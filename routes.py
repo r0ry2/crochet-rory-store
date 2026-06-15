@@ -6,7 +6,6 @@ from app import app, db, mail
 from models import Product, Order, OrderItem, User, Cart
 from forms import LoginForm, RegisterForm, ProductForm
 from werkzeug.utils import secure_filename
-from flask_mail import Message as MailMessage
 from itsdangerous import URLSafeTimedSerializer
 import os
 from datetime import datetime
@@ -204,36 +203,29 @@ def cart_page():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
+
     if form.validate_on_submit():
         existing_user = User.query.filter_by(email=form.email.data).first()
+
         if existing_user:
             flash('⚠️ Email already registered!', 'warning')
             return redirect(url_for('register'))
 
-        new_user = User(username=form.username.data, email=form.email.data)
+        new_user = User(
+            username=form.username.data,
+            email=form.email.data
+        )
         new_user.set_password(form.password.data)
 
-        # ✅ لو هو الأدمن نفعّله تلقائيًا
+        # الأدمن
         if form.email.data == "admin@store.com":
             new_user.role = 'admin'
-            new_user.confirmed = True
+
+        # تفعيل الحساب مباشرة
+        new_user.confirmed = True
 
         db.session.add(new_user)
         db.session.commit()
-
-        # ✅ المستخدمين الجدد فقط لازم يأكدون البريد
-        if not new_user.confirmed:
-            token = s.dumps(new_user.email, salt='email-confirm')
-            confirm_url = url_for('confirm_email', token=token, _external=True)
-
-            msg = Message(
-                subject="📧 Confirm your Crochet Rory Store account",
-                recipients=[form.email.data],
-                body=f"Hi {form.username.data},\n\nPlease confirm your email by clicking the link below:\n\n{confirm_url}\n\n– The Crochet Rory Team 💕"
-            )
-            mail.send(msg)
-            flash('✅ Registration successful! Please check your email to confirm your account.', 'info')
-            return redirect(url_for('login'))
 
         flash('✅ Registration successful! You can now log in.', 'success')
         return redirect(url_for('login'))
@@ -241,28 +233,10 @@ def register():
     return render_template('register.html', form=form)
 
 
-@app.route('/confirm/<token>')
-def confirm_email(token):
-    try:
-        email = s.loads(token, salt='email-confirm', max_age=3600)
-    except:
-        flash('❌ Invalid or expired confirmation link.', 'danger')
-        return redirect(url_for('login'))
-
-    user = User.query.filter_by(email=email).first_or_404()
-    if getattr(user, "confirmed", False):
-        flash('✅ Account already confirmed. Please log in.', 'success')
-    else:
-        user.confirmed = True
-        db.session.commit()
-        flash('🎉 Your account has been confirmed! You can now log in.', 'success')
-
-    return redirect(url_for('login'))
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
 
@@ -270,31 +244,27 @@ def login():
             flash('❌ Invalid email or password!', 'danger')
             return render_template('login.html', form=form)
 
-        if user.role != 'admin' and not getattr(user, "confirmed", True):
-            flash('⚠️ Please confirm your email before logging in.', 'warning')
-            return redirect(url_for('login'))
-
-        # تسجيل الدخول: نحفظ اسم المستخدم وحقل id للمستخدم
         session['user'] = user.username
         session['user_id'] = user.id
         session['is_admin'] = (user.role == 'admin')
 
-        # لو كان في سلة بالجلسة (guest) نندمجها مع سلة الـ DB للمستخدم
         merge_session_cart_into_db(user.id)
 
         flash(f"Welcome back, {user.username} 💕", "success")
-        return redirect(url_for('admin_home') if session['is_admin'] else url_for('home_logged'))
+        return redirect(
+            url_for('admin_home')
+            if session['is_admin']
+            else url_for('home_logged')
+        )
 
     return render_template('login.html', form=form)
 
 
 @app.route('/logout')
 def logout():
-    # تنظيف الـ session لكن مع إمكانية ترك ملفات أخرى لو حبّيت
     session.clear()
     flash('👋 You have been logged out.', 'info')
     return redirect(url_for('login'))
-
 
 # ==========================================
 # 🛒 CART (single set of endpoints supporting session or DB)
@@ -547,8 +517,9 @@ def edit_product(id):
         return redirect(url_for('login'))
 
     product = Product.query.get_or_404(id)
-    form = ProductForm(obj=product)
-    edit_mode = True
+
+    # إذا كنتِ تستخدمين AddProductForm
+    form = AddProductForm(obj=product)
 
     if form.validate_on_submit():
         product.name = form.name.data
@@ -559,16 +530,28 @@ def edit_product(id):
         if form.image.data:
             image = form.image.data
             filename = secure_filename(image.filename)
-            image_path = os.path.join(app.root_path, 'static/images', filename)
+
+            image_path = os.path.join(
+                app.root_path,
+                'static',
+                'images',
+                filename
+            )
+
             image.save(image_path)
             product.image = filename
 
         db.session.commit()
+
         flash("✅ Product updated successfully!", "success")
         return redirect(url_for('admin_products'))
 
-    return render_template('admin/admin_product.html', form=form, product=product, edit_mode=edit_mode)
-
+    return render_template(
+        'admin/edit_product.html',
+        form=form,
+        product=product,
+        edit_mode=True
+    )
 
 @app.route('/admin/delete_product/<int:id>', methods=['POST'])
 def delete_product(id):
