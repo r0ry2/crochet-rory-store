@@ -593,37 +593,29 @@ padding:0 20px;
 
 .about-container{
     display:flex;
-    justify-content:center;
     align-items:center;
-    flex-wrap:wrap;
-    gap:40px;
-
-    max-width:1000px;
-    margin:auto;
+    justify-content:center;
+    gap:25px;
+    max-width:900px;
+    margin:0 auto;
 }
 
 .about-image{
-    width:100%;
-    max-width:400px;
-    height:auto;
-
+    width:250px;
+    height:280px;
     object-fit:cover;
-
-    border-radius:20px;
-    box-shadow:0 4px 10px rgba(0,0,0,.1);
+    border-radius:15px;
+    flex-shrink:0;
 }
+
+
 
 .about-text{
     flex:1;
-    min-width:300px;
-
     text-align:left;
-
-    font-size:1.1rem;
+    font-size:15px;
     line-height:1.8;
-    color:#444;
 }
-
 /* ==========================================
    PRODUCTS
 ========================================== */
@@ -1694,13 +1686,8 @@ input:checked + .slider:before{
     font-size:2.8rem;
 }
 
-.about-container{
-    flex-direction:column;
-}
 
-.about-text{
-    text-align:center;
-}
+
 
 .category-card span{
     font-size:18px;
