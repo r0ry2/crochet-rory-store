@@ -1,0 +1,107 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}Edit Product{% endblock %}
+
+{% block content %}
+
+<div class="container" style="max-width:700px; margin:40px auto;">
+
+    <div style="
+        background:white;
+        padding:30px;
+        border-radius:15px;
+        box-shadow:0 5px 15px rgba(0,0,0,.1);
+    ">
+
+        <h2 style="
+            text-align:center;
+            color:#e26fa7;
+            margin-bottom:30px;
+        ">
+            ✏️ Edit Product
+        </h2>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            {{ form.hidden_tag() }}
+
+            <!-- Product Name -->
+            <div style="margin-bottom:20px;">
+                <label>{{ form.name.label }}</label><br>
+                {{ form.name(style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;") }}
+            </div>
+
+            <!-- Price -->
+            <div style="margin-bottom:20px;">
+                <label>{{ form.price.label }}</label><br>
+                {{ form.price(style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;") }}
+            </div>
+
+            <!-- Description -->
+            <div style="margin-bottom:20px;">
+                <label>{{ form.description.label }}</label><br>
+                {{ form.description(rows="5", style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;") }}
+            </div>
+
+            <!-- Publish -->
+            <div style="margin-bottom:20px;">
+                <label>{{ form.publish_location.label }}</label><br>
+                {{ form.publish_location(style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;") }}
+            </div>
+
+            <!-- Image -->
+            <div style="margin-bottom:20px;">
+                <label>{{ form.image.label }}</label><br>
+                {{ form.image() }}
+            </div>
+
+            {% if product.image %}
+            <div style="margin-bottom:20px;">
+
+                <p><strong>Current Image</strong></p>
+
+                <img
+                    src="{{ url_for('static', filename='images/' ~ product.image) }}"
+                    width="180"
+                    style="border-radius:10px; border:1px solid #ddd;">
+
+            </div>
+            {% endif %}
+
+            <div style="display:flex; gap:10px;">
+
+                {{ form.submit(
+                    value="Update Product",
+                    style="
+                        background:#e26fa7;
+                        color:white;
+                        border:none;
+                        padding:12px 20px;
+                        border-radius:8px;
+                        cursor:pointer;
+                        flex:1;
+                    "
+                ) }}
+
+                <a href="{{ url_for('admin_products') }}"
+                   style="
+                        flex:1;
+                        text-align:center;
+                        text-decoration:none;
+                        background:#777;
+                        color:white;
+                        padding:12px;
+                        border-radius:8px;
+                   ">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

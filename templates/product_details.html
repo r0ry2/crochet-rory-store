@@ -1,0 +1,641 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+
+<style>
+
+:root{
+
+    --pink:#F7B7C9;
+    --pink-dark:#E78BAF;
+    --pink-light:#FFF4F7;
+    --black:#181818;
+    --white:#FFFFFF;
+    --gray:#666;
+    --border:#F7B7C9;
+
+}
+
+body{
+
+    background:var(--pink-light);
+    font-family:Poppins,sans-serif;
+
+}
+
+.container{
+
+    width:90%;
+    max-width:1300px;
+    margin:60px auto;
+
+}
+
+/*==========================
+      PRODUCT DETAILS
+==========================*/
+
+.product-details{
+
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:70px;
+    align-items:center;
+
+}
+
+.product-image{
+
+    background:white;
+    border-radius:30px;
+    padding:20px;
+    border:2px solid var(--border);
+    box-shadow:0 15px 35px rgba(0,0,0,.08);
+
+}
+
+.product-image img{
+
+    width:100%;
+    border-radius:20px;
+    display:block;
+
+}
+
+/*==========================
+       PRODUCT INFO
+==========================*/
+
+.product-info h1{
+
+    font-size:45px;
+    color:var(--black);
+    margin-bottom:15px;
+    font-weight:800;
+
+}
+
+.rating{
+
+    color:#FFC107;
+    font-size:22px;
+    margin-bottom:18px;
+
+}
+
+.price{
+
+    font-size:38px;
+    font-weight:800;
+    color:var(--pink-dark);
+    margin-bottom:25px;
+
+}
+
+.description{
+
+    color:#555;
+    line-height:1.9;
+    font-size:17px;
+    margin-bottom:35px;
+
+}
+
+/*==========================
+        CUSTOM BOX
+==========================*/
+
+.custom-box{
+
+    margin:30px 0;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+
+}
+
+.custom-box label{
+
+    color:var(--black);
+    font-weight:700;
+
+}
+
+.custom-box select,
+.custom-box textarea,
+.custom-box input{
+
+    padding:14px;
+    border-radius:12px;
+    border:2px solid var(--border);
+    background:white;
+    font-size:15px;
+    transition:.3s;
+
+}
+
+.custom-box select:focus,
+.custom-box textarea:focus,
+.custom-box input:focus{
+
+    outline:none;
+    border-color:var(--black);
+
+}
+
+.custom-box textarea{
+
+    resize:none;
+}
+
+/*==========================
+       QUANTITY
+==========================*/
+
+.quantity{
+
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin:35px 0;
+
+}
+
+.quantity button{
+
+    width:45px;
+    height:45px;
+    border:none;
+    border-radius:12px;
+    background:var(--pink);
+    color:var(--black);
+    cursor:pointer;
+    font-size:22px;
+    font-weight:bold;
+    transition:.3s;
+
+}
+
+.quantity button:hover{
+
+    background:var(--black);
+    color:var(--pink);
+
+}
+
+.quantity span{
+
+    font-size:22px;
+    font-weight:bold;
+    color:var(--black);
+
+}
+
+/*==========================
+        BUTTONS
+==========================*/
+
+.actions{
+
+    display:flex;
+    gap:18px;
+    flex-wrap:wrap;
+
+}
+
+.cart-btn{
+
+    background:var(--black);
+    color:white;
+    border:none;
+    padding:16px 35px;
+    border-radius:15px;
+    cursor:pointer;
+    font-size:17px;
+    font-weight:700;
+    transition:.3s;
+
+}
+
+.cart-btn:hover{
+
+    background:var(--pink);
+    color:var(--black);
+
+}
+
+.wishlist-btn{
+
+    background:white;
+    border:2px solid var(--pink);
+    color:var(--black);
+    padding:16px 35px;
+    border-radius:15px;
+    text-decoration:none;
+    font-weight:700;
+    transition:.3s;
+
+}
+
+.wishlist-btn:hover{
+
+    background:var(--black);
+    color:var(--pink);
+
+}
+
+.section-title{
+
+    text-align:center;
+    color:#111;
+    font-size:34px;
+    margin:80px 0 35px;
+    font-weight:800;
+
+}
+
+.review{
+
+    background:white;
+    border:2px solid var(--border);
+    border-radius:25px;
+    padding:25px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    margin-bottom:50px;
+
+}
+
+.related-grid{
+
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:30px;
+
+}
+
+.related-card{
+
+    background:white;
+    border-radius:25px;
+    overflow:hidden;
+    border:2px solid var(--border);
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.3s;
+
+}
+
+.related-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.related-card img{
+
+    width:100%;
+    height:240px;
+    object-fit:cover;
+
+}
+
+.related-card a{
+
+    display:block;
+    text-align:center;
+    padding:14px;
+    background:#111;
+    color:white;
+    border-radius:12px;
+    text-decoration:none;
+    transition:.3s;
+
+}
+
+.related-card a:hover{
+
+    background:#E78BAF;
+
+}
+
+@media(max-width:900px){
+
+    .product-details{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+</style>
+
+<div class="container">
+
+    <div class="product-details">
+
+        <!-- Product Image -->
+        <div class="product-image">
+
+            <img src="{{ url_for('static', filename='images/' ~ product.image) }}"
+                 alt="{{ product.name }}">
+
+        </div>
+
+        <!-- Product Information -->
+        <div class="product-info">
+
+            <h1>{{ product.name }}</h1>
+
+            <div class="rating">
+                ★★★★★
+            </div>
+
+            <div class="price">
+                {{ product.price }}
+                {{ "ر.س" if current_lang == "ar" else "SAR" }}
+            </div>
+
+            <p class="description">
+                {{ product.description }}
+            </p>
+
+            {% if product.category == "Dolls" %}
+
+            <h2 style="margin-bottom:20px;color:#111;">
+                {{ "✨ خصص الدمية" if current_lang=="ar"
+                else "✨ Customize Your Doll" }}
+            </h2>
+
+            <div class="custom-box">
+
+                <label>
+                    {{ "لون البشرة" if current_lang=="ar" else "Skin Color" }}
+                </label>
+
+                <select>
+                    <option>{{ "أبيض" if current_lang=="ar" else "White" }}</option>
+                    <option>{{ "قمحي" if current_lang=="ar" else "Tan" }}</option>
+                    <option>{{ "بني" if current_lang=="ar" else "Brown" }}</option>
+                </select>
+
+                <label>
+                    {{ "نوع الشعر" if current_lang=="ar" else "Hair Type" }}
+                </label>
+
+                <select>
+                    <option>{{ "مستقيم" if current_lang=="ar" else "Straight" }}</option>
+                    <option>{{ "مموج" if current_lang=="ar" else "Wavy" }}</option>
+                    <option>{{ "مجعد" if current_lang=="ar" else "Curly" }}</option>
+                </select>
+
+                <label>
+                    {{ "لون الشعر" if current_lang=="ar" else "Hair Color" }}
+                </label>
+
+                <select>
+                    <option>{{ "أسود" if current_lang=="ar" else "Black" }}</option>
+                    <option>{{ "بني" if current_lang=="ar" else "Brown" }}</option>
+                    <option>{{ "أشقر" if current_lang=="ar" else "Blonde" }}</option>
+                </select>
+
+                <label>
+                    {{ "الحجم" if current_lang=="ar" else "Size" }}
+                </label>
+
+                <select>
+                    <option>{{ "صغير" if current_lang=="ar" else "Small" }}</option>
+                    <option>{{ "متوسط" if current_lang=="ar" else "Medium" }}</option>
+                    <option>{{ "كبير" if current_lang=="ar" else "Large" }}</option>
+                </select>
+
+                <label>
+                    {{ "صورة مرجعية" if current_lang=="ar" else "Reference Image" }}
+                </label>
+
+                <input type="file">
+
+                <label>
+                    {{ "ملاحظات إضافية" if current_lang=="ar" else "Additional Notes" }}
+                </label>
+
+                <textarea rows="4"></textarea>
+
+            </div>
+
+            {% elif product.category == "Keychains" %}
+
+            <h2 style="margin-bottom:20px;color:#111;">
+                {{ "✨ خصص الميدالية" if current_lang=="ar"
+                else "✨ Customize Your Keychain" }}
+            </h2>
+
+            <div class="custom-box">
+
+                <label>
+                    {{ "اللون" if current_lang=="ar" else "Color" }}
+                </label>
+
+                <select>
+                    <option>{{ "وردي" if current_lang=="ar" else "Pink" }}</option>
+                    <option>{{ "أبيض" if current_lang=="ar" else "White" }}</option>
+                    <option>{{ "أزرق" if current_lang=="ar" else "Blue" }}</option>
+                </select>
+
+                <label>
+                    {{ "الحجم" if current_lang=="ar" else "Size" }}
+                </label>
+
+                <select>
+                    <option>{{ "صغير" if current_lang=="ar" else "Small" }}</option>
+                    <option>{{ "متوسط" if current_lang=="ar" else "Medium" }}</option>
+                </select>
+
+                <label>
+                    {{ "نوع الخيط" if current_lang=="ar" else "Yarn Type" }}
+                </label>
+
+                <select>
+                    <option>Cotton</option>
+                    <option>Milk Cotton</option>
+                    <option>Velvet</option>
+                </select>
+
+                <label>
+                    {{ "صورة مرجعية" if current_lang=="ar" else "Reference Image" }}
+                </label>
+
+                <input type="file">
+
+                <label>
+                    {{ "ملاحظات إضافية" if current_lang=="ar" else "Additional Notes" }}
+                </label>
+
+                <textarea rows="4"></textarea>
+
+            </div>
+
+            {% endif %}
+
+            <div class="quantity">
+
+                <button>-</button>
+
+                <span>1</span>
+
+                <button>+</button>
+
+            </div>
+
+            <div class="actions">
+
+                <button class="cart-btn">
+                    🛒 {{ "أضف إلى السلة" if current_lang=="ar" else "Add to Cart" }}
+                </button>
+
+                <a href="{{ url_for('toggle_wishlist', product_id=product.id) }}"
+                   class="wishlist-btn">
+
+                    ❤️ {{ "المفضلة" if current_lang=="ar" else "Wishlist" }}
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+    <h2 class="section-title">
+
+💬 {{ "آراء العملاء" if current_lang == "ar"
+else "Customer Reviews" }}
+
+</h2>
+
+<div class="review">
+
+    <div class="rating" style="margin-bottom:10px;">
+        ★★★★★
+    </div>
+
+    <p style="font-size:17px;color:#555;">
+
+        {{ "لا توجد مراجعات بعد. كن أول من يشارك تجربته 💕"
+        if current_lang=="ar"
+        else "No reviews yet. Be the first to share your experience 💕" }}
+
+    </p>
+
+</div>
+
+<h2 class="section-title">
+
+🧸 {{ "قد يعجبك أيضًا"
+if current_lang=="ar"
+else "You May Also Like" }}
+
+</h2>
+
+<div class="related-grid">
+
+{% for item in related_products %}
+
+<div class="related-card">
+
+    <img src="{{ url_for('static', filename='images/' ~ item.image) }}"
+         alt="{{ item.name }}">
+
+    <div style="padding:20px;">
+
+        <h3 style="margin-bottom:10px;color:#111;">
+
+            {{ item.name }}
+
+        </h3>
+
+        <div style="color:#FFC107;font-size:18px;margin-bottom:12px;">
+            ★★★★★
+        </div>
+
+        <div style="
+            font-size:24px;
+            font-weight:bold;
+            color:#E78BAF;
+            margin-bottom:18px;">
+
+            {{ item.price }}
+            {{ "ر.س" if current_lang=="ar" else "SAR" }}
+
+        </div>
+
+        <a href="{{ url_for('product_details', product_id=item.id) }}">
+
+            {{ "عرض المنتج"
+            if current_lang=="ar"
+            else "View Product" }}
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<script>
+
+let quantity = 1;
+
+const qtySpan = document.querySelector(".quantity span");
+
+document.querySelectorAll(".quantity button")[0].onclick = function(){
+
+    if(quantity > 1){
+
+        quantity--;
+        qtySpan.innerHTML = quantity;
+
+    }
+
+}
+
+document.querySelectorAll(".quantity button")[1].onclick = function(){
+
+    quantity++;
+    qtySpan.innerHTML = quantity;
+
+}
+
+/*==============================
+      ADD TO CART EFFECT
+==============================*/
+
+const cartBtn = document.querySelector(".cart-btn");
+
+cartBtn.onclick = function(){
+
+    const originalText = cartBtn.innerHTML;
+
+    cartBtn.innerHTML =
+        "{{ '✓ تمت الإضافة' if current_lang == 'ar' else '✓ Added to Cart' }}";
+
+    cartBtn.style.background = "#4CAF50";
+    cartBtn.style.color = "white";
+
+    setTimeout(function(){
+
+        cartBtn.innerHTML = originalText;
+        cartBtn.style.background = "#111";
+        cartBtn.style.color = "white";
+
+    },1800);
+
+}
+
+</script>
+
+</div>
+{% endblock %}

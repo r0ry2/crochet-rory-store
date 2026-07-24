@@ -1,50 +1,171 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_lang }}" dir="{{ 'rtl' if current_lang == 'ar' else 'ltr' }}">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Crochet Rory Store{% endblock %}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {{ "متجر روري للكروشيه" if current_lang == "ar" else "Crochet Rory Store" }}
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-  <!-- الشريط العلوي -->
-  <header style="background-color:#ffb6c1; color:#333; text-align:center; padding:8px; font-weight:bold;">
-    ✨ Use code: Rory for 2% off! ✨
-  </header>
 
-  <!-- العنوان الرئيسي -->
-  <div style="background-color:#ffe4ef; padding:10px 0; text-align:center; box-shadow:0 2px 5px rgba(0,0,0,0.1);">
-    <h1 style="color:#e26fa7; font-family:'Poppins',sans-serif; font-size:2.5rem; text-shadow:1px 1px 2px white; margin:10px 0;">
-      Crochet Rory Store
-    </h1>
-  </div>
+<!-- العنوان الرئيسي -->
+<div class="header-top">
 
-  <!-- ✅ عرض فقط رسائل النجاح (مثل "تم تسجيل دخولك") -->
-  {% with messages = get_flashed_messages(with_categories=true) %}
+    <!-- ☰ + البحث + السلة + الحساب -->
+    <div class="left-icons">
+
+        <button class="menu-btn" onclick="toggleMenu()">
+            ☰
+        </button>
+
+        <form action="{{ url_for('search') }}"
+              method="GET"
+              class="search-box">
+
+            <input
+                type="text"
+                name="q"
+                placeholder="{{ 'ابحث...' if current_lang == 'ar' else 'Search...' }}"
+                required>
+
+            <button type="submit">🔍</button>
+
+        </form>
+
+        <a href="{{ url_for('cart_page') }}"
+           class="cart-icon">
+            🛒
+        </a>
+
+        <a href="{{ url_for('profile') }}"
+           class="profile-icon">
+            👤
+        </a>
+
+    </div>
+
+    <!-- اسم المتجر + اللوقو -->
+    <div class="logo-section">
+
+        <h1>
+            {{ "متجر روري للكروشيه" if current_lang == "ar" else "Crochet Rory Store" }}
+        </h1>
+
+        <img src="{{ url_for('static', filename='images/logo.png') }}"
+             class="logo">
+
+    </div>
+
+</div>
+
+
+<!-- القائمة الجانبية -->
+<div id="sideMenu" class="side-menu">
+
+    <button class="close-menu" onclick="closeMenu()">
+        &times;
+    </button>
+
+    <a href="#home">
+        🏠 {{ "الرئيسية" if current_lang == "ar" else "Home" }}
+    </a>
+
+    <a href="#about-me">
+        💗 {{ "من أنا" if current_lang == "ar" else "About Me" }}
+    </a>
+
+    <a href="#products">
+        🧶 {{ "المنتجات" if current_lang == "ar" else "Products" }}
+    </a>
+
+    <a href="#reviews">
+        ⭐ {{ "التقييمات" if current_lang == "ar" else "Reviews" }}
+    </a>
+
+    <hr>
+
+    <a href="{{ url_for('change_language', lang='en') }}">
+        🇺🇸 English
+    </a>
+
+    <a href="{{ url_for('change_language', lang='ar') }}">
+        🇸🇦 العربية
+    </a>
+
+    <hr>
+
+    <a href="#" onclick="openLogin()">
+        👤 {{ "تسجيل الدخول" if current_lang == "ar" else "Login" }}
+    </a>
+
+</div>
+
+  <!-- رسائل النجاح -->
+{% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-      <div style="max-width:600px; margin:20px auto;">
-        {% for category, message in messages %}
-          {% if category == 'success' %}
-            <div style="padding:10px; border-radius:8px; margin-bottom:10px; text-align:center;
-                        background-color:#e26fa7; color:#white; border:1px solid #c3e6cb;">
-              💖 {{ message }}
-            </div>
-          {% endif %}
-        {% endfor %}
-      </div>
-    {% endif %}
-  {% endwith %}
+        <div style="max-width:600px; margin:20px auto;">
 
-  <!-- المحتوى الخاص بكل صفحة -->
-  <main>
+            {% for category, message in messages %}
+
+                {% if category == 'success' %}
+
+                    <div style="
+                        padding:10px;
+                        border-radius:8px;
+                        margin-bottom:10px;
+                        text-align:center;
+                        background:#e26fa7;
+                        color:white;
+                    ">
+                        💖 {{ message }}
+                    </div>
+
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+    {% endif %}
+{% endwith %}
+
+<!-- محتوى الصفحة -->
+<main>
     {% block content %}
     {% endblock %}
-  </main>
+</main>
 
-  <!-- الفوتر -->
-  <footer style="text-align:center; padding:20px; background-color:#ffe4ef; color:#555; margin-top:50px;">
-    © 2024 Crochet Rory Store. All rights reserved.
-  </footer>
+<footer
+style="text-align:center;
+padding:20px;
+background:#F5A9C6;
+color:#555;">
+
+    © 2026
+    {{ "متجر روري للكروشيه. جميع الحقوق محفوظة." if current_lang == "ar"
+    else "Crochet Rory Store. All rights reserved." }}
+
+</footer>
+
+<script>
+function toggleMenu() {
+    document.getElementById("sideMenu").classList.toggle("active");
+}
+
+function openMenu() {
+    document.getElementById("sideMenu").classList.add("active");
+}
+
+function closeMenu() {
+    document.getElementById("sideMenu").classList.remove("active");
+}
+</script>
+
 </body>
 </html>

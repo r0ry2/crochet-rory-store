@@ -1,51 +1,108 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from config import Config
-from dotenv import load_dotenv
 import os
-from flask_mail import Mail
+from dotenv import load_dotenv
 
-# تحميل ملف .env
+from flask import Flask
+from flask_mail import Mail
+from flask_login import LoginManager
+from flask_migrate import Migrate
+from flask_babel import Babel
+from flask import session
+
+
+from config import Config
+from models import (
+    db,
+    Product,
+    Order,
+    OrderItem,
+    User,
+    Message,
+    Cart,
+    Wishlist
+)
+
+# ==========================================
+# Load Environment Variables
+# ==========================================
 load_dotenv()
 
-# إنشاء التطبيق
+# ==========================================
+# Create Flask App
+# ==========================================
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# 🔹 إعداد القيم الأساسية
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'supersecretkey')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.sqlite'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["BABEL_DEFAULT_LOCALE"] = "en"
+app.config["BABEL_SUPPORTED_LOCALES"] = ["en", "ar"]
 
-# 🔹 إعداد البريد (محلي فقط)
-app.config['MAIL_SERVER'] = 'localhost'
-app.config['MAIL_PORT'] = 8028
-app.config['MAIL_DEFAULT_SENDER'] = 'noreply@crochetrory.com'
+from flask import session
 
-# 🔹 تهيئة البريد
+def get_locale():
+    return session.get("language", "en")
+
+babel = Babel(app, locale_selector=get_locale)
+@app.context_processor
+def inject_locale():
+    return {
+        "current_lang": session.get("language", "en")
+    }
+# ==========================================
+# Secret Key & Database
+# ==========================================
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "supersecretkey")
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.sqlite"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+# ==========================================
+# Mail Configuration
+# ==========================================
+app.config["MAIL_SERVER"] = "localhost"
+app.config["MAIL_PORT"] = 8028
+app.config["MAIL_DEFAULT_SENDER"] = "noreply@crochetrory.com"
+
 mail = Mail(app)
 
-# ✅ تأكيد قاعدة البيانات المستخدمة
-print("📁 Using database file:", app.config['SQLALCHEMY_DATABASE_URI'])
-
-# 🟢 استيراد قاعدة البيانات من models
-from models import db, Product, Order, OrderItem, User
-
-# 🟢 تهيئة قاعدة البيانات مع التطبيق
+# ==========================================
+# Database
+# ==========================================
 db.init_app(app)
 migrate = Migrate(app, db)
 
-# 🟢 استيراد المسارات بعد تهيئة قاعدة البيانات
+# ==========================================
+# Flask Login
+# ==========================================
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+# إذا لم يكن المستخدم مسجل دخول يتم تحويله لصفحة تسجيل الدخول
+login_manager.login_view = "login"
+
+# رسالة تظهر عند محاولة دخول صفحة محمية
+login_manager.login_message = "Please log in first."
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+# ==========================================
+# Print Database
+# ==========================================
+print("📁 Using database file:", app.config["SQLALCHEMY_DATABASE_URI"])
+
+# ==========================================
+# Import Routes
+# ==========================================
 from routes import *
 
-# 🟢 تشغيل التطبيق
-if __name__ == "__main__":
-    app.run(debug=True)
-
-
-from models import Message, Product, User, Cart, Order, OrderItem  # <-- تأكدي إن Message هنا
-
+# ==========================================
+# Create Database Tables
+# ==========================================
 with app.app_context():
     db.create_all()
     print("✅ Database tables created successfully!")
+
+# ==========================================
+# Run App
+# ==========================================
+if __name__ == "__main__":
+    app.run(debug=True)

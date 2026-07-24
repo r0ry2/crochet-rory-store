@@ -1,126 +1,738 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crochet Rory Store - Products</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-  <style>
-    .quantity-box {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 10px;
-    }
+{% extends "base.html" %}
+{% block title %}Products{% endblock %}
 
-    .quantity-btn {
-      background-color: #e26fa7;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      width: 30px;
-      height: 30px;
-      cursor: pointer;
-      font-size: 18px;
-      font-weight: bold;
-      transition: 0.3s;
-    }
+{% block content %}
 
-    .quantity-btn:hover {
-      background-color: #ff8fc2;
-    }
+<style>
 
-    .quantity-display {
-      font-size: 16px;
-      font-weight: bold;
-      width: 30px;
-      text-align: center;
-      color: #333;
-    }
+:root{
 
-    .product button {
-      background-color: #e26fa7;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: 0.3s;
-      margin-top: 10px;
-    }
+--primary:#DAAAA4;
+--primary-dark:#C97C8F;
+--light:#FFF7F8;
+--white:#ffffff;
+--dark:#333;
+--gray:#777;
+--border:#F1D8DE;
+--shadow:0 15px 35px rgba(0,0,0,.08);
 
-    .product button:hover {
-      background-color: #ff8fc2;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    ✨ Use code: Rory for 2% off! ✨
-  </header>
+}
 
-  <nav class="navbar">
-    <div class="logo">Crochet Rory Store</div>
-    <ul>
-      <li><a href="{{ url_for('home_logged') }}">Home</a></li>
-      <li><a href="/cart">Cart</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </nav>
+body{
 
-  <div class="search-container">
-    <input type="text" id="search" placeholder="Search...">
-    <button type="button" id="searchBtn">🔍</button>
-  </div>
+background:#FFF8FA;
 
-  <section class="product-grid">
+}
+
+/*==========================
+        HERO
+==========================*/
+
+.products-hero{
+
+height:340px;
+
+background:url("{{ url_for('static', filename='images/hero.png') }}") center/cover;
+
+position:relative;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+overflow:hidden;
+
+}
+
+.products-hero::before{
+
+content:"";
+
+position:absolute;
+
+inset:0;
+
+background:rgba(0,0,0,.35);
+
+}
+
+.hero-content{
+
+position:relative;
+
+z-index:5;
+
+text-align:center;
+
+color:white;
+
+}
+
+.hero-content h1{
+
+font-size:55px;
+
+margin-bottom:15px;
+
+}
+
+.hero-content p{
+
+font-size:19px;
+
+opacity:.95;
+
+}
+
+/*==========================
+      SEARCH BAR
+==========================*/
+
+.products-toolbar{
+
+width:90%;
+
+max-width:1300px;
+
+margin:40px auto;
+
+display:flex;
+
+gap:20px;
+
+flex-wrap:wrap;
+
+justify-content:space-between;
+
+align-items:center;
+
+}
+
+.search-product{
+
+flex:1;
+
+min-width:320px;
+
+position:relative;
+
+}
+
+.search-product input{
+
+width:100%;
+
+padding:16px 22px;
+
+border-radius:50px;
+
+border:2px solid var(--border);
+
+font-size:16px;
+
+outline:none;
+
+background:white;
+
+transition:.3s;
+
+}
+
+.search-product input:focus{
+
+border-color:var(--primary);
+
+}
+
+.category-filter{
+
+display:flex;
+
+gap:12px;
+
+flex-wrap:wrap;
+
+}
+
+.category-btn{
+
+padding:12px 22px;
+
+border:none;
+
+border-radius:40px;
+
+background:white;
+
+cursor:pointer;
+
+font-weight:600;
+
+transition:.3s;
+
+border:2px solid var(--border);
+
+}
+
+.category-btn:hover{
+
+background:var(--primary);
+
+color:white;
+
+}
+
+/*==========================
+      PRODUCTS GRID
+==========================*/
+
+.products-grid{
+
+width:90%;
+
+max-width:1300px;
+
+margin:auto;
+
+display:grid;
+
+grid-template-columns:
+
+repeat(auto-fill,minmax(280px,1fr));
+
+gap:35px;
+
+padding-bottom:80px;
+
+}
+
+.product-card{
+
+background:white;
+
+border-radius:28px;
+
+overflow:hidden;
+
+box-shadow:var(--shadow);
+
+transition:.35s;
+
+position:relative;
+
+}
+
+.product-card:hover{
+
+transform:translateY(-8px);
+
+}
+
+.product-image{
+
+height:300px;
+
+overflow:hidden;
+
+position:relative;
+
+}
+
+.product-image img{
+
+width:100%;
+
+height:100%;
+
+object-fit:cover;
+
+transition:.4s;
+
+}
+
+.product-card:hover img{
+
+transform:scale(1.08);
+
+}
+
+.badge{
+
+position:absolute;
+
+top:18px;
+
+left:18px;
+
+background:#ff4d6d;
+
+color:white;
+
+padding:8px 15px;
+
+border-radius:30px;
+
+font-size:13px;
+
+font-weight:bold;
+
+}
+
+.favorite{
+
+position:absolute;
+
+top:18px;
+
+right:18px;
+
+width:45px;
+
+height:45px;
+
+border-radius:50%;
+
+background:white;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:20px;
+
+cursor:pointer;
+
+box-shadow:0 5px 15px rgba(0,0,0,.15);
+
+transition:.3s;
+
+}
+
+.favorite:hover{
+
+background:#ff4d6d;
+
+color:white;
+
+}
+
+.product-info{
+
+padding:25px;
+
+}
+
+.product-title{
+
+font-size:22px;
+
+color:#333;
+
+margin-bottom:12px;
+
+}
+
+.product-price{
+
+font-size:26px;
+
+font-weight:bold;
+
+color:var(--primary-dark);
+
+margin-bottom:15px;
+
+}
+
+.rating{
+
+color:#ffb703;
+
+font-size:18px;
+
+margin-bottom:18px;
+
+}
+.add-cart{
+
+width:100%;
+
+padding:15px;
+
+border:none;
+
+border-radius:15px;
+
+background:var(--primary);
+
+color:white;
+
+font-size:16px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+.add-cart:hover{
+
+background:var(--primary-dark);
+
+transform:translateY(-2px);
+
+}
+
+.view-btn{
+
+margin-top:12px;
+
+display:block;
+
+text-align:center;
+
+text-decoration:none;
+
+padding:14px;
+
+border:2px solid var(--primary);
+
+border-radius:15px;
+
+color:var(--primary-dark);
+
+font-weight:bold;
+
+transition:.3s;
+
+}
+
+.view-btn:hover{
+
+background:var(--primary);
+
+color:white;
+
+}
+
+@media(max-width:768px){
+
+.hero-content h1{
+
+font-size:38px;
+
+}
+
+.hero-content p{
+
+font-size:16px;
+
+}
+
+.products-toolbar{
+
+flex-direction:column;
+
+align-items:stretch;
+
+}
+
+}
+.favorite-btn{
+
+    position:absolute;
+    top:12px;
+    right:12px;
+
+    width:40px;
+    height:40px;
+
+    border:none;
+    border-radius:50%;
+
+    background:white;
+
+    cursor:pointer;
+
+    font-size:22px;
+
+    transition:.3s;
+}
+
+.favorite-btn:hover{
+
+    transform:scale(1.1);
+
+    background:#ffe8ef;
+
+}
+
+</style>
+
+<section class="products-hero">
+
+    <div class="hero-content">
+
+        <h1>
+            {{ "🧸 إبداعاتنا الجميلة" if current_lang == "ar"
+            else "Our Lovely Creations 🧸" }}
+        </h1>
+
+        <p>
+            {{ "مصنوعة يدويًا بكل حب، خصيصًا من أجلك."
+            if current_lang == "ar"
+            else "Handmade with love, stitched just for you." }}
+        </p>
+
+    </div>
+
+</section>
+
+
+<section class="products-toolbar">
+
+    <div class="search-product">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="{{ 'ابحث عن منتج...' if current_lang == 'ar' else 'Search products...' }}">
+
+    </div>
+
+    <div class="category-filter">
+
+        <button class="category-btn active"
+                data-category="all">
+
+            {{ "الكل" if current_lang == "ar" else "All" }}
+
+        </button>
+
+        <button class="category-btn"
+                data-category="Dolls">
+
+            {{ "الدمى" if current_lang == "ar" else "Dolls" }}
+
+        </button>
+
+        <button class="category-btn"
+                data-category="Flowers">
+
+            {{ "الزهور" if current_lang == "ar" else "Flowers" }}
+
+        </button>
+
+        <button class="category-btn"
+                data-category="Keychains">
+
+            {{ "الميداليات" if current_lang == "ar" else "Keychains" }}
+
+        </button>
+
+        <button class="category-btn"
+                data-category="Custom">
+
+            {{ "حسب الطلب" if current_lang == "ar" else "Custom" }}
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<section class="products-grid"
+         id="productsGrid">
+
     {% for product in products %}
-      <div class="product">
-        <img src="{{ url_for('static', filename='images/' ~ product.image) }}" alt="{{ product.name }}">
-        <h2>{{ product.name }}</h2>
-        <p>{{ product.description }}</p>
-        <p class="price">{{ product.price }} TUB</p>
-        <div class="rating">★★★★★</div>
 
-        <!-- ✅ أزرار الكمية -->
-        <div class="quantity-box">
-          <button class="quantity-btn" onclick="changeQuantity({{ product.id }}, -1)">−</button>
-          <span id="qty-{{ product.id }}" class="quantity-display">1</span>
-          <button class="quantity-btn" onclick="changeQuantity({{ product.id }}, 1)">+</button>
+    <div class="product-card"
+         data-name="{{ product.name|lower }}"
+         data-category="{{ product.category }}">
+
+        <div class="product-image">
+
+            <img src="{{ url_for('static', filename='images/' ~ product.image) }}"
+                 alt="{{ product.name }}">
+
+            <span class="badge">
+
+                {{ "جديد" if current_lang == "ar" else "New" }}
+
+            </span>
+
+            <form action="{{ url_for('toggle_wishlist', product_id=product.id) }}"
+                  method="POST">
+
+                <button type="submit" class="favorite-btn">
+
+                    {% if product.id in wishlist_ids %}
+                        ❤️
+                    {% else %}
+                        🤍
+                    {% endif %}
+
+                </button>
+
+            </form>
+
         </div>
 
-        <button onclick="addToCart({{ product.id }})">Buy now</button>
-      </div>
+        <div class="product-info">
+
+            <h3 class="product-title">
+                {{ product.name }}
+            </h3>
+
+            <div class="rating">
+                ★★★★★
+            </div>
+
+<div class="product-price">
+    {{ product.price }}
+    {{ "ر.س" if current_lang == "ar" else "SAR" }}
+</div>
+            <button class="add-cart">
+
+                {{ "🛒 أضف إلى السلة" if current_lang == "ar"
+                else "🛒 Add to Cart" }}
+
+            </button>
+
+            <a href="{{ url_for('product_details', product_id=product.id) }}"
+               class="view-btn">
+
+                {{ "عرض التفاصيل" if current_lang == "ar"
+                else "View Details" }}
+
+            </a>
+
+        </div>
+
+    </div>
+
     {% endfor %}
-  </section>
 
-  <footer>
-    © 2024 Crochet Rory Store. All rights reserved.
-  </footer>
+</section>
 
-  <script>
-    // 🔹 تغيير الكمية في الواجهة
-    function changeQuantity(productId, change) {
-      const qtyElement = document.getElementById(`qty-${productId}`);
-      let qty = parseInt(qtyElement.textContent);
-      qty = Math.max(1, qty + change); // لا تقل عن 1
-      qtyElement.textContent = qty;
-    }
+<script>
+    const searchInput=document.getElementById("searchInput");
 
-    // 🔹 إضافة إلى السلة بالكمية المحددة
-    function addToCart(productId) {
-      const qty = parseInt(document.getElementById(`qty-${productId}`).textContent);
-      
-      fetch('/api/cart/add', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ product_id: productId, quantity: qty })
-      })
-      .then(res => res.json())
-      .then(data => alert(`🛍️ Added ${qty} item(s) to cart!`))
-      .catch(err => console.error(err));
-    }
-  </script>
-</body>
-</html>
+const cards=document.querySelectorAll(".product-card");
+
+searchInput.addEventListener("keyup",function(){
+
+const value=this.value.toLowerCase();
+
+cards.forEach(card=>{
+
+const name=card.dataset.name.toLowerCase();
+
+if(name.includes(value)){
+
+card.style.display="block";
+
+}else{
+
+card.style.display="none";
+
+}
+
+});
+
+});
+
+const buttons=document.querySelectorAll(".category-btn");
+
+buttons.forEach(btn=>{
+
+btn.addEventListener("click",function(){
+
+buttons.forEach(b=>b.classList.remove("active"));
+
+this.classList.add("active");
+
+const category=this.dataset.category;
+
+cards.forEach(card=>{
+
+if(category=="all"){
+
+card.style.display="block";
+
+}
+
+else if(card.dataset.category==category){
+
+card.style.display="block";
+
+}
+
+else{
+
+card.style.display="none";
+
+}
+
+});
+
+});
+
+});
+
+document.querySelectorAll(".favorite").forEach(btn=>{
+
+btn.addEventListener("click",function(){
+
+this.classList.toggle("liked");
+
+if(this.classList.contains("liked")){
+
+this.style.background="#ff4d6d";
+
+this.style.color="white";
+
+}
+
+else{
+
+this.style.background="white";
+
+this.style.color="#333";
+
+}
+
+});
+
+});
+
+document.querySelectorAll(".add-cart").forEach(btn=>{
+
+btn.addEventListener("click",function(){
+
+this.innerHTML="✔ Added";
+
+this.style.background="#4CAF50";
+
+setTimeout(()=>{
+
+this.innerHTML="🛒 Add to Cart";
+
+this.style.background="";
+
+},1500);
+
+});
+
+});
+
+</script>
+
+{% endblock %}

@@ -101,6 +101,16 @@
       {% for error in form.email.errors %}
         <div class="error-text">⚠️ {{ error }}</div>
       {% endfor %}
+      <!-- 📱 رقم الجوال -->
+{{ form.phone.label }}<br>
+{{ form.phone(size=32) }}
+
+{% for error in form.phone.errors %}
+<div class="error-text">
+    ⚠️ {{ error }}
+</div>
+{% endfor %}
+      
 
       <!-- 🔑 كلمة المرور -->
       {{ form.password.label }}<br>

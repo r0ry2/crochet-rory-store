@@ -1,66 +1,321 @@
-{% extends "base.html" %}
-{% block title %}Welcome | Crochet Rory Store{% endblock %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="{{ current_lang }}">
+<head>
 
-<!-- ====== NAVBAR ====== -->
-<nav style="background-color:white; width:80%; margin:20px auto; border-radius:25px; padding:10px; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
-  <ul style="list-style:none; display:flex; justify-content:center; align-items:center; gap:40px; margin:0; padding:0; font-weight:bold;">
-    <li><a href="{{ url_for('home_logged') }}" style="text-decoration:none; color:#e26fa7;">Home</a></li>
-    <li><a href="{{ url_for('products_page') }}" style="text-decoration:none; color:#333;">Products</a></li>
-    <li><a href="{{ url_for('cart_page') }}" style="text-decoration:none; color:#333;">🛒 Cart</a></li>
-    <li><a href="{{ url_for('contact_page') }}" style="text-decoration:none; color:#333; font-weight:bold;">Contact</a></li>
-    <li><a href="{{ url_for('logout') }}" style="text-decoration:none; color:#333;">Logout</a></li>
-  </ul>
-</nav>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {{ "متجر روري للكروشيه" if current_lang == "ar" else "Crochet Rory Store" }}
+    </title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="header-top">
+
+    <!-- ☰ + Search + Cart + Profile -->
+    <div class="left-icons">
+
+        <button class="menu-btn" onclick="toggleMenu()">
+            ☰
+        </button>
+
+        <form action="{{ url_for('search') }}" method="GET" class="search-box">
+
+            <input
+                type="text"
+                name="q"
+                placeholder="{{ 'ابحث...' if current_lang == 'ar' else 'Search...' }}"
+                required>
+
+            <button type="submit">🔍</button>
+
+        </form>
+
+        <a href="{{ url_for('cart_page') }}" class="cart-icon">
+            🛒
+        </a>
+
+        <a href="{{ url_for('wishlist_page') }}" class="wishlist-icon">
+            ❤️
+        </a>
+
+        <a href="{{ url_for('profile') }}" class="profile-icon">
+            👤
+        </a>
+
+    </div>
+
+    <!-- Logo -->
+    <div class="logo-section">
+
+        <h1>
+            {{ "متجر روري للكروشيه" if current_lang == "ar" else "Crochet Rory Store" }}
+        </h1>
+
+        <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            class="logo">
+
+    </div>
+
+</div>
+
+<div class="top-header">
+
+    <nav class="navbar">
+
+        <ul class="nav-links">
+
+            <li>
+                <a href="{{ url_for('home_logged') }}" class="nav-link">
+                    {{ "الرئيسية" if current_lang == "ar" else "Home" }}
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('products_page') }}" class="nav-link">
+                    {{ "المنتجات" if current_lang == "ar" else "Products" }}
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('home_logged') }}#reviews" class="nav-link">
+                    {{ "التقييمات" if current_lang == "ar" else "Reviews" }}
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('contact_page') }}" class="nav-link">
+                    {{ "تواصل معنا" if current_lang == "ar" else "Contact" }}
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ url_for('logout') }}" class="nav-link login-link">
+                    {{ "تسجيل الخروج" if current_lang == "ar" else "Logout" }}
+                </a>
+            </li>
+
+        </ul>
+
+    </nav>
+
+</div>
 
 <!-- ====== WELCOME SECTION ====== -->
-<section style="text-align:center; padding:60px 20px; background-color:#fff0f6; border-radius:20px; width:90%; margin:auto;">
-  <h1 style="color:#e26fa7;">Welcome back, {{ user }} 💕</h1>
-  <p style="color:#555; font-size:1.2rem;">Explore your favorite crochet collections!</p>
 
-  <div style="margin-top:30px;">
-    <a href="{{ url_for('products_page') }}" 
-       style="background-color:#e26fa7; color:white; border:none; padding:12px 30px; border-radius:25px; font-size:1.1rem; text-decoration:none;">
-       🧶 Find Your Favorite Product
-    </a>
-  </div>
+<section style="text-align:center; padding:20px 70px; width:90%; margin:auto;">
+
+    <h1 style="color:#e26fa7;">
+
+        {{ "مرحبًا،" if current_lang == "ar" else "Welcome," }}
+        {{ user }} 💕
+
+    </h1>
+
+    <p style="color:#555; font-size:1.2rem;">
+
+        {{ "استكشف مجموعات الكروشيه المفضلة لديك!"
+        if current_lang == "ar"
+        else "Explore your favorite crochet collections!" }}
+
+    </p>
+
 </section>
 
 <!-- ====== HERO SECTION ====== -->
-<section id="home" class="hero" style="position:relative; text-align:center; margin-top:60px;">
-  <img src="{{ url_for('static', filename='images/cattt.jpg') }}" alt="image" class="hero_image" style="width:90%; border-radius:20px; max-height:500px; object-fit:cover;">
-  <div class="hero-content" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:#e26fa7;">
-    <h1 style="font-size:70px; padding:10px 20px; border-radius:15px;">
-      Welcome back to Crochet Rory 🧶
-    </h1>
-    <button onclick="window.location.href='{{ url_for('products_page') }}'" 
-            style="margin-top:20px; background-color:#e26fa7; color:white; border:none; padding:12px 30px; border-radius:25px; cursor:pointer;">
-      Find your favorite product
-    </button>
-  </div>
+<section id="home" class="hero"
+         style="text-align:center; padding:20px 70px;">
+
+    <img src="{{ url_for('static', filename='images/hero.png') }}"
+         alt="image"
+         class="hero_image"
+         style="border-radius:20px;">
+
+    <div class="hero-content">
+
+<h1>Welcome to Crochet Rory</h1>
+
+        <button onclick="window.location.href='{{ url_for('products_page') }}'">
+
+            {{ "🧶 ابحث عن منتجك المفضل"
+            if current_lang == "ar"
+            else "🧶 Find Your Favorite Product" }}
+
+        </button>
+
+    </div>
+
 </section>
 
 
-<!-- ====== ABOUT ME ====== -->
-<section id="about-me" style="background-color:#fff0f6; padding:50px 20px; text-align:center; margin-top:60px;">
-  <h2 style="color:#e26fa7; font-size:2rem;">✨ About Me ✨</h2>
-  <div style="max-width:900px; margin:auto; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:30px;">
-    <img src="{{ url_for('static', filename='images/tu.jpg') }}" alt="Crochet Art" style="width:260px; border-radius:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-    <p style="flex:1; min-width:300px; text-align:left; font-size:1.1rem; line-height:1.8; color:#444;">
-      Welcome to <strong>Rory’s world</strong>, where craftsmanship meets creativity!  
-      Each creation reflects love, patience, and attention to every detail 🧶💗  
-      Thank you for being part of this cozy handmade journey ✨
-    </p>
-  </div>
+<section id="categories">
+
+    <h2 class="section-title">
+        {{ "🧶 تسوق حسب الفئة" if current_lang == "ar"
+        else "🧶 Shop by Category" }}
+    </h2>
+
+    <div class="categories-grid">
+
+        <a href="#" class="category-card">
+            <img src="{{ url_for('static', filename='images/dolls.jpg') }}" alt="Dolls">
+            <span>{{ "الدمى" if current_lang == "ar" else "Dolls" }}</span>
+        </a>
+
+        <a href="#" class="category-card">
+            <img src="{{ url_for('static', filename='images/keychain.jpg') }}" alt="Keychains">
+            <span>{{ "الميداليات" if current_lang == "ar" else "Keychains" }}</span>
+        </a>
+
+        <a href="#" class="category-card">
+            <img src="{{ url_for('static', filename='images/pattron.jpg') }}" alt="Pattern">
+            <span>{{ "الباترون" if current_lang == "ar" else "Pattern" }}</span>
+        </a>
+
+        <a href="#" class="category-card">
+            <img src="{{ url_for('static', filename='images/Coaster.jpg') }}" alt="Coaster">
+            <span>{{ "حاملات الأكواب" if current_lang == "ar" else "Coaster" }}</span>
+        </a>
+
+    </div>
+
 </section>
+
+
+<section id="products" style="padding:60px 20px; text-align:center;">
+
+    <h2 style="color:#e26fa7; font-size:2rem; margin-bottom:30px;">
+
+        {{ "🧸 إبداعاتنا الجميلة 🧸"
+        if current_lang == "ar"
+        else "🧸 Our Lovely Creations 🧸" }}
+
+    </h2>
+
+    <div class="product-grid"
+         style="display:grid;
+                grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+                gap:40px;
+                max-width:1100px;
+                margin:auto;
+                padding:20px;">
+
+        {% if products %}
+
+            {% for product in products %}
+
+            <div class="product"
+                 style="
+                        background:#ffc9d9;
+                        border-radius:15px;
+                        padding:15px;
+                        box-shadow:0 4px 10px rgba(0,0,0,0.1);
+                        display:flex;
+                        flex-direction:column;
+                        height:100%;
+                 ">
+
+                <img src="{{ url_for('static', filename='images/' ~ product.image) }}"
+                     alt="{{ product.name }}"
+                     style="width:100%;
+                            height:230px;
+                            object-fit:cover;
+                            border-radius:10px;">
+
+                <h3 style="color:#e26fa7;">
+                    {{ product.name }}
+                </h3>
+
+                <p style="min-height:120px;">
+                    {{ product.description }}
+                </p>
+
+<p style="font-weight:bold;">
+    {{ product.price }} SAR
+</p>
+
+                <p style="color:#fbc02d;">★★★★★</p>
+
+                <div style="margin-top:auto;">
+
+                    <div class="quantity-box">
+
+                        <button class="quantity-btn"
+                                onclick="changeQuantity({{ product.id }}, -1)">
+                            −
+                        </button>
+
+                        <span id="qty-{{ product.id }}"
+                              class="quantity-display">
+                            1
+                        </span>
+
+                        <button class="quantity-btn"
+                                onclick="changeQuantity({{ product.id }}, 1)">
+                            +
+                        </button>
+
+                    </div>
+
+                    <button onclick="addToCart({{ product.id }})"
+                            style="background:#b05ca0;
+                                   color:white;
+                                   border:none;
+                                   border-radius:10px;
+                                   padding:10px 20px;
+                                   cursor:pointer;
+                                   width:100%;
+                                   margin-top:12px;">
+
+                        {{ "🛒 أضف إلى السلة"
+                        if current_lang == "ar"
+                        else "🛒 Add to Cart" }}
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p style="color:#777; font-size:18px;">
+
+                {{ "لا توجد منتجات متاحة حالياً."
+                if current_lang == "ar"
+                else "No products available yet." }}
+
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
 
 
 <!-- ====== REVIEWS SECTION ====== -->
 <section id="reviews" style="background-color:#ffcbe1; padding:60px 20px; text-align:center;">
-  <h2 style="color:#e26fa7; font-size:2rem; margin-bottom:30px;">💬 Customer Reviews 💬</h2>
 
-  <!-- 📝 نموذج كتابة مراجعة -->
+  <h2 style="color:#e26fa7; font-size:2rem; margin-bottom:30px;">
+
+    {{ "💬 آراء العملاء 💬" if current_lang == "ar"
+    else "💬 Customer Reviews 💬" }}
+
+  </h2>
+
+  <!-- نموذج المراجعة -->
   <div style="max-width:600px; margin:0 auto 40px; background:white; border-radius:15px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
         {% for category, message in messages %}
@@ -72,54 +327,126 @@
     {% endwith %}
 
     <form method="POST" action="{{ url_for('home_logged') }}">
-      <input type="text" name="name" placeholder="Your Name" required 
-             style="padding:10px; width:80%; border-radius:10px; border:1px solid #ccc; margin-bottom:15px;"><br>
 
-      <textarea name="message" placeholder="Write your review here..." required
-                style="padding:10px; width:80%; height:100px; border-radius:10px; border:1px solid #ccc; margin-bottom:15px;"></textarea><br>
+      <input type="text"
+             name="name"
+             placeholder="{{ 'اسمك' if current_lang == 'ar' else 'Your Name' }}"
+             required
+             style="padding:10px; width:80%; border-radius:10px; border:1px solid #ccc; margin-bottom:15px;">
 
-      <label style="color:#e26fa7; font-weight:bold;">Your Rating:</label><br>
-      <select name="stars" required 
+      <br>
+
+      <textarea
+          name="message"
+          placeholder="{{ 'اكتب رأيك هنا...' if current_lang == 'ar' else 'Write your review here...' }}"
+          required
+          style="padding:10px; width:80%; height:100px; border-radius:10px; border:1px solid #ccc; margin-bottom:15px;"></textarea>
+
+      <br>
+
+      <label style="color:#e26fa7; font-weight:bold;">
+
+        {{ "تقييمك:" if current_lang == "ar" else "Your Rating:" }}
+
+      </label>
+
+      <br>
+
+      <select name="stars"
+              required
               style="padding:10px; border-radius:10px; border:1px solid #ccc; margin:10px 0;">
-        <option value="5">★★★★★ - Excellent</option>
-        <option value="4">★★★★☆ - Good</option>
-        <option value="3">★★★☆☆ - Average</option>
-        <option value="2">★★☆☆☆ - Poor</option>
-        <option value="1">★☆☆☆☆ - Bad</option>
-      </select><br>
 
-      <button type="submit" 
+        <option value="5">
+          {{ "★★★★★ - ممتاز" if current_lang == "ar" else "★★★★★ - Excellent" }}
+        </option>
+
+        <option value="4">
+          {{ "★★★★☆ - جيد" if current_lang == "ar" else "★★★★☆ - Good" }}
+        </option>
+
+        <option value="3">
+          {{ "★★★☆☆ - متوسط" if current_lang == "ar" else "★★★☆☆ - Average" }}
+        </option>
+
+        <option value="2">
+          {{ "★★☆☆☆ - ضعيف" if current_lang == "ar" else "★★☆☆☆ - Poor" }}
+        </option>
+
+        <option value="1">
+          {{ "★☆☆☆☆ - سيئ" if current_lang == "ar" else "★☆☆☆☆ - Bad" }}
+        </option>
+
+      </select>
+
+      <br>
+
+      <button type="submit"
               style="background-color:#e26fa7; color:white; border:none; padding:10px 20px; border-radius:20px; cursor:pointer;">
-        Submit Review
+
+        {{ "إرسال التقييم" if current_lang == "ar" else "Submit Review" }}
+
       </button>
+
     </form>
+
   </div>
 
-  <!-- 💬 عرض المراجعات -->
+  <!-- عرض المراجعات -->
   <div style="max-width:800px; margin:auto; display:flex; flex-direction:column; gap:20px;">
+
     {% for review in reviews %}
+
       <div style="background:white; border-radius:15px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:left;">
+
         <p style="color:#fbc02d; font-size:1.2rem;">
           {% for i in range(review.stars) %}★{% endfor %}
-          {% for i in range(5 - review.stars) %}☆{% endfor %}
+          {% for i in range(5-review.stars) %}☆{% endfor %}
         </p>
-        <p style="margin-bottom:5px;">{{ review.message }}</p>
-        <strong style="color:#e26fa7;">- {{ review.name }}</strong>
+
+        <p style="margin-bottom:5px;">
+          {{ review.message }}
+        </p>
+
+        <strong style="color:#e26fa7;">
+          - {{ review.name }}
+        </strong>
 
         {% if review.admin_reply %}
-          <div class="admin-reply" 
-               style="background:#fff5fa; padding:12px; border-radius:10px; margin-top:10px; border-left:4px solid #e26fa7;">
-            <strong style="color:#e26fa7;">💌 Admin reply:</strong>
-            <p style="margin:5px 0 0;">{{ review.admin_reply }}</p>
-          </div>
+
+        <div class="admin-reply"
+             style="background:#fff5fa; padding:12px; border-radius:10px; margin-top:10px; border-left:4px solid #e26fa7;">
+
+          <strong style="color:#e26fa7;">
+
+            {{ "💌 رد الإدارة:" if current_lang == "ar" else "💌 Admin Reply:" }}
+
+          </strong>
+
+          <p style="margin:5px 0 0;">
+            {{ review.admin_reply }}
+          </p>
+
+        </div>
+
         {% endif %}
+
       </div>
+
     {% else %}
-      <p style="color:#555;">No reviews yet. Be the first to share your experience! 💕</p>
+
+      <p style="color:#555;">
+
+        {{ "لا توجد مراجعات حتى الآن. كن أول من يشارك تجربته! 💕"
+        if current_lang == "ar"
+        else "No reviews yet. Be the first to share your experience! 💕" }}
+
+      </p>
+
     {% endfor %}
+
   </div>
+
 </section>
-``
 
 
 
@@ -138,7 +465,10 @@
     } else {
       alert("❌ " + data.error);
     }
-  }
+
+
+  
 </script>
 
-{% endblock %}
+</body>
+</html>

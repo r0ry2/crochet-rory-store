@@ -1,0 +1,1191 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+
+<style>
+
+:root{
+    --primary:#d8a7b1;
+    --secondary:#fff6f8;
+    --dark:#444;
+    --white:#fff;
+    --shadow:0 10px 30px rgba(0,0,0,.08);
+    --radius:22px;
+}
+
+.profile-page{
+    background:#faf7f8;
+    min-height:100vh;
+    padding-bottom:80px;
+}
+
+/* =========================
+        COVER
+========================= */
+
+.profile-cover{
+    width:100%;
+    height:320px;
+    position:relative;
+    overflow:hidden;
+}
+
+.cover-image{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.cover-overlay{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(
+        rgba(0,0,0,.15),
+        rgba(0,0,0,.45)
+    );
+}
+
+/* =========================
+      PROFILE CARD
+========================= */
+
+.profile-card{
+
+    width:90%;
+    max-width:1100px;
+
+    margin:-110px auto 50px;
+
+    background:rgb(252, 186, 186);
+
+    border-radius:30px;
+
+    box-shadow:var(--shadow);
+
+    position:relative;
+
+    padding:40px;
+
+    z-index:10;
+
+    text-align:center;
+
+}
+
+.profile-avatar{
+
+    width:170px;
+
+    height:170px;
+
+    margin:auto;
+
+    margin-top:-120px;
+
+    border-radius:50%;
+
+    overflow:hidden;
+
+    border:8px solid white;
+
+    box-shadow:0 15px 35px rgba(0,0,0,.15);
+
+}
+
+.profile-avatar img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+}
+
+.profile-card h1{
+
+    margin-top:20px;
+
+    font-size:35px;
+
+    color:#444;
+
+}
+
+.email{
+
+    color:#999;
+
+    margin-bottom:35px;
+
+    font-size:17px;
+
+}
+
+/* =========================
+        INFO GRID
+========================= */
+
+.profile-info{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+
+    gap:22px;
+
+    margin-top:35px;
+
+}
+
+.info-card{
+
+    background:#111111;
+
+    border-radius:18px;
+
+    padding:22px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    transition:.35s;
+
+    border:1px solid #f6dbe2;
+
+}
+
+.info-card:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:0 10px 20px rgba(0,0,0,.08);
+
+}
+
+.info-card span{
+
+    width:65px;
+
+    height:65px;
+
+    border-radius:50%;
+
+    background:rgb(252, 186, 186);;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:28px;
+
+}
+
+.info-card small{
+
+    color:#888;
+
+    font-size:13px;
+
+}
+
+.info-card p{
+
+    margin-top:6px;
+
+    font-weight:600;
+
+    color:#444;
+
+}
+
+.profile-actions{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:18px;
+
+    margin-top:45px;
+
+    flex-wrap:wrap;
+
+}
+
+.edit-btn{
+
+    border:none;
+
+    background:#B90B2B;
+
+    color:rgb(0, 0, 0);
+
+    padding:14px 35px;
+
+    border-radius:50px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    transition:.3s;
+
+}
+
+.edit-btn:hover{
+
+    background:#c78d9a;
+
+    transform:translateY(-3px);
+
+}
+
+.logout-btn{
+
+    border:none;
+
+    background:#111111;
+
+    color:white;
+
+    padding:14px 35px;
+
+    border-radius:50px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    transition:.3s;
+
+}
+
+.logout-btn:hover{
+
+    background:#222;
+
+    transform:translateY(-3px);
+
+}
+
+</style>
+
+<div class="profile-page">
+
+<section class="profile-cover">
+
+<img src="{{ url_for('static', filename='images/hero.png') }}"
+class="cover-image">
+
+<div class="cover-overlay"></div>
+
+</section>
+
+<section class="profile-card">
+
+<div class="profile-avatar">
+
+<label for="profileImageInput" style="cursor:pointer;">
+
+<label for="profileImageInput" style="cursor:pointer;">
+
+<img
+id="profilePreview"
+src="{{ url_for('static', filename='uploads/profile/' ~ current_user.profile_image) }}"
+alt="Profile"
+onerror="this.src='{{ url_for('static', filename='images/profile.png') }}'">
+
+</label>
+</div>
+
+<h1>{{ current_user.username }}</h1>
+
+<p class="email">
+
+{{ current_user.email }}
+
+</p>
+
+<div class="profile-info">
+                <div class="info-card">
+
+                <span>📱</span>
+
+                <div>
+
+                    <small>Phone Number</small>
+
+                    <p>{{ current_user.phone or "Not Set" }}</p>
+
+                </div>
+
+            </div>
+
+            <div class="info-card">
+
+                <span>🎂</span>
+
+                <div>
+
+                    <small>Birthday</small>
+
+                    <p>{{ current_user.birthday or "Not Set" }}</p>
+
+                </div>
+
+            </div>
+
+            <div class="info-card">
+
+                <span>⚧</span>
+
+                <div>
+
+                    <small>Gender</small>
+
+                    <p>{{ current_user.gender or "Not Set" }}</p>
+
+                </div>
+
+            </div>
+
+            <div class="info-card">
+
+                <span>🌍</span>
+
+                <div>
+
+                    <small>Nationality</small>
+
+                    <p>{{ current_user.nationality or "Not Set" }}</p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="profile-actions">
+
+            <button
+                class="edit-btn"
+                onclick="openEditProfile()">
+
+                ✏ Edit Profile
+
+            </button>
+
+            <a href="{{ url_for('logout') }}">
+
+                <button class="logout-btn">
+
+                    🚪 Logout
+
+                </button>
+
+            </a>
+
+        </div>
+
+    </section>
+
+    <!-- =========================
+            DASHBOARD
+    ========================== -->
+
+    <style>
+
+    .dashboard{
+
+        width:90%;
+        max-width:1200px;
+        margin:auto;
+        margin-bottom:60px;
+
+    }
+
+    .section-header{
+
+        text-align:center;
+        margin-bottom:35px;
+
+    }
+
+    .section-header h2{
+
+        font-size:34px;
+        color:#444;
+
+    }
+
+    .section-header p{
+
+        color:#888;
+        margin-top:8px;
+
+    }
+
+    .dashboard-grid{
+
+        display:grid;
+
+        grid-template-columns:
+        repeat(auto-fit,minmax(220px,1fr));
+
+        gap:25px;
+
+    }
+
+    .dashboard-card{
+
+        background:#DAAAA4;
+
+        border-radius:22px;
+
+        padding:35px;
+
+        text-align:center;
+
+        box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+        transition:.35s;
+
+        cursor:pointer;
+
+        border:1px solid #f5e4e9;
+
+    }
+
+    .dashboard-card:hover{
+
+        transform:translateY(-8px);
+
+        box-shadow:0 18px 35px rgba(0,0,0,.10);
+
+    }
+
+    .dashboard-card .icon{
+
+        width:80px;
+
+        height:80px;
+
+        margin:auto;
+
+        border-radius:50%;
+
+        background:#fff3f6;
+
+        display:flex;
+
+        align-items:center;
+
+        justify-content:center;
+
+        font-size:34px;
+
+        margin-bottom:18px;
+
+    }
+
+    .dashboard-card h3{
+
+        color:#555;
+
+        margin-bottom:15px;
+
+        font-size:18px;
+
+    }
+
+    .dashboard-card span{
+
+        font-size:38px;
+
+        color:#d8a7b1;
+
+        font-weight:bold;
+
+    }
+
+    </style>
+
+    <section class="dashboard">
+
+        <div class="section-header">
+
+            <h2>Dashboard</h2>
+
+            <p>Manage all your Crochet Rory activities.</p>
+
+        </div>
+
+        <div class="dashboard-grid">
+
+            <div class="dashboard-card">
+
+                <div class="icon">📦</div>
+
+                <h3>Total Orders</h3>
+
+                <span>{{ total_orders }}</span>
+
+            </div>
+
+            <div class="dashboard-card">
+
+                <div class="icon">🛒</div>
+
+                <h3>Cart</h3>
+
+                <span>{{ cart_count }}</span>
+
+            </div>
+
+            <div class="dashboard-card">
+
+                <div class="icon">⏳</div>
+
+                <h3>Pending</h3>
+
+                <span>{{ pending_orders }}</span>
+
+            </div>
+
+            <div class="dashboard-card">
+
+                <div class="icon">💳</div>
+
+                <h3>Unpaid</h3>
+
+                <span>{{ unpaid_orders }}</span>
+
+            </div>
+                        <div class="dashboard-card">
+
+                <div class="icon">⚙</div>
+
+                <h3>Processing</h3>
+
+                <span>{{ processing_orders }}</span>
+
+            </div>
+
+            <div class="dashboard-card">
+
+                <div class="icon">✅</div>
+
+                <h3>Completed</h3>
+
+                <span>{{ completed_orders }}</span>
+
+            </div>
+
+            <div class="dashboard-card">
+
+                <div class="icon">❌</div>
+
+                <h3>Cancelled</h3>
+
+                <span>{{ cancelled_orders }}</span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- =========================
+            MY ORDERS
+    ========================== -->
+
+    <style>
+
+    .orders-section{
+
+        width:90%;
+        max-width:1200px;
+        margin:auto;
+
+    }
+
+    .order-card{
+
+        background:white;
+
+        border-radius:22px;
+
+        padding:25px 30px;
+
+        margin-bottom:22px;
+
+        display:flex;
+
+        justify-content:space-between;
+
+        align-items:center;
+
+        flex-wrap:wrap;
+
+        gap:20px;
+
+        box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+        transition:.35s;
+
+    }
+
+    .order-card:hover{
+
+        transform:translateY(-5px);
+
+        box-shadow:0 15px 30px rgba(0,0,0,.10);
+
+    }
+
+    .order-left h3{
+
+        color:#444;
+
+        margin-bottom:8px;
+
+    }
+
+    .order-left small{
+
+        color:#999;
+
+    }
+
+    .order-center{
+
+        font-size:24px;
+
+        color:#d8a7b1;
+
+        font-weight:bold;
+
+    }
+
+    .status{
+
+        padding:10px 22px;
+
+        border-radius:50px;
+
+        font-weight:600;
+
+        color:white;
+
+        display:inline-block;
+
+    }
+
+    .pending{
+
+        background:#f4b400;
+
+    }
+
+    .processing{
+
+        background:#4a90e2;
+
+    }
+
+    .completed{
+
+        background:#43a047;
+
+    }
+
+    .cancelled{
+
+        background:#e53935;
+
+    }
+
+    .unpaid{
+
+        background:#8e24aa;
+
+    }
+
+    .empty-orders{
+
+        background:white;
+
+        border-radius:20px;
+
+        padding:60px;
+
+        text-align:center;
+
+        box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+    }
+
+    .empty-orders h3{
+
+        color:#555;
+
+        margin-bottom:10px;
+
+    }
+
+    .empty-orders p{
+
+        color:#999;
+
+    }
+
+    @media(max-width:768px){
+
+        .profile-card{
+
+            padding:25px;
+
+        }
+
+        .profile-avatar{
+
+            width:130px;
+
+            height:130px;
+
+            margin-top:-90px;
+
+        }
+
+        .profile-card h1{
+
+            font-size:28px;
+
+        }
+
+        .order-card{
+
+            flex-direction:column;
+
+            text-align:center;
+
+        }
+
+    }
+
+    </style>
+
+    <section class="orders-section">
+
+        <div class="section-header">
+
+            <h2>My Orders</h2>
+
+            <p>Track all your crochet orders.</p>
+
+        </div>
+
+        {% if orders %}
+
+            {% for order in orders %}
+
+            <div class="order-card">
+
+                <div class="order-left">
+
+                    <h3>Order #{{ order.id }}</h3>
+
+                    <small>
+
+                        {{ order.created_at.strftime("%d %b %Y") }}
+
+                    </small>
+
+                </div>
+
+                <div class="order-center">
+
+                    {{ order.total }} THB
+
+                </div>
+
+                <div class="order-right">
+                                        {% if order.status == "Pending" %}
+
+                        <span class="status pending">
+                            ⏳ Pending
+                        </span>
+
+                    {% elif order.status == "Processing" %}
+
+                        <span class="status processing">
+                            ⚙ Processing
+                        </span>
+
+                    {% elif order.status == "Completed" %}
+
+                        <span class="status completed">
+                            ✅ Completed
+                        </span>
+
+                    {% elif order.status == "Cancelled" %}
+
+                        <span class="status cancelled">
+                            ❌ Cancelled
+                        </span>
+
+                    {% elif order.status == "Unpaid" %}
+
+                        <span class="status unpaid">
+                            💳 Unpaid
+                        </span>
+
+                    {% else %}
+
+                        <span class="status">
+                            {{ order.status }}
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+        <div class="empty-orders">
+
+            <h3>No Orders Yet</h3>
+
+            <p>Your future crochet orders will appear here.</p>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    <!-- =========================
+            EDIT PROFILE POPUP
+    ========================== -->
+
+    <div id="editProfilePopup" class="popup">
+
+        <div class="popup-box">
+
+            <h2>Edit Profile</h2>
+
+<form
+method="POST"
+action="{{ url_for('profile') }}"
+enctype="multipart/form-data">
+<input
+type="file"
+id="profileImageInput"
+name="profile_image"
+accept="image/*"
+hidden
+onchange="previewProfile(event)">
+
+                <label>Username</label>
+                <input type="text"
+                       name="username"
+                       value="{{ current_user.username }}">
+
+                <label>Email</label>
+                <input type="email"
+                       name="email"
+                       value="{{ current_user.email }}">
+
+                <label>Phone</label>
+                <input type="text"
+                       name="phone"
+                       value="{{ current_user.phone }}">
+
+                <label>Birthday</label>
+                <input type="date"
+                       name="birthday"
+                       value="{{ current_user.birthday }}">
+
+                <label>Gender</label>
+
+                <select name="gender">
+
+                    <option value="Male"
+                    {% if current_user.gender=="Male" %}
+                    selected
+                    {% endif %}>
+                    Male
+                    </option>
+
+                    <option value="Female"
+                    {% if current_user.gender=="Female" %}
+                    selected
+                    {% endif %}>
+                    Female
+                    </option>
+
+                </select>
+
+                <label>Nationality</label>
+
+                <input type="text"
+                       name="nationality"
+                       value="{{ current_user.nationality }}">
+
+                <div class="popup-buttons">
+
+                    <button type="button"
+                            onclick="closeEditProfile()">
+
+                        Cancel
+
+                    </button>
+
+                    <button type="submit">
+
+                        Save Changes
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+
+.popup{
+
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:9999;
+
+}
+#profilePreview{
+
+width:100%;
+
+height:100%;
+
+object-fit:cover;
+
+transition:.35s;
+
+cursor:pointer;
+
+}
+
+#profilePreview:hover{
+
+transform:scale(1.05);
+
+filter:brightness(.9);
+
+}
+
+.popup-box{
+
+    width:92%;
+
+    max-width:520px;
+
+    background:white;
+
+    border-radius:25px;
+
+    padding:35px;
+
+    animation:popup .3s ease;
+
+}
+
+@keyframes popup{
+
+from{
+
+opacity:0;
+
+transform:scale(.9);
+
+}
+
+to{
+
+opacity:1;
+
+transform:scale(1);
+
+}
+
+}
+
+.popup-box h2{
+
+text-align:center;
+
+margin-bottom:25px;
+
+color:#444;
+
+}
+
+.popup-box label{
+
+display:block;
+
+margin-top:15px;
+
+margin-bottom:8px;
+
+font-weight:600;
+
+color:#666;
+
+}
+
+.popup-box input,
+.popup-box select{
+
+width:100%;
+
+padding:13px;
+
+border:1px solid #ddd;
+
+border-radius:12px;
+
+outline:none;
+
+}
+
+.popup-buttons{
+
+display:flex;
+
+justify-content:flex-end;
+
+gap:12px;
+
+margin-top:30px;
+
+}
+
+.popup-buttons button{
+
+border:none;
+
+padding:12px 24px;
+
+border-radius:30px;
+
+cursor:pointer;
+
+font-weight:600;
+
+}
+
+.popup-buttons button:first-child{
+
+background:#ddd;
+
+}
+
+.popup-buttons button:last-child{
+
+background:#d8a7b1;
+
+color:white;
+
+}
+
+</style>
+
+<script>
+
+function openEditProfile(){
+
+document.getElementById("editProfilePopup").style.display="flex";
+
+}
+
+function closeEditProfile(){
+
+document.getElementById("editProfilePopup").style.display="none";
+
+}
+
+window.onclick=function(e){
+
+let popup=document.getElementById("editProfilePopup");
+
+if(e.target===popup){
+
+popup.style.display="none";
+
+}
+
+}
+async function previewProfile(event){
+
+const file = event.target.files[0];
+
+if(!file) return;
+
+document.getElementById("profilePreview").src =
+URL.createObjectURL(file);
+
+const formData = new FormData();
+
+formData.append("profile_image", file);
+
+const response = await fetch("/upload_profile_image",{
+
+method:"POST",
+
+body:formData
+
+});
+
+const data = await response.json();
+
+if(data.success){
+
+alert("✅ Profile photo updated successfully.");
+
+}else{
+
+alert("❌ Failed to upload image.");
+
+}
+
+}
+
+</script>
+
+{% endblock %}
