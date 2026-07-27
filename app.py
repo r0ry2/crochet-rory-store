@@ -8,7 +8,6 @@ from flask_migrate import Migrate
 from flask_babel import Babel
 from flask import session
 
-
 from config import Config
 from models import (
     db,
@@ -35,22 +34,30 @@ app.config.from_object(Config)
 app.config["BABEL_DEFAULT_LOCALE"] = "en"
 app.config["BABEL_SUPPORTED_LOCALES"] = ["en", "ar"]
 
-from flask import session
-
 def get_locale():
     return session.get("language", "en")
 
 babel = Babel(app, locale_selector=get_locale)
+
 @app.context_processor
 def inject_locale():
     return {
         "current_lang": session.get("language", "en")
     }
+
 # ==========================================
 # Secret Key & Database
 # ==========================================
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "supersecretkey")
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.sqlite"
+
+database_url = os.getenv("DATABASE_URL")
+
+if database_url:
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+else:
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.sqlite"
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # ==========================================
@@ -74,10 +81,7 @@ migrate = Migrate(app, db)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-# إذا لم يكن المستخدم مسجل دخول يتم تحويله لصفحة تسجيل الدخول
 login_manager.login_view = "login"
-
-# رسالة تظهر عند محاولة دخول صفحة محمية
 login_manager.login_message = "Please log in first."
 
 @login_manager.user_loader
@@ -87,7 +91,7 @@ def load_user(user_id):
 # ==========================================
 # Print Database
 # ==========================================
-print("📁 Using database file:", app.config["SQLALCHEMY_DATABASE_URI"])
+print("📁 Using database:", app.config["SQLALCHEMY_DATABASE_URI"])
 
 # ==========================================
 # Import Routes
