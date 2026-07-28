@@ -80,6 +80,31 @@
       margin-top: -5px;
       margin-bottom: 10px;
     }
+    .password-container{
+    position: relative;
+    width: 100%;
+}
+
+.password-container input{
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 45px;
+}
+
+.toggle-password{
+    position:absolute;
+    right:15px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    user-select:none;
+    font-size:20px;
+    color:#888;
+}
+
+.toggle-password:hover{
+    color:#e26fa7;
+}
   </style>
 </head>
 <body>
@@ -113,23 +138,56 @@
       
 
       <!-- 🔑 كلمة المرور -->
-      {{ form.password.label }}<br>
-      {{ form.password(size=32) }}
-      {% for error in form.password.errors %}
-        <div class="error-text">⚠️ {{ error }}</div>
-      {% endfor %}
+<!-- 🔑 كلمة المرور -->
+{{ form.password.label }}<br>
+
+<div class="password-container">
+    {{ form.password(size=32, id="password") }}
+    <span class="toggle-password"
+          onclick="togglePassword('password', this)">👁️</span>
+</div>
+
+{% for error in form.password.errors %}
+<div class="error-text">
+    ⚠️ {{ error }}
+</div>
+{% endfor %}
 
       <!-- ✅ تأكيد كلمة المرور -->
-      {{ form.confirm_password.label }}<br>
-      {{ form.confirm_password(size=32) }}
-      {% for error in form.confirm_password.errors %}
-        <div class="error-text">⚠️ {{ error }}</div>
-      {% endfor %}
+{{ form.confirm_password.label }}<br>
+
+<div class="password-container">
+    {{ form.confirm_password(size=32, id="confirm_password") }}
+    <span class="toggle-password"
+          onclick="togglePassword('confirm_password', this)">👁️</span>
+</div>
+
+{% for error in form.confirm_password.errors %}
+<div class="error-text">
+    ⚠️ {{ error }}
+</div>
+{% endfor %}
 
       {{ form.submit(class_='btn') }}
     </form>
 
     <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
   </div>
+
+  <script>
+function togglePassword(inputId, icon) {
+
+    const input = document.getElementById(inputId);
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.textContent = "🙈";
+    } else {
+        input.type = "password";
+        icon.textContent = "👁️";
+    }
+
+}
+</script>
 </body>
 </html>

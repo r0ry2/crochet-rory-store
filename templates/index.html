@@ -277,6 +277,16 @@ Such cute designs! Everything looks exactly like the photos. Highly recommend �
 
 <div class="login-box">
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="flash-message {{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
 <span class="close-btn" onclick="closeLogin()">&times;</span>
 
 <h2>
@@ -287,11 +297,19 @@ Such cute designs! Everything looks exactly like the photos. Highly recommend �
 
 {{ form.hidden_tag() }}
 
-{{ form.email.label }}
+<label>
+{{ "البريد الإلكتروني" if current_lang=="ar" else "Email" }}
+</label>
 {{ form.email() }}
 
-{{ form.password.label }}
-{{ form.password() }}
+<label>
+{{ "كلمة المرور" if current_lang=="ar" else "Password" }}
+</label>
+<div class="password-container">
+    {{ form.password(id="login_password") }}
+    <span class="toggle-password"
+          onclick="togglePassword('login_password', this)">👁️</span>
+</div>
 
 {{ form.submit(class="login-btn") }}
 
@@ -338,23 +356,41 @@ Register
 
 {{ register_form.hidden_tag() }}
 
-{{ register_form.username.label }}
+<label>
+{{ "اسم المستخدم" if current_lang=="ar" else "Username" }}
+</label>
 {{ register_form.username() }}
 
-{{ register_form.email.label }}
+<label>
+{{ "البريد الإلكتروني" if current_lang=="ar" else "Email" }}
+</label>
 {{ register_form.email() }}
 
-{{ register_form.phone.label }}
+<label>
+{{ "رقم الجوال" if current_lang=="ar" else "Phone Number" }}
+</label>
 {{ register_form.phone() }}
 
-{{ register_form.password.label }}
-{{ register_form.password() }}
-
-{{ register_form.confirm_password.label }}
-{{ register_form.confirm_password() }}
-
-{{ register_form.submit(class="login-btn") }}
-
+<label>
+{{ "كلمة المرور" if current_lang=="ar" else "Password" }}
+</label>
+<div class="password-container">
+    {{ register_form.password(id="register_password") }}
+    <span class="toggle-password"
+          onclick="togglePassword('register_password', this)">👁️</span>
+</div>
+<label>
+{{ "تأكيد كلمة المرور" if current_lang=="ar" else "Confirm Password" }}
+</label>
+<div class="password-container">
+    {{ register_form.confirm_password(id="confirm_password") }}
+    <span class="toggle-password"
+          onclick="togglePassword('confirm_password', this)">👁️</span>
+</div>
+<input
+    type="submit"
+    class="login-btn"
+    value="{{ 'إنشاء حساب' if current_lang=='ar' else 'Create Account' }}">
 </form>
 
 <p>
@@ -399,6 +435,30 @@ function openRegister(){
 function closeRegister(){
     document.getElementById("registerPopup").style.display = "none";
 }
+
+function togglePassword(id, icon){
+
+    const input = document.getElementById(id);
+
+    if(input.type === "password"){
+        input.type = "text";
+        icon.textContent = "🙈";
+    }else{
+        input.type = "password";
+        icon.textContent = "👁️";
+    }
+
+}
+
+
 </script>
+
+{% if login_error %}
+<script>
+window.onload = function () {
+    openLogin();
+};
+</script>
+{% endif %}
 
 {% endblock %}

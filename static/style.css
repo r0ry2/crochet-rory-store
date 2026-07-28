@@ -1893,7 +1893,39 @@ input:checked + .slider:before{
 }
 
 
+}
 
+.password-container{
+    position: relative;
+}
 
+.password-container input{
+    width:100%;
+    padding-right:45px;
+    box-sizing:border-box;
+}
 
+.toggle-password{
+    position:absolute;
+    right:15px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    font-size:18px;
+    user-select:none;
+    color:#888;
+}
+
+.toggle-password:hover{
+    color:#e26fa7;
+}
+.flash-message{
+    background:#ffe5e5;
+    color:#c62828;
+    border:1px solid #f5b5b5;
+    padding:10px;
+    margin-bottom:15px;
+    border-radius:8px;
+    text-align:center;
+    font-size:14px;
 }

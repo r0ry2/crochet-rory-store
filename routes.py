@@ -417,6 +417,9 @@ def index():
     ).all()
 
     form = LoginForm()
+    register_form = RegisterForm()
+
+    login_error = False
 
     if form.validate_on_submit():
 
@@ -424,9 +427,26 @@ def index():
             email=form.email.data
         ).first()
 
-        if not user or not user.check_password(form.password.data):
-            flash("❌ Invalid email or password!", "danger")
+        if not user:
+
+            login_error = True
+
+            if session.get("language") == "ar":
+                flash("❌ البريد الإلكتروني غير موجود.", "danger")
+            else:
+                flash("❌ Email not found.", "danger")
+
+        elif not user.check_password(form.password.data):
+
+            login_error = True
+
+            if session.get("language") == "ar":
+                flash("❌ كلمة المرور غير صحيحة.", "danger")
+            else:
+                flash("❌ Incorrect password.", "danger")
+
         else:
+
             login_user(user)
             session["is_admin"] = (user.role == "admin")
             merge_session_cart_into_db(user.id)
@@ -436,17 +456,13 @@ def index():
 
             return redirect(url_for("home_logged"))
 
-    register_form = RegisterForm()
-
     return render_template(
         "index.html",
         products=products,
         form=form,
-        register_form=register_form
+        register_form=register_form,
+        login_error=login_error
     )
-
-
-
 @app.route("/cart")
 def cart_page():
     return render_template("cart.html")
@@ -697,15 +713,7 @@ def upload_profile_image():
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
-    print("========== LOGIN ==========")
-    print("Method:", request.method)
-    print("Form Data:", request.form)
-
     form = LoginForm()
-
-    print("Method:", request.method)
-    print("Form valid:", form.validate_on_submit())
-    print("Errors:", form.errors)
 
     if form.validate_on_submit():
 
@@ -713,39 +721,76 @@ def login():
             email=form.email.data
         ).first()
 
-        print("========== LOGIN DEBUG ==========")
-        print("Email entered:", form.email.data)
-        print("Password entered:", form.password.data)
-        print("User found:", user)
+        # تجهيز بيانات الصفحة الرئيسية
+        products = Product.query.filter(
+            Product.publish_location.in_(["both", "home_only"])
+        ).all()
 
-        if user:
-            print("Database email:", user.email)
-            print("Password hash:", user.password_hash)
-            print("Password correct:", user.check_password(form.password.data))
+        register_form = RegisterForm()
 
+        # البريد الإلكتروني غير موجود
         if user is None:
-            flash("❌ Email not found.", "danger")
-            return redirect(url_for("index"))
 
+            if session.get("language") == "ar":
+                flash("❌ البريد الإلكتروني غير موجود.", "danger")
+            else:
+                flash("❌ Email not found.", "danger")
+
+            return render_template(
+                "index.html",
+                products=products,
+                form=form,
+                register_form=register_form,
+                login_error=True
+            )
+
+        # كلمة المرور خاطئة
         if not user.check_password(form.password.data):
-            flash("❌ Wrong password.", "danger")
-            return redirect(url_for("index"))
 
+            if session.get("language") == "ar":
+                flash("❌ كلمة المرور غير صحيحة.", "danger")
+            else:
+                flash("❌ Incorrect password.", "danger")
+
+            return render_template(
+                "index.html",
+                products=products,
+                form=form,
+                register_form=register_form,
+                login_error=True
+            )
+
+        # تسجيل الدخول
         login_user(user, remember=True)
 
         session["is_admin"] = (user.role == "admin")
 
         merge_session_cart_into_db(user.id)
 
-        print("✅ LOGIN SUCCESS")
-
         if user.role == "admin":
             return redirect(url_for("admin_home"))
 
         return redirect(url_for("home_logged"))
 
-    flash("❌ Please check your information.", "danger")
-    return redirect(url_for("index"))
+    # إذا كان النموذج غير صالح
+    products = Product.query.filter(
+        Product.publish_location.in_(["both", "home_only"])
+    ).all()
+
+    register_form = RegisterForm()
+
+    if session.get("language") == "ar":
+        flash("❌ يرجى التحقق من البيانات.", "danger")
+    else:
+        flash("❌ Please check your information.", "danger")
+
+    return render_template(
+        "index.html",
+        products=products,
+        form=form,
+        register_form=register_form,
+        login_error=True
+    )
 # ==========================================
 # 🚪 LOGOUT
 # ==========================================
