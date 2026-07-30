@@ -315,6 +315,18 @@ Such cute designs! Everything looks exactly like the photos. Highly recommend �
 
 {{ form.submit(class="login-btn") }}
 
+<p style="margin-top:10px; text-align:center;">
+
+<a href="#"
+   onclick="closeLogin(); openForgotPassword(); return false;">
+
+{{ "نسيت كلمة المرور؟" if current_lang=="ar"
+else "Forgot Password?" }}
+
+</a>
+
+</p>
+
 </form>
 
 <p>
@@ -442,7 +454,7 @@ Login
             else "We've sent a verification code to your email." }}
         </p>
 
-<form method="POST" action="{{ url_for('verify_email') }}">
+<form method="POST" action="{% if session.get('reset_email') %}{{ url_for('verify_reset_code') }}{% else %}{{ url_for('verify_email') }}{% endif %}">
 
     {{ verify_form.hidden_tag() }}
 
@@ -457,6 +469,110 @@ Login
     ) }}
 
 </form>
+
+    </div>
+
+</div>
+
+<!-- Forgot Password Popup -->
+<div id="forgotPopup" class="login-popup">
+
+    <div class="login-box">
+
+        <span class="close-btn"
+              onclick="closeForgotPassword()">&times;</span>
+
+        <h2>
+            {{ "نسيت كلمة المرور؟ 🔑"
+            if current_lang=="ar"
+            else "Forgot Password? 🔑" }}
+        </h2>
+
+        <p>
+
+        {{ "أدخل بريدك الإلكتروني وسنرسل لك رمز التحقق."
+        if current_lang=="ar"
+        else "Enter your email and we'll send you a verification code." }}
+
+        </p>
+
+        <form method="POST"
+              action="{{ url_for('forgot_password') }}">
+
+            <input
+                type="email"
+                name="email"
+                required
+                placeholder="{{ 'البريد الإلكتروني'
+                if current_lang=='ar'
+                else 'Email' }}">
+
+            <button
+                type="submit"
+                class="login-btn">
+
+                {{ "إرسال الكود"
+                if current_lang=="ar"
+                else "Send Code" }}
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- Reset Password Popup -->
+<div id="resetPasswordPopup" class="login-popup">
+
+    <div class="login-box">
+
+        <span class="close-btn"
+              onclick="closeResetPassword()">&times;</span>
+
+        <h2>
+            {{ "تغيير كلمة المرور 🔒"
+            if current_lang=="ar"
+            else "Reset Password 🔒" }}
+        </h2>
+
+        <form method="POST"
+              action="{{ url_for('reset_password') }}">
+
+            <label>
+                {{ "كلمة المرور الجديدة"
+                if current_lang=="ar"
+                else "New Password" }}
+            </label>
+
+            <input
+                type="password"
+                name="password"
+                required>
+
+            <label>
+                {{ "تأكيد كلمة المرور"
+                if current_lang=="ar"
+                else "Confirm Password" }}
+            </label>
+
+            <input
+                type="password"
+                name="confirm_password"
+                required>
+
+            <button
+                type="submit"
+                class="login-btn">
+
+                {{ "حفظ"
+                if current_lang=="ar"
+                else "Save" }}
+
+            </button>
+
+        </form>
 
     </div>
 
@@ -516,7 +632,26 @@ window.onload = function () {
         openVerify();
     {% endif %}
 
+    {% if request.args.get("reset") == "1" %}
+        closeVerify();
+        openResetPassword();
+    {% endif %}
+
 };
+function openForgotPassword() {
+    document.getElementById("forgotPopup").style.display = "flex";
+}
+
+function closeForgotPassword() {
+    document.getElementById("forgotPopup").style.display = "none";
+}
+function openResetPassword() {
+    document.getElementById("resetPasswordPopup").style.display = "flex";
+}
+
+function closeResetPassword() {
+    document.getElementById("resetPasswordPopup").style.display = "none";
+}
 
 </script>
 

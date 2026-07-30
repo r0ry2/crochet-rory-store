@@ -50,6 +50,9 @@ import os
 import random
 from datetime import datetime, timedelta
 from flask import jsonify
+import random
+
+
 
 
 @app.route("/language/<lang>")
@@ -579,8 +582,83 @@ Crochet Rory Team
         register_form=form
     )
 
+@app.route("/forgot_password", methods=["POST"])
+def forgot_password():
 
+    email = request.form.get("email")
 
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        flash("❌ Email not found.", "danger")
+        return redirect(url_for("index"))
+
+    code = str(random.randint(100000, 999999))
+
+    user.verification_code = code
+    user.verification_expiry = datetime.utcnow() + timedelta(minutes=10)
+
+    db.session.commit()
+
+    try:
+
+        msg = MailMessage(
+            subject="Reset your Crochet Rory password",
+            recipients=[user.email]
+        )
+
+        msg.body = f"""
+Hi {user.username},
+
+You requested to reset your password.
+
+Your verification code is:
+
+{code}
+
+This code will expire in 10 minutes.
+
+Crochet Rory Team
+"""
+
+        mail.send(msg)
+
+    except Exception as e:
+        print("Mail Error:", e)
+
+    session["reset_email"] = user.email
+
+    flash("📧 Verification code sent.", "success")
+
+    return redirect(url_for("index", verify=1))
+
+@app.route("/verify_reset_code", methods=["POST"])
+def verify_reset_code():
+
+    code = request.form.get("code")
+
+    email = session.get("reset_email")
+
+    if not email:
+        return redirect(url_for("index"))
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        flash("User not found.", "danger")
+        return redirect(url_for("index"))
+
+    if datetime.utcnow() > user.verification_expiry:
+        flash("❌ Verification code expired.", "danger")
+        return redirect(url_for("index"))
+
+    if code != user.verification_code:
+        flash("❌ Invalid verification code.", "danger")
+        return redirect(url_for("index", verify=1))
+
+    print("✅ Correct reset code")
+
+    return redirect(url_for("index", reset=1))
 # ==========================================
 # 📧 VERIFY EMAIL
 # ==========================================
@@ -641,6 +719,41 @@ def verify_email():
         verify_form=form,
         show_verify_popup=True
     )
+
+@app.route("/reset_password", methods=["POST"])
+def reset_password():
+
+    email = session.get("reset_email")
+
+    if not email:
+        flash("Session expired.", "danger")
+        return redirect(url_for("index"))
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        flash("User not found.", "danger")
+        return redirect(url_for("index"))
+
+    password = request.form.get("password")
+    confirm = request.form.get("confirm_password")
+
+    if password != confirm:
+        flash("❌ Passwords do not match.", "danger")
+        return redirect(url_for("index", reset=1))
+
+    user.set_password(password)
+
+    user.verification_code = None
+    user.verification_expiry = None
+
+    db.session.commit()
+
+    session.pop("reset_email", None)
+
+    flash("✅ Password changed successfully. You can now login.", "success")
+
+    return redirect(url_for("index"))
 # ==========================================
 # 👤 PROFILE
 # ==========================================
