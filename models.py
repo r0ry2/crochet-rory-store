@@ -161,7 +161,15 @@ class User(UserMixin, db.Model):
         db.Boolean,
         default=False
     )
+    verification_code = db.Column(
+        db.String(6),
+        nullable=True
+    )
 
+    verification_expiry = db.Column(
+        db.DateTime,
+        nullable=True
+    )
     # ==========================
     # Personal Information
     # ==========================

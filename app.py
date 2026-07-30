@@ -60,13 +60,10 @@ else:
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# ==========================================
-# Mail Configuration
-# ==========================================
-app.config["MAIL_SERVER"] = "localhost"
-app.config["MAIL_PORT"] = 8028
-app.config["MAIL_DEFAULT_SENDER"] = "noreply@crochetrory.com"
 
+# ==========================================
+# Mail
+# ==========================================
 mail = Mail(app)
 
 # ==========================================

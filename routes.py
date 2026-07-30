@@ -9,6 +9,7 @@ from flask import (
 )
 
 
+
 from app import app, db, mail
 
 from models import (
@@ -26,7 +27,8 @@ from models import (
 from forms import (
     LoginForm,
     RegisterForm,
-    ProductForm
+    ProductForm,
+    VerifyCodeForm
 )
 
 from flask_login import (
@@ -36,11 +38,18 @@ from flask_login import (
     current_user
 )
 
+from flask_mail import Message as MailMessage
+from app import mail
+
 from werkzeug.utils import secure_filename
 from itsdangerous import URLSafeTimedSerializer
 
 from datetime import datetime
 import os
+
+import random
+from datetime import datetime, timedelta
+from flask import jsonify
 
 
 @app.route("/language/<lang>")
@@ -404,6 +413,7 @@ def wishlist_page():
         "wishlist.html",
         wishlist=wishlist
     )
+# ==========================================
 # 🏠 GENERAL ROUTES
 # ==========================================
 
@@ -418,6 +428,7 @@ def index():
 
     form = LoginForm()
     register_form = RegisterForm()
+    verify_form = VerifyCodeForm()
 
     login_error = False
 
@@ -461,12 +472,12 @@ def index():
         products=products,
         form=form,
         register_form=register_form,
+        verify_form=verify_form,
         login_error=login_error
     )
 @app.route("/cart")
 def cart_page():
     return render_template("cart.html")
-
 
 # ==========================================
 # 👤 REGISTER
@@ -477,8 +488,6 @@ def register():
 
     form = RegisterForm()
 
-    print(form.errors)
-
     if form.validate_on_submit():
 
         existing_user = User.query.filter_by(
@@ -486,11 +495,16 @@ def register():
         ).first()
 
         if existing_user:
+
             flash(
                 "⚠️ Email already registered!",
                 "warning"
             )
+
             return redirect(url_for("index"))
+
+        # إنشاء كود تحقق
+        code = str(random.randint(100000, 999999))
 
         new_user = User(
             username=form.username.data,
@@ -503,22 +517,59 @@ def register():
         if form.email.data == "admin@store.com":
             new_user.role = "admin"
 
-        new_user.confirmed = True
+        # الحساب غير مفعل
+        new_user.confirmed = False
+        new_user.verification_code = code
+        new_user.verification_expiry = (
+            datetime.utcnow() + timedelta(minutes=10)
+        )
 
         db.session.add(new_user)
         db.session.commit()
 
-        flash(
-            "✅ Registration successful! You can now log in.",
-            "success"
-        )
+        # حفظ البريد في الـ Session
+        session["verify_email"] = new_user.email
 
-        return redirect(url_for("index"))
+        # إرسال كود التحقق
+        try:
+
+            msg = MailMessage(
+                subject="Verify your Crochet Rory account",
+                recipients=[new_user.email]
+            )
+
+            msg.body = f"""
+Hi {new_user.username},
+
+Welcome to Crochet Rory 💖
+
+Thank you for registering.
+
+Your verification code is:
+
+{code}
+
+This code will expire in 10 minutes.
+
+Please enter this code to activate your account.
+
+Crochet Rory Team
+"""
+
+            mail.send(msg)
+
+        except Exception as e:
+            print("Mail Error:", e)
+
+        # الرجوع للرئيسية وفتح نافذة التحقق
+        return redirect(url_for("index", verify=1))
 
     login_form = LoginForm()
 
     products = Product.query.filter(
-        Product.publish_location.in_(["both", "home_only"])
+        Product.publish_location.in_(
+            ["both", "home_only"]
+        )
     ).all()
 
     return render_template(
@@ -529,6 +580,67 @@ def register():
     )
 
 
+
+# ==========================================
+# 📧 VERIFY EMAIL
+# ==========================================
+
+@app.route("/verify_email", methods=["GET", "POST"])
+def verify_email():
+
+    form = VerifyCodeForm()
+
+    email = session.get("verify_email")
+
+    if not email:
+        return redirect(url_for("index"))
+
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        flash("User not found.", "danger")
+        return redirect(url_for("index"))
+
+    if form.validate_on_submit():
+
+        # انتهت صلاحية الكود
+        if datetime.utcnow() > user.verification_expiry:
+            flash("Verification code has expired.", "danger")
+            return redirect(url_for("index"))
+
+        # الكود خطأ
+        if form.code.data != user.verification_code:
+            flash("Invalid verification code.", "danger")
+            return redirect(url_for("verify_email"))
+
+        # نجاح التحقق
+        user.confirmed = True
+        user.verification_code = None
+        user.verification_expiry = None
+
+        db.session.commit()
+
+        session.pop("verify_email", None)
+
+        flash("🎉 Your account has been verified successfully!", "success")
+
+        return redirect(url_for("index"))
+
+    login_form = LoginForm()
+    register_form = RegisterForm()
+
+    products = Product.query.filter(
+        Product.publish_location.in_(["both", "home_only"])
+    ).all()
+
+    return render_template(
+        "index.html",
+        products=products,
+        form=login_form,
+        register_form=register_form,
+        verify_form=form,
+        show_verify_popup=True
+    )
 # ==========================================
 # 👤 PROFILE
 # ==========================================
@@ -799,16 +911,15 @@ def login():
 @login_required
 def logout():
 
+    print("Before logout:", current_user.is_authenticated)
+
     logout_user()
 
-    flash(
-        "👋 You have been logged out.",
-        "info"
-    )
+    print("After logout:", current_user.is_authenticated)
 
-    return redirect(url_for("login"))
+    flash("👋 You have been logged out.", "info")
 
-
+    return redirect(url_for("index"))
 # ==========================================
 # 🛒 CART API
 # ==========================================

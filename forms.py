@@ -127,3 +127,18 @@ class LoginForm(FlaskForm):
     )
 
     submit = SubmitField("Login")
+
+# ==================================================
+# 📧 VERIFY EMAIL FORM
+# ==================================================
+class VerifyCodeForm(FlaskForm):
+
+    code = StringField(
+        "Verification Code",
+        validators=[
+            DataRequired(),
+            Length(min=6, max=6)
+        ]
+    )
+
+    submit = SubmitField("Verify")

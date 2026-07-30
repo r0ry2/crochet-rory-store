@@ -11,8 +11,6 @@
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
-          <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 
 <body>
@@ -86,38 +84,29 @@
         &times;
     </button>
 
-    <a href="#home">
-        🏠 {{ "الرئيسية" if current_lang == "ar" else "Home" }}
-    </a>
+ <a href="{{ url_for('home_logged') }}">
+    🏠 {{ "الرئيسية" if current_lang == "ar" else "Home" }}
+</a>
 
-    <a href="#about-me">
-        💗 {{ "من أنا" if current_lang == "ar" else "About Me" }}
-    </a>
+<a href="{{ url_for('profile') }}">
+    👤 {{ "حسابي" if current_lang == "ar" else "My Profile" }}
+</a>
 
-    <a href="#products">
-        🧶 {{ "المنتجات" if current_lang == "ar" else "Products" }}
-    </a>
+<hr>
 
-    <a href="#reviews">
-        ⭐ {{ "التقييمات" if current_lang == "ar" else "Reviews" }}
-    </a>
+<a href="{{ url_for('change_language', lang='en') }}">
+    🇺🇸 English
+</a>
 
-    <hr>
+<a href="{{ url_for('change_language', lang='ar') }}">
+    🇸🇦 العربية
+</a>
 
-    <a href="{{ url_for('change_language', lang='en') }}">
-        🇺🇸 English
-    </a>
+<hr>
 
-    <a href="{{ url_for('change_language', lang='ar') }}">
-        🇸🇦 العربية
-    </a>
-
-    <hr>
-
-    <a href="#" onclick="openLogin()">
-        👤 {{ "تسجيل الدخول" if current_lang == "ar" else "Login" }}
-    </a>
-
+<a href="{{ url_for('logout') }}">
+    🚪 {{ "تسجيل الخروج" if current_lang == "ar" else "Logout" }}
+</a>
 </div>
 
   <!-- رسائل النجاح -->

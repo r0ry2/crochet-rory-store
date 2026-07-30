@@ -308,7 +308,9 @@ Such cute designs! Everything looks exactly like the photos. Highly recommend �
 <div class="password-container">
     {{ form.password(id="login_password") }}
     <span class="toggle-password"
-          onclick="togglePassword('login_password', this)">👁️</span>
+      onclick="togglePassword('login_password', this)">
+    <i class="fa-regular fa-eye"></i>
+</span>
 </div>
 
 {{ form.submit(class="login-btn") }}
@@ -376,21 +378,22 @@ Register
 </label>
 <div class="password-container">
     {{ register_form.password(id="register_password") }}
-    <span class="toggle-password"
-          onclick="togglePassword('register_password', this)">👁️</span>
+   <span class="toggle-password"
+      onclick="togglePassword('register_password', this)">
+    <i class="fa-regular fa-eye"></i>
+</span>
 </div>
 <label>
 {{ "تأكيد كلمة المرور" if current_lang=="ar" else "Confirm Password" }}
 </label>
 <div class="password-container">
     {{ register_form.confirm_password(id="confirm_password") }}
-    <span class="toggle-password"
-          onclick="togglePassword('confirm_password', this)">👁️</span>
+<span class="toggle-password"
+      onclick="togglePassword('confirm_password', this)">
+    <i class="fa-regular fa-eye"></i>
+</span>
 </div>
-<input
-    type="submit"
-    class="login-btn"
-    value="{{ 'إنشاء حساب' if current_lang=='ar' else 'Create Account' }}">
+{{ register_form.submit(class="login-btn") }}
 </form>
 
 <p>
@@ -415,50 +418,107 @@ Login
 
 </p>
 
+
+
 </div>
+
+</div>
+
+<!-- Verify Email Popup -->
+<div id="verifyPopup" class="login-popup">
+
+    <div class="login-box">
+
+        <span class="close-btn" onclick="closeVerify()">&times;</span>
+
+        <h2>
+            {{ "تأكيد البريد الإلكتروني 📧" if current_lang=="ar"
+            else "Verify Email 📧" }}
+        </h2>
+
+        <p>
+            {{ "أرسلنا رمز التحقق إلى بريدك الإلكتروني."
+            if current_lang=="ar"
+            else "We've sent a verification code to your email." }}
+        </p>
+
+<form method="POST" action="{{ url_for('verify_email') }}">
+
+    {{ verify_form.hidden_tag() }}
+
+    {{ verify_form.code(
+        class="form-control",
+        placeholder="Enter verification code"
+    ) }}
+
+    {{ verify_form.submit(
+        class="login-btn",
+        value="Verify"
+    ) }}
+
+</form>
+
+    </div>
 
 </div>
 
 <script>
-function openLogin(){
+
+function openLogin() {
     document.getElementById("loginPopup").style.display = "flex";
 }
 
-function closeLogin(){
+function closeLogin() {
     document.getElementById("loginPopup").style.display = "none";
 }
 
-function openRegister(){
+function openRegister() {
     document.getElementById("registerPopup").style.display = "flex";
 }
 
-function closeRegister(){
+function closeRegister() {
     document.getElementById("registerPopup").style.display = "none";
 }
 
-function togglePassword(id, icon){
-
-    const input = document.getElementById(id);
-
-    if(input.type === "password"){
-        input.type = "text";
-        icon.textContent = "🙈";
-    }else{
-        input.type = "password";
-        icon.textContent = "👁️";
-    }
-
+function openVerify() {
+    document.getElementById("verifyPopup").style.display = "flex";
 }
 
+function closeVerify() {
+    document.getElementById("verifyPopup").style.display = "none";
+}
 
-</script>
+function togglePassword(id, icon) {
 
-{% if login_error %}
-<script>
+    const input = document.getElementById(id);
+    const eye = icon.querySelector("i");
+
+    if (input.type === "password") {
+        input.type = "text";
+        eye.classList.remove("fa-eye");
+        eye.classList.add("fa-eye-slash");
+    } else {
+        input.type = "password";
+        eye.classList.remove("fa-eye-slash");
+        eye.classList.add("fa-eye"
+
+        );
+    }
+}
+
 window.onload = function () {
-    openLogin();
+
+    {% if login_error %}
+        openLogin();
+    {% endif %}
+
+    {% if request.args.get("verify") == "1" %}
+        openVerify();
+    {% endif %}
+
 };
+
 </script>
-{% endif %}
+
 
 {% endblock %}

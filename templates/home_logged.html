@@ -3,28 +3,32 @@
 <head>
 
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>
         {{ "متجر روري للكروشيه" if current_lang == "ar" else "Crochet Rory Store" }}
     </title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 
 <body>
 
+<!-- ===== HEADER ===== -->
+
 <div class="header-top">
 
-    <!-- ☰ + Search + Cart + Profile -->
     <div class="left-icons">
 
         <button class="menu-btn" onclick="toggleMenu()">
             ☰
         </button>
 
-        <form action="{{ url_for('search') }}" method="GET" class="search-box">
+        <form action="{{ url_for('search') }}"
+              method="GET"
+              class="search-box">
 
             <input
                 type="text"
@@ -50,20 +54,60 @@
 
     </div>
 
-    <!-- Logo -->
     <div class="logo-section">
 
         <h1>
-            {{ "متجر روري للكروشيه" if current_lang == "ar" else "Crochet Rory Store" }}
+            {{ "متجر روري للكروشيه" if current_lang == "ar"
+            else "Crochet Rory Store" }}
         </h1>
 
-        <img
-            src="{{ url_for('static', filename='images/logo.png') }}"
-            class="logo">
+        <img src="{{ url_for('static', filename='images/logo.png') }}"
+             class="logo">
 
     </div>
 
 </div>
+
+<!-- ===== SIDE MENU ===== -->
+
+<div id="sideMenu" class="side-menu">
+
+    <button class="close-menu"
+            onclick="closeMenu()">
+        &times;
+    </button>
+
+    <a href="{{ url_for('home_logged') }}">
+        🏠 {{ "الرئيسية" if current_lang == "ar" else "Home" }}
+    </a>
+
+    <a href="{{ url_for('products_page') }}">
+        🧶 {{ "المنتجات" if current_lang == "ar" else "Products" }}
+    </a>
+
+    <a href="{{ url_for('contact_page') }}">
+        📞 {{ "تواصل معنا" if current_lang == "ar" else "Contact" }}
+    </a>
+
+    <hr>
+
+    <a href="{{ url_for('change_language', lang='en') }}">
+        🇺🇸 English
+    </a>
+
+    <a href="{{ url_for('change_language', lang='ar') }}">
+        🇸🇦 العربية
+    </a>
+
+    <hr>
+
+    <a href="{{ url_for('logout') }}">
+        🚪 {{ "تسجيل الخروج" if current_lang == "ar" else "Logout" }}
+    </a>
+
+</div>
+
+<!-- ===== NAVBAR ===== -->
 
 <div class="top-header">
 
@@ -96,7 +140,7 @@
             </li>
 
             <li>
-                <a href="{{ url_for('logout') }}" class="nav-link login-link">
+                <a href="{{ url_for('logout') }}" class="nav-link">
                     {{ "تسجيل الخروج" if current_lang == "ar" else "Logout" }}
                 </a>
             </li>
@@ -106,45 +150,70 @@
     </nav>
 
 </div>
+<!-- ===== WELCOME ===== -->
 
-<!-- ====== WELCOME SECTION ====== -->
-
-<section style="text-align:center; padding:20px 70px; width:90%; margin:auto;">
+<section
+style="
+text-align:center;
+padding:20px 70px;
+width:90%;
+margin:auto;
+">
 
     <h1 style="color:#e26fa7;">
 
-        {{ "مرحبًا،" if current_lang == "ar" else "Welcome," }}
+        {{ "مرحبًا،" if current_lang=="ar" else "Welcome," }}
         {{ user }} 💕
 
     </h1>
 
-    <p style="color:#555; font-size:1.2rem;">
+    <p
+    style="
+    color:#555;
+    font-size:1.2rem;
+    ">
 
         {{ "استكشف مجموعات الكروشيه المفضلة لديك!"
-        if current_lang == "ar"
+        if current_lang=="ar"
         else "Explore your favorite crochet collections!" }}
 
     </p>
 
 </section>
 
-<!-- ====== HERO SECTION ====== -->
-<section id="home" class="hero"
-         style="text-align:center; padding:20px 70px;">
+<!-- ===== HERO ===== -->
 
-    <img src="{{ url_for('static', filename='images/hero.png') }}"
-         alt="image"
-         class="hero_image"
-         style="border-radius:20px;">
+<section
+id="home"
+class="hero"
+style="
+text-align:center;
+padding:20px 70px;
+">
+
+    <img
+    src="{{ url_for('static', filename='images/hero.png') }}"
+    class="hero_image"
+    alt="Hero"
+    style="
+    border-radius:20px;
+    ">
 
     <div class="hero-content">
 
-<h1>Welcome to Crochet Rory</h1>
+        <h1>
 
-        <button onclick="window.location.href='{{ url_for('products_page') }}'">
+            {{ "مرحبًا بك في متجر روري"
+            if current_lang=="ar"
+            else "Welcome to Crochet Rory" }}
+
+        </h1>
+
+        <button
+        onclick="window.location.href='{{ url_for('products_page') }}'">
 
             {{ "🧶 ابحث عن منتجك المفضل"
-            if current_lang == "ar"
+            if current_lang=="ar"
             else "🧶 Find Your Favorite Product" }}
 
         </button>
@@ -152,134 +221,158 @@
     </div>
 
 </section>
-
+<!-- ===== CATEGORIES ===== -->
 
 <section id="categories">
 
     <h2 class="section-title">
-        {{ "🧶 تسوق حسب الفئة" if current_lang == "ar"
+        {{ "🧶 تسوق حسب الفئة" if current_lang=="ar"
         else "🧶 Shop by Category" }}
     </h2>
 
     <div class="categories-grid">
 
         <a href="#" class="category-card">
-            <img src="{{ url_for('static', filename='images/dolls.jpg') }}" alt="Dolls">
-            <span>{{ "الدمى" if current_lang == "ar" else "Dolls" }}</span>
+            <img src="{{ url_for('static', filename='images/dolls.jpg') }}">
+            <span>{{ "الدمى" if current_lang=="ar" else "Dolls" }}</span>
         </a>
 
         <a href="#" class="category-card">
-            <img src="{{ url_for('static', filename='images/keychain.jpg') }}" alt="Keychains">
-            <span>{{ "الميداليات" if current_lang == "ar" else "Keychains" }}</span>
+            <img src="{{ url_for('static', filename='images/keychain.jpg') }}">
+            <span>{{ "الميداليات" if current_lang=="ar" else "Keychains" }}</span>
         </a>
 
         <a href="#" class="category-card">
-            <img src="{{ url_for('static', filename='images/pattron.jpg') }}" alt="Pattern">
-            <span>{{ "الباترون" if current_lang == "ar" else "Pattern" }}</span>
+            <img src="{{ url_for('static', filename='images/pattron.jpg') }}">
+            <span>{{ "الباترون" if current_lang=="ar" else "Pattern" }}</span>
         </a>
 
         <a href="#" class="category-card">
-            <img src="{{ url_for('static', filename='images/Coaster.jpg') }}" alt="Coaster">
-            <span>{{ "حاملات الأكواب" if current_lang == "ar" else "Coaster" }}</span>
+            <img src="{{ url_for('static', filename='images/Coaster.jpg') }}">
+            <span>{{ "حاملات الأكواب" if current_lang=="ar" else "Coaster" }}</span>
         </a>
 
     </div>
 
 </section>
 
+<!-- ===== PRODUCTS ===== -->
 
-<section id="products" style="padding:60px 20px; text-align:center;">
+<section id="products">
 
-    <h2 style="color:#e26fa7; font-size:2rem; margin-bottom:30px;">
+<style>
+
+.view-btn{
+
+    display:block;
+
+    width:100%;
+
+    margin-top:12px;
+
+    padding:12px;
+
+    background:white;
+
+    color:#C97C8F;
+
+    border:2px solid #C97C8F;
+
+    border-radius:12px;
+
+    text-decoration:none;
+
+    text-align:center;
+
+    font-weight:bold;
+
+    transition:.3s;
+
+    box-sizing:border-box;
+
+}
+
+.view-btn:hover{
+
+    background:#C97C8F;
+
+    color:white;
+
+}
+
+</style>
+
+    <h2 class="section-title">
 
         {{ "🧸 إبداعاتنا الجميلة 🧸"
-        if current_lang == "ar"
+        if current_lang=="ar"
         else "🧸 Our Lovely Creations 🧸" }}
 
     </h2>
 
-    <div class="product-grid"
-         style="display:grid;
-                grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-                gap:40px;
-                max-width:1100px;
-                margin:auto;
-                padding:20px;">
+    <div class="product-grid">
 
         {% if products %}
 
             {% for product in products %}
 
-            <div class="product"
-                 style="
-                        background:#ffc9d9;
-                        border-radius:15px;
-                        padding:15px;
-                        box-shadow:0 4px 10px rgba(0,0,0,0.1);
-                        display:flex;
-                        flex-direction:column;
-                        height:100%;
-                 ">
+            <div class="product">
 
-                <img src="{{ url_for('static', filename='images/' ~ product.image) }}"
-                     alt="{{ product.name }}"
-                     style="width:100%;
-                            height:230px;
-                            object-fit:cover;
-                            border-radius:10px;">
+                <img
+                src="{{ url_for('static', filename='images/' ~ product.image) }}"
+                alt="{{ product.name }}">
 
-                <h3 style="color:#e26fa7;">
-                    {{ product.name }}
-                </h3>
+                <h3>{{ product.name }}</h3>
 
-                <p style="min-height:120px;">
-                    {{ product.description }}
+                <p>{{ product.description }}</p>
+
+                <p class="price">
+                    {{ product.price }} SAR
                 </p>
 
-<p style="font-weight:bold;">
-    {{ product.price }} SAR
-</p>
+                <p class="stars">★★★★★</p>
 
-                <p style="color:#fbc02d;">★★★★★</p>
+                <div class="quantity-box">
 
-                <div style="margin-top:auto;">
+                    <button
+                    class="quantity-btn"
+                    onclick="changeQuantity({{ product.id }},-1)">
+                        −
+                    </button>
 
-                    <div class="quantity-box">
+                    <span
+                    id="qty-{{ product.id }}"
+                    class="quantity-display">
+                        1
+                    </span>
 
-                        <button class="quantity-btn"
-                                onclick="changeQuantity({{ product.id }}, -1)">
-                            −
-                        </button>
-
-                        <span id="qty-{{ product.id }}"
-                              class="quantity-display">
-                            1
-                        </span>
-
-                        <button class="quantity-btn"
-                                onclick="changeQuantity({{ product.id }}, 1)">
-                            +
-                        </button>
-
-                    </div>
-
-                    <button onclick="addToCart({{ product.id }})"
-                            style="background:#b05ca0;
-                                   color:white;
-                                   border:none;
-                                   border-radius:10px;
-                                   padding:10px 20px;
-                                   cursor:pointer;
-                                   width:100%;
-                                   margin-top:12px;">
-
-                        {{ "🛒 أضف إلى السلة"
-                        if current_lang == "ar"
-                        else "🛒 Add to Cart" }}
-
+                    <button
+                    class="quantity-btn"
+                    onclick="changeQuantity({{ product.id }},1)">
+                        +
                     </button>
 
                 </div>
+
+                <button
+                class="add-cart-btn"
+                onclick="addToCart({{ product.id }})">
+
+                    {{ "🛒 أضف إلى السلة"
+                    if current_lang=="ar"
+                    else "🛒 Add to Cart" }}
+
+                </button>
+
+                <a
+                href="{{ url_for('product_details', product_id=product.id) }}"
+                class="view-btn">
+
+                    {{ "📄 عرض التفاصيل"
+                    if current_lang=="ar"
+                    else "📄 View Details" }}
+
+                </a>
 
             </div>
 
@@ -287,11 +380,11 @@
 
         {% else %}
 
-            <p style="color:#777; font-size:18px;">
+            <p>
 
-                {{ "لا توجد منتجات متاحة حالياً."
-                if current_lang == "ar"
-                else "No products available yet." }}
+                {{ "لا توجد منتجات حالياً."
+                if current_lang=="ar"
+                else "No products available." }}
 
             </p>
 
@@ -300,6 +393,7 @@
     </div>
 
 </section>
+
 
 
 
@@ -453,21 +547,76 @@
 
 
 <script>
-  async function addToCart(id) {
+/* ===========================
+   القائمة الجانبية
+=========================== */
+
+function toggleMenu() {
+    document.getElementById("sideMenu").classList.toggle("active");
+}
+
+function closeMenu() {
+    document.getElementById("sideMenu").classList.remove("active");
+}
+
+/* ===========================
+   عداد الكمية
+=========================== */
+
+function changeQuantity(id, change) {
+
+    let qty = document.getElementById("qty-" + id);
+
+    let value = parseInt(qty.innerText);
+
+    value += change;
+
+    if (value < 1)
+        value = 1;
+
+    qty.innerText = value;
+}
+
+/* ===========================
+   إضافة للسلة
+=========================== */
+
+async function addToCart(id) {
+
+    let quantity = parseInt(
+        document.getElementById("qty-" + id).innerText
+    );
+
     const res = await fetch("/api/cart/add", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ product_id: id })
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            product_id: id,
+            quantity: quantity
+
+        })
+
     });
+
     const data = await res.json();
+
     if (data.success) {
-      alert("✅ Added to cart!");
+
+        alert("✅ Added to cart!");
+
     } else {
-      alert("❌ " + data.error);
+
+        alert("❌ " + data.error);
+
     }
 
-
-  
+}
 </script>
 
 </body>
