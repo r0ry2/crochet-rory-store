@@ -9,7 +9,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Vollkorn:wght@400;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cormorant:wght@300;700&display=swap');
 
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+html,
+body{
+    width: 100%;
+    overflow-x: hidden;
+}
 /* ======================================================
    RESET
 ====================================================== */
@@ -61,11 +71,12 @@
 ====================================================== */
 
 .logo{
-    position:absolute;
-    right:15px;
-    width:150px;
-    max-width:100%;
-    height:auto;
+    position: absolute;
+    right: -30px;       top: 50%;
+    transform: translateY(-50%);
+    width: 150px;
+    max-width: 100%;
+    height: auto;
 }
 .logo-section{
     display:flex;
@@ -536,11 +547,15 @@
     margin:0;
 
     font-family:"Lilita One", cursive;
-    font-size:80px;
+    font-size:clamp(34px, 8vw, 80px);
+
     color:#fff;
 
     white-space:normal;
-padding:0 20px;
+    line-height:1.1;
+
+    padding:0 20px;
+    text-align:center;
 
     -webkit-text-stroke:3px #3f2525;
 
