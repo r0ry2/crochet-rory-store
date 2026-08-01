@@ -51,7 +51,7 @@ import random
 from datetime import datetime, timedelta
 from flask import jsonify
 import random
-
+from sqlalchemy import func
 
 
 
@@ -419,14 +419,11 @@ def wishlist_page():
 # ==========================================
 # 🏠 GENERAL ROUTES
 # ==========================================
-
 @app.route("/", methods=["GET", "POST"])
 def index():
 
     products = Product.query.filter(
-        Product.publish_location.in_(
-            ["both", "home_only"]
-        )
+        Product.publish_location.in_(["both", "home_only"])
     ).all()
 
     form = LoginForm()
@@ -441,28 +438,32 @@ def index():
             email=form.email.data
         ).first()
 
+        # البريد الإلكتروني غير موجود
         if not user:
 
             login_error = True
 
             if session.get("language") == "ar":
-                flash("❌ البريد الإلكتروني غير موجود.", "danger")
+                flash("❌ البريد الإلكتروني غير موجود.", "login_error")
             else:
-                flash("❌ Email not found.", "danger")
+                flash("❌ Email not found.", "login_error")
 
+        # كلمة المرور خاطئة
         elif not user.check_password(form.password.data):
 
             login_error = True
 
             if session.get("language") == "ar":
-                flash("❌ كلمة المرور غير صحيحة.", "danger")
+                flash("❌ كلمة المرور غير صحيحة.", "login_error")
             else:
-                flash("❌ Incorrect password.", "danger")
+                flash("❌ Incorrect password.", "login_error")
 
+        # تسجيل الدخول
         else:
 
             login_user(user)
             session["is_admin"] = (user.role == "admin")
+
             merge_session_cart_into_db(user.id)
 
             if user.role == "admin":
@@ -478,6 +479,8 @@ def index():
         verify_form=verify_form,
         login_error=login_error
     )
+
+
 @app.route("/cart")
 def cart_page():
     return render_template("cart.html")
@@ -493,34 +496,72 @@ def register():
 
     if form.validate_on_submit():
 
-        existing_user = User.query.filter_by(
-            email=form.email.data
+        username = form.username.data.strip()
+        email = form.email.data.strip().lower()
+
+        # التحقق من البريد
+        existing_email = User.query.filter(
+            func.lower(User.email) == email
         ).first()
 
-        if existing_user:
+        if existing_email:
 
-            flash(
-                "⚠️ Email already registered!",
-                "warning"
+            flash("⚠️ Email already registered!", "register_warning")
+
+            login_form = LoginForm()
+            verify_form = VerifyCodeForm()
+
+            products = Product.query.filter(
+                Product.publish_location.in_(["both", "home_only"])
+            ).all()
+
+            return render_template(
+                "index.html",
+                products=products,
+                form=login_form,
+                register_form=form,
+                verify_form=verify_form,
+                show_register_popup=True
             )
 
-            return redirect(url_for("index"))
+        # التحقق من اسم المستخدم
+        existing_username = User.query.filter(
+            func.lower(User.username) == username.lower()
+        ).first()
 
-        # إنشاء كود تحقق
+        if existing_username:
+
+            flash("⚠️ Username already exists!", "register_warning")
+
+            login_form = LoginForm()
+            verify_form = VerifyCodeForm()
+
+            products = Product.query.filter(
+                Product.publish_location.in_(["both", "home_only"])
+            ).all()
+
+            return render_template(
+                "index.html",
+                products=products,
+                form=login_form,
+                register_form=form,
+                verify_form=verify_form,
+                show_register_popup=True
+            )
+
         code = str(random.randint(100000, 999999))
 
         new_user = User(
-            username=form.username.data,
-            email=form.email.data,
+            username=username,
+            email=email,
             phone=form.phone.data
         )
 
         new_user.set_password(form.password.data)
 
-        if form.email.data == "admin@store.com":
+        if email == "admin@store.com":
             new_user.role = "admin"
 
-        # الحساب غير مفعل
         new_user.confirmed = False
         new_user.verification_code = code
         new_user.verification_expiry = (
@@ -530,12 +571,9 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        # حفظ البريد في الـ Session
         session["verify_email"] = new_user.email
 
-        # إرسال كود التحقق
         try:
-
             msg = MailMessage(
                 subject="Verify your Crochet Rory account",
                 recipients=[new_user.email]
@@ -564,24 +602,23 @@ Crochet Rory Team
         except Exception as e:
             print("Mail Error:", e)
 
-        # الرجوع للرئيسية وفتح نافذة التحقق
         return redirect(url_for("index", verify=1))
 
     login_form = LoginForm()
+    verify_form = VerifyCodeForm()
 
     products = Product.query.filter(
-        Product.publish_location.in_(
-            ["both", "home_only"]
-        )
+        Product.publish_location.in_(["both", "home_only"])
     ).all()
 
     return render_template(
         "index.html",
         products=products,
         form=login_form,
-        register_form=form
+        register_form=form,
+        verify_form=verify_form
     )
-
+    
 @app.route("/forgot_password", methods=["POST"])
 def forgot_password():
 
@@ -939,33 +976,33 @@ def upload_profile_image():
 def login():
 
     form = LoginForm()
+    register_form = RegisterForm()
+    verify_form = VerifyCodeForm()
+
+    products = Product.query.filter(
+        Product.publish_location.in_(["both", "home_only"])
+    ).all()
 
     if form.validate_on_submit():
 
         user = User.query.filter_by(
-            email=form.email.data
+            email=form.email.data.strip()
         ).first()
-
-        # تجهيز بيانات الصفحة الرئيسية
-        products = Product.query.filter(
-            Product.publish_location.in_(["both", "home_only"])
-        ).all()
-
-        register_form = RegisterForm()
 
         # البريد الإلكتروني غير موجود
         if user is None:
 
             if session.get("language") == "ar":
-                flash("❌ البريد الإلكتروني غير موجود.", "danger")
+                flash("❌ البريد الإلكتروني غير موجود.", "login_error")
             else:
-                flash("❌ Email not found.", "danger")
+                flash("❌ Email not found.", "login_error")
 
             return render_template(
                 "index.html",
                 products=products,
                 form=form,
                 register_form=register_form,
+                verify_form=verify_form,
                 login_error=True
             )
 
@@ -973,17 +1010,30 @@ def login():
         if not user.check_password(form.password.data):
 
             if session.get("language") == "ar":
-                flash("❌ كلمة المرور غير صحيحة.", "danger")
+                flash("❌ كلمة المرور غير صحيحة.", "login_error")
             else:
-                flash("❌ Incorrect password.", "danger")
+                flash("❌ Incorrect password.", "login_error")
 
             return render_template(
                 "index.html",
                 products=products,
                 form=form,
                 register_form=register_form,
+                verify_form=verify_form,
                 login_error=True
             )
+
+        # الحساب غير مفعل
+        if not user.confirmed:
+
+            session["verify_email"] = user.email
+
+            if session.get("language") == "ar":
+                flash("📧 يرجى تأكيد بريدك الإلكتروني أولاً.", "login_warning")
+            else:
+                flash("📧 Please verify your email first.", "login_warning")
+
+            return redirect(url_for("index", verify=1))
 
         # تسجيل الدخول
         login_user(user, remember=True)
@@ -998,22 +1048,19 @@ def login():
         return redirect(url_for("home_logged"))
 
     # إذا كان النموذج غير صالح
-    products = Product.query.filter(
-        Product.publish_location.in_(["both", "home_only"])
-    ).all()
+    if request.method == "POST":
 
-    register_form = RegisterForm()
-
-    if session.get("language") == "ar":
-        flash("❌ يرجى التحقق من البيانات.", "danger")
-    else:
-        flash("❌ Please check your information.", "danger")
+        if session.get("language") == "ar":
+            flash("❌ يرجى التحقق من البيانات.", "login_error")
+        else:
+            flash("❌ Please check your information.", "login_error")
 
     return render_template(
         "index.html",
         products=products,
         form=form,
         register_form=register_form,
+        verify_form=verify_form,
         login_error=True
     )
 # ==========================================
@@ -1201,7 +1248,7 @@ def api_cart_remove():
         "success": True
     })
 
-    # ==========================================
+# ==========================================
 # ➕➖ Update Cart Quantity
 # ==========================================
 

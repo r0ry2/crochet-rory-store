@@ -275,167 +275,181 @@ Such cute designs! Everything looks exactly like the photos. Highly recommend �
 <!-- Login Popup -->
 <div id="loginPopup" class="login-popup">
 
-<div class="login-box">
+    <div class="login-box">
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="flash-message {{ category }}">
-        {{ message }}
-      </div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {% if category == "login_error" or category == "login_warning" %}
+                        <div class="flash-message {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-<span class="close-btn" onclick="closeLogin()">&times;</span>
+        <span class="close-btn" onclick="closeLogin()">&times;</span>
 
-<h2>
-{{ "مرحبًا بعودتك 💕" if current_lang=="ar" else "Welcome Back 💕" }}
-</h2>
+        <h2>
+            {{ "مرحبًا بعودتك 💕" if current_lang=="ar" else "Welcome Back 💕" }}
+        </h2>
 
-<form method="POST" action="{{ url_for('login') }}">
+        <form method="POST" action="{{ url_for('login') }}">
 
-{{ form.hidden_tag() }}
+            {{ form.hidden_tag() }}
 
-<label>
-{{ "البريد الإلكتروني" if current_lang=="ar" else "Email" }}
-</label>
-{{ form.email() }}
+            <label>
+                {{ "البريد الإلكتروني" if current_lang=="ar" else "Email" }}
+            </label>
+            {{ form.email() }}
 
-<label>
-{{ "كلمة المرور" if current_lang=="ar" else "Password" }}
-</label>
-<div class="password-container">
-    {{ form.password(id="login_password") }}
-    <span class="toggle-password"
-      onclick="togglePassword('login_password', this)">
-    <i class="fa-regular fa-eye"></i>
-</span>
-</div>
+            <label>
+                {{ "كلمة المرور" if current_lang=="ar" else "Password" }}
+            </label>
 
-{{ form.submit(class="login-btn") }}
+            <div class="password-container">
+                {{ form.password(id="login_password") }}
+                <span class="toggle-password"
+                      onclick="togglePassword('login_password', this)">
+                    <i class="fa-regular fa-eye"></i>
+                </span>
+            </div>
 
-<p style="margin-top:10px; text-align:center;">
+            {{ form.submit(class="login-btn") }}
 
-<a href="#"
-   onclick="closeLogin(); openForgotPassword(); return false;">
+            <p style="margin-top:10px; text-align:center;">
+                <a href="#"
+                   onclick="closeLogin(); openForgotPassword(); return false;">
+                    {{ "نسيت كلمة المرور؟" if current_lang=="ar"
+                    else "Forgot Password?" }}
+                </a>
+            </p>
 
-{{ "نسيت كلمة المرور؟" if current_lang=="ar"
-else "Forgot Password?" }}
+        </form>
 
-</a>
+        <p>
 
-</p>
+            {% if current_lang=="ar" %}
 
-</form>
+                ليس لديك حساب؟
 
-<p>
+                <a href="#" onclick="closeLogin(); openRegister(); return false;">
+                    إنشاء حساب
+                </a>
 
-{% if current_lang=="ar" %}
+            {% else %}
 
-ليس لديك حساب؟
+                Don't have an account?
 
-<a href="#" onclick="closeLogin(); openRegister(); return false;">
-إنشاء حساب
-</a>
+                <a href="#" onclick="closeLogin(); openRegister(); return false;">
+                    Register
+                </a>
 
-{% else %}
+            {% endif %}
 
-Don't have an account?
+        </p>
 
-<a href="#" onclick="closeLogin(); openRegister(); return false;">
-Register
-</a>
-
-{% endif %}
-
-</p>
-
-</div>
+    </div>
 
 </div>
 
 <!-- Register Popup -->
+<!-- Register Popup -->
 <div id="registerPopup" class="login-popup">
 
-<div class="login-box">
+    <div class="login-box">
 
-<span class="close-btn" onclick="closeRegister()">&times;</span>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {% if category == "register_warning" %}
+                        <div class="flash-message warning">
+                            {{ message }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-<h2>
-{{ "إنشاء حساب 💖" if current_lang=="ar" else "Create Account 💖" }}
-</h2>
+        <span class="close-btn" onclick="closeRegister()">&times;</span>
 
-<form method="POST" action="{{ url_for('register') }}">
+        <h2>
+            {{ "إنشاء حساب 💖" if current_lang=="ar" else "Create Account 💖" }}
+        </h2>
 
-{{ register_form.hidden_tag() }}
+        <form method="POST" action="{{ url_for('register') }}">
 
-<label>
-{{ "اسم المستخدم" if current_lang=="ar" else "Username" }}
-</label>
-{{ register_form.username() }}
+            {{ register_form.hidden_tag() }}
 
-<label>
-{{ "البريد الإلكتروني" if current_lang=="ar" else "Email" }}
-</label>
-{{ register_form.email() }}
+            <label>
+                {{ "اسم المستخدم" if current_lang=="ar" else "Username" }}
+            </label>
+            {{ register_form.username() }}
 
-<label>
-{{ "رقم الجوال" if current_lang=="ar" else "Phone Number" }}
-</label>
-{{ register_form.phone() }}
+            <label>
+                {{ "البريد الإلكتروني" if current_lang=="ar" else "Email" }}
+            </label>
+            {{ register_form.email() }}
 
-<label>
-{{ "كلمة المرور" if current_lang=="ar" else "Password" }}
-</label>
-<div class="password-container">
-    {{ register_form.password(id="register_password") }}
-   <span class="toggle-password"
-      onclick="togglePassword('register_password', this)">
-    <i class="fa-regular fa-eye"></i>
-</span>
+            <label>
+                {{ "رقم الجوال" if current_lang=="ar" else "Phone Number" }}
+            </label>
+            {{ register_form.phone() }}
+
+            <label>
+                {{ "كلمة المرور" if current_lang=="ar" else "Password" }}
+            </label>
+
+            <div class="password-container">
+                {{ register_form.password(id="register_password") }}
+                <span class="toggle-password"
+                      onclick="togglePassword('register_password', this)">
+                    <i class="fa-regular fa-eye"></i>
+                </span>
+            </div>
+
+            <label>
+                {{ "تأكيد كلمة المرور" if current_lang=="ar" else "Confirm Password" }}
+            </label>
+
+            <div class="password-container">
+                {{ register_form.confirm_password(id="confirm_password") }}
+                <span class="toggle-password"
+                      onclick="togglePassword('confirm_password', this)">
+                    <i class="fa-regular fa-eye"></i>
+                </span>
+            </div>
+
+            {{ register_form.submit(class="login-btn") }}
+
+        </form>
+
+        <p>
+
+            {% if current_lang=="ar" %}
+
+                لديك حساب بالفعل؟
+
+                <a href="#" onclick="closeRegister(); openLogin(); return false;">
+                    تسجيل الدخول
+                </a>
+
+            {% else %}
+
+                Already have an account?
+
+                <a href="#" onclick="closeRegister(); openLogin(); return false;">
+                    Login
+                </a>
+
+            {% endif %}
+
+        </p>
+
+    </div>
+
 </div>
-<label>
-{{ "تأكيد كلمة المرور" if current_lang=="ar" else "Confirm Password" }}
-</label>
-<div class="password-container">
-    {{ register_form.confirm_password(id="confirm_password") }}
-<span class="toggle-password"
-      onclick="togglePassword('confirm_password', this)">
-    <i class="fa-regular fa-eye"></i>
-</span>
-</div>
-{{ register_form.submit(class="login-btn") }}
-</form>
-
-<p>
-
-{% if current_lang=="ar" %}
-
-لديك حساب بالفعل؟
-
-<a href="#" onclick="closeRegister(); openLogin(); return false;">
-تسجيل الدخول
-</a>
-
-{% else %}
-
-Already have an account?
-
-<a href="#" onclick="closeRegister(); openLogin(); return false;">
-Login
-</a>
-
-{% endif %}
-
-</p>
-
-
-
-</div>
-
-</div>
-
 <!-- Verify Email Popup -->
 <div id="verifyPopup" class="login-popup">
 
@@ -604,6 +618,22 @@ function closeVerify() {
     document.getElementById("verifyPopup").style.display = "none";
 }
 
+function openForgotPassword() {
+    document.getElementById("forgotPopup").style.display = "flex";
+}
+
+function closeForgotPassword() {
+    document.getElementById("forgotPopup").style.display = "none";
+}
+
+function openResetPassword() {
+    document.getElementById("resetPasswordPopup").style.display = "flex";
+}
+
+function closeResetPassword() {
+    document.getElementById("resetPasswordPopup").style.display = "none";
+}
+
 function togglePassword(id, icon) {
 
     const input = document.getElementById(id);
@@ -616,13 +646,16 @@ function togglePassword(id, icon) {
     } else {
         input.type = "password";
         eye.classList.remove("fa-eye-slash");
-        eye.classList.add("fa-eye"
-
-        );
+        eye.classList.add("fa-eye");
     }
+
 }
 
 window.onload = function () {
+
+    {% if show_register_popup %}
+        openRegister();
+    {% endif %}
 
     {% if login_error %}
         openLogin();
@@ -638,22 +671,7 @@ window.onload = function () {
     {% endif %}
 
 };
-function openForgotPassword() {
-    document.getElementById("forgotPopup").style.display = "flex";
-}
-
-function closeForgotPassword() {
-    document.getElementById("forgotPopup").style.display = "none";
-}
-function openResetPassword() {
-    document.getElementById("resetPasswordPopup").style.display = "flex";
-}
-
-function closeResetPassword() {
-    document.getElementById("resetPasswordPopup").style.display = "none";
-}
 
 </script>
-
 
 {% endblock %}
