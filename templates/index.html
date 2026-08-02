@@ -55,40 +55,42 @@
 
     </div>
 </section>
-
-<!-- ====== ABOUT ME ====== -->
 <section id="about-me">
 
-<h2 class="about-title">
-    ✨ {{ "من أنا" if current_lang == "ar" else "About Me" }} ✨
-</h2>
-<div class="about-container">
+    <h2 class="about-title">
+        ✨ {{ "من أنا" if current_lang == "ar" else "About Me" }} ✨
+    </h2>
 
-    <img src="{{ url_for('static', filename='images/about_me.jpg') }}"
-         alt="Crochet Art"
-         class="about-image">
+    <div class="about-container">
 
-    <p class="about-text">
+        <div class="about-image">
+            <img src="{{ url_for('static', filename='images/about_me.jpg') }}"
+                 alt="Crochet Art">
+        </div>
 
-        {% if current_lang == "ar" %}
+        <div class="about-text">
 
-        مرحبًا بكم في <strong>عالم روري</strong>، حيث يلتقي الإبداع بالحرفية.
-        أنا <strong>ريما</strong>، شغوفة بفن الكروشيه وأحب تحويل الخيوط إلى قطع فنية مميزة.
-        كل عمل أصنعه يحمل الحب والصبر والاهتمام بأدق التفاصيل 🧶💗
-        شكرًا لدعمكم لمتجري الصغير ولكونكم جزءًا من هذه الرحلة الدافئة ✨
+            {% if current_lang == "ar" %}
 
-        {% else %}
+            مرحبًا بكم في <strong>عالم روري</strong>، حيث يلتقي الإبداع بالحرفية.
+            أنا <strong>ريما</strong>، شغوفة بفن الكروشيه وأحب تحويل الخيوط إلى قطع فنية مميزة.
+            كل عمل أصنعه يحمل الحب والصبر والاهتمام بأدق التفاصيل 🧶💗
+            شكرًا لدعمكم لمتجري الصغير ولكونكم جزءًا من هذه الرحلة الدافئة ✨
 
-        Welcome to <strong>Rory’s world</strong>, where craftsmanship meets creativity!
-        I'm <strong>Reema</strong>, a passionate crocheter who loves transforming yarn into art.
-        Each creation reflects love, patience, and attention to every detail 🧶💗
-        Thank you for supporting my small business and being part of this cozy handmade journey ✨
+            {% else %}
 
-        {% endif %}
+            Welcome to <strong>Rory’s world</strong>, where craftsmanship meets creativity!
+            I'm <strong>Reema</strong>, a passionate crocheter who loves transforming yarn into art.
+            Each creation reflects love, patience, and attention to every detail 🧶💗
+            Thank you for supporting my small business and being part of this cozy handmade journey ✨
 
-    </p>
+            {% endif %}
 
-</div>
+        </div>
+
+    </div>
+
+</section>
 
 
 <section id="categories">

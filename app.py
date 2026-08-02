@@ -95,12 +95,7 @@ print("📁 Using database:", app.config["SQLALCHEMY_DATABASE_URI"])
 # ==========================================
 from routes import *
 
-# ==========================================
-# Create Database Tables
-# ==========================================
-with app.app_context():
-    db.create_all()
-    print("✅ Database tables created successfully!")
+
 
 # ==========================================
 # Run App
