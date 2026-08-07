@@ -123,13 +123,419 @@
 
     </div>
 
-</section>
+<style>
+/* ===========================
+   PRODUCTS
+=========================== */
 
-<section id="products">
+.product-section{
+    width:100%;
+    max-width:1400px;
+    margin:auto;
+    padding:40px 25px 60px;
+}
 
-    <h2>
-        🧸 {{ "أجمل منتجاتنا" if current_lang == "ar" else "Our Lovely Creations" }} 🧸
-    </h2>
+.product-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:25px;
+}
+
+/* Card */
+
+.product{
+    background:#fff;
+    border-radius:18px;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    transition:.3s;
+    height:100%;
+}
+
+.product:hover{
+    transform:translateY(-6px);
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
+}
+
+/* Image */
+
+.product img{
+    width:100%;
+    aspect-ratio:1/1;
+    object-fit:cover;
+    display:block;
+    background:#fafafa;
+}
+
+/* Product Content */
+
+.product h3{
+    padding:16px 16px 8px;
+    font-size:18px;
+    font-weight:600;
+    color:#333;
+    line-height:1.4;
+}
+
+.description{
+    padding:0 16px;
+    color:#777;
+    font-size:14px;
+    line-height:1.7;
+
+    display:-webkit-box;
+    -webkit-line-clamp:3;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+
+    min-height:72px;
+}
+
+.rating{
+    padding:10px 16px 5px;
+    color:#FDBA12;
+    font-size:16px;
+}
+
+.price{
+    padding:0 16px;
+    font-size:30px;
+    font-weight:bold;
+    color:#d85c8d;
+}
+
+.bottom{
+    margin-top:auto;
+    padding:18px 16px 16px;
+}
+
+.quantity-box{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:14px;
+    margin-bottom:16px;
+}
+
+.quantity-btn{
+    width:40px;
+    height:40px;
+    border:none;
+    border-radius:50%;
+    background:#e06ca2;
+    color:#fff;
+    font-size:22px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.quantity-btn:hover{
+    background:#ca538a;
+}
+
+.quantity-display{
+    min-width:22px;
+    text-align:center;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.add-cart-btn{
+    width:100%;
+    border:none;
+    border-radius:12px;
+    padding:13px;
+    background:#d88ea4;
+    color:#fff;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.add-cart-btn:hover{
+    background:#c76f89;
+}
+
+.no-products{
+    text-align:center;
+    font-size:18px;
+    color:#777;
+    padding:60px;
+}
+
+/* ===========================
+   Laptop
+=========================== */
+
+@media (min-width:1200px){
+
+.product-grid{
+    grid-template-columns:repeat(4,1fr);
+}
+
+}
+
+/* ===========================
+   Tablet
+=========================== */
+
+@media (max-width:992px){
+
+.product-section{
+    padding:35px 20px;
+}
+
+.product-grid{
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.product h3{
+    font-size:17px;
+}
+
+.price{
+    font-size:26px;
+}
+
+}
+
+/* ===========================
+   Mobile
+=========================== */
+
+@media (max-width:768px){
+
+.product-section{
+    padding:25px 15px;
+}
+
+.product-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.product img{
+    aspect-ratio:1/1;
+}
+
+.product h3{
+    font-size:15px;
+    padding:12px 12px 6px;
+}
+
+.description{
+    font-size:12px;
+    padding:0 12px;
+    min-height:60px;
+}
+
+.rating{
+    padding:8px 12px 4px;
+    font-size:14px;
+}
+
+.price{
+    padding:0 12px;
+    font-size:20px;
+}
+
+.bottom{
+    padding:12px;
+}
+
+.quantity-btn{
+    width:34px;
+    height:34px;
+    font-size:18px;
+}
+
+.quantity-display{
+    font-size:16px;
+}
+
+.add-cart-btn{
+    font-size:13px;
+    padding:10px;
+}
+
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.section-title h2{
+    font-size:38px;
+    color:#d86f9d;
+    font-weight:700;
+    margin-bottom:12px;
+}
+
+.section-title p{
+    font-size:16px;
+    color:#777;
+    max-width:650px;
+    margin:auto;
+    line-height:1.8;
+}
+/* ==========================
+   Reviews
+========================== */
+
+.reviews-section{
+    padding:70px 20px;
+    background:#fff8fb;
+}
+
+.reviews-container{
+    max-width:1200px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:25px;
+    margin-top:40px;
+}
+
+.review-card{
+    background:#ffc9d9;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.review-card:hover{
+    transform:translateY(-5px);
+}
+
+.stars{
+    color:#ffc107;
+    font-size:22px;
+    margin-bottom:12px;
+}
+
+.review-message{
+    color:#555;
+    line-height:1.8;
+    margin-bottom:18px;
+}
+
+.review-name{
+    color:#d86f9d;
+    font-size:16px;
+}
+
+.admin-reply{
+    margin-top:18px;
+    background:#fff2f7;
+    border-left:4px solid #d86f9d;
+    padding:15px;
+    border-radius:12px;
+}
+
+.admin-reply strong{
+    color:#d86f9d;
+}
+
+.admin-reply p{
+    margin-top:8px;
+    color:#555;
+}
+
+@media(max-width:768px){
+
+.reviews-section{
+    padding:50px 15px;
+}
+
+.review-card{
+    padding:18px;
+}
+
+.stars{
+    font-size:20px;
+}
+
+}
+
+@media (max-width:768px){
+
+.section-title{
+    margin-bottom:30px;
+}
+
+.section-title h2{
+    font-size:28px;
+}
+
+.section-title p{
+    font-size:14px;
+    padding:0 10px;
+}
+
+}
+/* ===========================
+   Small Mobile
+=========================== */
+
+@media (max-width:480px){
+
+.product-section{
+    padding:20px 10px;
+}
+
+.product-grid{
+    gap:12px;
+}
+
+.product h3{
+    font-size:14px;
+}
+
+.description{
+    -webkit-line-clamp:2;
+    min-height:42px;
+}
+
+.price{
+    font-size:18px;
+}
+
+.quantity-box{
+    gap:10px;
+}
+
+.quantity-btn{
+    width:30px;
+    height:30px;
+}
+
+.add-cart-btn{
+    font-size:12px;
+}
+
+}
+</style>
+
+
+<section class="product-section">
+
+    <div class="section-title">
+
+        <h2>
+            {{ "✨ مجموعة روري المميزة" if current_lang=="ar" else "✨ Rory's Featured Collection" }}
+        </h2>
+
+        <p>
+            {{ "اكتشف أجمل منتجات الكروشيه المصنوعة يدويًا بكل حب وعناية." if current_lang=="ar" else "Discover our handmade crochet creations, crafted with love and care." }}
+        </p>
+
+    </div>
 
     <div class="product-grid">
 
@@ -148,30 +554,30 @@
                     {{ product.description }}
                 </p>
 
-<p class="price">
-    {{ product.price }}
-    {{ "ر.س" if current_lang == "ar" else "SAR" }}
-</p>
                 <div class="rating">
                     ★★★★★
                 </div>
+
+                <p class="price">
+                    {{ product.price }}
+                    {{ "ر.س" if current_lang == "ar" else "SAR" }}
+                </p>
 
                 <div class="bottom">
 
                     <div class="quantity-box">
 
                         <button class="quantity-btn"
-                                onclick="changeQuantity({{ product.id }}, -1)">
+                                onclick="window.location.href='{{ url_for('login') }}'">
                             −
                         </button>
 
-                        <span id="qty-{{ product.id }}"
-                              class="quantity-display">
+                        <span class="quantity-display">
                             1
                         </span>
 
                         <button class="quantity-btn"
-                                onclick="changeQuantity({{ product.id }}, 1)">
+                                onclick="window.location.href='{{ url_for('login') }}'">
                             +
                         </button>
 
@@ -179,7 +585,9 @@
 
                     <button class="add-cart-btn"
                             onclick="window.location.href='{{ url_for('login') }}'">
-                        🛒 {{ "أضف إلى السلة" if current_lang == "ar" else "Add to Cart" }}
+
+                        🛒 {{ "إضافة للسلة" if current_lang=="ar" else "Add to Cart" }}
+
                     </button>
 
                 </div>
@@ -191,10 +599,79 @@
         {% else %}
 
             <p class="no-products">
-                {{ "لا توجد منتجات حالياً." if current_lang == "ar" else "No products available yet." }}
+                {{ "لا توجد منتجات حالياً." if current_lang=="ar" else "No products available yet." }}
             </p>
 
         {% endif %}
+
+    </div>
+
+</section>
+<section id="reviews" class="reviews-section">
+
+    <div class="section-title">
+
+        <h2>
+            {{ "💬 آراء العملاء 💬" if current_lang=="ar"
+            else "💬 Customer Reviews 💬" }}
+        </h2>
+
+        <p>
+            {{ "ماذا قال عملاؤنا عن منتجات روري؟"
+            if current_lang=="ar"
+            else "What our customers say about Rory Store?" }}
+        </p>
+
+    </div>
+
+    <div class="reviews-container">
+
+        {% for review in reviews %}
+
+        <div class="review-card">
+
+            <div class="stars">
+                {% for i in range(review.stars) %}★{% endfor %}
+                {% for i in range(5-review.stars) %}☆{% endfor %}
+            </div>
+
+            <p class="review-message">
+                {{ review.message }}
+            </p>
+
+            <strong class="review-name">
+                - {{ review.name }}
+            </strong>
+
+            {% if review.admin_reply %}
+
+            <div class="admin-reply">
+
+                <strong>
+                    {{ "💌 رد الإدارة"
+                    if current_lang=="ar"
+                    else "💌 Admin Reply" }}
+                </strong>
+
+                <p>{{ review.admin_reply }}</p>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+        {% else %}
+
+        <p style="text-align:center;">
+
+            {{ "لا توجد تقييمات حتى الآن 💕"
+            if current_lang=="ar"
+            else "No reviews yet 💕" }}
+
+        </p>
+
+        {% endfor %}
 
     </div>
 
@@ -213,66 +690,7 @@ function changeQuantity(productId, change){
 }
 </script>
 
-<!-- ====== CUSTOMER REVIEWS ====== -->
-<section id="reviews" style=" padding:60px 20px; text-align:center;">
 
-<h2 style="color:#e26fa7; font-size:2rem; margin-bottom:30px;">
-💬 {{ "آراء العملاء" if current_lang == "ar" else "Customer Reviews" }} 💬
-</h2>
-
-<div style="max-width:800px; margin:auto; display:flex; flex-direction:column; gap:20px;">
-
-<div style="background:white; border-radius:15px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-
-<p style="color:#fbc02d;">★★★★★</p>
-
-<p>
-{% if current_lang=="ar" %}
-اشتريت باقة زهور وقدمتها لصديقتي في عيد ميلادها، وأعجبت بها كثيرًا!
-{% else %}
-I bought a bouquet of flowers and gave it to my friend for her birthday. She loved it!
-{% endif %}
-</p>
-
-<strong>- {{ "هناء" if current_lang=="ar" else "Hana" }}</strong>
-
-</div>
-
-<div style="background:white; border-radius:15px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-
-<p style="color:#fbc02d;">★★★★★</p>
-
-<p>
-{% if current_lang=="ar" %}
-طلبت ميدالية قطة لحقيبتي المدرسية ولم تصل بعد، وأنا متحمسة جدًا لاستلامها!
-{% else %}
-I ordered a cat necklace for my school bag and haven't received it yet. I'm so excited, and I'm sure I'll love it!
-{% endif %}
-</p>
-
-<strong>- {{ "ريهام" if current_lang=="ar" else "Riham" }}</strong>
-
-</div>
-
-<div style="background:white; border-radius:15px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-
-<p style="color:#fbc02d;">★★★★★</p>
-
-<p>
-{% if current_lang=="ar" %}
-تصاميم جميلة جدًا، وكل شيء مطابق تمامًا للصور. أنصح بها بشدة 💕
-{% else %}
-Such cute designs! Everything looks exactly like the photos. Highly recommend 💕
-{% endif %}
-</p>
-
-<strong>- {{ "سارة" if current_lang=="ar" else "Sara" }}</strong>
-
-</div>
-
-</div>
-
-</section>
 
 <!-- Login Popup -->
 <div id="loginPopup" class="login-popup">

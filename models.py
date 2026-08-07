@@ -282,25 +282,61 @@ class Wishlist(db.Model):
 # 📦 ORDER
 # ==================================================
 class Order(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
     user_id = db.Column(
         db.Integer,
         db.ForeignKey("user.id")
     )
 
-    customer_name = db.Column(db.String(100))
-    address = db.Column(db.String(255))
-    total = db.Column(db.Float)
+    customer_name = db.Column(
+        db.String(100)
+    )
 
+    customer_email = db.Column(
+        db.String(120)
+    )
+
+    address = db.Column(
+        db.String(255)
+    )
+
+    payment_method = db.Column(
+        db.String(50)
+    )
+
+    total = db.Column(
+        db.Float
+    )
+
+    # حالات الطلب:
+    # Pending Payment
+    # Pending Review
+    # Processing
+    # Shipping
+    # Delivered
+    # Cancelled
     status = db.Column(
-        db.String(20),
-        default="Pending"
+        db.String(50),
+        default="Pending Payment"
     )
 
     created_at = db.Column(
         db.DateTime,
         default=datetime.utcnow
+    )
+
+    # (اختياري) يضاف لاحقًا عند الشحن
+    tracking_number = db.Column(
+        db.String(100)
+    )
+
+    shipping_company = db.Column(
+        db.String(100)
     )
 
     user = db.relationship(
@@ -311,6 +347,48 @@ class Order(db.Model):
 
     def __repr__(self):
         return f"<Order {self.id} - {self.customer_name}>"
+class Notification(db.Model):
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    message = db.Column(
+        db.String(255)
+    )
+
+    is_read = db.Column(
+        db.Boolean,
+        default=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
+# ==================================================
+# 👀 VISITORS
+# ==================================================
+class Visitor(db.Model):
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    ip_address = db.Column(
+        db.String(100)
+    )
+
+    page = db.Column(
+        db.String(255)
+    )
+
+    visited_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
 # ==================================================
 # 🧾 ORDER ITEM
 # ==================================================

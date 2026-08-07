@@ -1,0 +1,305 @@
+{% extends "base_logged.html" %}
+
+{% block title %}
+تفاصيل الطلب
+{% endblock %}
+
+
+{% block content %}
+
+
+<style>
+
+.order-box{
+
+    width:90%;
+    max-width:1000px;
+    margin:50px auto;
+
+    background:white;
+
+    padding:30px;
+
+    border-radius:25px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+}
+
+
+.title{
+
+    color:#d88ea4;
+
+    margin-bottom:25px;
+
+}
+
+
+.info{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:15px;
+
+}
+
+
+.info div{
+
+    background:#fdecef;
+
+    padding:15px;
+
+    border-radius:15px;
+
+}
+
+
+table{
+
+    width:100%;
+
+    margin-top:25px;
+
+    border-collapse:collapse;
+
+}
+
+
+th{
+
+    background:#fff1f6;
+
+    padding:15px;
+
+}
+
+
+td{
+
+    padding:15px;
+
+    text-align:center;
+
+    border-bottom:1px solid #eee;
+
+}
+
+
+img{
+
+    width:60px;
+
+    height:60px;
+
+    border-radius:10px;
+
+    object-fit:cover;
+
+}
+
+
+.back{
+
+    display:inline-block;
+
+    margin-top:25px;
+
+    background:#d88ea4;
+
+    color:white;
+
+    padding:12px 25px;
+
+    border-radius:30px;
+
+    text-decoration:none;
+
+}
+
+
+</style>
+
+
+
+<div class="order-box">
+
+
+<h2 class="title">
+
+🧾 طلب رقم #{{ order.id }}
+
+</h2>
+
+
+
+<div class="info">
+
+
+<div>
+
+<b>الحالة:</b>
+
+{{ order.status }}
+
+</div>
+
+
+<div>
+
+<b>التاريخ:</b>
+
+{{ order.created_at.strftime("%Y-%m-%d") }}
+
+</div>
+
+
+<div>
+
+<b>طريقة الدفع:</b>
+
+{{ order.payment_method }}
+
+</div>
+
+
+<div>
+
+<b>الإجمالي:</b>
+
+{{ order.total }} ريال
+
+</div>
+
+
+
+{% if order.shipping_company %}
+
+<div>
+
+<b>🚚 شركة الشحن:</b>
+
+{{ order.shipping_company }}
+
+</div>
+
+
+{% endif %}
+
+
+
+{% if order.tracking_number %}
+
+<div>
+
+<b>🔎 رقم التتبع:</b>
+
+{{ order.tracking_number }}
+
+</div>
+
+
+{% endif %}
+
+
+
+</div>
+
+
+
+
+<h3 style="margin-top:30px">
+
+🛒 المنتجات
+
+</h3>
+
+
+
+<table>
+
+
+<tr>
+
+<th>الصورة</th>
+
+<th>المنتج</th>
+
+<th>الكمية</th>
+
+<th>السعر</th>
+
+</tr>
+
+
+
+{% for item in order.items %}
+
+
+<tr>
+
+
+<td>
+
+{% if item.product.image %}
+
+<img src="{{ url_for('static',
+filename='uploads/' + item.product.image) }}">
+
+{% else %}
+
+-
+
+{% endif %}
+
+
+</td>
+
+
+<td>
+
+{{ item.product.name }}
+
+</td>
+
+
+<td>
+
+{{ item.quantity }}
+
+</td>
+
+
+<td>
+
+{{ item.price }} ريال
+
+</td>
+
+
+</tr>
+
+
+{% endfor %}
+
+
+
+</table>
+
+
+
+<a href="{{ url_for('profile') }}" class="back">
+
+⬅ العودة
+
+</a>
+
+
+
+</div>
+
+
+{% endblock %}

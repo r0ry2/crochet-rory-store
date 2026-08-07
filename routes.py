@@ -21,7 +21,12 @@ from models import (
     Message,
     Review,
     Wishlist,
-    AddProductForm
+    AddProductForm,
+    db,
+    Notification,
+    Visitor
+
+
 )
 
 from forms import (
@@ -52,7 +57,7 @@ from datetime import datetime, timedelta
 from flask import jsonify
 import random
 from sqlalchemy import func
-
+from flask_login import login_user, logout_user, login_required, current_user
 
 
 @app.route("/language/<lang>")
@@ -332,6 +337,8 @@ def product_details(product_id):
         related_products=related_products
     )
 
+
+
 # ==========================================
 # 📦 ORDER DETAILS API
 # ==========================================
@@ -342,7 +349,10 @@ def get_order_details(order_id):
     order = Order.query.get(order_id)
 
     if not order:
-        return jsonify({"error": "Order not found"}), 404
+        return jsonify({
+            "error": "Order not found"
+        }), 404
+
 
     items = (
         db.session.query(OrderItem, Product)
@@ -351,24 +361,74 @@ def get_order_details(order_id):
         .all()
     )
 
+
     item_list = []
+
 
     for order_item, product in items:
 
         item_list.append({
+
             "name": product.name,
+
             "price": order_item.price,
+
             "quantity": order_item.quantity,
+
             "image": product.image if product.image else ""
+
         })
 
+
     return jsonify({
+
         "id": order.id,
+
         "customer_name": order.customer_name,
+
+        "customer_email": order.customer_email,
+
         "address": order.address,
+
+        "payment_method": order.payment_method,
+
+        "status": order.status,
+
+        "created_at": (
+            order.created_at.strftime("%Y-%m-%d %H:%M")
+            if order.created_at
+            else ""
+        ),
+
         "total": order.total,
+
         "items": item_list
+
     })
+
+
+
+# ==========================================
+# 📦 GET USER ORDERS BY STATUS
+# ==========================================
+
+
+
+
+@app.route("/my-order/<int:order_id>")
+@login_required
+def customer_order_detail(order_id):
+
+    order = Order.query.filter_by(
+        id=order_id,
+        user_id=current_user.id
+    ).first_or_404()
+
+
+    return render_template(
+        "customer_order_detail.html",
+        order=order
+    )
 # ==========================================
 # ❤️ TOGGLE WISHLIST
 # ==========================================
@@ -426,6 +486,9 @@ def index():
         Product.publish_location.in_(["both", "home_only"])
     ).all()
 
+    # جميع التقييمات
+    reviews = Review.query.order_by(Review.id.desc()).all()
+
     form = LoginForm()
     register_form = RegisterForm()
     verify_form = VerifyCodeForm()
@@ -474,17 +537,12 @@ def index():
     return render_template(
         "index.html",
         products=products,
+        reviews=reviews,
         form=form,
         register_form=register_form,
         verify_form=verify_form,
         login_error=login_error
     )
-
-
-@app.route("/cart")
-def cart_page():
-    return render_template("cart.html")
-
 # ==========================================
 # 👤 REGISTER
 # ==========================================
@@ -791,6 +849,46 @@ def reset_password():
     flash("✅ Password changed successfully. You can now login.", "success")
 
     return redirect(url_for("index"))
+
+@app.route("/change_password", methods=["POST"])
+@login_required
+def change_password():
+
+    current = request.form["current_password"]
+    new = request.form["new_password"]
+    confirm = request.form["confirm_password"]
+
+    if not current_user.check_password(current):
+        flash("كلمة المرور الحالية غير صحيحة", "danger")
+        return redirect(url_for("profile"))
+
+    if new != confirm:
+        flash("كلمتا المرور غير متطابقتين", "danger")
+        return redirect(url_for("profile"))
+
+    current_user.set_password(new)
+
+    db.session.commit()
+
+    flash("تم تغيير كلمة المرور بنجاح", "success")
+
+    return redirect(url_for("profile"))
+@app.route("/add-review", methods=["POST"])
+@login_required
+def add_review():
+
+    review = Review(
+        name=current_user.username,
+        message=request.form.get("message"),
+        stars=int(request.form.get("stars"))
+    )
+
+    db.session.add(review)
+    db.session.commit()
+
+    flash("تم إرسال تقييمك بنجاح 💕")
+
+    return redirect(url_for("home_logged"))
 # ==========================================
 # 👤 PROFILE
 # ==========================================
@@ -807,14 +905,14 @@ def profile():
         user_id=current_user.id
     ).count()
 
-    pending_orders = Order.query.filter_by(
+    pending_payment_orders = Order.query.filter_by(
         user_id=current_user.id,
-        status="Pending"
+        status="Pending Payment"
     ).count()
 
-    unpaid_orders = Order.query.filter_by(
+    pending_review_orders = Order.query.filter_by(
         user_id=current_user.id,
-        status="Unpaid"
+        status="Pending Review"
     ).count()
 
     processing_orders = Order.query.filter_by(
@@ -822,9 +920,14 @@ def profile():
         status="Processing"
     ).count()
 
-    completed_orders = Order.query.filter_by(
+    shipping_orders = Order.query.filter_by(
         user_id=current_user.id,
-        status="Completed"
+        status="Shipping"
+    ).count()
+
+    delivered_orders = Order.query.filter_by(
+        user_id=current_user.id,
+        status="Delivered"
     ).count()
 
     cancelled_orders = Order.query.filter_by(
@@ -836,7 +939,9 @@ def profile():
         user_id=current_user.id
     ).count()
 
-    wishlist_count = 0
+    wishlist_count = Wishlist.query.filter_by(
+        user_id=current_user.id
+    ).count()
 
     # ==========================
     # Orders Lists
@@ -848,29 +953,46 @@ def profile():
         Order.created_at.desc()
     ).all()
 
-    pending_list = Order.query.filter_by(
+    pending_payment_list = Order.query.filter_by(
         user_id=current_user.id,
-        status="Pending"
+        status="Pending Payment"
+    ).order_by(
+        Order.created_at.desc()
     ).all()
 
-    unpaid_list = Order.query.filter_by(
+    pending_review_list = Order.query.filter_by(
         user_id=current_user.id,
-        status="Unpaid"
+        status="Pending Review"
+    ).order_by(
+        Order.created_at.desc()
     ).all()
 
     processing_list = Order.query.filter_by(
         user_id=current_user.id,
         status="Processing"
+    ).order_by(
+        Order.created_at.desc()
     ).all()
 
-    completed_list = Order.query.filter_by(
+    shipping_list = Order.query.filter_by(
         user_id=current_user.id,
-        status="Completed"
+        status="Shipping"
+    ).order_by(
+        Order.created_at.desc()
+    ).all()
+
+    delivered_list = Order.query.filter_by(
+        user_id=current_user.id,
+        status="Delivered"
+    ).order_by(
+        Order.created_at.desc()
     ).all()
 
     cancelled_list = Order.query.filter_by(
         user_id=current_user.id,
         status="Cancelled"
+    ).order_by(
+        Order.created_at.desc()
     ).all()
 
     # ==========================
@@ -885,6 +1007,7 @@ def profile():
         current_user.birthday = request.form.get("birthday")
         current_user.gender = request.form.get("gender")
         current_user.nationality = request.form.get("nationality")
+
         # ==========================
         # Upload Profile Image
         # ==========================
@@ -916,29 +1039,79 @@ def profile():
 
         return redirect(url_for("profile"))
 
+    # ==========================
+    # Render
+    # ==========================
+
     return render_template(
+
         "profile.html",
 
         user=current_user,
 
         total_orders=total_orders,
-        pending_orders=pending_orders,
-        unpaid_orders=unpaid_orders,
+
+        pending_payment_orders=pending_payment_orders,
+        pending_review_orders=pending_review_orders,
         processing_orders=processing_orders,
-        completed_orders=completed_orders,
+        shipping_orders=shipping_orders,
+        delivered_orders=delivered_orders,
         cancelled_orders=cancelled_orders,
 
         cart_count=cart_count,
         wishlist_count=wishlist_count,
 
         orders=all_orders,
-        pending_list=pending_list,
-        unpaid_list=unpaid_list,
+
+        pending_payment_list=pending_payment_list,
+        pending_review_list=pending_review_list,
         processing_list=processing_list,
-        completed_list=completed_list,
+        shipping_list=shipping_list,
+        delivered_list=delivered_list,
         cancelled_list=cancelled_list
     )
+# ==========================================
+# 📦 GET USER ORDERS BY STATUS
+# ==========================================
 
+@app.route("/get-orders/<status>")
+@login_required
+def get_orders(status):
+
+    print("STATUS =", status)
+
+    orders = Order.query.filter_by(
+        user_id=current_user.id,
+        status=status
+    ).order_by(
+        Order.created_at.desc()
+    ).all()
+
+    result = []
+
+    for order in orders:
+
+        items = []
+
+        for item in order.items:
+
+            items.append({
+                "product_name": item.product.name,
+                "quantity": item.quantity,
+                "price": item.price
+            })
+
+        result.append({
+            "id": order.id,
+            "total": order.total,
+            "status": order.status,
+            "date": order.created_at.strftime("%Y-%m-%d"),
+            "shipping_company": order.shipping_company,
+            "tracking_number": order.tracking_number,
+            "items": items
+        })
+
+    return jsonify(result)
 @app.route("/upload_profile_image", methods=["POST"])
 @login_required
 def upload_profile_image():
@@ -1035,8 +1208,14 @@ def login():
 
             return redirect(url_for("index", verify=1))
 
+        # ==========================
         # تسجيل الدخول
+        # ==========================
+
         login_user(user, remember=True)
+
+        # حفظ معرف المستخدم في الـ session
+        session["user_id"] = user.id
 
         session["is_admin"] = (user.role == "admin")
 
@@ -1080,6 +1259,15 @@ def logout():
     flash("👋 You have been logged out.", "info")
 
     return redirect(url_for("index"))
+
+# ==========================================
+# 🛒 CART PAGE
+# ==========================================
+
+@app.route("/cart")
+@login_required
+def cart_page():
+    return render_template("cart.html")
 # ==========================================
 # 🛒 CART API
 # ==========================================
@@ -1310,20 +1498,35 @@ def api_checkout():
 
     data = request.get_json() or {}
 
-    name = data.get("name") or "Guest"
-    address = data.get("address") or ""
+    name = data.get("name", "").strip()
+    address = data.get("address", "").strip()
+
+    if not name or not address:
+        return jsonify({
+            "error": "Please complete all information."
+        }), 400
 
     user_id = session.get("user_id")
+
+    # ===============================
+    # البريد الإلكتروني
+    # ===============================
+    customer_email = ""
+
+    if user_id:
+        user = User.query.get(user_id)
+        if user:
+            customer_email = user.email
 
     cart_entries = []
     total = 0
 
+    # ===============================
+    # مستخدم مسجل
+    # ===============================
     if user_id:
 
         db_cart = get_db_cart_items(user_id)
-
-        if not db_cart:
-            return jsonify({"error": "Cart is empty"}), 400
 
         for item in db_cart:
 
@@ -1339,6 +1542,9 @@ def api_checkout():
                 "quantity": item.quantity
             })
 
+    # ===============================
+    # زائر
+    # ===============================
     else:
 
         for item in session_get_cart():
@@ -1348,62 +1554,228 @@ def api_checkout():
             if not product:
                 continue
 
-            quantity = item["quantity"]
-
-            total += product.price * quantity
+            total += product.price * item["quantity"]
 
             cart_entries.append({
                 "product": product,
-                "quantity": quantity
+                "quantity": item["quantity"]
             })
 
+    # ===============================
+    # إذا السلة فارغة
+    # ===============================
+    if not cart_entries:
+
+        return jsonify({
+            "error": "Cart is empty."
+        }), 400
+
+    # ===============================
+    # إنشاء الطلب
+    # ===============================
     order = Order(
+
         user_id=user_id,
         customer_name=name,
+        customer_email=customer_email,
         address=address,
-        total=0
+        payment_method="",
+        total=total,
+
+        # يبدأ دائماً بانتظار المراجعة
+        status="Pending Review"
+
     )
 
     db.session.add(order)
     db.session.flush()
 
+    # ===============================
+    # إضافة المنتجات
+    # ===============================
     for entry in cart_entries:
 
         product = entry["product"]
 
         db.session.add(
+
             OrderItem(
+
                 order_id=order.id,
                 product_id=product.id,
                 quantity=entry["quantity"],
                 price=product.price
+
             )
+
         )
 
-        if user_id:
+    # ===============================
+    # تفريغ السلة
+    # ===============================
+    if user_id:
 
-            cart_item = Cart.query.filter_by(
-                user_id=user_id,
-                product_id=product.id
-            ).first()
+        Cart.query.filter_by(user_id=user_id).delete()
 
-            if cart_item:
-                db.session.delete(cart_item)
+    else:
 
-    order.total = total
-
-    db.session.commit()
-
-    if not user_id:
         session_save_cart([])
 
+    # ===============================
+    # إنشاء إشعار للأدمن
+    # ===============================
+    notification = Notification(
+        message=f"🛍️ طلب جديد رقم #{order.id} من العميل {order.customer_name}"
+    )
+
+    db.session.add(notification)
+
+    # حفظ الطلب والإشعار معاً
+    db.session.commit()
+
+    # ===============================
+    # إرسال إيميل للأدمن
+    # ===============================
+    try:
+
+        products_text = ""
+
+        for entry in cart_entries:
+
+            product = entry["product"]
+
+            products_text += (
+                f"• {product.name}\n"
+                f"   الكمية: {entry['quantity']}\n"
+                f"   السعر: {product.price:.2f} ر.س\n\n"
+            )
+
+        msg = MailMessage(
+
+            subject=f"🛍️ طلب جديد رقم #{order.id}",
+
+            recipients=["rema7122002@gmail.com"]
+
+        )
+
+        msg.body = f"""
+السلام عليكم،
+
+لديك طلب جديد في متجر Crochet Rory Store 🎉
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+📦 رقم الطلب:
+#{order.id}
+
+👤 اسم العميل:
+{order.customer_name}
+
+📧 البريد الإلكتروني:
+{order.customer_email if order.customer_email else "لا يوجد"}
+
+📍 عنوان التوصيل:
+{order.address}
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+🛍️ تفاصيل الطلب:
+
+{products_text}
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+💰 إجمالي الطلب:
+{order.total:.2f} ر.س
+
+━━━━━━━━━━━━━━━━━━━━━━
+
+الحالة الحالية:
+بانتظار المراجعة
+
+يرجى تسجيل الدخول إلى لوحة التحكم لمراجعة الطلب.
+
+مع تحيات،
+Crochet Rory Store
+"""
+
+        mail.send(msg)
+
+    except Exception as e:
+
+        print("Order Mail Error:", e)
+
     return jsonify({
-        "message": "Checkout successful!",
-        "order_id": order.id,
-        "total": order.total
+
+        "success": True,
+        "order_id": order.id
+
     })
 
+@app.route("/admin/orders/delete", methods=["POST"])
+@login_required
+def delete_orders():
 
+    if current_user.role != "admin":
+        return jsonify({
+            "success": False,
+            "error": "Access denied."
+        }), 403
+
+    data = request.get_json() or {}
+
+    order_ids = data.get("order_ids", [])
+
+    if not order_ids:
+        return jsonify({
+            "success": False,
+            "error": "No orders selected."
+        })
+
+    try:
+
+        for order_id in order_ids:
+
+            # حذف منتجات الطلب أولاً
+            OrderItem.query.filter_by(
+                order_id=order_id
+            ).delete()
+
+            # حذف الطلب
+            Order.query.filter_by(
+                id=order_id
+            ).delete()
+
+        db.session.commit()
+
+        return jsonify({
+            "success": True
+        })
+
+    except Exception as e:
+
+        db.session.rollback()
+
+        print("Delete Orders Error:", e)
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        })
+@app.before_request
+def count_visitors():
+
+    # لا نسجل ملفات static
+    if request.path.startswith("/static"):
+        return
+
+    visitor = Visitor(
+        ip_address=request.remote_addr,
+        page=request.path
+    )
+
+    db.session.add(visitor)
+    db.session.commit()
 # ==========================================
 # 👑 ADMIN
 # ==========================================
@@ -1433,14 +1805,172 @@ def admin_home():
 
     return render_template(
         "admin/admin_home.html",
+
         product_count=Product.query.count(),
+
         order_count=Order.query.count(),
+
         user_count=User.query.count(),
-        new_messages=Message.query.filter_by(is_read=False).count(),
-        orders=Order.query.order_by(Order.id.desc()).limit(5).all()
+
+        visitor_count=Visitor.query.count(),
+
+        new_messages=Message.query.filter_by(
+            is_read=False
+        ).count(),
+
+        orders=Order.query.order_by(
+            Order.id.desc()
+        ).limit(5).all()
     )
 
+# ==========================================
+# 📦 ADMIN ORDERS
+# ==========================================
 
+@app.route("/admin/orders")
+@login_required
+def admin_orders():
+
+    # السماح للأدمن فقط
+    if current_user.role != "admin":
+        flash("⚠️ Access denied! Admins only.", "danger")
+        return redirect(url_for("home_logged"))
+
+    # ======================================
+    # جعل إشعارات الطلبات مقروءة
+    # ======================================
+    Notification.query.filter_by(
+        is_read=False
+    ).update({
+        Notification.is_read: True
+    })
+
+    db.session.commit()
+
+    # ======================================
+    # فلترة الطلبات
+    # ======================================
+    status = request.args.get("status", "all")
+
+    query = Order.query.order_by(Order.id.desc())
+
+    if status != "all":
+        query = query.filter_by(status=status)
+
+    orders = query.all()
+
+    # ======================================
+    # عداد الحالات
+    # ======================================
+    counts = {
+        "all": Order.query.count(),
+        "Pending Payment": Order.query.filter_by(status="Pending Payment").count(),
+        "Pending Review": Order.query.filter_by(status="Pending Review").count(),
+        "Processing": Order.query.filter_by(status="Processing").count(),
+        "Completed": Order.query.filter_by(status="Completed").count(),
+        "Shipping": Order.query.filter_by(status="Shipping").count(),
+        "Delivered": Order.query.filter_by(status="Delivered").count(),
+        "Cancelled": Order.query.filter_by(status="Cancelled").count(),
+    }
+
+    return render_template(
+        "admin/admin_orders.html",
+        orders=orders,
+        counts=counts,
+        current_status=status
+    )
+@app.context_processor
+def inject_admin_notifications():
+
+    unread_notifications = Notification.query.filter_by(
+        is_read=False
+    ).count()
+
+    return dict(
+        unread_notifications=unread_notifications
+    )
+# ==========================================
+# 📦 UPDATE ORDER STATUS
+# ==========================================
+
+@app.route("/admin/orders/update-status", methods=["POST"])
+@login_required
+def update_order_status():
+
+    if not session.get("is_admin"):
+        return jsonify({"success": False}), 403
+
+    data = request.get_json()
+
+    order_ids = data.get("order_ids", [])
+    status = data.get("status")
+
+    if not order_ids or not status:
+        return jsonify({
+            "success": False,
+            "message": "Missing data."
+        }), 400
+
+    orders = Order.query.filter(
+        Order.id.in_(order_ids)
+    ).all()
+
+    for order in orders:
+        order.status = status
+
+    db.session.commit()
+
+    return jsonify({
+        "success": True
+    })
+
+
+@app.route("/admin/orders/<int:order_id>")
+def admin_order_detail(order_id):
+
+    order = Order.query.get_or_404(order_id)
+
+    return render_template(
+        "admin/order_detail.html",
+        order=order
+    )
+
+@app.route("/admin/orders/<int:order_id>/update", methods=["POST"])
+def update_order_detail(order_id):
+
+    order = Order.query.get_or_404(order_id)
+
+    order.status = request.form.get("status")
+    order.tracking_number = request.form.get("tracking_number")
+    order.shipping_company = request.form.get("shipping_company")
+
+    db.session.commit()
+
+    return redirect(
+        url_for(
+            "admin_order_detail",
+            order_id=order.id
+        )
+    )
+
+# ==========================================
+# 🧾 PRINT INVOICE
+# ==========================================
+
+@app.route("/admin/invoice/<int:order_id>")
+@login_required
+def admin_invoice(order_id):
+
+    if current_user.role != "admin":
+        flash("⚠️ Access denied! Admins only.", "danger")
+        return redirect(url_for("home_logged"))
+
+    order = Order.query.get_or_404(order_id)
+
+    return render_template(
+        "admin/invoice.html",
+        order=order
+    )
 # ==========================================
 # 🧶 ADD PRODUCT
 # ==========================================

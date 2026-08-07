@@ -1,0 +1,454 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}
+تفاصيل الطلب
+{% endblock %}
+
+
+{% block content %}
+
+
+<style>
+
+.order-card{
+
+    background:white;
+    border-radius:18px;
+    padding:25px;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    margin-bottom:25px;
+
+}
+
+
+.order-title{
+
+    color:#e26fa7;
+    margin-bottom:20px;
+
+}
+
+
+.info{
+
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+
+}
+
+
+.info div{
+
+    background:#fff5f9;
+    padding:15px;
+    border-radius:12px;
+
+}
+
+
+.form-control{
+
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #ddd;
+    margin:10px 0 15px;
+
+}
+
+
+table{
+
+    width:100%;
+    border-collapse:collapse;
+
+}
+
+
+th{
+
+    background:#fff4f8;
+    padding:15px;
+
+}
+
+
+td{
+
+    padding:15px;
+    text-align:center;
+    border-bottom:1px solid #eee;
+
+}
+
+
+.product-img{
+
+    width:60px;
+    height:60px;
+    object-fit:cover;
+    border-radius:10px;
+
+}
+
+
+.save-btn{
+
+    background:#e26fa7;
+    color:white;
+    border:none;
+    padding:12px 25px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+
+}
+
+
+.save-btn:hover{
+
+    background:#cf5d95;
+
+}
+
+
+.back-btn{
+
+    display:inline-block;
+    background:#e26fa7;
+    color:white;
+    padding:10px 20px;
+    border-radius:8px;
+    text-decoration:none;
+
+}
+.print-btn{
+
+    background:#4CAF50;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-left:10px;
+    font-size:15px;
+
+}
+
+.print-btn:hover{
+
+    background:#43a047;
+
+}
+
+@media print{
+
+    .sidebar,
+    .navbar,
+    .back-btn,
+    .print-btn,
+    form{
+
+        display:none !important;
+
+    }
+
+    body{
+
+        background:white;
+
+    }
+
+    .order-card{
+
+        box-shadow:none;
+        border:1px solid #ddd;
+        margin:0;
+        page-break-inside:avoid;
+
+    }
+
+}
+
+
+</style>
+
+
+
+<div class="order-card">
+
+<div style="text-align:center;margin-bottom:25px;">
+
+<h1 style="color:#e26fa7;margin:0;">
+Crochet Rory Store
+</h1>
+
+<p style="margin-top:8px;color:#666;">
+فاتورة طلب
+</p>
+
+</div>
+
+
+<div class="info">
+
+
+<div>
+<strong>العميل:</strong>
+{{ order.customer_name }}
+</div>
+
+
+<div>
+<strong>البريد:</strong>
+{{ order.customer_email or "-" }}
+</div>
+
+
+<div>
+<strong>العنوان:</strong>
+{{ order.address or "-" }}
+</div>
+
+
+<div>
+<strong>طريقة الدفع:</strong>
+{{ order.payment_method or "-" }}
+</div>
+
+
+<div>
+<strong>الحالة:</strong>
+{{ order.status }}
+</div>
+
+
+<div>
+<strong>التاريخ:</strong>
+{{ order.created_at.strftime("%Y-%m-%d") if order.created_at else "-" }}
+</div>
+
+
+</div>
+
+</div>
+
+
+
+
+<!-- تحديث الطلب -->
+
+<div class="order-card">
+
+
+<h3>
+📦 تحديث الطلب
+</h3>
+
+
+<form method="POST"
+action="{{ url_for('update_order_detail', order_id=order.id) }}">
+
+
+<label>
+حالة الطلب
+</label>
+
+
+<select name="status" class="form-control">
+
+
+<option value="Pending Payment"
+{% if order.status=="Pending Payment" %}selected{% endif %}>
+بانتظار الدفع
+</option>
+
+
+<option value="Pending Review"
+{% if order.status=="Pending Review" %}selected{% endif %}>
+بانتظار المراجعة
+</option>
+
+
+<option value="Processing"
+{% if order.status=="Processing" %}selected{% endif %}>
+قيد التنفيذ
+</option>
+
+
+<option value="Completed"
+{% if order.status=="Completed" %}selected{% endif %}>
+تم التنفيذ
+</option>
+
+
+<option value="Shipping"
+{% if order.status=="Shipping" %}selected{% endif %}>
+جاري التوصيل
+</option>
+
+
+<option value="Delivered"
+{% if order.status=="Delivered" %}selected{% endif %}>
+تم التسليم
+</option>
+
+
+<option value="Cancelled"
+{% if order.status=="Cancelled" %}selected{% endif %}>
+ملغاة
+</option>
+
+
+</select>
+
+
+
+<label>
+شركة الشحن
+</label>
+
+
+<input
+type="text"
+name="shipping_company"
+class="form-control"
+value="{{ order.shipping_company or '' }}"
+placeholder="مثال: DHL"
+>
+
+
+
+<label>
+رقم التتبع
+</label>
+
+
+<input
+type="text"
+name="tracking_number"
+class="form-control"
+value="{{ order.tracking_number or '' }}"
+placeholder="رقم الشحنة"
+>
+
+
+
+<button type="submit" class="save-btn">
+
+💾 حفظ التعديلات
+
+</button>
+
+
+</form>
+
+
+</div>
+
+
+
+
+
+<!-- المنتجات -->
+
+<div class="order-card">
+
+
+<h3>
+🛒 المنتجات
+</h3>
+
+
+<table>
+
+
+<tr>
+
+<th>الصورة</th>
+<th>المنتج</th>
+<th>الكمية</th>
+<th>السعر</th>
+<th>الإجمالي</th>
+
+</tr>
+
+
+
+{% for item in order.items %}
+
+<tr>
+
+
+<td>
+
+{% if item.product.image %}
+
+<img 
+src="{{ url_for('static', filename='uploads/' + item.product.image) }}"
+class="product-img">
+
+{% else %}
+
+-
+
+{% endif %}
+
+</td>
+
+
+<td>
+{{ item.product.name }}
+</td>
+
+
+<td>
+{{ item.quantity }}
+</td>
+
+
+<td>
+{{ "%.2f"|format(item.price) }} ر.س
+</td>
+
+
+<td>
+{{ "%.2f"|format(item.price * item.quantity) }} ر.س
+</td>
+
+
+</tr>
+
+
+{% endfor %}
+
+
+</table>
+
+
+
+<h3 style="text-align:left;margin-top:20px">
+
+الإجمالي:
+{{ "%.2f"|format(order.total) }} ر.س
+
+</h3>
+
+
+</div>
+
+
+
+<button onclick="window.print()" class="print-btn">
+    🖨️ طباعة الفاتورة
+</button>
+
+<a href="{{ url_for('admin_orders') }}" class="back-btn">
+
+⬅ العودة للطلبات
+
+</a>
+
+
+{% endblock %}

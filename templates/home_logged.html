@@ -56,15 +56,19 @@
 
     <div class="logo-section">
 
-        <h1>
-            {{ "متجر روري للكروشيه" if current_lang == "ar"
-            else "Crochet Rory Store" }}
-        </h1>
 
         <img src="{{ url_for('static', filename='images/logo.png') }}"
              class="logo">
 
     </div>
+
+</div>
+<div class="section-title">
+
+        <h1>
+            {{ "متجر روري للكروشيه" if current_lang == "ar"
+            else "Crochet Rory Store" }}
+        </h1>
 
 </div>
 
@@ -212,9 +216,9 @@ padding:20px 70px;
         <button
         onclick="window.location.href='{{ url_for('products_page') }}'">
 
-            {{ "🧶 ابحث عن منتجك المفضل"
+            {{ " ابحث عن منتجك المفضل"
             if current_lang=="ar"
-            else "🧶 Find Your Favorite Product" }}
+            else "Find Your Favorite Product" }}
 
         </button>
 
@@ -258,58 +262,22 @@ padding:20px 70px;
 
 <!-- ===== PRODUCTS ===== -->
 
-<section id="products">
+<section class="product-section">
 
-<style>
+    <!-- عنوان القسم -->
+    <div class="section-title">
 
-.view-btn{
+        <h2>
+            {{ "✨ مجموعة روري المميزة" if current_lang=="ar" else "✨ Rory's Featured Collection" }}
+        </h2>
 
-    display:block;
+        <p>
+            {{ "اكتشف أجمل منتجات الكروشيه المصنوعة يدويًا بكل حب وعناية." if current_lang=="ar" else "Discover our handmade crochet creations, crafted with love and care." }}
+        </p>
 
-    width:100%;
+    </div>
 
-    margin-top:12px;
-
-    padding:12px;
-
-    background:white;
-
-    color:#C97C8F;
-
-    border:2px solid #C97C8F;
-
-    border-radius:12px;
-
-    text-decoration:none;
-
-    text-align:center;
-
-    font-weight:bold;
-
-    transition:.3s;
-
-    box-sizing:border-box;
-
-}
-
-.view-btn:hover{
-
-    background:#C97C8F;
-
-    color:white;
-
-}
-
-</style>
-
-    <h2 class="section-title">
-
-        {{ "🧸 إبداعاتنا الجميلة 🧸"
-        if current_lang=="ar"
-        else "🧸 Our Lovely Creations 🧸" }}
-
-    </h2>
-
+    <!-- شبكة المنتجات -->
     <div class="product-grid">
 
         {% if products %}
@@ -318,61 +286,60 @@ padding:20px 70px;
 
             <div class="product">
 
-                <img
-                src="{{ url_for('static', filename='images/' ~ product.image) }}"
-                alt="{{ product.name }}">
+                <img src="{{ url_for('static', filename='images/' ~ product.image) }}"
+                     alt="{{ product.name }}">
 
                 <h3>{{ product.name }}</h3>
 
-                <p>{{ product.description }}</p>
-
-                <p class="price">
-                    {{ product.price }} SAR
+                <p class="description">
+                    {{ product.description }}
                 </p>
 
-                <p class="stars">★★★★★</p>
-
-                <div class="quantity-box">
-
-                    <button
-                    class="quantity-btn"
-                    onclick="changeQuantity({{ product.id }},-1)">
-                        −
-                    </button>
-
-                    <span
-                    id="qty-{{ product.id }}"
-                    class="quantity-display">
-                        1
-                    </span>
-
-                    <button
-                    class="quantity-btn"
-                    onclick="changeQuantity({{ product.id }},1)">
-                        +
-                    </button>
-
+                <div class="rating">
+                    ★★★★★
                 </div>
 
-                <button
-                class="add-cart-btn"
-                onclick="addToCart({{ product.id }})">
+                <p class="price">
+                    {{ product.price }}
+                    {{ "ر.س" if current_lang=="ar" else "SAR" }}
+                </p>
 
-                    {{ "🛒 أضف إلى السلة"
-                    if current_lang=="ar"
-                    else "🛒 Add to Cart" }}
+                <div class="bottom">
 
-                </button>
+                    <div class="quantity-box">
 
-                <a
-                href="{{ url_for('product_details', product_id=product.id) }}"
-                class="view-btn">
+                        <button class="quantity-btn"
+                                onclick="changeQuantity({{ product.id }}, -1)">
+                            −
+                        </button>
 
-                    {{ "📄 عرض التفاصيل"
-                    if current_lang=="ar"
-                    else "📄 View Details" }}
+                        <span id="qty-{{ product.id }}"
+                              class="quantity-display">
+                            1
+                        </span>
 
-                </a>
+                        <button class="quantity-btn"
+                                onclick="changeQuantity({{ product.id }}, 1)">
+                            +
+                        </button>
+
+                    </div>
+
+                    <button class="add-cart-btn"
+                            onclick="addToCart({{ product.id }})">
+
+                        🛒 {{ "إضافة للسلة" if current_lang=="ar" else "Add to Cart" }}
+
+                    </button>
+
+                    <a href="{{ url_for('product_details', product_id=product.id) }}"
+                       class="view-btn">
+
+                        {{ "📄 عرض التفاصيل" if current_lang=="ar" else "📄 View Details" }}
+
+                    </a>
+
+                </div>
 
             </div>
 
@@ -380,12 +347,8 @@ padding:20px 70px;
 
         {% else %}
 
-            <p>
-
-                {{ "لا توجد منتجات حالياً."
-                if current_lang=="ar"
-                else "No products available." }}
-
+            <p class="no-products">
+                {{ "لا توجد منتجات حالياً." if current_lang=="ar" else "No products available yet." }}
             </p>
 
         {% endif %}
@@ -394,153 +357,595 @@ padding:20px 70px;
 
 </section>
 
+<style>
+
+
+/* ===========================
+   PRODUCTS SECTION
+=========================== */
+
+.product-section{
+    width:100%;
+    max-width:1400px;
+    margin:auto;
+    padding:40px 25px 60px;
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.section-title h2{
+    font-size:38px;
+    color:#d86f9d;
+    font-weight:700;
+    margin-bottom:12px;
+}
+
+.section-title p{
+    max-width:650px;
+    margin:auto;
+    color:#777;
+    font-size:16px;
+    line-height:1.8;
+}
+
+/* ===========================
+   PRODUCT GRID
+=========================== */
+
+.product-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:25px;
+}
+.section-title{
+    text-align:center;
+    padding:45px 20px 35px;
+}
+
+.section-title h2{
+    font-size:56px;
+    font-weight:800;
+    color:#d88ea4;
+    margin:0;
+    letter-spacing:1px;
+    line-height:1.2;
+}
+
+.section-title p{
+    margin-top:18px;
+    font-size:20px;
+    color:#777;
+    max-width:750px;
+    margin-left:auto;
+    margin-right:auto;
+    line-height:1.8;
+}
+
+/* iPad */
+@media (max-width:992px){
+
+.section-title h2{
+    font-size:46px;
+}
+
+.section-title p{
+    font-size:18px;
+}
+
+}
+
+/* Mobile */
+@media (max-width:768px){
+
+.section-title{
+    padding:30px 15px 25px;
+}
+
+.section-title h2{
+    font-size:34px;
+}
+
+.section-title p{
+    font-size:15px;
+}
+
+}
+/* ===========================
+   PRODUCT CARD
+=========================== */
+/* ===========================
+   STORE BANNER
+=========================== */
+
+.store-banner{
+    text-align:center;
+    padding:60px 20px;
+    background:#fff;
+}
+
+.store-banner h1{
+    margin:0;
+    color:#d86f9d;
+    font-size:clamp(2.2rem, 6vw, 5rem);
+    font-weight:800;
+    letter-spacing:1px;
+    line-height:1.2;
+}
+
+.store-banner p{
+    margin-top:18px;
+    color:#777;
+    font-size:clamp(1rem, 2vw, 1.4rem);
+    line-height:1.8;
+}
+
+/* ===========================
+   Tablet
+=========================== */
+
+@media (max-width:992px){
+
+.store-banner{
+    padding:50px 20px;
+}
+
+}
+
+/* ===========================
+   Mobile
+=========================== */
+
+@media (max-width:768px){
+
+.store-banner{
+    padding:40px 15px;
+}
+
+.store-banner p{
+    max-width:90%;
+    margin:15px auto 0;
+}
+
+}
+.product{
+    background:#fff;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    transition:.3s;
+    display:flex;
+    flex-direction:column;
+    height:100%;
+}
+
+.product:hover{
+    transform:translateY(-6px);
+    box-shadow:0 15px 35px rgba(0,0,0,.12);
+}
+
+.product img{
+    width:100%;
+    aspect-ratio:1/1;
+    object-fit:cover;
+    display:block;
+    background:#fafafa;
+}
+
+.product h3{
+    padding:16px 16px 8px;
+    font-size:18px;
+    color:#333;
+    font-weight:600;
+}
+
+.description{
+    padding:0 16px;
+    color:#777;
+    font-size:14px;
+    line-height:1.7;
+
+    display:-webkit-box;
+    -webkit-line-clamp:3;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+
+    min-height:72px;
+}
+
+.rating{
+    padding:10px 16px 5px;
+    color:#FDBA12;
+    font-size:16px;
+}
+
+.price{
+    padding:0 16px;
+    color:#d86f9d;
+    font-size:28px;
+    font-weight:bold;
+}
+
+.bottom{
+    margin-top:auto;
+    padding:18px 16px;
+}
+
+/* ===========================
+   QUANTITY
+=========================== */
+
+.quantity-box{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:14px;
+    margin-bottom:15px;
+}
+
+.quantity-btn{
+    width:40px;
+    height:40px;
+    border:none;
+    border-radius:50%;
+    background:#d86f9d;
+    color:#fff;
+    font-size:22px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.quantity-btn:hover{
+    background:#c75a87;
+}
+
+.quantity-display{
+    min-width:25px;
+    text-align:center;
+    font-size:18px;
+    font-weight:bold;
+}
+
+/* ===========================
+   BUTTONS
+=========================== */
+
+.add-cart-btn{
+    width:100%;
+    border:none;
+    padding:13px;
+    background:#d86f9d;
+    color:#fff;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:600;
+    transition:.3s;
+}
+
+.add-cart-btn:hover{
+    background:#c75a87;
+}
+
+.view-btn{
+    display:block;
+    width:100%;
+    margin-top:12px;
+    padding:12px;
+    background:#fff;
+    color:#d86f9d;
+    border:2px solid #d86f9d;
+    border-radius:12px;
+    text-decoration:none;
+    text-align:center;
+    font-weight:600;
+    transition:.3s;
+    box-sizing:border-box;
+}
+
+.view-btn:hover{
+    background:#d86f9d;
+    color:#fff;
+}
+
+.no-products{
+    text-align:center;
+    font-size:18px;
+    color:#777;
+    padding:60px;
+}
+
+/* ===========================
+   TABLET
+=========================== */
+
+@media (max-width:992px){
+
+.product-section{
+    padding:35px 20px;
+}
+
+.product-grid{
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.section-title h2{
+    font-size:32px;
+}
+
+}
+
+/* ===========================
+   MOBILE
+=========================== */
+
+@media (max-width:768px){
+
+.product-section{
+    padding:25px 15px;
+}
+
+.product-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.section-title{
+    margin-bottom:30px;
+}
+
+.section-title h2{
+    font-size:26px;
+}
+
+.section-title p{
+    font-size:14px;
+}
+
+.product h3{
+    font-size:15px;
+}
+
+.description{
+    font-size:12px;
+    min-height:58px;
+}
+
+.price{
+    font-size:20px;
+}
+
+.quantity-btn{
+    width:34px;
+    height:34px;
+    font-size:18px;
+}
+
+.add-cart-btn,
+.view-btn{
+    font-size:13px;
+    padding:10px;
+}
+
+}
+
+/* ===========================
+   SMALL MOBILE
+=========================== */
+
+@media (max-width:480px){
+
+.product-grid{
+    gap:12px;
+}
+
+.section-title h2{
+    font-size:22px;
+}
+
+.description{
+    -webkit-line-clamp:2;
+    min-height:42px;
+}
+
+.price{
+    font-size:18px;
+}
+
+.quantity-btn{
+    width:30px;
+    height:30px;
+}
+
+}
+.view-btn{
+    display:block;
+    width:100%;
+    margin-top:12px;
+    padding:12px;
+    background:#fff;
+    color:#C97C8F;
+    border:2px solid #C97C8F;
+    border-radius:12px;
+    text-decoration:none;
+    text-align:center;
+    font-weight:600;
+    transition:.3s;
+    box-sizing:border-box;
+}
+
+.view-btn:hover{
+    background:#C97C8F;
+    color:#fff;
+}
+
+</style>
 
 
 
-<!-- ====== REVIEWS SECTION ====== -->
-<section id="reviews" style="background-color:#ffcbe1; padding:60px 20px; text-align:center;">
+<!-- ==========================
+        ADD REVIEW
+========================== -->
 
-  <h2 style="color:#e26fa7; font-size:2rem; margin-bottom:30px;">
+<section id="reviews" class="reviews-section">
 
-    {{ "💬 آراء العملاء 💬" if current_lang == "ar"
-    else "💬 Customer Reviews 💬" }}
+    <h2 class="section-title">
+        {{ "💬 أضف تقييمك 💬" if current_lang == "ar"
+        else "💬 Add Your Review 💬" }}
+    </h2>
 
-  </h2>
-
-  <!-- نموذج المراجعة -->
-  <div style="max-width:600px; margin:0 auto 40px; background:white; border-radius:15px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+    <p class="reviews-subtitle">
+        {{ "شاركنا رأيك بعد استلام طلبك ❤️"
+        if current_lang == "ar"
+        else "Share your experience after receiving your order ❤️" }}
+    </p>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div style="background-color:#e26fa7; color:white; padding:10px; border-radius:10px; margin-bottom:10px;">
-            {{ message }}
-          </div>
-        {% endfor %}
-      {% endif %}
+        {% if messages %}
+            {% for category, message in messages %}
+
+                <div class="review-success">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+        {% endif %}
     {% endwith %}
 
-    <form method="POST" action="{{ url_for('home_logged') }}">
+    <form method="POST"
+          action="{{ url_for('add_review') }}"
+          class="review-form">
 
-      <input type="text"
-             name="name"
-             placeholder="{{ 'اسمك' if current_lang == 'ar' else 'Your Name' }}"
-             required
-             style="padding:10px; width:80%; border-radius:10px; border:1px solid #ccc; margin-bottom:15px;">
+        <textarea
+            name="message"
+            required
+            placeholder="{{ 'اكتب رأيك هنا...' if current_lang=='ar' else 'Write your review here...' }}"></textarea>
 
-      <br>
+        <label>
+            {{ "التقييم" if current_lang=="ar" else "Rating" }}
+        </label>
 
-      <textarea
-          name="message"
-          placeholder="{{ 'اكتب رأيك هنا...' if current_lang == 'ar' else 'Write your review here...' }}"
-          required
-          style="padding:10px; width:80%; height:100px; border-radius:10px; border:1px solid #ccc; margin-bottom:15px;"></textarea>
+        <select name="stars" required>
 
-      <br>
+            <option value="5">
+                ★★★★★ -
+                {{ "ممتاز" if current_lang=="ar" else "Excellent" }}
+            </option>
 
-      <label style="color:#e26fa7; font-weight:bold;">
+            <option value="4">
+                ★★★★☆ -
+                {{ "جيد" if current_lang=="ar" else "Good" }}
+            </option>
 
-        {{ "تقييمك:" if current_lang == "ar" else "Your Rating:" }}
+            <option value="3">
+                ★★★☆☆ -
+                {{ "متوسط" if current_lang=="ar" else "Average" }}
+            </option>
 
-      </label>
+            <option value="2">
+                ★★☆☆☆ -
+                {{ "ضعيف" if current_lang=="ar" else "Poor" }}
+            </option>
 
-      <br>
+            <option value="1">
+                ★☆☆☆☆ -
+                {{ "سيئ" if current_lang=="ar" else "Bad" }}
+            </option>
 
-      <select name="stars"
-              required
-              style="padding:10px; border-radius:10px; border:1px solid #ccc; margin:10px 0;">
+        </select>
 
-        <option value="5">
-          {{ "★★★★★ - ممتاز" if current_lang == "ar" else "★★★★★ - Excellent" }}
-        </option>
-
-        <option value="4">
-          {{ "★★★★☆ - جيد" if current_lang == "ar" else "★★★★☆ - Good" }}
-        </option>
-
-        <option value="3">
-          {{ "★★★☆☆ - متوسط" if current_lang == "ar" else "★★★☆☆ - Average" }}
-        </option>
-
-        <option value="2">
-          {{ "★★☆☆☆ - ضعيف" if current_lang == "ar" else "★★☆☆☆ - Poor" }}
-        </option>
-
-        <option value="1">
-          {{ "★☆☆☆☆ - سيئ" if current_lang == "ar" else "★☆☆☆☆ - Bad" }}
-        </option>
-
-      </select>
-
-      <br>
-
-      <button type="submit"
-              style="background-color:#e26fa7; color:white; border:none; padding:10px 20px; border-radius:20px; cursor:pointer;">
-
-        {{ "إرسال التقييم" if current_lang == "ar" else "Submit Review" }}
-
-      </button>
+        <button type="submit">
+            {{ "إرسال التقييم" if current_lang=="ar"
+            else "Submit Review" }}
+        </button>
 
     </form>
 
-  </div>
-
-  <!-- عرض المراجعات -->
-  <div style="max-width:800px; margin:auto; display:flex; flex-direction:column; gap:20px;">
-
-    {% for review in reviews %}
-
-      <div style="background:white; border-radius:15px; padding:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:left;">
-
-        <p style="color:#fbc02d; font-size:1.2rem;">
-          {% for i in range(review.stars) %}★{% endfor %}
-          {% for i in range(5-review.stars) %}☆{% endfor %}
-        </p>
-
-        <p style="margin-bottom:5px;">
-          {{ review.message }}
-        </p>
-
-        <strong style="color:#e26fa7;">
-          - {{ review.name }}
-        </strong>
-
-        {% if review.admin_reply %}
-
-        <div class="admin-reply"
-             style="background:#fff5fa; padding:12px; border-radius:10px; margin-top:10px; border-left:4px solid #e26fa7;">
-
-          <strong style="color:#e26fa7;">
-
-            {{ "💌 رد الإدارة:" if current_lang == "ar" else "💌 Admin Reply:" }}
-
-          </strong>
-
-          <p style="margin:5px 0 0;">
-            {{ review.admin_reply }}
-          </p>
-
-        </div>
-
-        {% endif %}
-
-      </div>
-
-    {% else %}
-
-      <p style="color:#555;">
-
-        {{ "لا توجد مراجعات حتى الآن. كن أول من يشارك تجربته! 💕"
-        if current_lang == "ar"
-        else "No reviews yet. Be the first to share your experience! 💕" }}
-
-      </p>
-
-    {% endfor %}
-
-  </div>
-
 </section>
+
+<style>
+
+.reviews-section{
+
+    max-width:700px;
+    margin:70px auto;
+    background:#fff;
+    border-radius:20px;
+    padding:35px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+
+}
+
+.reviews-subtitle{
+
+    text-align:center;
+    color:#777;
+    margin-top:-10px;
+    margin-bottom:25px;
+
+}
+
+.review-success{
+
+    background:#e26fa7;
+    color:#fff;
+    padding:12px;
+    border-radius:10px;
+    text-align:center;
+    margin-bottom:20px;
+
+}
+
+.review-form{
+
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+
+}
+
+.review-form textarea{
+
+    min-height:140px;
+    border:1px solid #ddd;
+    border-radius:12px;
+    padding:15px;
+    resize:vertical;
+    font-size:15px;
+
+}
+
+.review-form select{
+
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #ddd;
+
+}
+
+.review-form button{
+
+    background:#e26fa7;
+    color:#fff;
+    border:none;
+    padding:14px;
+    border-radius:12px;
+    font-size:16px;
+    cursor:pointer;
+    transition:.3s;
+
+}
+
+.review-form button:hover{
+
+    background:#d05590;
+
+}
+
+</style>
 
 
 

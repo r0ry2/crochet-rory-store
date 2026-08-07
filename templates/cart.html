@@ -1,63 +1,305 @@
 {% extends "base_logged.html" %}
-{% block title %}My Cart | Crochet Rory Store{% endblock %}
+
+{% block title %}
+{{ "سلة التسوق" if current_lang=="ar" else "My Shopping Cart" }}
+{% endblock %}
+
 {% block content %}
 
 <section class="cart-page">
 
     <h1 class="cart-title">
-        🛒 {{ "سلة التسوق" if current_lang == "ar" else "My Shopping Cart" }}
+
+        🛒 {{ "سلة التسوق" if current_lang=="ar" else "My Shopping Cart" }}
+
     </h1>
 
-    <div class="cart-container">
+    <div class="cart-layout">
 
-        <!-- المنتجات -->
+        <!-- ===========================
+             LEFT SIDE
+        ============================ -->
+
         <div class="cart-left">
 
-            <div id="cartItems">
+            <!-- Address -->
+
+            <div class="cart-card">
+
+                <div class="card-header">
+
+                    <h2>
+
+                        📍 {{ "عنوان التوصيل" if current_lang=="ar" else "Delivery Address" }}
+
+                    </h2>
+
+                    <button class="edit-btn">
+
+                        {{ "تغيير" if current_lang=="ar" else "Change" }}
+
+                    </button>
+
+                </div>
+
+                <div class="address-content">
+
+                    <div class="address-name">
+
+                        {{ current_user.name }}
+
+                    </div>
+
+                    <div class="address-phone">
+
+                        {{ current_user.phone }}
+
+                    </div>
+
+                    <div class="address-text">
+
+                        {{ "لم تتم إضافة عنوان بعد." if current_lang=="ar"
+                        else "No address added yet." }}
+
+                    </div>
+
+                </div>
+
             </div>
 
-            <div id="emptyCart" class="empty-cart">
+            <!-- Products -->
 
-                <h2>
-                    {{ "سلتك فارغة 🧺" if current_lang == "ar" else "Your Cart is Empty 🧺" }}
-                </h2>
+            <div class="cart-card">
 
-                <p>
-                    {{ "يبدو أنك لم تضف أي منتج بعد." if current_lang == "ar"
-                    else "Looks like you haven't added anything yet." }}
-                </p>
+                <div class="card-header">
 
-                <a href="{{ url_for('products_page') }}"
-                   class="continue-shopping">
+                    <h2>
 
-                    {{ "متابعة التسوق" if current_lang == "ar"
-                    else "Continue Shopping" }}
+                        🛍 {{ "المنتجات" if current_lang=="ar" else "Products" }}
 
-                </a>
+                    </h2>
+
+                    <span id="itemsCount">
+
+                        0 {{ "منتج" if current_lang=="ar" else "Items" }}
+
+                    </span>
+
+                </div>
+
+                <div id="cartItems">
+
+                    <!-- المنتجات ستظهر هنا بواسطة JavaScript -->
+
+                </div>
+
+                <div
+                    id="emptyCart"
+                    class="empty-cart"
+                    style="display:none;">
+
+                    <img
+                        src="{{ url_for('static', filename='images/empty_cart.png') }}"
+                        alt="empty">
+
+                    <h3>
+
+                        {{ "سلتك فارغة 🧺"
+                        if current_lang=="ar"
+                        else "Your Cart is Empty 🧺" }}
+
+                    </h3>
+
+                    <p>
+
+                        {{ "ابدأ بإضافة منتجاتك المفضلة."
+                        if current_lang=="ar"
+                        else "Start adding your favorite products." }}
+
+                    </p>
+
+                    <a
+                        href="{{ url_for('products_page') }}"
+                        class="continue-btn">
+
+                        {{ "متابعة التسوق"
+                        if current_lang=="ar"
+                        else "Continue Shopping" }}
+
+                    </a>
+
+                </div>
 
             </div>
 
         </div>
 
-        <!-- ملخص الطلب -->
+        <!-- ===========================
+             RIGHT SIDE
+        ============================ -->
+
         <div class="cart-right">
 
-            <div class="summary-box">
+            <!-- Shipping -->
+
+            <div class="cart-card">
 
                 <h2>
-                    {{ "ملخص الطلب" if current_lang == "ar"
+
+                    🚚 {{ "طريقة الشحن" if current_lang=="ar" else "Shipping Method" }}
+
+                </h2>
+
+                <label class="shipping-box">
+
+                    <input
+                        type="radio"
+                        name="shipping"
+                        checked>
+
+                    <div>
+
+                        <strong>
+
+                            {{ "شحن عادي"
+                            if current_lang=="ar"
+                            else "Standard Shipping" }}
+
+                        </strong>
+
+                        <p>
+
+                            {{ "3 - 5 أيام"
+                            if current_lang=="ar"
+                            else "3 - 5 Days" }}
+
+                        </p>
+
+                    </div>
+
+                    <span>
+
+                        20 SAR
+
+                    </span>
+
+                </label>
+
+                <label class="shipping-box">
+
+                    <input
+                        type="radio"
+                        name="shipping">
+
+                    <div>
+
+                        <strong>
+
+                            {{ "شحن سريع"
+                            if current_lang=="ar"
+                            else "Express Shipping" }}
+
+                        </strong>
+
+                        <p>
+
+                            {{ "1 - 2 يوم"
+                            if current_lang=="ar"
+                            else "1 - 2 Days" }}
+
+                        </p>
+
+                    </div>
+
+                    <span>
+
+                        40 SAR
+
+                    </span>
+
+                </label>
+
+            </div>
+
+            <!-- Delivery -->
+
+            <div class="cart-card">
+
+                <h2>
+
+                    📅 {{ "موعد التسليم المتوقع"
+                    if current_lang=="ar"
+                    else "Estimated Delivery" }}
+
+                </h2>
+
+                <div class="delivery-date">
+
+                    {{ "سيتم تحديثه بواسطة المتجر"
+                    if current_lang=="ar"
+                    else "Will be updated by the store" }}
+
+                </div>
+
+            </div>
+                        <!-- Coupon -->
+
+            <div class="cart-card">
+
+                <h2>
+
+                    🎁 {{ "كوبون الخصم" if current_lang=="ar"
+                    else "Coupon" }}
+
+                </h2>
+
+                <div class="coupon-box">
+
+                    <input
+                        type="text"
+                        id="coupon"
+                        placeholder="{{ 'أدخل الكوبون'
+                        if current_lang=='ar'
+                        else 'Enter coupon code' }}">
+
+                    <button>
+
+                        {{ "تطبيق"
+                        if current_lang=="ar"
+                        else "Apply" }}
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- Summary -->
+
+            <div class="cart-card summary-card">
+
+                <h2>
+
+                    💳 {{ "ملخص الطلب"
+                    if current_lang=="ar"
                     else "Order Summary" }}
+
                 </h2>
 
                 <div class="summary-row">
 
                     <span>
-                        {{ "المجموع الفرعي" if current_lang == "ar"
-                        else "Subtotal" }}
+
+                        {{ "سعر المنتجات"
+                        if current_lang=="ar"
+                        else "Products" }}
+
                     </span>
 
-                    <span id="subtotal">
-                        0 THB
+                    <span id="productsPrice">
+
+                        0 SAR
+
                     </span>
 
                 </div>
@@ -65,75 +307,84 @@
                 <div class="summary-row">
 
                     <span>
-                        {{ "الشحن" if current_lang == "ar"
-                        else "Shipping" }}
+
+                        {{ "الإضافات"
+                        if current_lang=="ar"
+                        else "Extras" }}
+
                     </span>
 
+                    <span id="extrasPrice">
+
+                        0 SAR
+
+                    </span>
+
+                </div>
+
+                <div class="summary-row">
+
                     <span>
-                        {{ "مجاني" if current_lang == "ar"
-                        else "Free" }}
+
+                        {{ "الشحن"
+                        if current_lang=="ar"
+                        else "Shipping" }}
+
+                    </span>
+
+                    <span id="shippingPrice">
+
+                        20 SAR
+
+                    </span>
+
+                </div>
+
+                <div class="summary-row">
+
+                    <span>
+
+                        {{ "الخصم"
+                        if current_lang=="ar"
+                        else "Discount" }}
+
+                    </span>
+
+                    <span id="discountPrice">
+
+                        0 SAR
+
                     </span>
 
                 </div>
 
                 <hr>
 
-                <div class="summary-row total">
+                <div class="summary-row total-row">
 
-                    <span>
-                        {{ "الإجمالي" if current_lang == "ar"
+                    <strong>
+
+                        {{ "الإجمالي"
+                        if current_lang=="ar"
                         else "Total" }}
-                    </span>
 
-                    <span id="total">
-                        0 THB
-                    </span>
+                    </strong>
+
+                    <strong id="total">
+
+                        20 SAR
+
+                    </strong>
 
                 </div>
-
-            </div>
-
-            <div class="customer-box">
-
-                <h2>
-                    {{ "بيانات العميل" if current_lang == "ar"
-                    else "Customer Information" }}
-                </h2>
-
-                <input
-                    type="text"
-                    id="customerName"
-                    placeholder="{{ 'الاسم الكامل' if current_lang == 'ar' else 'Full Name' }}">
-
-                <textarea
-                    id="customerAddress"
-                    placeholder="{{ 'عنوان التوصيل' if current_lang == 'ar' else 'Delivery Address' }}"></textarea>
-
-                <select id="paymentMethod">
-
-                    <option value="">
-                        {{ "طريقة الدفع" if current_lang == "ar"
-                        else "Payment Method" }}
-                    </option>
-
-                    <option>
-                        {{ "الدفع عند الاستلام" if current_lang == "ar"
-                        else "Cash On Delivery" }}
-                    </option>
-
-                    <option>
-                        {{ "تحويل بنكي" if current_lang == "ar"
-                        else "Bank Transfer" }}
-                    </option>
-
-                </select>
 
                 <button
                     class="checkout-btn"
                     onclick="checkout()">
 
-                    {{ "إتمام الطلب" if current_lang == "ar"
-                    else "Proceed to Checkout" }}
+                    🛍 {{ "إتمام الطلب"
+                    if current_lang=="ar"
+                    else "Checkout" }}
 
                 </button>
 
@@ -144,104 +395,790 @@
     </div>
 
 </section>
+<style>/* =====================================
+   CART PAGE
+===================================== */
 
-<script>
+.cart-page{
+    max-width:1450px;
+    margin:auto;
+    padding:40px 25px;
+}
 
-    const currentLang = "{{ current_lang }}";
+.cart-title{
+    font-size:34px;
+    font-weight:700;
+    color:#d86d97;
+    margin-bottom:30px;
+}
 
+.cart-layout{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:25px;
+    align-items:start;
+}
 
-async function loadCart(){
+.cart-left,
+.cart-right{
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+}
 
-    const response = await fetch("/api/cart");
+.cart-card{
+    background:#fff;
+    border-radius:18px;
+    padding:22px;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
 
-    const data = await response.json();
+.card-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
 
-    const cartItems =
-        document.getElementById("cartItems");
+.card-header h2{
+    font-size:22px;
+    color:#444;
+}
 
-    const emptyCart =
-        document.getElementById("emptyCart");
+.edit-btn{
+    border:none;
+    background:#d88ea4;
+    color:#fff;
+    padding:10px 18px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:.3s;
+}
 
-    cartItems.innerHTML = "";
+.edit-btn:hover{
+    background:#c76f89;
+}
 
-    let total = 0;
+.address-name{
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:8px;
+}
 
-if(data.cart.length===0){
+.address-phone{
+    color:#777;
+    margin-bottom:10px;
+}
 
-    emptyCart.style.display = "block";
+.address-text{
+    color:#666;
+    line-height:1.8;
+}
 
-document.getElementById("subtotal").innerHTML =
-    total.toFixed(2) + " " + (currentLang === "ar" ? "ر.س" : "SAR");
+.shipping-box{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border:1px solid #eee;
+    border-radius:15px;
+    padding:18px;
+    margin-top:15px;
+    cursor:pointer;
+    transition:.3s;
+}
 
-document.getElementById("total").innerHTML =
-    total.toFixed(2) + " " + (currentLang === "ar" ? "ر.س" : "SAR");
+.shipping-box:hover{
+    border-color:#d88ea4;
+    background:#fff8fb;
+}
 
-    return;
+.shipping-box input{
+    margin-right:15px;
+}
+
+.shipping-box strong{
+    color:#444;
+}
+
+.shipping-box p{
+    margin-top:5px;
+    color:#888;
+    font-size:14px;
+}
+
+.delivery-date{
+    margin-top:15px;
+    padding:18px;
+    background:#fff7fa;
+    border-radius:12px;
+    color:#d86d97;
+    font-weight:600;
+    text-align:center;
+}
+
+.coupon-box{
+    display:flex;
+    gap:12px;
+    margin-top:18px;
+}
+
+.coupon-box input{
+    flex:1;
+    padding:13px;
+    border-radius:12px;
+    border:1px solid #ddd;
+    outline:none;
+}
+
+.coupon-box input:focus{
+    border-color:#d88ea4;
+}
+
+.coupon-box button{
+    border:none;
+    background:#d88ea4;
+    color:white;
+    padding:0 22px;
+    border-radius:12px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.coupon-box button:hover{
+    background:#c76f89;
+}
+
+.summary-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:13px 0;
+    color:#555;
+}
+
+.total-row{
+    font-size:22px;
+    color:#d86d97;
+}
+
+.checkout-btn{
+    width:100%;
+    margin-top:20px;
+    border:none;
+    border-radius:14px;
+    padding:16px;
+    background:#d88ea4;
+    color:white;
+    font-size:18px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.checkout-btn:hover{
+    background:#c76f89;
+}
+
+/* =====================================
+   PRODUCTS
+===================================== */
+
+.cart-product{
+
+    display:flex;
+    gap:18px;
+    align-items:center;
+
+    border-bottom:1px solid #eee;
+
+    padding:20px 0;
 
 }
 
-    emptyCart.style.display="none";
+.cart-product:last-child{
 
-    data.cart.forEach(item=>{
+    border-bottom:none;
 
-        total += item.price * item.quantity;
+}
 
-        cartItems.innerHTML += `
+.product-check{
 
+    width:28px;
 
-<div class="cart-card">
+}
 
-    <img
-        src="${item.image}"
-        class="cart-image">
+.product-check input{
 
-    <div class="cart-info">
+    width:18px;
+    height:18px;
 
-        <h3>${item.name}</h3>
+}
 
-        <p>
-            ${item.price}
-            ${currentLang === "ar" ? "ر.س" : "SAR"}
-        </p>
+.product-image{
 
-    </div>
+    width:120px;
+    height:120px;
 
-    <div class="quantity-box">
+    border-radius:16px;
 
-        <button
-            onclick="changeQuantity(${item.id},${item.quantity-1})">
+    object-fit:cover;
 
-            -
+    background:#fafafa;
 
-        </button>
+}
 
-        <span>
+.product-info{
 
-            ${item.quantity}
+    flex:1;
 
-        </span>
+}
 
-        <button
-            onclick="changeQuantity(${item.id},${item.quantity+1})">
+.product-info h3{
 
-            +
+    font-size:20px;
+    margin-bottom:10px;
+    color:#444;
 
-        </button>
+}
 
-    </div>
+.product-price{
 
-<div class="cart-price">
-    ${(item.price * item.quantity).toFixed(2)}
-    ${currentLang === "ar" ? "ر.س" : "SAR"}
+    color:#d86d97;
+
+    font-size:24px;
+
+    font-weight:bold;
+
+    margin-bottom:15px;
+
+}
+
+.qty-box{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    margin-bottom:15px;
+
+}
+
+.qty-box button{
+
+    width:38px;
+
+    height:38px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#d88ea4;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:20px;
+
+    transition:.3s;
+
+}
+
+.qty-box button:hover{
+
+    background:#c76f89;
+
+}
+
+.qty-box span{
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    min-width:25px;
+
+    text-align:center;
+
+}
+
+.remove-btn{
+
+    border:none;
+
+    background:#ffe9ef;
+
+    color:#d85b8d;
+
+    padding:10px 16px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.remove-btn:hover{
+
+    background:#ffd4e2;
+
+}
+/* ===============================
+   CART ITEM
+================================= */
+
+.cart-item{
+
+    display:flex;
+    align-items:center;
+    gap:18px;
+
+    background:#fff;
+
+    border:1px solid #eee;
+
+    border-radius:18px;
+
+    padding:18px;
+
+    margin-bottom:18px;
+
+    box-shadow:0 6px 18px rgba(0,0,0,.05);
+
+}
+
+.cart-img{
+
+    width:120px;
+
+    height:120px;
+
+    object-fit:cover;
+
+    border-radius:15px;
+
+    background:#fafafa;
+
+}
+
+.cart-info{
+
+    flex:1;
+
+}
+
+.cart-info h3{
+
+    margin-bottom:10px;
+
+    font-size:20px;
+
+    color:#444;
+
+}
+
+.cart-info p{
+
+    color:#e26fa7;
+
+    font-weight:bold;
+
+    font-size:20px;
+
+}
+
+.qty-box{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.qty-box button{
+
+    width:38px;
+
+    height:38px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#e26fa7;
+
+    color:#fff;
+
+    cursor:pointer;
+
+    font-size:20px;
+
+}
+
+.qty-box span{
+
+    width:25px;
+
+    text-align:center;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+}
+
+/* ===============================
+   ADDRESS
+================================= */
+
+.address-box{
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    margin-bottom:25px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.05);
+
+}
+
+.address-box h2{
+
+    margin-bottom:20px;
+
+    color:#d86f9d;
+
+}
+
+.address-box input,
+
+.address-box textarea{
+
+    width:100%;
+
+    padding:14px;
+
+    border:1px solid #ddd;
+
+    border-radius:12px;
+
+    margin-bottom:15px;
+
+    font-size:15px;
+
+}
+
+.address-box textarea{
+
+    resize:none;
+
+    height:90px;
+
+}
+
+/* ===============================
+   SHIPPING
+================================= */
+
+.shipping-box{
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    margin-bottom:25px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.05);
+
+}
+
+.shipping-box h2{
+
+    color:#d86f9d;
+
+    margin-bottom:18px;
+
+}
+
+.shipping-box label{
+
+    display:block;
+
+    margin-bottom:12px;
+
+    cursor:pointer;
+
+}
+
+/* ===============================
+   COUPON
+================================= */
+
+.coupon-box{
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    margin-bottom:25px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.05);
+
+}
+
+.coupon-input{
+
+    display:flex;
+
+    gap:10px;
+
+}
+
+.coupon-input input{
+
+    flex:1;
+
+    padding:12px;
+
+    border:1px solid #ddd;
+
+    border-radius:10px;
+
+}
+
+.coupon-input button{
+
+    padding:12px 20px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#e26fa7;
+
+    color:#fff;
+
+    cursor:pointer;
+
+}
+
+/* ===============================
+   SUMMARY
+================================= */
+
+.summary-box{
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.05);
+
+    position:sticky;
+
+    top:20px;
+
+}
+
+.summary-box h2{
+
+    color:#d86f9d;
+
+    margin-bottom:20px;
+
+}
+
+.summary-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    margin:15px 0;
+
+    font-size:16px;
+
+}
+
+.summary-total{
+
+    border-top:1px solid #eee;
+
+    padding-top:18px;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    color:#d86f9d;
+
+}
+
+.checkout-btn{
+
+    width:100%;
+
+    margin-top:25px;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#e26fa7;
+
+    color:#fff;
+
+    font-size:17px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.checkout-btn:hover{
+
+    background:#c84f88;
+
+}
+
+/* ===============================
+   MOBILE
+================================= */
+
+@media(max-width:900px){
+
+.cart-container{
+
+    grid-template-columns:1fr;
+
+}
+
+.cart-item{
+
+    flex-direction:column;
+
+    text-align:center;
+
+}
+
+.cart-img{
+
+    width:180px;
+
+    height:180px;
+
+}
+
+.qty-box{
+
+    margin-top:15px;
+
+}
+
+.summary-box{
+
+    position:static;
+
+}
+
+.coupon-input{
+
+    flex-direction:column;
+
+}
+
+}
+</style>
+
+<!-- =====================================
+     JavaScript
+===================================== -->
+
+<script>
+
+let cart = [];
+
+async function loadCart(){
+
+    const res = await fetch("/api/cart");
+    const data = await res.json();
+
+    cart = data.cart;
+
+    renderCart();
+
+}
+
+function renderCart(){
+
+    const container = document.getElementById("cartItems");
+
+    const empty = document.getElementById("emptyCart");
+
+    container.innerHTML = "";
+
+    if(cart.length===0){
+
+        empty.style.display="block";
+
+        document.getElementById("subtotal").innerText="0 SAR";
+        document.getElementById("shipping").innerText="0 SAR";
+        document.getElementById("total").innerText="0 SAR";
+
+        return;
+
+    }
+
+    empty.style.display="none";
+
+    let subtotal=0;
+
+    cart.forEach(item=>{
+
+        subtotal += item.price * item.quantity;
+
+        container.innerHTML += `
+
+<div class="cart-item">
+
+<img src="${item.image}" class="cart-img">
+
+<div class="cart-info">
+
+<h3>${item.name}</h3>
+
+<p>${item.price} SAR</p>
+
 </div>
 
-    <button
-        class="delete-btn"
-        onclick="removeItem(${item.id})">
+<div class="qty-box">
 
-        🗑
+<button onclick="changeQty(${item.id},-1)">−</button>
 
-    </button>
+<span>${item.quantity}</span>
+
+<button onclick="changeQty(${item.id},1)">+</button>
+
+</div>
 
 </div>
 
@@ -249,17 +1186,17 @@ document.getElementById("total").innerHTML =
 
     });
 
-    document.getElementById("subtotal").innerHTML =
-        total.toFixed(2)+" THB";
+    const shipping = subtotal>=300 ? 0 : 25;
 
-    document.getElementById("total").innerHTML =
-        total.toFixed(2)+" THB";
+    document.getElementById("subtotal").innerText=subtotal+" SAR";
+    document.getElementById("shipping").innerText=shipping+" SAR";
+    document.getElementById("total").innerText=(subtotal+shipping)+" SAR";
 
 }
 
-async function removeItem(id){
+async function changeQty(productId,change){
 
-    await fetch("/api/cart/remove",{
+    await fetch("/api/cart/add",{
 
         method:"POST",
 
@@ -268,9 +1205,8 @@ async function removeItem(id){
         },
 
         body:JSON.stringify({
-
-            product_id:id
-
+            product_id:productId,
+            quantity:change
         })
 
     });
@@ -279,95 +1215,25 @@ async function removeItem(id){
 
 }
 
-async function changeQuantity(id,quantity){
+function checkout(){
 
-    if(quantity<1)
-        quantity=1;
+    const name=document.getElementById("customerName").value;
 
-    await fetch("/api/cart/update",{
+    const address=document.getElementById("customerAddress").value;
 
-        method:"POST",
+    if(name==="" || address===""){
 
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            product_id:id,
-            quantity:quantity
-
-        })
-
-    });
-
-    loadCart();
-
-}
-
-async function checkout(){
-
-    const name =
-        document.getElementById("customerName").value;
-
-    const address =
-        document.getElementById("customerAddress").value;
-
-    const payment =
-        document.getElementById("paymentMethod").value;
-
-    if(!name || !address || !payment){
-
-       alert(
-    currentLang === "ar"
-    ? "يرجى إكمال جميع البيانات."
-    : "Please complete all information."
-);
+        alert("يرجى إدخال الاسم والعنوان");
 
         return;
 
     }
 
-    const response = await fetch("/api/checkout",{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            name:name,
-            address:address,
-            payment:payment
-
-        })
-
-    });
-
-    const data = await response.json();
-
-    if(data.order_id){
-
-        window.location.href =
-        "/checkout?id="+data.order_id;
-
-    }else{
-
-        alert(
-    data.error ||
-    (currentLang === "ar"
-        ? "حدث خطأ أثناء إتمام الطلب."
-        : "An error occurred while completing your order.")
-);
-
-    }
+    alert("تم إرسال الطلب بنجاح 💕");
 
 }
 
 loadCart();
 
 </script>
-
 {% endblock %}

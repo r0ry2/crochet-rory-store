@@ -1,32 +1,48 @@
 {% extends "base_logged.html" %}
-{% block title %}My Profile{% endblock %}
+
+{% block title %}
+{{ "ملفي الشخصي" if current_lang=="ar" else "My Profile" }}
+{% endblock %}
 
 {% block content %}
 
 <style>
 
 :root{
-    --primary:#d8a7b1;
-    --secondary:#fff6f8;
-    --dark:#444;
-    --white:#fff;
-    --shadow:0 10px 30px rgba(0,0,0,.08);
-    --radius:22px;
+    --primary:#d88ea4;
+    --primary-dark:#c76f89;
+    --light:#fdecef;
+    --light2:#f9d8e2;
+    --border:#f2bfd0;
+    --text:#5d4b52;
+    --white:#ffffff;
+    --shadow:0 12px 35px rgba(216,142,164,.18);
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Poppins",sans-serif;
+}
+
+body{
+    background:#faf7f8;
 }
 
 .profile-page{
-    background:#faf7f8;
+    width:100%;
     min-height:100vh;
-    padding-bottom:80px;
+    padding-bottom:70px;
 }
 
-/* =========================
+/*==========================
         COVER
-========================= */
+==========================*/
 
 .profile-cover{
     width:100%;
-    height:320px;
+    height:330px;
     position:relative;
     overflow:hidden;
 }
@@ -40,289 +56,563 @@
 .cover-overlay{
     position:absolute;
     inset:0;
-    background:linear-gradient(
-        rgba(0,0,0,.15),
-        rgba(0,0,0,.45)
-    );
+    background:linear-gradient(rgba(0,0,0,.15),rgba(0,0,0,.45));
 }
 
-/* =========================
+/*==========================
       PROFILE CARD
-========================= */
+==========================*/
 
 .profile-card{
-
-    width:90%;
-    max-width:1100px;
-
-    margin:-110px auto 50px;
-
-    background:rgb(252, 186, 186);
-
-    border-radius:30px;
-
-    box-shadow:var(--shadow);
-
-    position:relative;
-
+    width:min(1150px,92%);
+    margin:-120px auto 50px;
+    background:#fff;
+    border-radius:32px;
     padding:40px;
-
-    z-index:10;
-
+    box-shadow:0 20px 45px rgba(0,0,0,.08);
+    position:relative;
     text-align:center;
-
 }
 
 .profile-avatar{
-
     width:170px;
-
     height:170px;
-
     margin:auto;
-
-    margin-top:-120px;
-
+    margin-top:-125px;
     border-radius:50%;
-
     overflow:hidden;
-
-    border:8px solid white;
-
-    box-shadow:0 15px 35px rgba(0,0,0,.15);
-
+    border:8px solid #fff;
+    box-shadow:0 15px 35px rgba(0,0,0,.18);
 }
 
 .profile-avatar img{
-
     width:100%;
-
     height:100%;
-
     object-fit:cover;
-
 }
 
 .profile-card h1{
-
     margin-top:20px;
-
-    font-size:35px;
-
     color:#444;
-
+    font-size:34px;
+    font-weight:700;
 }
 
 .email{
-
-    color:#999;
-
-    margin-bottom:35px;
-
-    font-size:17px;
-
+    margin-top:8px;
+    color:#888;
 }
 
-/* =========================
-        INFO GRID
-========================= */
+/*==========================
+      INFO
+==========================*/
 
 .profile-info{
-
-    display:grid;
-
-    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
-
-    gap:22px;
-
     margin-top:35px;
-
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:22px;
 }
 
 .info-card{
-
-    background:#111111;
-
-    border-radius:18px;
-
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:22px;
     padding:22px;
-
     display:flex;
-
     align-items:center;
-
     gap:18px;
-
-    transition:.35s;
-
-    border:1px solid #f6dbe2;
-
+    transition:.3s;
+    box-shadow:var(--shadow);
 }
 
 .info-card:hover{
-
     transform:translateY(-6px);
-
-    box-shadow:0 10px 20px rgba(0,0,0,.08);
-
 }
 
 .info-card span{
-
     width:65px;
-
     height:65px;
-
+    flex-shrink:0;
     border-radius:50%;
-
-    background:rgb(252, 186, 186);;
-
+    background:#f7c2d1;
     display:flex;
-
-    justify-content:center;
-
     align-items:center;
-
+    justify-content:center;
     font-size:28px;
+}
 
+.info-card div{
+    flex:1;
+    min-width:0;
 }
 
 .info-card small{
-
-    color:#888;
-
-    font-size:13px;
-
+    color:#9a6b79;
+    font-weight:600;
 }
 
 .info-card p{
-
     margin-top:6px;
-
-    font-weight:600;
-
     color:#444;
-
+    font-weight:600;
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
 }
 
+/*==========================
+      BUTTONS
+==========================*/
+
 .profile-actions{
-
+    margin-top:35px;
     display:flex;
-
     justify-content:center;
-
-    gap:18px;
-
-    margin-top:45px;
-
     flex-wrap:wrap;
+    gap:15px;
+}
 
+.edit-btn,
+.logout-btn,
+.password-btn,
+.delete-btn{
+    border:none;
+    cursor:pointer;
+    border-radius:50px;
+    padding:15px 30px;
+    color:#fff;
+    font-size:15px;
+    font-weight:600;
+    transition:.3s;
 }
 
 .edit-btn{
-
-    border:none;
-
-    background:#B90B2B;
-
-    color:rgb(0, 0, 0);
-
-    padding:14px 35px;
-
-    border-radius:50px;
-
-    cursor:pointer;
-
-    font-size:16px;
-
-    transition:.3s;
-
+    background:#d88ea4;
 }
 
 .edit-btn:hover{
+    background:#c97891;
+}
 
-    background:#c78d9a;
+.password-btn{
+    background:#8570eb;
+}
 
-    transform:translateY(-3px);
-
+.password-btn:hover{
+    background:#7057de;
 }
 
 .logout-btn{
-
-    border:none;
-
-    background:#111111;
-
-    color:white;
-
-    padding:14px 35px;
-
-    border-radius:50px;
-
-    cursor:pointer;
-
-    font-size:16px;
-
-    transition:.3s;
-
+    background:#ba627b;
 }
 
 .logout-btn:hover{
+    background:#a84d68;
+}
 
-    background:#222;
+.danger-zone{
+    margin-top:25px;
+    padding-top:25px;
+    border-top:1px solid #eee;
+}
 
-    transform:translateY(-3px);
+.delete-btn{
+    background:#e74c3c;
+}
+
+.delete-btn:hover{
+    background:#c0392b;
+}
+
+/*==========================
+      QUICK ACTIONS
+==========================*/
+
+.quick-actions,
+.orders-status,
+.orders-list{
+    width:min(1200px,92%);
+    margin:auto;
+    margin-bottom:55px;
+}
+
+.section-header{
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.section-header h2{
+    color:#444;
+    font-size:32px;
+}
+
+.section-header p{
+    color:#888;
+    margin-top:6px;
+}
+
+.quick-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:22px;
+}
+
+.quick-card{
+    background:#fff;
+    border-radius:24px;
+    padding:30px;
+    text-align:center;
+    text-decoration:none;
+    color:#444;
+    border:1px solid var(--border);
+    box-shadow:var(--shadow);
+    transition:.3s;
+}
+
+.quick-card:hover{
+    transform:translateY(-7px);
+}
+
+.quick-card .icon{
+    width:75px;
+    height:75px;
+    margin:auto;
+    margin-bottom:18px;
+    border-radius:50%;
+    background:#f7c2d1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:34px;
+}
+
+.quick-card h3{
+    color:#b15f77;
+    margin-bottom:8px;
+}
+.quick-card p{
+    color:#777;
+    font-size:14px;
+    line-height:1.6;
+}
+
+/*==========================
+      ORDER STATUS
+==========================*/
+
+.status-grid{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:18px;
+}
+
+.status-card{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:24px 15px;
+    text-align:center;
+    cursor:pointer;
+    transition:.3s;
+    box-shadow:var(--shadow);
+}
+
+.status-card:hover{
+    transform:translateY(-6px);
+}
+
+.status-card.active{
+    background:linear-gradient(135deg,#d88ea4,#c76f89);
+    color:#fff;
+}
+
+.status-icon{
+    font-size:30px;
+    margin-bottom:10px;
+}
+
+.status-count{
+    display:block;
+    font-size:28px;
+    font-weight:bold;
+    color:#b15f77;
+    margin-bottom:8px;
+}
+
+.status-card.active .status-count,
+.status-card.active p{
+    color:#fff;
+}
+
+/*==========================
+      ORDERS
+==========================*/
+
+.empty-orders{
+    background:#fff;
+    border-radius:25px;
+    border:1px solid var(--border);
+    padding:70px 30px;
+    text-align:center;
+    color:#999;
+    box-shadow:var(--shadow);
+}
+
+.order-card{
+    background:#fff;
+    border-radius:24px;
+    border:1px solid var(--border);
+    padding:28px;
+    margin-bottom:22px;
+    box-shadow:var(--shadow);
+    transition:.3s;
+}
+
+.order-card:hover{
+    transform:translateY(-4px);
+}
+
+.order-card h3{
+    color:#b15f77;
+    margin-bottom:18px;
+}
+
+.order-card p{
+    margin:10px 0;
+    color:#555;
+}
+
+.order-card h4{
+    margin-top:18px;
+    margin-bottom:10px;
+    color:#444;
+}
+
+.order-card a{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    margin-top:18px;
+    background:#d88ea4;
+    color:#fff;
+    padding:12px 24px;
+    border-radius:30px;
+    text-decoration:none;
+    transition:.3s;
+}
+
+.order-card a:hover{
+    background:#c76f89;
+}
+
+/*==========================
+      MODALS
+==========================*/
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    z-index:9999;
+}
+
+.modal-content{
+    width:100%;
+    max-width:560px;
+    max-height:90vh;
+    overflow-y:auto;
+    background:#fff;
+    border-radius:28px;
+    padding:35px;
+    position:relative;
+    animation:fadeIn .3s;
+}
+
+@keyframes fadeIn{
+    from{
+        transform:translateY(-20px);
+        opacity:0;
+    }
+    to{
+        transform:translateY(0);
+        opacity:1;
+    }
+}
+
+.close-modal{
+    position:absolute;
+    top:15px;
+    right:20px;
+    font-size:32px;
+    cursor:pointer;
+    color:#999;
+}
+
+.close-modal:hover{
+    color:#d88ea4;
+}
+
+.modal-content h2{
+    text-align:center;
+    color:#b15f77;
+    margin-bottom:25px;
+}
+
+.edit-form{
+    display:grid;
+    gap:16px;
+}
+
+.edit-form label{
+    font-weight:600;
+    color:#666;
+}
+
+.edit-form input,
+.edit-form select{
+    width:100%;
+    padding:13px 16px;
+    border-radius:14px;
+    border:1px solid var(--border);
+    outline:none;
+}
+
+.edit-form input:focus,
+.edit-form select:focus{
+    border-color:#d88ea4;
+}
+
+.save-btn{
+    margin-top:10px;
+    background:#d88ea4;
+    color:#fff;
+    border:none;
+    padding:15px;
+    border-radius:16px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:600;
+}
+
+.save-btn:hover{
+    background:#c76f89;
+}
+
+/*==========================
+      RESPONSIVE
+==========================*/
+
+@media(max-width:992px){
+
+    .status-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .quick-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
 
 }
 
-</style>
 
+
+@media (max-width:768px){
+
+    .status-grid{
+        grid-template-columns:repeat(3,1fr);
+        gap:10px;
+    }
+
+    .status-card{
+        padding:12px 6px;
+    }
+
+    .status-icon{
+        font-size:20px;
+    }
+
+    .status-count{
+        font-size:18px;
+    }
+
+    .status-card p{
+        font-size:11px;
+    }
+
+}
+}
+</style>
 <div class="profile-page">
 
-<section class="profile-cover">
+    <!-- ==========================
+            COVER
+    ========================== -->
 
-<img src="{{ url_for('static', filename='images/hero.png') }}"
-class="cover-image">
+    <section class="profile-cover">
 
-<div class="cover-overlay"></div>
+        <img
+            src="{{ url_for('static', filename='images/hero.png') }}"
+            class="cover-image">
 
-</section>
+        <div class="cover-overlay"></div>
 
-<section class="profile-card">
+    </section>
 
-<div class="profile-avatar">
+    <!-- ==========================
+            PROFILE CARD
+    ========================== -->
 
-<label for="profileImageInput" style="cursor:pointer;">
+    <section class="profile-card">
 
-<label for="profileImageInput" style="cursor:pointer;">
+        <div class="profile-avatar">
 
-<img
-id="profilePreview"
-src="{{ url_for('static', filename='uploads/profile/' ~ current_user.profile_image) }}"
-alt="Profile"
-onerror="this.src='{{ url_for('static', filename='images/profile.png') }}'">
+            <img
+                id="profilePreview"
+                src="{{ url_for('static', filename='uploads/profile/' ~ current_user.profile_image) }}"
+                onerror="this.src='{{ url_for('static', filename='images/profile.png') }}'">
 
-</label>
-</div>
+        </div>
 
-<h1>{{ current_user.username }}</h1>
+        <h1>{{ current_user.username }}</h1>
 
-<p class="email">
+        <p class="email">
+            {{ current_user.email }}
+        </p>
 
-{{ current_user.email }}
+        <!-- ==========================
+                USER INFO
+        ========================== -->
 
-</p>
+        <div class="profile-info">
 
-<div class="profile-info">
-                <div class="info-card">
+            <div class="info-card">
+
+                <span>📧</span>
+
+                <div>
+
+                    <small>البريد الإلكتروني</small>
+
+                    <p>{{ current_user.email }}</p>
+
+                </div>
+
+            </div>
+
+            <div class="info-card">
 
                 <span>📱</span>
 
                 <div>
 
-                    <small>Phone Number</small>
+                    <small>رقم الجوال</small>
 
-                    <p>{{ current_user.phone or "Not Set" }}</p>
+                    <p>{{ current_user.phone or "غير مضاف" }}</p>
 
                 </div>
 
@@ -334,9 +624,9 @@ onerror="this.src='{{ url_for('static', filename='images/profile.png') }}'">
 
                 <div>
 
-                    <small>Birthday</small>
+                    <small>تاريخ الميلاد</small>
 
-                    <p>{{ current_user.birthday or "Not Set" }}</p>
+                    <p>{{ current_user.birthday or "غير مضاف" }}</p>
 
                 </div>
 
@@ -348,23 +638,9 @@ onerror="this.src='{{ url_for('static', filename='images/profile.png') }}'">
 
                 <div>
 
-                    <small>Gender</small>
+                    <small>الجنس</small>
 
-                    <p>{{ current_user.gender or "Not Set" }}</p>
-
-                </div>
-
-            </div>
-
-            <div class="info-card">
-
-                <span>🌍</span>
-
-                <div>
-
-                    <small>Nationality</small>
-
-                    <p>{{ current_user.nationality or "Not Set" }}</p>
+                    <p>{{ current_user.gender or "غير مضاف" }}</p>
 
                 </div>
 
@@ -372,21 +648,36 @@ onerror="this.src='{{ url_for('static', filename='images/profile.png') }}'">
 
         </div>
 
+        <!-- ==========================
+                ACTION BUTTONS
+        ========================== -->
+
         <div class="profile-actions">
 
             <button
                 class="edit-btn"
-                onclick="openEditProfile()">
+                onclick="openEditModal()">
 
-                ✏ Edit Profile
+                ✏️ تعديل الملف الشخصي
+
+            </button>
+
+            <button
+                class="password-btn"
+                type="button"
+                onclick="openPasswordModal()">
+
+                🔒 تغيير كلمة المرور
 
             </button>
 
             <a href="{{ url_for('logout') }}">
 
-                <button class="logout-btn">
+                <button
+                    class="logout-btn"
+                    type="button">
 
-                    🚪 Logout
+                    🚪 تسجيل الخروج
 
                 </button>
 
@@ -394,797 +685,605 @@ onerror="this.src='{{ url_for('static', filename='images/profile.png') }}'">
 
         </div>
 
-    </section>
+        <div class="danger-zone">
 
-    <!-- =========================
-            DASHBOARD
-    ========================== -->
+            <button
+                class="delete-btn"
+                onclick="confirmDeleteAccount()">
 
-    <style>
+                🗑️ حذف الحساب
 
-    .dashboard{
-
-        width:90%;
-        max-width:1200px;
-        margin:auto;
-        margin-bottom:60px;
-
-    }
-
-    .section-header{
-
-        text-align:center;
-        margin-bottom:35px;
-
-    }
-
-    .section-header h2{
-
-        font-size:34px;
-        color:#444;
-
-    }
-
-    .section-header p{
-
-        color:#888;
-        margin-top:8px;
-
-    }
-
-    .dashboard-grid{
-
-        display:grid;
-
-        grid-template-columns:
-        repeat(auto-fit,minmax(220px,1fr));
-
-        gap:25px;
-
-    }
-
-    .dashboard-card{
-
-        background:#DAAAA4;
-
-        border-radius:22px;
-
-        padding:35px;
-
-        text-align:center;
-
-        box-shadow:0 8px 25px rgba(0,0,0,.08);
-
-        transition:.35s;
-
-        cursor:pointer;
-
-        border:1px solid #f5e4e9;
-
-    }
-
-    .dashboard-card:hover{
-
-        transform:translateY(-8px);
-
-        box-shadow:0 18px 35px rgba(0,0,0,.10);
-
-    }
-
-    .dashboard-card .icon{
-
-        width:80px;
-
-        height:80px;
-
-        margin:auto;
-
-        border-radius:50%;
-
-        background:#fff3f6;
-
-        display:flex;
-
-        align-items:center;
-
-        justify-content:center;
-
-        font-size:34px;
-
-        margin-bottom:18px;
-
-    }
-
-    .dashboard-card h3{
-
-        color:#555;
-
-        margin-bottom:15px;
-
-        font-size:18px;
-
-    }
-
-    .dashboard-card span{
-
-        font-size:38px;
-
-        color:#d8a7b1;
-
-        font-weight:bold;
-
-    }
-
-    </style>
-
-    <section class="dashboard">
-
-        <div class="section-header">
-
-            <h2>Dashboard</h2>
-
-            <p>Manage all your Crochet Rory activities.</p>
+            </button>
 
         </div>
 
-        <div class="dashboard-grid">
+    </section>
 
-            <div class="dashboard-card">
+    <!-- ==========================
+            QUICK ACTIONS
+    ========================== -->
 
-                <div class="icon">📦</div>
+    <section class="quick-actions">
 
-                <h3>Total Orders</h3>
+        <div class="section-header">
 
-                <span>{{ total_orders }}</span>
+            <h2>الإجراءات السريعة</h2>
 
-            </div>
+            <p>الوصول السريع إلى أهم صفحات حسابك.</p>
 
-            <div class="dashboard-card">
+        </div>
+
+        <div class="quick-grid">
+
+            <a
+                href="{{ url_for('cart_page') }}"
+                class="quick-card">
 
                 <div class="icon">🛒</div>
 
-                <h3>Cart</h3>
+                <h3>السلة</h3>
 
-                <span>{{ cart_count }}</span>
+                <p>عرض وإدارة السلة</p>
 
-            </div>
+            </a>
 
-            <div class="dashboard-card">
+            <a
+                href="{{ url_for('wishlist_page') }}"
+                class="quick-card">
 
-                <div class="icon">⏳</div>
+                <div class="icon">❤️</div>
 
-                <h3>Pending</h3>
+                <h3>المفضلة</h3>
 
-                <span>{{ pending_orders }}</span>
+                <p>المنتجات المحفوظة</p>
 
-            </div>
+            </a>
 
-            <div class="dashboard-card">
+<a href="javascript:void(0)"
+   class="quick-card"
+   onclick="openReviewModal()">
 
-                <div class="icon">💳</div>
+    <div class="icon">💬</div>
 
-                <h3>Unpaid</h3>
+    <h3>التقييمات</h3>
 
-                <span>{{ unpaid_orders }}</span>
+    <p>اكتب رأيك عن طلبك</p>
 
-            </div>
-                        <div class="dashboard-card">
+</a>
+<a
+    href="{{ url_for('contact_page') }}"
+    class="quick-card">
 
-                <div class="icon">⚙</div>
+    <div class="icon">💬</div>
 
-                <h3>Processing</h3>
+    <h3>خدمة العملاء</h3>
 
-                <span>{{ processing_orders }}</span>
+    <p>تواصل معنا للمساعدة</p>
 
-            </div>
-
-            <div class="dashboard-card">
-
-                <div class="icon">✅</div>
-
-                <h3>Completed</h3>
-
-                <span>{{ completed_orders }}</span>
-
-            </div>
-
-            <div class="dashboard-card">
-
-                <div class="icon">❌</div>
-
-                <h3>Cancelled</h3>
-
-                <span>{{ cancelled_orders }}</span>
-
-            </div>
+</a>
 
         </div>
+
 
     </section>
+<!-- ==========================
+        REVIEW MODAL
+========================== -->
 
-    <!-- =========================
-            MY ORDERS
-    ========================== -->
+<div class="modal" id="reviewModal">
 
-    <style>
+    <div class="modal-content">
 
-    .orders-section{
+        <span class="close-modal"
+              onclick="closeReviewModal()">
+            &times;
+        </span>
 
-        width:90%;
-        max-width:1200px;
-        margin:auto;
+        <h2>💬 اكتب تقييمك</h2>
 
-    }
+        <form action="{{ url_for('add_review') }}"
+              method="POST"
+              class="edit-form">
 
-    .order-card{
+            <label>التقييم</label>
 
-        background:white;
+            <select name="stars" required>
 
-        border-radius:22px;
+                <option value="5">★★★★★ ممتاز</option>
+                <option value="4">★★★★☆ جيد</option>
+                <option value="3">★★★☆☆ متوسط</option>
+                <option value="2">★★☆☆☆ ضعيف</option>
+                <option value="1">★☆☆☆☆ سيئ</option>
 
-        padding:25px 30px;
+            </select>
 
-        margin-bottom:22px;
+            <label>تعليقك</label>
 
-        display:flex;
+            <textarea
+                name="message"
+                rows="5"
+                placeholder="اكتب تجربتك مع منتجات Rory Store..."
+                style="padding:14px;border:1px solid #f2bfd0;border-radius:14px;resize:none;"
+                required></textarea>
 
-        justify-content:space-between;
+            <button
+                class="save-btn"
+                type="submit">
 
-        align-items:center;
+                💕 إرسال التقييم
 
-        flex-wrap:wrap;
+            </button>
 
-        gap:20px;
-
-        box-shadow:0 8px 20px rgba(0,0,0,.08);
-
-        transition:.35s;
-
-    }
-
-    .order-card:hover{
-
-        transform:translateY(-5px);
-
-        box-shadow:0 15px 30px rgba(0,0,0,.10);
-
-    }
-
-    .order-left h3{
-
-        color:#444;
-
-        margin-bottom:8px;
-
-    }
-
-    .order-left small{
-
-        color:#999;
-
-    }
-
-    .order-center{
-
-        font-size:24px;
-
-        color:#d8a7b1;
-
-        font-weight:bold;
-
-    }
-
-    .status{
-
-        padding:10px 22px;
-
-        border-radius:50px;
-
-        font-weight:600;
-
-        color:white;
-
-        display:inline-block;
-
-    }
-
-    .pending{
-
-        background:#f4b400;
-
-    }
-
-    .processing{
-
-        background:#4a90e2;
-
-    }
-
-    .completed{
-
-        background:#43a047;
-
-    }
-
-    .cancelled{
-
-        background:#e53935;
-
-    }
-
-    .unpaid{
-
-        background:#8e24aa;
-
-    }
-
-    .empty-orders{
-
-        background:white;
-
-        border-radius:20px;
-
-        padding:60px;
-
-        text-align:center;
-
-        box-shadow:0 8px 25px rgba(0,0,0,.08);
-
-    }
-
-    .empty-orders h3{
-
-        color:#555;
-
-        margin-bottom:10px;
-
-    }
-
-    .empty-orders p{
-
-        color:#999;
-
-    }
-
-    @media(max-width:768px){
-
-        .profile-card{
-
-            padding:25px;
-
-        }
-
-        .profile-avatar{
-
-            width:130px;
-
-            height:130px;
-
-            margin-top:-90px;
-
-        }
-
-        .profile-card h1{
-
-            font-size:28px;
-
-        }
-
-        .order-card{
-
-            flex-direction:column;
-
-            text-align:center;
-
-        }
-
-    }
-
-    </style>
-
-    <section class="orders-section">
-
-        <div class="section-header">
-
-            <h2>My Orders</h2>
-
-            <p>Track all your crochet orders.</p>
-
-        </div>
-
-        {% if orders %}
-
-            {% for order in orders %}
-
-            <div class="order-card">
-
-                <div class="order-left">
-
-                    <h3>Order #{{ order.id }}</h3>
-
-                    <small>
-
-                        {{ order.created_at.strftime("%d %b %Y") }}
-
-                    </small>
-
-                </div>
-
-                <div class="order-center">
-
-                    {{ order.total }} THB
-
-                </div>
-
-                <div class="order-right">
-                                        {% if order.status == "Pending" %}
-
-                        <span class="status pending">
-                            ⏳ Pending
-                        </span>
-
-                    {% elif order.status == "Processing" %}
-
-                        <span class="status processing">
-                            ⚙ Processing
-                        </span>
-
-                    {% elif order.status == "Completed" %}
-
-                        <span class="status completed">
-                            ✅ Completed
-                        </span>
-
-                    {% elif order.status == "Cancelled" %}
-
-                        <span class="status cancelled">
-                            ❌ Cancelled
-                        </span>
-
-                    {% elif order.status == "Unpaid" %}
-
-                        <span class="status unpaid">
-                            💳 Unpaid
-                        </span>
-
-                    {% else %}
-
-                        <span class="status">
-                            {{ order.status }}
-                        </span>
-
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-            {% endfor %}
-
-        {% else %}
-
-        <div class="empty-orders">
-
-            <h3>No Orders Yet</h3>
-
-            <p>Your future crochet orders will appear here.</p>
-
-        </div>
-
-        {% endif %}
-
-    </section>
-
-    <!-- =========================
-            EDIT PROFILE POPUP
-    ========================== -->
-
-    <div id="editProfilePopup" class="popup">
-
-        <div class="popup-box">
-
-            <h2>Edit Profile</h2>
-
-<form
-method="POST"
-action="{{ url_for('profile') }}"
-enctype="multipart/form-data">
-<input
-type="file"
-id="profileImageInput"
-name="profile_image"
-accept="image/*"
-hidden
-onchange="previewProfile(event)">
-
-                <label>Username</label>
-                <input type="text"
-                       name="username"
-                       value="{{ current_user.username }}">
-
-                <label>Email</label>
-                <input type="email"
-                       name="email"
-                       value="{{ current_user.email }}">
-
-                <label>Phone</label>
-                <input type="text"
-                       name="phone"
-                       value="{{ current_user.phone }}">
-
-                <label>Birthday</label>
-                <input type="date"
-                       name="birthday"
-                       value="{{ current_user.birthday }}">
-
-                <label>Gender</label>
-
-                <select name="gender">
-
-                    <option value="Male"
-                    {% if current_user.gender=="Male" %}
-                    selected
-                    {% endif %}>
-                    Male
-                    </option>
-
-                    <option value="Female"
-                    {% if current_user.gender=="Female" %}
-                    selected
-                    {% endif %}>
-                    Female
-                    </option>
-
-                </select>
-
-                <label>Nationality</label>
-
-                <input type="text"
-                       name="nationality"
-                       value="{{ current_user.nationality }}">
-
-                <div class="popup-buttons">
-
-                    <button type="button"
-                            onclick="closeEditProfile()">
-
-                        Cancel
-
-                    </button>
-
-                    <button type="submit">
-
-                        Save Changes
-
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
+        </form>
 
     </div>
 
 </div>
 
-<style>
+<!-- ==========================
+        ORDER STATUS
+========================== -->
 
-.popup{
+<section class="orders-status">
 
-    display:none;
+    <div class="section-header">
 
-    position:fixed;
+        <h2>طلباتي</h2>
 
-    inset:0;
+        <p>اختر حالة الطلب لعرض الطلبات.</p>
 
-    background:rgba(0,0,0,.45);
+    </div>
 
-    justify-content:center;
+    <div class="status-grid">
 
-    align-items:center;
+        <!-- بانتظار المعالجة -->
+        <div class="status-card active"
+             data-status="Pending Review">
 
-    z-index:9999;
+            <div class="status-icon">📝</div>
 
-}
-#profilePreview{
+            <span class="status-count">
+                {{ pending_review_orders }}
+            </span>
 
-width:100%;
+            <p>بانتظار المعالجة</p>
 
-height:100%;
+        </div>
 
-object-fit:cover;
+        <!-- بانتظار الدفع -->
+        <div class="status-card"
+             data-status="Pending Payment">
 
-transition:.35s;
+            <div class="status-icon">💳</div>
 
-cursor:pointer;
+            <span class="status-count">
+                {{ pending_payment_orders }}
+            </span>
 
-}
+            <p>بانتظار الدفع</p>
 
-#profilePreview:hover{
+        </div>
 
-transform:scale(1.05);
+        <!-- قيد التنفيذ -->
+        <div class="status-card"
+             data-status="Processing">
 
-filter:brightness(.9);
+            <div class="status-icon">⚙️</div>
 
-}
+            <span class="status-count">
+                {{ processing_orders }}
+            </span>
 
-.popup-box{
+            <p>قيد التنفيذ</p>
 
-    width:92%;
+        </div>
 
-    max-width:520px;
+        <!-- تم التنفيذ -->
+        <div class="status-card"
+             data-status="Completed">
 
-    background:white;
+            <div class="status-icon">✅</div>
 
-    border-radius:25px;
+            <span class="status-count">
+                {{ completed_orders }}
+            </span>
 
-    padding:35px;
+            <p>تم التنفيذ</p>
 
-    animation:popup .3s ease;
+        </div>
 
-}
+        <!-- جاري التوصيل -->
+        <div class="status-card"
+             data-status="Shipping">
 
-@keyframes popup{
+            <div class="status-icon">🚚</div>
 
-from{
+            <span class="status-count">
+                {{ shipping_orders }}
+            </span>
 
-opacity:0;
+            <p>جاري التوصيل</p>
 
-transform:scale(.9);
+        </div>
 
-}
+        <!-- تم الاستلام -->
+        <div class="status-card"
+             data-status="Delivered">
 
-to{
+            <div class="status-icon">📦</div>
 
-opacity:1;
+            <span class="status-count">
+                {{ delivered_orders }}
+            </span>
 
-transform:scale(1);
+            <p>تم الاستلام</p>
 
-}
+        </div>
 
-}
+        <!-- ملغاة -->
+        <div class="status-card"
+             data-status="Cancelled">
 
-.popup-box h2{
+            <div class="status-icon">❌</div>
 
-text-align:center;
+            <span class="status-count">
+                {{ cancelled_orders }}
+            </span>
 
-margin-bottom:25px;
+            <p>ملغاة</p>
 
-color:#444;
+        </div>
 
-}
+    </div>
 
-.popup-box label{
+</section>
 
-display:block;
+<!-- ==========================
+        ORDERS LIST
+========================== -->
 
-margin-top:15px;
+<section class="orders-list">
 
-margin-bottom:8px;
+    <div class="section-header">
 
-font-weight:600;
+        <h2>تفاصيل الطلبات</h2>
 
-color:#666;
+        <p>اضغط على أي حالة لعرض الطلبات الخاصة بها.</p>
 
-}
+    </div>
 
-.popup-box input,
-.popup-box select{
+    <div id="ordersContainer">
 
-width:100%;
+        <div class="empty-orders">
 
-padding:13px;
+            <div style="font-size:60px;margin-bottom:15px;">
+                📦
+            </div>
 
-border:1px solid #ddd;
+            <h3>اختر حالة الطلب</h3>
 
-border-radius:12px;
+            <p style="margin-top:10px;">
+                سيتم عرض الطلبات هنا.
+            </p>
 
-outline:none;
+        </div>
 
-}
+    </div>
 
-.popup-buttons{
+</section>
+<!-- ==========================
+        EDIT PROFILE MODAL
+========================== -->
 
-display:flex;
+<div class="modal" id="editModal">
 
-justify-content:flex-end;
+    <div class="modal-content">
 
-gap:12px;
+        <span class="close-modal"
+              onclick="closeEditModal()">&times;</span>
 
-margin-top:30px;
+        <h2>✏️ تعديل الملف الشخصي</h2>
 
-}
+        <form method="POST"
+              enctype="multipart/form-data"
+              class="edit-form">
 
-.popup-buttons button{
+            <label>الصورة الشخصية</label>
 
-border:none;
+            <input type="file"
+                   name="profile_image"
+                   accept="image/*">
 
-padding:12px 24px;
+            <label>اسم المستخدم</label>
 
-border-radius:30px;
+            <input type="text"
+                   name="username"
+                   value="{{ current_user.username }}"
+                   required>
 
-cursor:pointer;
+            <label>البريد الإلكتروني</label>
 
-font-weight:600;
+            <input type="email"
+                   name="email"
+                   value="{{ current_user.email }}"
+                   required>
 
-}
+            <label>رقم الجوال</label>
 
-.popup-buttons button:first-child{
+            <input type="text"
+                   name="phone"
+                   value="{{ current_user.phone or '' }}">
 
-background:#ddd;
+            <label>تاريخ الميلاد</label>
 
-}
+            <input type="date"
+                   name="birthday"
+                   value="{{ current_user.birthday or '' }}">
 
-.popup-buttons button:last-child{
+            <label>الجنس</label>
 
-background:#d8a7b1;
+            <select name="gender">
 
-color:white;
+                <option value="">اختر</option>
 
-}
+                <option value="ذكر"
+                    {% if current_user.gender=="ذكر" %}selected{% endif %}>
+                    ذكر
+                </option>
 
-</style>
+                <option value="أنثى"
+                    {% if current_user.gender=="أنثى" %}selected{% endif %}>
+                    أنثى
+                </option>
 
+            </select>
+
+            <label>الجنسية</label>
+
+            <input type="text"
+                   name="nationality"
+                   value="{{ current_user.nationality or '' }}">
+
+            <button type="submit"
+                    class="save-btn">
+
+                💾 حفظ التعديلات
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- ==========================
+        CHANGE PASSWORD MODAL
+========================== -->
+
+<div class="modal" id="passwordModal">
+
+    <div class="modal-content">
+
+        <span class="close-modal"
+              onclick="closePasswordModal()">&times;</span>
+
+        <h2>🔒 تغيير كلمة المرور</h2>
+
+        <form action="{{ url_for('change_password') }}"
+              method="POST"
+              class="edit-form">
+
+            <label>كلمة المرور الحالية</label>
+
+            <input type="password"
+                   name="current_password"
+                   required>
+
+            <label>كلمة المرور الجديدة</label>
+
+            <input type="password"
+                   name="new_password"
+                   required>
+
+            <label>تأكيد كلمة المرور</label>
+
+            <input type="password"
+                   name="confirm_password"
+                   required>
+
+            <button type="submit"
+                    class="save-btn">
+
+                🔒 تغيير كلمة المرور
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+</div>
 <script>
 
-function openEditProfile(){
+// ===========================
+// MODALS
+// ===========================
 
-document.getElementById("editProfilePopup").style.display="flex";
+const editModal = document.getElementById("editModal");
+const passwordModal = document.getElementById("passwordModal");
 
+function openEditModal(){
+    editModal.style.display = "flex";
 }
 
-function closeEditProfile(){
-
-document.getElementById("editProfilePopup").style.display="none";
-
+function closeEditModal(){
+    editModal.style.display = "none";
 }
 
-window.onclick=function(e){
-
-let popup=document.getElementById("editProfilePopup");
-
-if(e.target===popup){
-
-popup.style.display="none";
-
+function openPasswordModal(){
+    passwordModal.style.display = "flex";
 }
 
+function closePasswordModal(){
+    passwordModal.style.display = "none";
 }
-async function previewProfile(event){
 
-const file = event.target.files[0];
+// إغلاق النوافذ عند الضغط خارجها
+window.addEventListener("click",function(e){
 
-if(!file) return;
+    if(e.target===editModal){
+        closeEditModal();
+    }
 
-document.getElementById("profilePreview").src =
-URL.createObjectURL(file);
-
-const formData = new FormData();
-
-formData.append("profile_image", file);
-
-const response = await fetch("/upload_profile_image",{
-
-method:"POST",
-
-body:formData
+    if(e.target===passwordModal){
+        closePasswordModal();
+    }
 
 });
 
-const data = await response.json();
+// ===========================
+// DELETE ACCOUNT
+// ===========================
 
-if(data.success){
+function confirmDeleteAccount(){
 
-alert("✅ Profile photo updated successfully.");
+    if(confirm("هل أنت متأكد من حذف الحساب؟ لا يمكن التراجع عن هذه العملية.")){
 
-}else{
+        window.location.href="/delete-account";
 
-alert("❌ Failed to upload image.");
+    }
 
 }
 
+// ===========================
+// ORDERS
+// ===========================
+
+const cards = document.querySelectorAll(".status-card");
+const container = document.getElementById("ordersContainer");
+
+cards.forEach(card=>{
+
+    card.addEventListener("click",()=>{
+
+        cards.forEach(c=>c.classList.remove("active"));
+
+        card.classList.add("active");
+
+        fetch(`/get-orders/${encodeURIComponent(card.dataset.status)}`)
+
+        .then(res=>res.json())
+
+        .then(data=>{
+
+            container.innerHTML="";
+
+            if(data.length===0){
+
+                container.innerHTML=`
+
+                <div class="empty-orders">
+
+                    <div style="font-size:60px;">📦</div>
+
+                    <h3>لا توجد طلبات</h3>
+
+                </div>
+
+                `;
+
+                return;
+
+            }
+
+            data.forEach(order=>{
+
+                let products="";
+
+                if(order.items){
+
+                    order.items.forEach(item=>{
+
+                        products+=`
+
+                        <p>🧸 ${item.product_name} × ${item.quantity}</p>
+
+                        `;
+
+                    });
+
+                }
+
+                container.innerHTML+=`
+
+                <div class="order-card">
+
+                    <h3>📦 طلب #${order.id}</h3>
+
+                    <p><strong>💰 الإجمالي:</strong> ${order.total} ريال</p>
+
+                    <p><strong>📅 التاريخ:</strong> ${order.date}</p>
+
+                    <p><strong>🔄 الحالة:</strong> ${order.status}</p>
+
+                    <h4>🛒 المنتجات</h4>
+
+                    ${products}
+
+                    ${order.shipping_company ? `
+                    <p><strong>🚚 شركة الشحن:</strong> ${order.shipping_company}</p>
+                    ` : ""}
+
+                    ${order.tracking_number ? `
+                    <p><strong>🔎 رقم التتبع:</strong> ${order.tracking_number}</p>
+                    ` : ""}
+                    ${order.status === "Delivered" ? `
+
+<a href="/add-review/${order.id}"
+class="review-btn">
+
+⭐ تقييم المنتج
+
+</a>
+
+` : ""}
+
+                    <a href="/my-order/${order.id}">
+                        عرض التفاصيل
+                    </a>
+
+                </div>
+
+                `;
+
+            });
+
+        });
+
+    });
+
+});
+const reviewModal =
+document.getElementById("reviewModal");
+
+function openReviewModal(){
+    reviewModal.style.display = "flex";
 }
+
+function closeReviewModal(){
+    reviewModal.style.display = "none";
+}
+
+window.addEventListener("click", function(e){
+
+    if(e.target === reviewModal){
+        closeReviewModal();
+    }
+
+});
 
 </script>
 

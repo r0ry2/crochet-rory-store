@@ -1,46 +1,572 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ current_lang }}" dir="{{ 'rtl' if current_lang == 'ar' else 'ltr' }}">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Admin Panel{% endblock %}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: #ffb6c1;
-            color: white;
-            padding: 15px;
-            text-align: center;
-        }
-        .container {
-            padding: 20px;
-        }
-        a {
-            color: #ff69b4;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+{% block title %}
+{{ _("Admin Panel") }}
+{% endblock %}
+</title>
+
+<style>
+
+/* ==========================================
+   Reset
+========================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#fff7fb;
+}
+
+/* ==========================================
+   Sidebar
+========================================== */
+
+.sidebar{
+
+    position:fixed;
+
+    top:0;
+
+    right:0;
+
+    width:260px;
+
+    height:100vh;
+
+    overflow-y:auto;
+
+    background:linear-gradient(180deg,#f7a8c0,#e26fa7);
+
+    color:white;
+
+    padding:30px 20px;
+
+    box-shadow:-3px 0 15px rgba(0,0,0,.10);
+
+    z-index:999;
+
+}
+
+.sidebar h2{
+
+    text-align:center;
+
+    font-size:27px;
+
+    margin-bottom:35px;
+
+}
+
+.sidebar a{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    color:white;
+
+    text-decoration:none;
+
+    padding:15px;
+
+    border-radius:14px;
+
+    margin-bottom:12px;
+
+    font-size:16px;
+
+    transition:.3s;
+
+}
+
+.sidebar a:hover{
+
+    background:rgba(255,255,255,.20);
+
+    transform:translateX(-6px);
+
+}
+
+.sidebar a.active{
+
+    background:white;
+
+    color:#e26fa7;
+
+    font-weight:bold;
+
+}
+
+/* ==========================================
+   Notification Badge
+========================================== */
+
+.menu-badge{
+
+    background:#ff2d55;
+
+    color:white;
+
+    min-width:22px;
+
+    height:22px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:12px;
+
+    font-weight:bold;
+
+    margin-right:auto;
+
+}
+
+/* ==========================================
+   Main
+========================================== */
+
+.main{
+
+    margin-right:260px;
+
+    min-height:100vh;
+
+}
+
+/* ==========================================
+   Top Bar
+========================================== */
+
+.topbar{
+
+    background:white;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:20px 35px;
+
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+
+}
+
+.topbar h1{
+
+    color:#e26fa7;
+
+    font-size:30px;
+
+}
+
+.topbar p{
+
+    color:#777;
+
+    margin-top:5px;
+
+}
+
+.language-btn{
+
+    background:#ffe5ef;
+
+    color:#e26fa7;
+
+    text-decoration:none;
+
+    padding:10px 18px;
+
+    border-radius:30px;
+
+    font-weight:bold;
+
+    transition:.3s;
+
+}
+
+.language-btn:hover{
+
+    background:#ffd0e3;
+
+}
+
+/* ==========================================
+   Content
+========================================== */
+
+.content{
+
+    padding:35px;
+
+}
+
+/* ==========================================
+   Tablet
+========================================== */
+
+@media (max-width:992px){
+
+.sidebar{
+
+    width:220px;
+
+    padding:25px 15px;
+
+}
+
+.sidebar h2{
+
+    font-size:24px;
+
+}
+
+.sidebar a{
+
+    padding:13px;
+
+    font-size:15px;
+
+}
+
+.main{
+
+    margin-right:220px;
+
+}
+
+.topbar{
+
+    padding:18px 25px;
+
+}
+
+.topbar h1{
+
+    font-size:26px;
+
+}
+
+.content{
+
+    padding:25px;
+
+}
+
+}
+
+/* ==========================================
+   Mobile
+========================================== */
+
+@media (max-width:768px){
+
+.sidebar{
+
+    position:fixed;
+
+    top:0;
+
+    right:0;
+
+    width:220px;
+
+    height:100vh;
+
+    padding:20px 15px;
+
+    overflow-y:auto;
+
+}
+
+.main{
+
+    margin-right:220px;
+
+}
+
+.sidebar h2{
+
+    font-size:22px;
+
+    margin-bottom:20px;
+
+}
+
+.sidebar a{
+
+    padding:12px;
+
+    font-size:14px;
+
+}
+
+.topbar{
+
+    flex-direction:column;
+
+    gap:12px;
+
+    text-align:center;
+
+    padding:18px;
+
+}
+
+.topbar h1{
+
+    font-size:24px;
+
+}
+
+.topbar p{
+
+    font-size:14px;
+
+}
+
+.language-btn{
+
+    padding:8px 18px;
+
+}
+
+.content{
+
+    padding:20px 15px;
+
+}
+
+}
+
+/* ==========================================
+   Small Mobile
+========================================== */
+
+@media (max-width:480px){
+
+.sidebar{
+
+    width:190px;
+
+}
+
+.main{
+
+    margin-right:190px;
+
+}
+
+.sidebar h2{
+
+    font-size:20px;
+
+}
+
+.sidebar a{
+
+    font-size:13px;
+
+    padding:10px;
+
+}
+
+.topbar h1{
+
+    font-size:20px;
+
+}
+
+.topbar p{
+
+    font-size:12px;
+
+}
+
+.content{
+
+    padding:15px 12px;
+
+}
+
+}
+
+</style>
+
 </head>
 <body>
-    <header>
-        <h1>Admin Dashboard</h1>
-        <nav>
-            <a href="{{ url_for('admin_home') }}">Home</a> |
-            <a href="{{ url_for('admin_dashboard') }}">Dashboard</a> |
-            <a href="{{ url_for('admin_messages') }}">Messages</a> |
-            <a href="{{ url_for('logout') }}">Logout</a>
-        </nav>
-    </header>
+<div class="sidebar">
 
-    <div class="container">
-        {% block content %}{% endblock %}
+    <h2>
+        🧶 {{ "متجر روري" if current_lang=="ar" else "Rory Store" }}
+    </h2>
+
+    <!-- Home -->
+
+    <a href="{{ url_for('admin_home') }}"
+       class="{% if request.endpoint=='admin_home' %}active{% endif %}">
+
+        🏠 {{ "الرئيسية" if current_lang=="ar" else "Home" }}
+
+    </a>
+
+    <!-- Orders -->
+
+    <a href="{{ url_for('admin_orders') }}"
+       class="{% if request.endpoint=='admin_orders' %}active{% endif %}">
+
+        📦 {{ "الطلبات" if current_lang=="ar" else "Orders" }}
+
+        {% if unread_notifications > 0 %}
+
+        <span class="menu-badge">
+
+            {{ unread_notifications }}
+
+        </span>
+
+        {% endif %}
+
+    </a>
+
+    <!-- Dashboard -->
+
+    <a href="{{ url_for('admin_dashboard') }}"
+       class="{% if request.endpoint=='admin_dashboard' %}active{% endif %}">
+
+        📊 {{ "لوحة المعلومات" if current_lang=="ar" else "Dashboard" }}
+
+    </a>
+
+    <!-- Add Product -->
+
+    <a href="{{ url_for('add_product') }}"
+       class="{% if request.endpoint=='add_product' %}active{% endif %}">
+
+        ➕ {{ "إضافة منتج" if current_lang=="ar" else "Add Product" }}
+
+    </a>
+
+    <!-- Users -->
+
+    <a href="{{ url_for('admin_users') }}"
+       class="{% if request.endpoint=='admin_users' %}active{% endif %}">
+
+        👥 {{ "المستخدمون" if current_lang=="ar" else "Users" }}
+
+    </a>
+
+    <!-- Reviews -->
+
+    <a href="{{ url_for('admin_reviews') }}"
+       class="{% if request.endpoint=='admin_reviews' %}active{% endif %}">
+
+        ⭐ {{ "التقييمات" if current_lang=="ar" else "Reviews" }}
+
+    </a>
+
+    <!-- Messages -->
+
+    <a href="{{ url_for('admin_messages') }}"
+       class="{% if request.endpoint=='admin_messages' %}active{% endif %}">
+
+        💌 {{ "الرسائل" if current_lang=="ar" else "Messages" }}
+
+    </a>
+
+    <!-- Logout -->
+
+    <a href="{{ url_for('logout') }}">
+
+        🚪 {{ "تسجيل الخروج" if current_lang=="ar" else "Logout" }}
+
+    </a>
+
+</div>
+
+<!-- ==========================
+     Main Content
+========================== -->
+
+<div class="main">
+
+    <!-- Top Bar -->
+
+    <div class="topbar">
+
+        <div>
+
+            <h1>
+
+                {{ _("Admin Panel") }}
+
+            </h1>
+
+            <p>
+
+                {{ _("Welcome back Admin") }} 💕
+
+            </p>
+
+        </div>
+
+        <div>
+
+            {% if current_lang == "ar" %}
+
+            <a href="{{ url_for('change_language', lang='en') }}"
+               class="language-btn">
+
+                🇺🇸 English
+
+            </a>
+
+            {% else %}
+
+            <a href="{{ url_for('change_language', lang='ar') }}"
+               class="language-btn">
+
+                🇸🇦 العربية
+
+            </a>
+
+            {% endif %}
+
+        </div>
+
     </div>
+
+    <!-- Page Content -->
+
+    <div class="content">
+    {% block content %}
+{% endblock %}
+
+    </div>
+
+</div>
+
 </body>
+
 </html>

@@ -1,181 +1,690 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Order Confirmation | Crochet Rory Store</title>
-  <style>
-    body {
-      font-family: "Poppins", sans-serif;
-      background-color: #ffe4ef;
-      margin: 0;
-      padding: 0;
-      text-align: center;
+{% extends "base_logged.html" %}
+
+{% block title %}
+{{ "تأكيد الطلب" if current_lang=="ar" else "Order Confirmation" }}
+{% endblock %}
+
+{% block content %}
+
+<style>
+
+:root{
+
+    --primary:#d88ea4;
+    --primary-dark:#c76f89;
+
+    --light:#fdecef;
+    --border:#f2bfd0;
+
+    --text:#5d4b52;
+
+    --shadow:0 10px 25px rgba(216,167,177,.18);
+
+}
+
+.checkout-page{
+
+    width:min(92%,1100px);
+
+    margin:40px auto;
+
+}
+
+.success-card,
+.order-info-card,
+.customer-card,
+.products-card,
+.summary-card{
+
+    background:#fff;
+
+    border-radius:28px;
+
+    padding:35px;
+
+    box-shadow:var(--shadow);
+
+    margin-bottom:25px;
+
+}
+
+.success-card{
+
+    text-align:center;
+
+}
+
+.success-icon{
+
+    width:90px;
+    height:90px;
+
+    border-radius:50%;
+
+    background:var(--primary);
+
+    color:#fff;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:45px;
+
+    margin:0 auto 20px;
+
+}
+
+.success-card h1{
+
+    color:#444;
+
+    margin-bottom:12px;
+
+}
+
+.success-card p{
+
+    color:#777;
+
+    line-height:1.8;
+
+    max-width:650px;
+
+    margin:auto;
+
+}
+
+.order-info-card h2,
+.customer-card h2,
+.products-card h2,
+.summary-card h2{
+
+    text-align:center;
+
+    color:#444;
+
+    margin-bottom:25px;
+
+}
+
+.order-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:18px;
+
+}
+
+.order-item,
+.customer-item{
+
+    background:var(--light);
+
+    border:1px solid var(--border);
+
+    border-radius:18px;
+
+    padding:20px;
+
+}
+
+.order-item{
+
+    text-align:center;
+
+}
+
+.order-item small,
+.customer-item small{
+
+    display:block;
+
+    color:#888;
+
+    margin-bottom:8px;
+
+}
+
+.order-item h3{
+
+    color:var(--primary-dark);
+
+}
+
+.customer-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:18px;
+
+}
+
+.customer-address{
+
+    grid-column:1/-1;
+
+}
+
+.customer-item h3{
+
+    color:#555;
+
+    word-break:break-word;
+
+}
+
+.order-product{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    background:var(--light);
+
+    border:1px solid var(--border);
+
+    border-radius:18px;
+
+    padding:16px;
+
+    margin-bottom:18px;
+
+}
+
+.order-product img{
+
+    width:90px;
+
+    height:90px;
+
+    object-fit:cover;
+
+    border-radius:15px;
+
+}
+
+.product-details{
+
+    flex:1;
+
+}
+
+.product-details h3{
+
+    color:#444;
+
+    margin-bottom:8px;
+
+}
+
+.product-details p{
+
+    color:#777;
+
+    margin:4px 0;
+
+}
+
+.product-price{
+
+    color:var(--primary-dark);
+
+    font-size:20px;
+
+    font-weight:bold;
+
+}
+
+.summary-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:14px 0;
+
+    color:#555;
+
+}
+
+.summary-card hr{
+
+    border:none;
+
+    border-top:1px solid var(--border);
+
+    margin:12px 0;
+
+}
+
+.total-row{
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    color:var(--primary-dark);
+
+}
+
+/* ===========================
+        Mobile
+=========================== */
+
+@media(max-width:768px){
+
+    .checkout-page{
+
+        width:95%;
+
     }
 
-    header {
-      background-color: #ffb6c1;
-      color: #333;
-      padding: 10px 0;
-      font-weight: bold;
+    .success-card,
+    .order-info-card,
+    .customer-card,
+    .products-card,
+    .summary-card{
+
+        padding:22px;
+
+        border-radius:22px;
+
     }
 
-    h1 {
-      font-size: 2.5rem;
-      color: #e26fa7;
-      margin-top: 30px;
-      text-shadow: 1px 1px 2px white;
+    .customer-grid{
+
+        grid-template-columns:1fr;
+
     }
 
-    .confirmation-box {
-      background: white;
-      width: 60%;
-      max-width: 600px;
-      margin: 40px auto;
-      border-radius: 15px;
-      padding: 30px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    .customer-address{
+
+        grid-column:auto;
+
     }
 
-    h2 {
-      color: #444;
-      font-size: 1.5rem;
-      margin-bottom: 15px;
+    .order-product{
+
+        flex-direction:column;
+
+        text-align:center;
+
     }
 
-    .order-id {
-      background-color: #ffe0ec;
-      padding: 10px;
-      border-radius: 10px;
-      display: inline-block;
-      margin-bottom: 15px;
-      color: #e26fa7;
-      font-weight: bold;
+    .order-product img{
+
+        width:120px;
+
+        height:120px;
+
     }
 
-    .customer-info {
-      margin: 10px 0 20px;
-      color: #555;
-      font-size: 1rem;
+    .product-price{
+
+        margin-top:10px;
+
     }
 
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 20px 0;
-    }
+}
 
-    li {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #fff4f8;
-      padding: 12px 20px;
-      margin: 10px 0;
-      border-radius: 10px;
-      font-size: 1rem;
-      color: #555;
-    }
+</style>
+<div class="checkout-page">
 
-    .product-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    <div class="success-card">
 
-    .product-info img {
-      width: 50px;
-      height: 50px;
-      border-radius: 10px;
-      object-fit: cover;
-    }
+        <div class="success-icon">
+            ✓
+        </div>
 
-    .total {
-      font-size: 1.3rem;
-      font-weight: bold;
-      margin-top: 20px;
-      color: #444;
-    }
+        <h1>
+            {{ "تم استلام طلبك بنجاح 🎉" if current_lang=="ar"
+            else "Order Confirmed 🎉" }}
+        </h1>
 
-    .back-btn {
-      background-color: #e26fa7;
-      color: white;
-      border: none;
-      padding: 12px 30px;
-      border-radius: 25px;
-      font-size: 1.1rem;
-      cursor: pointer;
-      margin-top: 20px;
-      transition: 0.3s;
-    }
+        <p>
+            {{ "شكراً لتسوقك من Crochet Rory Store، يمكنك متابعة حالة طلبك من حسابك."
+            if current_lang=="ar"
+            else "Thank you for shopping with Crochet Rory Store. You can track your order anytime from your account." }}
+        </p>
 
-    .back-btn:hover {
-      background-color: #c85a8c;
-    }
-
-    footer {
-      margin-top: 50px;
-      font-size: 0.9rem;
-      color: #555;
-    }
-  </style>
-</head>
-<body>
-  <header>✨ Use code: Rory for 2% off! ✨</header>
-
-  <h1>🎀 Order Confirmed!</h1>
-
-  <div class="confirmation-box">
-    <h2>🧺 Your Order Details</h2>
-    <p class="order-id">Order ID: <span id="order-id">...</span></p>
-
-    <div class="customer-info">
-      <p><strong>👤 Name:</strong> <span id="customer-name">...</span></p>
-      <p><strong>📍 Address:</strong> <span id="customer-address">...</span></p>
     </div>
 
-    <ul id="order-items"></ul>
+    <!-- معلومات الطلب -->
 
-    <p class="total">Total: <span id="order-total"></span> TUB</p>
+    <div class="order-info-card">
 
-    <button class="back-btn" onclick="window.location.href='{{ url_for('home_logged') }}'">Continue Shopping 🛍️</button>
+        <h2>
+            {{ "معلومات الطلب" if current_lang=="ar"
+            else "Order Information" }}
+        </h2>
 
-  </div>
+        <div class="order-grid">
 
-  <footer>© 2024 Crochet Rory Store. All rights reserved.</footer>
+            <div class="order-item">
 
-  <script>
+                <small>
+                    {{ "رقم الطلب" if current_lang=="ar"
+                    else "Order ID" }}
+                </small>
+
+                <h3 id="order-id">
+                    #
+                </h3>
+
+            </div>
+
+            <div class="order-item">
+
+                <small>
+                    {{ "تاريخ الطلب" if current_lang=="ar"
+                    else "Order Date" }}
+                </small>
+
+                <h3 id="order-date">
+                    --
+                </h3>
+
+            </div>
+
+            <div class="order-item">
+
+                <small>
+                    {{ "حالة الطلب" if current_lang=="ar"
+                    else "Order Status" }}
+                </small>
+
+                <h3 id="order-status">
+
+                    {{ "قيد المراجعة" if current_lang=="ar"
+                    else "Pending" }}
+
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- بيانات العميل -->
+
+    <div class="customer-card">
+
+        <h2>
+
+            {{ "بيانات العميل" if current_lang=="ar"
+            else "Customer Information" }}
+
+        </h2>
+
+        <div class="customer-grid">
+
+            <div class="customer-item">
+
+                <small>
+                    {{ "الاسم" if current_lang=="ar"
+                    else "Full Name" }}
+                </small>
+
+                <h3 id="customer-name">
+                    --
+                </h3>
+
+            </div>
+
+            <div class="customer-item">
+
+                <small>
+                    {{ "البريد الإلكتروني" if current_lang=="ar"
+                    else "Email Address" }}
+                </small>
+
+                <h3 id="customer-email">
+                    --
+                </h3>
+
+            </div>
+
+            <div class="customer-item customer-address">
+
+                <small>
+                    {{ "عنوان التوصيل" if current_lang=="ar"
+                    else "Delivery Address" }}
+                </small>
+
+                <h3 id="customer-address">
+                    --
+                </h3>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- المنتجات -->
+
+    <div class="products-card">
+
+        <h2>
+
+            {{ "المنتجات" if current_lang=="ar"
+            else "Ordered Products" }}
+
+        </h2>
+
+        <div id="order-items">
+
+        </div>
+
+    </div>
+
+    <!-- الملخص -->
+
+    <div class="summary-card">
+
+        <h2>
+
+            {{ "ملخص الطلب" if current_lang=="ar"
+            else "Order Summary" }}
+
+        </h2>
+
+        <div class="summary-row">
+
+            <span>
+
+                {{ "المجموع الفرعي" if current_lang=="ar"
+                else "Subtotal" }}
+
+            </span>
+
+            <span id="subtotal">
+
+                0 {{ "ر.س" if current_lang=="ar" else "SAR" }}
+
+            </span>
+
+        </div>
+
+        <div class="summary-row">
+
+            <span>
+
+                {{ "الشحن" if current_lang=="ar"
+                else "Shipping" }}
+
+            </span>
+
+            <span>
+
+                {{ "مجاني" if current_lang=="ar"
+                else "Free" }}
+
+            </span>
+
+        </div>
+
+        <hr>
+
+        <div class="summary-row total-row">
+
+            <span>
+
+                {{ "الإجمالي" if current_lang=="ar"
+                else "Total" }}
+
+            </span>
+
+            <span id="total">
+
+                0 {{ "ر.س" if current_lang=="ar" else "SAR" }}
+
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
     async function loadOrderDetails() {
-      const params = new URLSearchParams(window.location.search);
-      const orderId = params.get("id");
-      if (!orderId) {
-        document.body.innerHTML = "<h2>❌ Order not found</h2>";
+
+    const params = new URLSearchParams(window.location.search);
+    const orderId = params.get("id");
+
+    if (!orderId) {
+        alert("Order not found");
         return;
-      }
+    }
 
-      const res = await fetch(`/api/order/${orderId}`);
-      const data = await res.json();
+    const response = await fetch(`/api/order/${orderId}`);
+    const data = await response.json();
 
-      document.getElementById("order-id").textContent = data.id;
-      document.getElementById("customer-name").textContent = data.customer_name;
-      document.getElementById("customer-address").textContent = data.address;
-      document.getElementById("order-total").textContent = data.total.toFixed(2);
+    if (data.error) {
+        alert(data.error);
+        return;
+    }
 
-      const list = document.getElementById("order-items");
-      data.items.forEach(item => {
-  const li = document.createElement("li");
-  li.innerHTML = `
-    <div class="product-info">
-      <img src="/static/images/${item.image}" alt="${item.name}">
-      <span>${item.name} ×${item.quantity}</span>
-    </div>
-    <span>${(item.price * item.quantity).toFixed(2)} TUB</span>`;
-  list.appendChild(li);
-});
+    // ==========================
+    // معلومات الطلب
+    // ==========================
+
+    document.getElementById("order-id").textContent =
+        "#" + data.id;
+
+    document.getElementById("order-date").textContent =
+        data.created_at || "--";
+
+    let status = data.status || "--";
+
+    if ("{{ current_lang }}" === "ar") {
+
+        if (status === "Pending")
+            status = "قيد المراجعة";
+
+        else if (status === "Processing")
+            status = "جاري التجهيز";
+
+        else if (status === "Shipped")
+            status = "تم الشحن";
+
+        else if (status === "Delivered")
+            status = "تم التسليم";
+
+        else if (status === "Cancelled")
+            status = "تم الإلغاء";
 
     }
 
-    loadOrderDetails();
-  </script>
-</body>
-</html>
+    document.getElementById("order-status").textContent = status;
+
+    // ==========================
+    // بيانات العميل
+    // ==========================
+
+    document.getElementById("customer-name").textContent =
+        data.customer_name || "--";
+
+    document.getElementById("customer-email").textContent =
+        data.customer_email || "--";
+
+    document.getElementById("customer-address").textContent =
+        data.address || "--";
+
+    // ==========================
+    // الإجمالي
+    // ==========================
+
+    document.getElementById("subtotal").textContent =
+        Number(data.total).toFixed(2) + " {{ 'ر.س' if current_lang=='ar' else 'SAR' }}";
+
+    document.getElementById("total").textContent =
+        Number(data.total).toFixed(2) + " {{ 'ر.س' if current_lang=='ar' else 'SAR' }}";
+
+    // ==========================
+    // المنتجات
+    // ==========================
+
+    const itemsBox = document.getElementById("order-items");
+    itemsBox.innerHTML = "";
+
+    data.items.forEach(item => {
+
+        itemsBox.innerHTML += `
+
+        <div class="order-product">
+
+            <img
+                src="/static/images/${item.image}"
+                alt="${item.name}"
+                onerror="this.src='/static/images/default.png'">
+
+            <div class="product-details">
+
+                <h3>${item.name}</h3>
+
+                <p>
+                    {{ "الكمية" if current_lang=="ar" else "Quantity" }}:
+                    ${item.quantity}
+                </p>
+
+                <p>
+                    {{ "السعر" if current_lang=="ar" else "Price" }}:
+                    ${Number(item.price).toFixed(2)}
+                    {{ "ر.س" if current_lang=="ar" else "SAR" }}
+                </p>
+
+            </div>
+
+            <div class="product-price">
+
+                ${(Number(item.price) * Number(item.quantity)).toFixed(2)}
+                {{ "ر.س" if current_lang=="ar" else "SAR" }}
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+loadOrderDetails();
+</script>
+
+{% endblock %}
