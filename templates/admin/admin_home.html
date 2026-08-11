@@ -13,14 +13,14 @@
    DASHBOARD GRID
 ===================================================== */
 
-.dashboard-grid{
+.dashboard-grid {
 
-    display:grid;
+    display: grid;
 
     grid-template-columns:
-        repeat(auto-fit,minmax(260px,1fr));
+        repeat(auto-fit, minmax(260px, 1fr));
 
-    gap:25px;
+    gap: 25px;
 
 }
 
@@ -29,67 +29,67 @@
    DASHBOARD CARD
 ===================================================== */
 
-.dashboard-card{
+.dashboard-card {
 
-    display:block;
+    display: block;
 
-    background:#fde7ef;
+    background: #fde7ef;
 
-    border:1px solid #f4bfd0;
+    border: 1px solid #f4bfd0;
 
-    border-radius:18px;
+    border-radius: 18px;
 
-    padding:25px;
+    padding: 25px;
 
-    text-decoration:none;
+    text-decoration: none;
 
-    color:#444;
+    color: #444;
 
     box-shadow:
-        0 8px 20px rgba(216,111,157,.12);
+        0 8px 20px rgba(216, 111, 157, .12);
 
-    transition:.3s;
+    transition: .3s;
 
-    position:relative;
+    position: relative;
 
-    overflow:hidden;
+    overflow: hidden;
 
 }
 
 
 /* وردي خفيف أعلى الكرت */
 
-.dashboard-card::before{
+.dashboard-card::before {
 
-    content:"";
+    content: "";
 
-    position:absolute;
+    position: absolute;
 
-    top:0;
+    top: 0;
 
-    left:0;
+    left: 0;
 
-    right:0;
+    right: 0;
 
-    height:5px;
+    height: 5px;
 
-    background:#e26fa7;
+    background: #e26fa7;
 
 }
 
 
 /* Hover */
 
-.dashboard-card:hover{
+.dashboard-card:hover {
 
-    transform:translateY(-6px);
+    transform: translateY(-6px);
 
-    background:#fbdce8;
+    background: #fbdce8;
 
-    border-color:#e8a0b9;
+    border-color: #e8a0b9;
 
     box-shadow:
-        0 12px 30px rgba(216,111,157,.22);
+        0 12px 30px rgba(216, 111, 157, .22);
 
 }
 
@@ -98,15 +98,15 @@
    CARD TITLE
 ===================================================== */
 
-.dashboard-card h3{
+.dashboard-card h3 {
 
-    color:#d85f91;
+    color: #d85f91;
 
-    font-size:22px;
+    font-size: 22px;
 
-    margin:0 0 12px;
+    margin: 0 0 12px;
 
-    font-weight:700;
+    font-weight: 700;
 
 }
 
@@ -115,15 +115,15 @@
    CARD DESCRIPTION
 ===================================================== */
 
-.dashboard-card p{
+.dashboard-card p {
 
-    color:#6f5a62;
+    color: #6f5a62;
 
-    line-height:1.8;
+    line-height: 1.8;
 
-    margin:0;
+    margin: 0;
 
-    font-size:15px;
+    font-size: 15px;
 
 }
 
@@ -132,15 +132,15 @@
    VISITOR COUNTER
 ===================================================== */
 
-.visitor-number{
+.visitor-number {
 
-    font-size:42px;
+    font-size: 42px;
 
-    font-weight:bold;
+    font-weight: bold;
 
-    color:#d85f91;
+    color: #d85f91;
 
-    margin-top:10px;
+    margin-top: 10px;
 
 }
 
@@ -149,16 +149,16 @@
    VISITOR CARD SPECIAL
 ===================================================== */
 
-.dashboard-card:has(.visitor-number){
+.dashboard-card:has(.visitor-number) {
 
-    background:#f9d5e3;
+    background: #f9d5e3;
 
 }
 
 
-.dashboard-card:has(.visitor-number)::before{
+.dashboard-card:has(.visitor-number)::before {
 
-    background:#d86f9d;
+    background: #d86f9d;
 
 }
 
@@ -167,21 +167,21 @@
    RESPONSIVE
 ===================================================== */
 
-@media (max-width:992px){
+@media (max-width: 992px) {
 
-    .dashboard-grid{
+    .dashboard-grid {
 
         grid-template-columns:
-            repeat(2,1fr);
+            repeat(2, 1fr);
 
-        gap:20px;
+        gap: 20px;
 
     }
 
 
-    .dashboard-card{
+    .dashboard-card {
 
-        padding:22px;
+        padding: 22px;
 
     }
 
@@ -192,43 +192,43 @@
    MOBILE
 ===================================================== */
 
-@media (max-width:768px){
+@media (max-width: 768px) {
 
-    .dashboard-grid{
+    .dashboard-grid {
 
-        grid-template-columns:1fr;
+        grid-template-columns: 1fr;
 
-        gap:18px;
-
-    }
-
-
-    .dashboard-card{
-
-        padding:20px;
-
-        border-radius:16px;
+        gap: 18px;
 
     }
 
 
-    .dashboard-card h3{
+    .dashboard-card {
 
-        font-size:20px;
+        padding: 20px;
 
-    }
-
-
-    .dashboard-card p{
-
-        font-size:14px;
+        border-radius: 16px;
 
     }
 
 
-    .visitor-number{
+    .dashboard-card h3 {
 
-        font-size:36px;
+        font-size: 20px;
+
+    }
+
+
+    .dashboard-card p {
+
+        font-size: 14px;
+
+    }
+
+
+    .visitor-number {
+
+        font-size: 36px;
 
     }
 
@@ -239,48 +239,47 @@
    SMALL MOBILE
 ===================================================== */
 
-@media (max-width:400px){
+@media (max-width: 400px) {
 
-    .dashboard-grid{
+    .dashboard-grid {
 
-        gap:15px;
-
-    }
-
-
-    .dashboard-card{
-
-        padding:18px;
+        gap: 15px;
 
     }
 
 
-    .dashboard-card h3{
+    .dashboard-card {
 
-        font-size:18px;
-
-    }
-
-
-    .dashboard-card p{
-
-        font-size:13px;
-
-        line-height:1.7;
+        padding: 18px;
 
     }
 
 
-    .visitor-number{
+    .dashboard-card h3 {
 
-        font-size:32px;
+        font-size: 18px;
+
+    }
+
+
+    .dashboard-card p {
+
+        font-size: 13px;
+
+        line-height: 1.7;
+
+    }
+
+
+    .visitor-number {
+
+        font-size: 32px;
 
     }
 
 }
 
 </style>
-
 
 
 <!-- =====================================================
@@ -304,7 +303,7 @@
 
             {{
                 "الإعدادات الأساسية"
-                if current_lang=="ar"
+                if current_lang == "ar"
                 else "Basic Settings"
             }}
 
@@ -315,7 +314,7 @@
 
             {{
                 "إدارة معلومات المتجر واللغة والعملة والإعدادات العامة."
-                if current_lang=="ar"
+                if current_lang == "ar"
                 else
                 "Manage store information, language, currency, and general settings."
             }}
@@ -327,38 +326,38 @@
 
 
     <!-- =================================================
-         ADD PRODUCT
+         PRODUCTS
     ================================================== -->
 
-<a
-    href="{{ url_for('admin_products') }}"
-    class="dashboard-card">
+    <a
+        href="{{ url_for('add_product') }}"
+        class="dashboard-card">
 
-    <h3>
+        <h3>
 
-        📦
+            📦
 
-        {{
-            "المنتجات"
-            if current_lang=="ar"
-            else "Products"
-        }}
+            {{
+                "المنتجات"
+                if current_lang == "ar"
+                else "Products"
+            }}
 
-    </h3>
+        </h3>
 
 
-    <p>
+        <p>
 
-        {{
-            "عرض وإدارة جميع منتجات المتجر وتعديل بياناتها وأسعارها وصورها."
-            if current_lang=="ar"
-            else
-            "View and manage all store products, including their details, prices, and images."
-        }}
+            {{
+                "عرض وإدارة جميع منتجات المتجر وتعديل بياناتها وأسعارها وصورها."
+                if current_lang == "ar"
+                else
+                "View and manage all store products, including their details, prices, and images."
+            }}
 
-    </p>
+        </p>
 
-</a>
+    </a>
 
 
 
@@ -376,7 +375,7 @@
 
             {{
                 "المستخدمون"
-                if current_lang=="ar"
+                if current_lang == "ar"
                 else "Users"
             }}
 
@@ -387,7 +386,7 @@
 
             {{
                 "إدارة حسابات العملاء والمشرفين."
-                if current_lang=="ar"
+                if current_lang == "ar"
                 else
                 "Manage customer and administrator accounts."
             }}
@@ -412,7 +411,7 @@
 
             {{
                 "التقييمات"
-                if current_lang=="ar"
+                if current_lang == "ar"
                 else "Reviews"
             }}
 
@@ -423,7 +422,7 @@
 
             {{
                 "عرض تقييمات العملاء وإدارتها."
-                if current_lang=="ar"
+                if current_lang == "ar"
                 else
                 "View and manage customer reviews."
             }}
@@ -448,7 +447,7 @@
 
             {{
                 "الرسائل"
-                if current_lang=="ar"
+                if current_lang == "ar"
                 else "Messages"
             }}
 
@@ -459,7 +458,7 @@
 
             {{
                 "عرض رسائل العملاء والرد عليها."
-                if current_lang=="ar"
+                if current_lang == "ar"
                 else
                 "View and reply to customer messages."
             }}
@@ -484,7 +483,7 @@
 
             {{
                 "عدد الزيارات"
-                if current_lang=="ar"
+                if current_lang == "ar"
                 else "Visitors"
             }}
 
@@ -502,7 +501,7 @@
 
             {{
                 "إجمالي عدد زوار المتجر."
-                if current_lang=="ar"
+                if current_lang == "ar"
                 else
                 "Total number of store visitors."
             }}
@@ -510,39 +509,42 @@
         </p>
 
     </a>
+
+
+
     <!-- =================================================
-     EDIT PRODUCTS
-================================================== -->
+         EDIT PRODUCTS
+    ================================================== -->
 
-<a
-    href="{{ url_for('admin_products') }}"
-    class="dashboard-card">
+    <a
+        href="{{ url_for('add_product') }}"
+        class="dashboard-card">
 
-    <h3>
+        <h3>
 
-        ✏️
+            ✏️
 
-        {{
-            "تعديل المنتجات"
-            if current_lang=="ar"
-            else "Edit Products"
-        }}
+            {{
+                "تعديل المنتجات"
+                if current_lang == "ar"
+                else "Edit Products"
+            }}
 
-    </h3>
+        </h3>
 
 
-    <p>
+        <p>
 
-        {{
-            "عرض المنتجات الحالية وتعديل بياناتها وصورها وأسعارها."
-            if current_lang=="ar"
-            else
-            "View your existing products and edit their details, images, and prices."
-        }}
+            {{
+                "عرض المنتجات الحالية وتعديل بياناتها وصورها وأسعارها."
+                if current_lang == "ar"
+                else
+                "View your existing products and edit their details, images, and prices."
+            }}
 
-    </p>
+        </p>
 
-</a>
+    </a>
 
 
 </div>

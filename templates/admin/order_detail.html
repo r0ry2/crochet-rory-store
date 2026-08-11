@@ -1,0 +1,757 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}
+{{ "تفاصيل الطلب" if current_lang == "ar" else "Order Details" }}
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .order-detail-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px 0 50px;
+    }
+
+    .order-header {
+        background: linear-gradient(135deg, #fff0f5, #ffe5ee);
+        border: 1px solid #f4bfd1;
+        border-radius: 20px;
+        padding: 25px;
+        margin-bottom: 22px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .order-header h1 {
+        margin: 0;
+        color: #d45f91;
+        font-size: 28px;
+        font-weight: 800;
+    }
+
+    .order-header p {
+        margin: 8px 0 0;
+        color: #777;
+    }
+
+    .order-id {
+        background: #d86f9d;
+        color: white;
+        padding: 10px 16px;
+        border-radius: 20px;
+        font-weight: 800;
+    }
+
+    .order-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .order-card {
+        background: #fff;
+        border: 1px solid #f4cada;
+        border-radius: 18px;
+        padding: 22px;
+        box-shadow: 0 7px 22px rgba(216, 111, 157, .08);
+    }
+
+    .order-card h2 {
+        margin: 0 0 18px;
+        color: #d45f91;
+        font-size: 20px;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        padding: 11px 0;
+        border-bottom: 1px solid #f5e3e9;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        color: #888;
+        font-size: 13px;
+    }
+
+    .info-value {
+        color: #444;
+        font-weight: 700;
+        text-align: left;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 7px 13px;
+        border-radius: 20px;
+        background: #f9d5e2;
+        color: #c84f82;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .items-card {
+        background: #fff;
+        border: 1px solid #f4cada;
+        border-radius: 18px;
+        padding: 22px;
+        margin-bottom: 20px;
+        box-shadow: 0 7px 22px rgba(216, 111, 157, .08);
+    }
+
+    .items-card h2 {
+        margin: 0 0 18px;
+        color: #d45f91;
+        font-size: 20px;
+    }
+
+    .item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px 0;
+        border-bottom: 1px solid #f5e3e9;
+    }
+
+    .item:last-child {
+        border-bottom: none;
+    }
+
+    .item-image {
+        width: 75px;
+        height: 75px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 1px solid #f3c4d4;
+        background: #fff6f9;
+    }
+
+    .item-no-image {
+        width: 75px;
+        height: 75px;
+        border-radius: 12px;
+        background: #fff6f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+    }
+
+    .item-info {
+        flex: 1;
+    }
+
+    .item-name {
+        font-weight: 800;
+        color: #444;
+        margin-bottom: 6px;
+    }
+
+    .item-meta {
+        color: #888;
+        font-size: 13px;
+    }
+
+    .item-total {
+        color: #d45f91;
+        font-weight: 800;
+    }
+
+    .total-box {
+        margin-top: 20px;
+        padding: 18px;
+        background: #fff0f5;
+        border: 1px solid #f4bfd1;
+        border-radius: 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .total-label {
+        font-weight: 800;
+        color: #555;
+    }
+
+    .total-value {
+        font-size: 24px;
+        font-weight: 900;
+        color: #d45f91;
+    }
+
+    .update-card {
+        background: #fff;
+        border: 1px solid #f4cada;
+        border-radius: 18px;
+        padding: 22px;
+        margin-bottom: 20px;
+        box-shadow: 0 7px 22px rgba(216, 111, 157, .08);
+    }
+
+    .update-card h2 {
+        margin: 0 0 18px;
+        color: #d45f91;
+        font-size: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        color: #555;
+        font-weight: 700;
+        font-size: 13px;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+        border: 1px solid #efc4d4;
+        border-radius: 10px;
+        background: #fff;
+        color: #444;
+        font-size: 14px;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #d86f9d;
+        box-shadow: 0 0 0 3px rgba(216, 111, 157, .12);
+    }
+
+    .update-btn {
+        width: 100%;
+        border: none;
+        background: #d86f9d;
+        color: #fff;
+        padding: 13px;
+        border-radius: 11px;
+        font-size: 15px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .update-btn:hover {
+        background: #c75a87;
+    }
+
+    .bottom-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 18px;
+        border-radius: 11px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    .back-btn {
+        background: #f5e3e9;
+        color: #c84f82;
+    }
+
+    .invoice-btn {
+        background: #d86f9d;
+        color: #fff;
+    }
+
+    @media (max-width: 768px) {
+        .order-detail-page {
+            padding: 10px 0 30px;
+        }
+
+        .order-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .order-header {
+            padding: 20px;
+        }
+
+        .order-header h1 {
+            font-size: 23px;
+        }
+
+        .info-row {
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .item {
+            align-items: flex-start;
+        }
+
+        .item-total {
+            font-size: 13px;
+        }
+
+        .total-box {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .bottom-actions {
+            flex-direction: column;
+        }
+
+        .action-btn {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+</style>
+
+<div class="order-detail-page">
+
+```
+<!-- HEADER -->
+<div class="order-header">
+
+    <div>
+        <h1>
+            📦
+            {{ "تفاصيل الطلب" if current_lang == "ar" else "Order Details" }}
+        </h1>
+
+        <p>
+            {{ 
+                "معلومات وتفاصيل الطلب بالكامل."
+                if current_lang == "ar"
+                else
+                "Complete order information and details."
+            }}
+        </p>
+    </div>
+
+    <div class="order-id">
+        #{{ order.id }}
+    </div>
+
+</div>
+
+
+<!-- CUSTOMER + ORDER INFO -->
+<div class="order-grid">
+
+    <!-- CUSTOMER -->
+    <div class="order-card">
+
+        <h2>
+            👤
+            {{ "بيانات العميل" if current_lang == "ar" else "Customer Information" }}
+        </h2>
+
+        <div class="info-row">
+            <span class="info-label">
+                {{ "الاسم" if current_lang == "ar" else "Name" }}
+            </span>
+
+            <span class="info-value">
+                {{ order.customer_name or "-" }}
+            </span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">
+                {{ "البريد الإلكتروني" if current_lang == "ar" else "Email" }}
+            </span>
+
+            <span class="info-value">
+                {{ order.customer_email or "-" }}
+            </span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">
+                {{ "رقم الجوال" if current_lang == "ar" else "Phone" }}
+            </span>
+
+            <span class="info-value">
+                {{ order.customer_phone or "-" }}
+            </span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">
+                {{ "العنوان" if current_lang == "ar" else "Address" }}
+            </span>
+
+            <span class="info-value">
+                {{ order.address or "-" }}
+            </span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">
+                {{ "المدينة" if current_lang == "ar" else "City" }}
+            </span>
+
+            <span class="info-value">
+                {{ order.city or "-" }}
+            </span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">
+                {{ "الحي" if current_lang == "ar" else "District" }}
+            </span>
+
+            <span class="info-value">
+                {{ order.district or "-" }}
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- ORDER INFO -->
+    <div class="order-card">
+
+        <h2>
+            🧾
+            {{ "معلومات الطلب" if current_lang == "ar" else "Order Information" }}
+        </h2>
+
+        <div class="info-row">
+            <span class="info-label">
+                {{ "رقم الطلب" if current_lang == "ar" else "Order Number" }}
+            </span>
+
+            <span class="info-value">
+                #{{ order.id }}
+            </span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">
+                {{ "الحالة" if current_lang == "ar" else "Status" }}
+            </span>
+
+            <span class="info-value">
+                <span class="status-badge">
+                    {{ order.status or "-" }}
+                </span>
+            </span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">
+                {{ "طريقة الدفع" if current_lang == "ar" else "Payment Method" }}
+            </span>
+
+            <span class="info-value">
+                {{ order.payment_method or "-" }}
+            </span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">
+                {{ "طريقة الشحن" if current_lang == "ar" else "Shipping Method" }}
+            </span>
+
+            <span class="info-value">
+                {{ order.shipping_method or "-" }}
+            </span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">
+                {{ "رقم التتبع" if current_lang == "ar" else "Tracking Number" }}
+            </span>
+
+            <span class="info-value">
+                {{ order.tracking_number or "-" }}
+            </span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">
+                {{ "شركة الشحن" if current_lang == "ar" else "Shipping Company" }}
+            </span>
+
+            <span class="info-value">
+                {{ order.shipping_company or "-" }}
+            </span>
+        </div>
+
+        <div class="info-row">
+            <span class="info-label">
+                {{ "تاريخ الطلب" if current_lang == "ar" else "Order Date" }}
+            </span>
+
+            <span class="info-value">
+                {% if order.created_at %}
+                    {{ order.created_at.strftime("%Y-%m-%d %H:%M") }}
+                {% else %}
+                    -
+                {% endif %}
+            </span>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ITEMS -->
+<div class="items-card">
+
+    <h2>
+        🛍️
+        {{ "المنتجات في الطلب" if current_lang == "ar" else "Order Items" }}
+    </h2>
+
+    {% if order.items %}
+
+        {% for item in order.items %}
+
+            <div class="item">
+
+                {% if item.product and item.product.image %}
+
+                    <img
+                        class="item-image"
+                        src="{{ url_for('static', filename='images/' ~ item.product.image) }}"
+                        alt="{{ item.product.name }}"
+                    >
+
+                {% else %}
+
+                    <div class="item-no-image">
+                        🧶
+                    </div>
+
+                {% endif %}
+
+
+                <div class="item-info">
+
+                    <div class="item-name">
+
+                        {% if item.product %}
+                            {{ item.product.name }}
+                        {% else %}
+                            {{ "منتج محذوف" if current_lang == "ar" else "Deleted Product" }}
+                        {% endif %}
+
+                    </div>
+
+                    <div class="item-meta">
+
+                        {{ "الكمية" if current_lang == "ar" else "Quantity" }}:
+                        {{ item.quantity }}
+
+                        &nbsp; | &nbsp;
+
+                        {{ "السعر" if current_lang == "ar" else "Price" }}:
+                        {{ "%.2f"|format(item.price or 0) }}
+
+                        {{ "ريال" if current_lang == "ar" else "SAR" }}
+
+                    </div>
+
+                </div>
+
+
+                <div class="item-total">
+
+                    {{
+                        "%.2f"|format(
+                            (item.price or 0) * (item.quantity or 0)
+                        )
+                    }}
+
+                    {{ "ريال" if current_lang == "ar" else "SAR" }}
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <p style="color:#888;">
+            {{
+                "لا توجد منتجات في هذا الطلب."
+                if current_lang == "ar"
+                else
+                "No products found in this order."
+            }}
+        </p>
+
+    {% endif %}
+
+
+    <!-- TOTAL -->
+    <div class="total-box">
+
+        <span class="total-label">
+            {{ "الإجمالي" if current_lang == "ar" else "Total" }}
+        </span>
+
+        <span class="total-value">
+            {{ "%.2f"|format(order.total or 0) }}
+            {{ "ريال" if current_lang == "ar" else "SAR" }}
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- UPDATE ORDER -->
+<div class="update-card">
+
+    <h2>
+        ⚙️
+        {{ "تحديث الطلب" if current_lang == "ar" else "Update Order" }}
+    </h2>
+
+    <form
+        method="POST"
+        action="{{ url_for('update_order_detail', order_id=order.id) }}"
+    >
+
+        <div class="form-group">
+
+            <label>
+                {{ "حالة الطلب" if current_lang == "ar" else "Order Status" }}
+            </label>
+
+            <select
+                name="status"
+                class="form-control"
+                required
+            >
+
+                <option value="Pending Payment"
+                    {% if order.status == "Pending Payment" %}selected{% endif %}>
+                    {{ "بانتظار الدفع" if current_lang == "ar" else "Pending Payment" }}
+                </option>
+
+                <option value="Pending Review"
+                    {% if order.status == "Pending Review" %}selected{% endif %}>
+                    {{ "بانتظار المراجعة" if current_lang == "ar" else "Pending Review" }}
+                </option>
+
+                <option value="Processing"
+                    {% if order.status == "Processing" %}selected{% endif %}>
+                    {{ "قيد التجهيز" if current_lang == "ar" else "Processing" }}
+                </option>
+
+                <option value="Shipping"
+                    {% if order.status == "Shipping" %}selected{% endif %}>
+                    {{ "جاري الشحن" if current_lang == "ar" else "Shipping" }}
+                </option>
+
+                <option value="Delivered"
+                    {% if order.status == "Delivered" %}selected{% endif %}>
+                    {{ "تم التوصيل" if current_lang == "ar" else "Delivered" }}
+                </option>
+
+                <option value="Cancelled"
+                    {% if order.status == "Cancelled" %}selected{% endif %}>
+                    {{ "ملغي" if current_lang == "ar" else "Cancelled" }}
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                {{ "شركة الشحن" if current_lang == "ar" else "Shipping Company" }}
+            </label>
+
+            <input
+                type="text"
+                name="shipping_company"
+                class="form-control"
+                value="{{ order.shipping_company or '' }}"
+                placeholder="{{ 'مثال: DHL أو SMSA' if current_lang == 'ar' else 'Example: DHL or SMSA' }}"
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                {{ "رقم التتبع" if current_lang == "ar" else "Tracking Number" }}
+            </label>
+
+            <input
+                type="text"
+                name="tracking_number"
+                class="form-control"
+                value="{{ order.tracking_number or '' }}"
+                placeholder="{{ 'أدخل رقم التتبع' if current_lang == 'ar' else 'Enter tracking number' }}"
+            >
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="update-btn"
+        >
+            💾
+            {{ "حفظ تحديثات الطلب" if current_lang == "ar" else "Save Order Updates" }}
+        </button>
+
+    </form>
+
+</div>
+
+
+<!-- ACTIONS -->
+<div class="bottom-actions">
+
+    <a
+        href="{{ url_for('admin_orders') }}"
+        class="action-btn back-btn"
+    >
+        ←
+        {{ "العودة للطلبات" if current_lang == "ar" else "Back to Orders" }}
+    </a>
+
+
+    <a
+        href="{{ url_for('admin_invoice', order_id=order.id) }}"
+        class="action-btn invoice-btn"
+    >
+        🧾
+        {{ "طباعة الفاتورة" if current_lang == "ar" else "Print Invoice" }}
+    </a>
+
+</div>
+```
+
+</div>
+
+{% endblock %}

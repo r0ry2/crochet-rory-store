@@ -202,7 +202,7 @@ def search():
 # ✏️ EDIT PRODUCT
 # ==================================================
 
-@app.route("/admin/edit_product/<int:id>", methods=["POST"])
+@app.route("/admin/edit_product/<int:id>", methods=["GET", "POST"])
 @login_required
 def edit_product(id):
 
@@ -242,11 +242,9 @@ def edit_product(id):
 
     filename = product.image
 
-
     if form.image.data:
 
         image_file = form.image.data
-
 
         if image_file.filename:
 
@@ -254,14 +252,12 @@ def edit_product(id):
                 image_file.filename
             )
 
-
             image_path = os.path.join(
                 app.root_path,
                 "static",
                 "images",
                 filename
             )
-
 
             image_file.save(image_path)
 
@@ -275,20 +271,16 @@ def edit_product(id):
         product.stock
     )
 
-
     try:
-
         quantity = int(quantity)
 
     except (TypeError, ValueError):
-
         quantity = product.stock
 
 
     # منع الكمية السالبة
 
     if quantity < 0:
-
         quantity = 0
 
 
@@ -302,21 +294,37 @@ def edit_product(id):
         product.cost_price
     )
 
-
     try:
-
         cost_price = float(cost_price)
 
     except (TypeError, ValueError):
-
         cost_price = product.cost_price or 0
 
 
     # منع القيمة السالبة
 
     if cost_price < 0:
-
         cost_price = 0
+
+
+    # ==================================================
+    # 💵 ORIGINAL PRICE
+    # السعر الأصلي
+    # ==================================================
+
+    original_price = form.price.data
+
+    try:
+        original_price = float(original_price)
+
+    except (TypeError, ValueError):
+        original_price = product.price or 0
+
+
+    # منع السعر الأصلي من أن يكون سالبًا
+
+    if original_price < 0:
+        original_price = 0
 
 
     # ==================================================
@@ -331,6 +339,7 @@ def edit_product(id):
 
 
     # إذا ترك المستخدم السعر المخفض فارغًا
+
     if sale_price in [None, ""]:
 
         sale_price = None
@@ -338,30 +347,26 @@ def edit_product(id):
     else:
 
         try:
-
             sale_price = float(sale_price)
 
         except (TypeError, ValueError):
-
             sale_price = None
 
 
     # منع السعر المخفض من أن يكون سالبًا
 
     if sale_price is not None and sale_price < 0:
-
         sale_price = None
 
 
     # ==================================================
     # ⚠️ CHECK SALE PRICE
-    # السعر المخفض لا يكون أعلى من السعر الأصلي
+    # السعر المخفض يجب أن يكون أقل من السعر الأصلي
     # ==================================================
 
     if sale_price is not None:
 
-        if sale_price >= form.price.data:
-
+        if sale_price >= original_price:
             sale_price = None
 
 
@@ -369,12 +374,14 @@ def edit_product(id):
     # ✏️ UPDATE PRODUCT
     # ==================================================
 
+    # الاسم
+
     product.name = form.name.data
 
 
     # السعر الأصلي
 
-    product.price = form.price.data
+    product.price = original_price
 
 
     # سعر التكلفة
@@ -421,6 +428,19 @@ def edit_product(id):
     # ==================================================
 
     db.session.commit()
+
+
+    # ==================================================
+    # 🌐 LANGUAGE
+    # ==================================================
+
+    # نحاول معرفة لغة المستخدم من الـ session
+    # وإذا لم تكن موجودة نستخدم العربية
+
+    current_lang = session.get(
+        "lang",
+        "ar"
+    )
 
 
     # ==================================================
@@ -1318,6 +1338,7 @@ def index():
         verify_form=verify_form,
         login_error=login_error
     )
+
 # ==========================================
 # 👤 REGISTER
 # ==========================================
@@ -1327,25 +1348,37 @@ def register():
 
     form = RegisterForm()
 
+    # ==========================================
+    # 📝 PROCESS REGISTER FORM
+    # ==========================================
+
     if form.validate_on_submit():
 
         username = form.username.data.strip()
         email = form.email.data.strip().lower()
 
-        # التحقق من البريد
+        # ==========================================
+        # 🔎 CHECK EMAIL
+        # ==========================================
+
         existing_email = User.query.filter(
             func.lower(User.email) == email
         ).first()
 
         if existing_email:
 
-            flash("⚠️ Email already registered!", "register_warning")
+            flash(
+                "⚠️ Email already registered!",
+                "register_warning"
+            )
 
             login_form = LoginForm()
             verify_form = VerifyCodeForm()
 
             products = Product.query.filter(
-                Product.publish_location.in_(["both", "home_only"])
+                Product.publish_location.in_(
+                    ["both", "home_only"]
+                )
             ).all()
 
             return render_template(
@@ -1357,20 +1390,28 @@ def register():
                 show_register_popup=True
             )
 
-        # التحقق من اسم المستخدم
+        # ==========================================
+        # 🔎 CHECK USERNAME
+        # ==========================================
+
         existing_username = User.query.filter(
             func.lower(User.username) == username.lower()
         ).first()
 
         if existing_username:
 
-            flash("⚠️ Username already exists!", "register_warning")
+            flash(
+                "⚠️ Username already exists!",
+                "register_warning"
+            )
 
             login_form = LoginForm()
             verify_form = VerifyCodeForm()
 
             products = Product.query.filter(
-                Product.publish_location.in_(["both", "home_only"])
+                Product.publish_location.in_(
+                    ["both", "home_only"]
+                )
             ).all()
 
             return render_template(
@@ -1382,7 +1423,17 @@ def register():
                 show_register_popup=True
             )
 
-        code = str(random.randint(100000, 999999))
+        # ==========================================
+        # 🔢 GENERATE VERIFICATION CODE
+        # ==========================================
+
+        code = str(
+            random.randint(100000, 999999)
+        )
+
+        # ==========================================
+        # 👤 CREATE USER
+        # ==========================================
 
         new_user = User(
             username=username,
@@ -1390,26 +1441,94 @@ def register():
             phone=form.phone.data
         )
 
-        new_user.set_password(form.password.data)
+        # ==========================================
+        # 🔐 SET PASSWORD
+        # ==========================================
 
-        if email == "admin@store.com":
-            new_user.role = "admin"
-
-        new_user.confirmed = False
-        new_user.verification_code = code
-        new_user.verification_expiry = (
-            datetime.utcnow() + timedelta(minutes=10)
+        new_user.set_password(
+            form.password.data
         )
 
-        db.session.add(new_user)
-        db.session.commit()
+        # ==========================================
+        # 👑 ADMIN ACCOUNT
+        # ==========================================
+
+        if email == "admin@store.com":
+
+            new_user.role = "admin"
+
+        # ==========================================
+        # 📧 EMAIL VERIFICATION DATA
+        # ==========================================
+
+        new_user.confirmed = False
+
+        new_user.verification_code = code
+
+        new_user.verification_expiry = (
+            datetime.utcnow()
+            + timedelta(minutes=10)
+        )
+
+        # ==========================================
+        # 💾 SAVE USER
+        # ==========================================
+
+        try:
+
+            db.session.add(new_user)
+
+            db.session.commit()
+
+        except Exception as e:
+
+            db.session.rollback()
+
+            print(
+                "❌ REGISTER DATABASE ERROR:",
+                repr(e)
+            )
+
+            flash(
+                "حدث خطأ أثناء إنشاء الحساب.",
+                "register_warning"
+            )
+
+            login_form = LoginForm()
+            verify_form = VerifyCodeForm()
+
+            products = Product.query.filter(
+                Product.publish_location.in_(
+                    ["both", "home_only"]
+                )
+            ).all()
+
+            return render_template(
+                "index.html",
+                products=products,
+                form=login_form,
+                register_form=form,
+                verify_form=verify_form,
+                show_register_popup=True
+            )
+
+        # ==========================================
+        # 📌 SAVE EMAIL IN SESSION
+        # ==========================================
 
         session["verify_email"] = new_user.email
 
+        # ==========================================
+        # 📧 SEND VERIFICATION EMAIL
+        # ==========================================
+
         try:
+
             msg = MailMessage(
                 subject="Verify your Crochet Rory account",
-                recipients=[new_user.email]
+                recipients=[
+                    new_user.email
+                ]
             )
 
             msg.body = f"""
@@ -1432,16 +1551,44 @@ Crochet Rory Team
 
             mail.send(msg)
 
-        except Exception as e:
-            print("Mail Error:", e)
+            print(
+                "✅ Verification email sent successfully to:",
+                new_user.email
+            )
 
-        return redirect(url_for("index", verify=1))
+        except Exception as e:
+
+            print(
+                "❌ MAIL ERROR:",
+                repr(e)
+            )
+
+            # لا نحذف المستخدم إذا فشل الإيميل
+            # حتى نعرف الخطأ ونصلحه من إعدادات البريد
+
+        # ==========================================
+        # ✅ OPEN VERIFY POPUP
+        # ==========================================
+
+        return redirect(
+            url_for(
+                "index",
+                verify=1
+            )
+        )
+
+    # ==========================================
+    # 📄 REGISTER PAGE
+    # ==========================================
 
     login_form = LoginForm()
+
     verify_form = VerifyCodeForm()
 
     products = Product.query.filter(
-        Product.publish_location.in_(["both", "home_only"])
+        Product.publish_location.in_(
+            ["both", "home_only"]
+        )
     ).all()
 
     return render_template(
@@ -1451,6 +1598,7 @@ Crochet Rory Team
         register_form=form,
         verify_form=verify_form
     )
+
     
 @app.route("/forgot_password", methods=["POST"])
 def forgot_password():
