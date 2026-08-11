@@ -75,6 +75,8 @@ mail = Mail(app)
 # ==========================================
 db.init_app(app)
 migrate = Migrate(app, db)
+with app.app_context():
+    db.create_all()
 
 # ==========================================
 # Flask Login
