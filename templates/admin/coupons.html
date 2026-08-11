@@ -1,0 +1,1058 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}
+{{ "الكوبونات" if current_lang=="ar" else "Coupons" }}
+{% endblock %}
+
+
+{% block content %}
+
+<style>
+
+/* ==================================================
+   COUPONS PAGE
+================================================== */
+
+.coupons-page {
+    width: 100%;
+}
+
+
+/* ==================================================
+   PAGE HEADER
+================================================== */
+
+.coupons-header {
+    margin-bottom: 25px;
+}
+
+.coupons-header h2 {
+    margin: 0 0 8px;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.coupons-header p {
+    margin: 0;
+    color: #777;
+    font-size: 15px;
+}
+
+
+/* ==================================================
+   ADD COUPON CARD
+================================================== */
+
+.add-coupon-card {
+
+    width: 100%;
+    box-sizing: border-box;
+
+    background: white;
+
+    border: none;
+    border-radius: 20px;
+
+    padding: 25px;
+
+    margin-bottom: 25px;
+
+    cursor: pointer;
+
+    text-align: inherit;
+
+    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+
+    transition: 0.25s;
+}
+
+.add-coupon-card:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+.add-coupon-card h3 {
+
+    margin: 0 0 8px;
+
+    font-size: 21px;
+}
+
+.add-coupon-card p {
+
+    margin: 0;
+
+    color: #777;
+
+    font-size: 14px;
+}
+
+
+/* ==================================================
+   CURRENT COUPONS
+================================================== */
+
+.coupons-box {
+
+    background: white;
+
+    border-radius: 20px;
+
+    padding: 25px;
+
+    box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+}
+
+.coupons-box h3 {
+
+    margin-top: 0;
+
+    margin-bottom: 20px;
+
+    font-size: 21px;
+}
+
+
+/* ==================================================
+   EMPTY STATE
+================================================== */
+
+.empty-coupons {
+
+    text-align: center;
+
+    padding: 60px 20px;
+
+    color: #777;
+}
+
+.empty-coupons .empty-icon {
+
+    font-size: 45px;
+
+    margin-bottom: 15px;
+}
+
+.empty-coupons h4 {
+
+    margin: 0 0 8px;
+
+    color: #222;
+
+    font-size: 18px;
+}
+
+.empty-coupons p {
+
+    margin: 0;
+
+    font-size: 14px;
+}
+
+
+/* ==================================================
+   COUPON LIST
+================================================== */
+
+.coupon-item {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 18px;
+
+    border: 1px solid #f0dce5;
+
+    border-radius: 15px;
+
+    margin-bottom: 12px;
+}
+
+.coupon-code {
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    color: #d94f88;
+}
+
+.coupon-info {
+
+    color: #777;
+
+    font-size: 14px;
+
+    margin-top: 5px;
+}
+
+.coupon-status {
+
+    padding: 6px 12px;
+
+    border-radius: 20px;
+
+    background: #e8f8ee;
+
+    color: #269653;
+
+    font-size: 13px;
+}
+
+
+/* ==================================================
+   MODAL BACKGROUND
+================================================== */
+
+.coupon-modal {
+
+    display: none;
+
+    position: fixed;
+
+    z-index: 9999;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0,0,0,0.45);
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+}
+
+
+/* ==================================================
+   MODAL BOX
+================================================== */
+
+.coupon-modal-content {
+
+    width: 100%;
+
+    max-width: 600px;
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    background: white;
+
+    border-radius: 22px;
+
+    padding: 30px;
+
+    box-sizing: border-box;
+
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+
+    position: relative;
+
+    animation: couponModalOpen 0.25s ease;
+}
+
+@keyframes couponModalOpen {
+
+    from {
+        opacity: 0;
+        transform: translateY(-15px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* ==================================================
+   MODAL HEADER
+================================================== */
+
+.coupon-modal-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 25px;
+}
+
+.coupon-modal-header h2 {
+
+    margin: 0;
+
+    font-size: 24px;
+}
+
+.close-modal {
+
+    border: none;
+
+    background: #fde8f0;
+
+    color: #d94f88;
+
+    width: 38px;
+    height: 38px;
+
+    border-radius: 50%;
+
+    font-size: 22px;
+
+    cursor: pointer;
+}
+
+.close-modal:hover {
+
+    background: #f8d4e2;
+}
+
+
+/* ==================================================
+   FORM
+================================================== */
+
+.coupon-form-group {
+
+    margin-bottom: 18px;
+}
+
+.coupon-form-group label {
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-weight: 600;
+
+    font-size: 14px;
+}
+
+.coupon-form-group input,
+.coupon-form-group select {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 12px 14px;
+
+    border: 1px solid #e4d5dc;
+
+    border-radius: 12px;
+
+    font-size: 15px;
+
+    outline: none;
+
+    background: white;
+}
+
+.coupon-form-group input:focus,
+.coupon-form-group select:focus {
+
+    border-color: #df78a2;
+
+    box-shadow: 0 0 0 3px rgba(223,120,162,0.12);
+}
+
+
+/* ==================================================
+   TWO COLUMNS
+================================================== */
+
+.coupon-row {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 15px;
+}
+
+
+/* ==================================================
+   BUTTONS
+================================================== */
+
+.coupon-buttons {
+
+    display: flex;
+
+    gap: 12px;
+
+    margin-top: 25px;
+}
+
+.coupon-submit {
+
+    flex: 1;
+
+    border: none;
+
+    border-radius: 12px;
+
+    padding: 13px;
+
+    background: #df78a2;
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.coupon-submit:hover {
+
+    background: #d4618e;
+}
+
+.coupon-cancel {
+
+    flex: 1;
+
+    border: none;
+
+    border-radius: 12px;
+
+    padding: 13px;
+
+    background: #f3f3f3;
+
+    color: #555;
+
+    font-size: 15px;
+
+    cursor: pointer;
+}
+
+.coupon-cancel:hover {
+
+    background: #e8e8e8;
+}
+
+
+/* ==================================================
+   MOBILE
+================================================== */
+
+@media (max-width: 600px) {
+
+    .coupon-modal-content {
+
+        padding: 22px;
+
+        border-radius: 18px;
+    }
+
+    .coupon-row {
+
+        grid-template-columns: 1fr;
+    }
+
+    .coupon-buttons {
+
+        flex-direction: column;
+    }
+
+    .coupon-item {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+}
+
+</style>
+
+
+<div class="coupons-page">
+
+
+    <!-- ==================================================
+         PAGE HEADER
+    ================================================== -->
+
+    <div class="coupons-header">
+
+        <h2>
+
+            🎟️
+            {{ "إدارة الكوبونات" if current_lang=="ar" else "Coupon Management" }}
+
+        </h2>
+
+        <p>
+
+            {{ "إنشاء وإدارة كوبونات الخصم الخاصة بالمتجر."
+            if current_lang=="ar"
+            else "Create and manage discount coupons for your store." }}
+
+        </p>
+
+    </div>
+
+
+
+    <!-- ==================================================
+         ADD COUPON
+    ================================================== -->
+
+    <button
+        type="button"
+        class="add-coupon-card"
+        onclick="openCouponModal()">
+
+        <h3>
+
+            ➕
+            {{ "إضافة كوبون جديد" if current_lang=="ar" else "Add New Coupon" }}
+
+        </h3>
+
+        <p>
+
+            {{ "اضغطي هنا لإنشاء كوبون خصم جديد."
+            if current_lang=="ar"
+            else "Click here to create a new discount coupon." }}
+
+        </p>
+
+    </button>
+
+
+
+    <!-- ==================================================
+         CURRENT COUPONS
+    ================================================== -->
+
+    <div class="coupons-box">
+
+        <h3>
+
+            🎟️
+            {{ "الكوبونات الحالية" if current_lang=="ar" else "Current Coupons" }}
+
+        </h3>
+
+
+        {% if coupons %}
+
+            {% for coupon in coupons %}
+
+                <div class="coupon-item">
+
+                    <div>
+
+                        <div class="coupon-code">
+
+                            🎟️ {{ coupon.code }}
+
+                        </div>
+
+
+                        <div class="coupon-info">
+
+                            {% if coupon.discount_type == "percentage" %}
+
+                                {{ coupon.discount_value }}%
+
+                            {% else %}
+
+                                {{ coupon.discount_value }}
+
+                            {% endif %}
+
+
+                            &nbsp; • &nbsp;
+
+
+                            {{ "الحد الأدنى" if current_lang=="ar" else "Minimum" }}
+
+                            {{ coupon.minimum_order or 0 }}
+
+
+                            {% if coupon.usage_limit %}
+
+                                &nbsp; • &nbsp;
+
+                                {{ coupon.used_count or 0 }}
+                                /
+                                {{ coupon.usage_limit }}
+
+                                {{ "استخدام" if current_lang=="ar" else "uses" }}
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div>
+
+                        {% if coupon.is_active %}
+
+                            <span class="coupon-status">
+
+                                ✓
+                                {{ "فعال" if current_lang=="ar" else "Active" }}
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="coupon-status"
+                                  style="background:#fce8e8;color:#c0392b;">
+
+                                ✕
+                                {{ "غير فعال" if current_lang=="ar" else "Inactive" }}
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-coupons">
+
+                <div class="empty-icon">
+
+                    🎟️
+
+                </div>
+
+                <h4>
+
+                    {{ "لا توجد كوبونات حاليًا"
+                    if current_lang=="ar"
+                    else "No coupons yet" }}
+
+                </h4>
+
+                <p>
+
+                    {{ "عند إنشاء كوبون جديد سيظهر هنا."
+                    if current_lang=="ar"
+                    else "New coupons will appear here." }}
+
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+
+<!-- ==================================================
+     ADD COUPON MODAL
+================================================== -->
+
+<div
+    id="couponModal"
+    class="coupon-modal"
+    onclick="closeCouponModalOutside(event)">
+
+
+    <div
+        class="coupon-modal-content"
+        onclick="event.stopPropagation()">
+
+
+        <!-- HEADER -->
+
+        <div class="coupon-modal-header">
+
+            <h2>
+
+                🎟️
+                {{ "إضافة كوبون جديد"
+                if current_lang=="ar"
+                else "Add New Coupon" }}
+
+            </h2>
+
+
+            <button
+                type="button"
+                class="close-modal"
+                onclick="closeCouponModal()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+
+        <!-- FORM -->
+
+        <form
+            method="POST"
+            action="{{ url_for('add_coupon') }}">
+
+
+            <!-- COUPON CODE -->
+
+            <div class="coupon-form-group">
+
+                <label>
+
+                    🎟️
+                    {{ "كود الكوبون"
+                    if current_lang=="ar"
+                    else "Coupon Code" }}
+
+                </label>
+
+                <input
+                    type="text"
+                    name="code"
+                    placeholder="{{ 'مثال: SAVE20' if current_lang=='ar' else 'Example: SAVE20' }}"
+                    required
+                    autocomplete="off">
+
+            </div>
+
+
+
+            <!-- DISCOUNT TYPE -->
+
+            <div class="coupon-form-group">
+
+                <label>
+
+                    💰
+                    {{ "نوع الخصم"
+                    if current_lang=="ar"
+                    else "Discount Type" }}
+
+                </label>
+
+                <select
+                    name="discount_type"
+                    id="discountType"
+                    onchange="toggleMaximumDiscount()">
+
+                    <option value="percentage">
+
+                        {{ "نسبة مئوية (%)"
+                        if current_lang=="ar"
+                        else "Percentage (%)" }}
+
+                    </option>
+
+                    <option value="fixed">
+
+                        {{ "مبلغ ثابت"
+                        if current_lang=="ar"
+                        else "Fixed Amount" }}
+
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <!-- DISCOUNT VALUE -->
+
+            <div class="coupon-form-group">
+
+                <label>
+
+                    💸
+                    {{ "قيمة الخصم"
+                    if current_lang=="ar"
+                    else "Discount Value" }}
+
+                </label>
+
+                <input
+                    type="number"
+                    name="discount_value"
+                    min="0.01"
+                    step="0.01"
+                    placeholder="{{ 'مثال: 20' if current_lang=='ar' else 'Example: 20' }}"
+                    required>
+
+            </div>
+
+
+
+            <!-- MINIMUM ORDER -->
+
+            <div class="coupon-form-group">
+
+                <label>
+
+                    🛒
+                    {{ "الحد الأدنى لقيمة الطلب"
+                    if current_lang=="ar"
+                    else "Minimum Order Amount" }}
+
+                </label>
+
+                <input
+                    type="number"
+                    name="minimum_order"
+                    min="0"
+                    step="0.01"
+                    value="0"
+                    placeholder="0">
+
+            </div>
+
+
+
+            <!-- TWO COLUMNS -->
+
+            <div class="coupon-row">
+
+
+                <!-- MAXIMUM DISCOUNT -->
+
+                <div
+                    class="coupon-form-group"
+                    id="maximumDiscountGroup">
+
+                    <label>
+
+                        🔒
+                        {{ "الحد الأقصى للخصم"
+                        if current_lang=="ar"
+                        else "Maximum Discount" }}
+
+                    </label>
+
+                    <input
+                        type="number"
+                        name="maximum_discount"
+                        min="0"
+                        step="0.01"
+                        placeholder="{{ 'مثال: 50' if current_lang=='ar' else 'Example: 50' }}">
+
+                </div>
+
+
+
+                <!-- USAGE LIMIT -->
+
+                <div class="coupon-form-group">
+
+                    <label>
+
+                        🔢
+                        {{ "عدد مرات الاستخدام"
+                        if current_lang=="ar"
+                        else "Usage Limit" }}
+
+                    </label>
+
+                    <input
+                        type="number"
+                        name="usage_limit"
+                        min="1"
+                        step="1"
+                        placeholder="{{ 'اتركيه فارغًا = غير محدود' if current_lang=='ar' else 'Leave empty = unlimited' }}">
+
+                </div>
+
+            </div>
+
+
+
+            <!-- BUTTONS -->
+
+            <div class="coupon-buttons">
+
+
+                <button
+                    type="submit"
+                    class="coupon-submit">
+
+                    ✓
+                    {{ "إنشاء الكوبون"
+                    if current_lang=="ar"
+                    else "Create Coupon" }}
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="coupon-cancel"
+                    onclick="closeCouponModal()">
+
+                    {{ "إلغاء"
+                    if current_lang=="ar"
+                    else "Cancel" }}
+
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+/* ==================================================
+   OPEN MODAL
+================================================== */
+
+function openCouponModal() {
+
+    const modal =
+        document.getElementById("couponModal");
+
+    if (!modal) return;
+
+    modal.style.display = "flex";
+
+    document.body.style.overflow = "hidden";
+
+}
+
+
+
+/* ==================================================
+   CLOSE MODAL
+================================================== */
+
+function closeCouponModal() {
+
+    const modal =
+        document.getElementById("couponModal");
+
+    if (!modal) return;
+
+    modal.style.display = "none";
+
+    document.body.style.overflow = "";
+
+}
+
+
+
+/* ==================================================
+   CLOSE WHEN CLICK OUTSIDE
+================================================== */
+
+function closeCouponModalOutside(event) {
+
+    if (
+        event.target.id === "couponModal"
+    ) {
+
+        closeCouponModal();
+
+    }
+
+}
+
+
+
+/* ==================================================
+   MAXIMUM DISCOUNT
+================================================== */
+
+function toggleMaximumDiscount() {
+
+    const type =
+        document.getElementById("discountType");
+
+    const group =
+        document.getElementById("maximumDiscountGroup");
+
+    if (!type || !group) return;
+
+
+    if (type.value === "fixed") {
+
+        group.style.display = "none";
+
+    } else {
+
+        group.style.display = "block";
+
+    }
+
+}
+
+
+
+/* ==================================================
+   ESC KEY
+================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Escape") {
+
+            closeCouponModal();
+
+        }
+
+    }
+);
+
+
+/* ==================================================
+   INITIAL STATE
+================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        toggleMaximumDiscount();
+
+    }
+);
+
+</script>
+
+{% endblock %}

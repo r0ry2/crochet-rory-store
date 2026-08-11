@@ -1,140 +1,2517 @@
-{% extends "base.html" %}
+{% extends "admin/admin_base.html" %}
+
 {% block title %}
-  {% if edit_mode %}Edit Product{% else %}Add Product{% endif %} | Crochet Rory Store
+{{ "المنتجات" if current_lang == "ar" else "Products" }}
+| Crochet Rory Store
 {% endblock %}
 
 {% block content %}
-<div style="background-color:#fff0f6; padding:30px; border-radius:15px; max-width:700px; margin:40px auto; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-  
-<h2 style="text-align:center; color:#e26fa7;">
+
+<style>
+
+/* =========================================================
+   PRODUCTS PAGE
+========================================================= */
+
+.products-page{
+    width:100%;
+    max-width:1400px;
+    margin:0 auto;
+    padding:10px 0 40px;
+}
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.products-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    margin-bottom:30px;
+    background:#fff;
+    padding:25px 28px;
+    border-radius:20px;
+    border:1px solid #f7d2df;
+    box-shadow:0 8px 25px rgba(216,111,157,.08);
+}
+
+.products-header-text h1{
+    margin:0;
+    color:#d86f9d;
+    font-size:30px;
+    font-weight:800;
+}
+
+.products-header-text p{
+    margin:8px 0 0;
+    color:#777;
+    font-size:14px;
+}
+
+/* =========================================================
+   ADD BUTTON
+========================================================= */
+
+.add-product-btn{
+    border:none;
+    background:linear-gradient(135deg,#e26fa7,#d86f9d);
+    color:#fff;
+    padding:14px 22px;
+    border-radius:13px;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    box-shadow:0 7px 18px rgba(216,111,157,.25);
+    transition:.3s;
+    white-space:nowrap;
+}
+
+.add-product-btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 25px rgba(216,111,157,.35);
+}
+
+/* =========================================================
+   PRODUCTS GRID
+========================================================= */
+
+.products-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:24px;
+}
+
+/* =========================================================
+   PRODUCT CARD
+========================================================= */
+
+.product-card{
+    position:relative;
+    background:linear-gradient(145deg,#fff0f5,#ffe5ee);
+    border:1px solid #f4bfd1;
+    border-radius:22px;
+    overflow:hidden;
+    box-shadow:0 8px 25px rgba(216,111,157,.15);
+    transition:.3s;
+}
+
+.product-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 14px 35px rgba(216,111,157,.25);
+}
+
+/* =========================================================
+   IMAGE
+========================================================= */
+
+.product-image-wrapper{
+    width:100%;
+    height:220px;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+
+.product-image-wrapper img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:.3s;
+}
+
+.product-card:hover .product-image-wrapper img{
+    transform:scale(1.04);
+}
+
+.no-product-image{
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    color:#d86f9d;
+    background:#fff6f9;
+    font-size:45px;
+}
+
+.no-product-image span{
+    font-size:13px;
+    margin-top:8px;
+    color:#999;
+}
+
+/* =========================================================
+   BODY
+========================================================= */
+
+.product-card-body{
+    padding:20px;
+}
+
+.product-name{
+    margin:0 0 10px;
+    color:#d45f91;
+    font-size:20px;
+    font-weight:800;
+}
+
+/* =========================================================
+   PRICE
+========================================================= */
+
+.product-price-area{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:12px;
+}
+
+.product-price{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    background:#fff;
+    color:#d86f9d;
+    padding:7px 12px;
+    border-radius:20px;
+    font-size:14px;
+    font-weight:800;
+}
+
+.original-price{
+    color:#999;
+    text-decoration:line-through;
+    font-size:13px;
+}
+
+.discount-price{
+    color:#d84d83;
+    background:#ffdce9;
+    padding:7px 12px;
+    border-radius:20px;
+    font-size:15px;
+    font-weight:900;
+}
+
+.discount-badge{
+    background:#d86f9d;
+    color:#fff;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:800;
+}
+
+/* =========================================================
+   DESCRIPTION
+========================================================= */
+
+.product-description{
+    color:#666;
+    font-size:13px;
+    line-height:1.8;
+    min-height:48px;
+    margin:8px 0 15px;
+}
+
+/* =========================================================
+   INFO
+========================================================= */
+
+.product-info{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:12px;
+}
+
+.product-info-item{
+    background:rgba(255,255,255,.75);
+    border:1px solid #f5cada;
+    border-radius:11px;
+    padding:10px;
+}
+
+.product-info-label{
+    display:block;
+    font-size:11px;
+    color:#999;
+    margin-bottom:4px;
+}
+
+.product-info-value{
+    display:block;
+    font-size:13px;
+    font-weight:700;
+    color:#555;
+}
+
+/* =========================================================
+   CUSTOMIZATION
+========================================================= */
+
+.customization-status{
+    margin-top:12px;
+    padding:9px 12px;
+    border-radius:10px;
+    font-size:12px;
+    font-weight:700;
+    text-align:center;
+}
+
+.customization-yes{
+    background:#f9d5e2;
+    color:#c84f82;
+}
+
+.customization-no{
+    background:#f1eeee;
+    color:#888;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.product-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    margin-top:18px;
+}
+
+.product-action-btn{
+    border:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    padding:11px 8px;
+    border-radius:11px;
+    color:#fff;
+    text-decoration:none;
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.product-action-btn:hover{
+    transform:translateY(-2px);
+}
+
+.delete-product-form{
+    margin:0;
+    padding:0;
+}
+
+.delete-product-btn{
+    width:100%;
+    background:#d9536f;
+}
+
+.delete-product-btn:hover{
+    background:#c9415d;
+}
+
+.edit-product-btn{
+    background:#d86f9d;
+}
+
+.edit-product-btn:hover{
+    background:#c75a87;
+}
+
+.product-data-btn{
+    background:#a979b8;
+}
+
+.product-data-btn:hover{
+    background:#8f5fa1;
+}
+
+.delete-product-btn{
+    background:#d9536f;
+}
+
+.delete-product-btn:hover{
+    background:#bd3f59;
+}
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.empty-products{
+    text-align:center;
+    padding:70px 20px;
+    background:#fff0f5;
+    border:2px dashed #efb7cb;
+    border-radius:22px;
+}
+
+.empty-products-icon{
+    font-size:55px;
+    margin-bottom:15px;
+}
+
+.empty-products h2{
+    color:#d86f9d;
+    margin:0 0 10px;
+    font-size:22px;
+}
+
+.empty-products p{
+    color:#888;
+    margin:0;
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.product-modal{
+    position:fixed;
+    inset:0;
+    background:rgba(80,35,55,.45);
+    backdrop-filter:blur(5px);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:9999;
+}
+
+.product-modal.show{
+    display:flex;
+}
+
+.product-modal-box{
+    width:100%;
+    max-width:800px;
+    max-height:92vh;
+    overflow-y:auto;
+    background:#fff;
+    border-radius:24px;
+    box-shadow:0 20px 60px rgba(0,0,0,.2);
+    border:1px solid #f3c4d4;
+    animation:modalOpen .25s ease;
+}
+
+@keyframes modalOpen{
+    from{
+        opacity:0;
+        transform:translateY(20px) scale(.98);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+    }
+}
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.modal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    padding:22px 25px;
+    background:linear-gradient(135deg,#fff0f5,#ffe5ee);
+    border-bottom:1px solid #f4cada;
+}
+
+.modal-header h2{
+    margin:0;
+    color:#d86f9d;
+    font-size:23px;
+}
+
+.close-modal-btn{
+    width:38px;
+    height:38px;
+    border:none;
+    border-radius:50%;
+    background:#fff;
+    color:#d86f9d;
+    font-size:20px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.close-modal-btn:hover{
+    background:#d86f9d;
+    color:#fff;
+    transform:rotate(90deg);
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.product-form{
+    padding:25px;
+}
+
+.form-group{
+    margin-bottom:20px;
+}
+
+.form-label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:700;
+    color:#444;
+    font-size:14px;
+}
+
+.form-control{
+    width:100%;
+    padding:12px 13px;
+    border-radius:11px;
+    border:1px solid #f0c4d4;
+    background:#fff;
+    color:#444;
+    font-size:14px;
+    box-sizing:border-box;
+    transition:.3s;
+}
+
+.form-control:focus{
+    outline:none;
+    border-color:#e26fa7;
+    box-shadow:0 0 0 3px rgba(226,111,167,.12);
+}
+
+textarea.form-control{
+    min-height:110px;
+    resize:vertical;
+}
+
+.form-control-file{
+    width:100%;
+    padding:10px;
+    border:1px dashed #e8a7bd;
+    border-radius:11px;
+    background:#fff7fa;
+    box-sizing:border-box;
+}
+
+.form-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+}
+
+.form-error{
+    color:#e53935;
+    font-size:12px;
+    margin:6px 0 0;
+}
+
+/* =========================================================
+   IMAGE PREVIEW
+========================================================= */
+
+.image-preview-box{
+    display:none;
+    margin-top:12px;
+    padding:10px;
+    background:#fff5f8;
+    border:1px solid #f4cada;
+    border-radius:12px;
+    text-align:center;
+}
+
+.image-preview-box.show{
+    display:block;
+}
+
+.image-preview-box img{
+    width:150px;
+    height:150px;
+    object-fit:cover;
+    border-radius:12px;
+    border:2px solid #efb4ca;
+}
+
+.current-image-box{
+    margin-top:12px;
+    padding:12px;
+    background:#fff5f8;
+    border-radius:12px;
+    border:1px solid #f4cada;
+}
+
+.current-image-box img{
+    width:150px;
+    height:150px;
+    object-fit:cover;
+    border-radius:12px;
+    display:block;
+    margin-top:10px;
+}
+
+/* =========================================================
+   CUSTOMIZATION BOX
+========================================================= */
+
+.customization-box{
+    padding:18px;
+    background:#fff0f5;
+    border:1px solid #f1c0d2;
+    border-radius:14px;
+    margin-top:10px;
+}
+
+.customization-label{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    cursor:pointer;
+    font-weight:700;
+    color:#444;
+}
+
+.customization-label input{
+    width:19px;
+    height:19px;
+    accent-color:#d86f9d;
+    cursor:pointer;
+}
+
+.customization-description{
+    margin:9px 0 0 29px;
+    color:#777;
+    font-size:12px;
+    line-height:1.7;
+}
+
+/* =========================================================
+   MODAL ACTIONS
+========================================================= */
+
+.modal-actions{
+    display:flex;
+    gap:12px;
+    margin-top:25px;
+}
+
+.save-product-btn{
+    flex:1;
+    border:none;
+    background:#d86f9d;
+    color:#fff;
+    padding:13px;
+    border-radius:11px;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.save-product-btn:hover{
+    background:#c75a87;
+    transform:translateY(-2px);
+}
+
+.cancel-product-btn{
+    flex:1;
+    border:2px solid #d86f9d;
+    background:#fff;
+    color:#d86f9d;
+    padding:11px;
+    border-radius:11px;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.cancel-product-btn:hover{
+    background:#d86f9d;
+    color:#fff;
+}
+
+/* =========================================================
+   DATA MODAL
+========================================================= */
+
+.data-modal-box{
+    max-width:650px;
+}
+
+.product-data-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    padding:25px;
+}
+
+.data-card{
+    background:#fff7fa;
+    border:1px solid #f4cada;
+    border-radius:15px;
+    padding:16px;
+}
+
+.data-card-label{
+    display:block;
+    color:#999;
+    font-size:12px;
+    margin-bottom:7px;
+}
+
+.data-card-value{
+    display:block;
+    color:#555;
+    font-size:18px;
+    font-weight:800;
+}
+
+.data-card.highlight{
+    background:#fff0f5;
+    border-color:#efb4ca;
+}
+
+.data-card.highlight .data-card-value{
+    color:#d86f9d;
+}
+
+.data-card.profit{
+    background:#f8f0fa;
+    border-color:#dcc5e5;
+}
+
+.data-card.profit .data-card-value{
+    color:#9a6aae;
+}
+
+.data-modal-footer{
+    padding:0 25px 25px;
+}
+
+.discount-empty{
+    padding:14px;
+    background:#f5f5f5;
+    border-radius:12px;
+    color:#888;
+    text-align:center;
+    font-size:13px;
+}
+
+/* =========================================================
+   DELETE MODAL
+========================================================= */
+
+.delete-modal-box{
+    max-width:480px;
+    text-align:center;
+}
+
+.delete-content{
+    padding:30px 25px;
+}
+
+.delete-icon{
+    width:70px;
+    height:70px;
+    margin:0 auto 18px;
+    border-radius:50%;
+    background:#fff0f3;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:32px;
+}
+
+.delete-content h3{
+    margin:0 0 10px;
+    color:#555;
+    font-size:20px;
+}
+
+.delete-content p{
+    color:#888;
+    font-size:13px;
+    line-height:1.8;
+    margin:0;
+}
+
+.delete-actions{
+    display:flex;
+    gap:12px;
+    margin-top:25px;
+}
+
+.confirm-delete-btn{
+    flex:1;
+    border:none;
+    background:#d9536f;
+    color:#fff;
+    padding:13px;
+    border-radius:11px;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.confirm-delete-btn:hover{
+    background:#bd3f59;
+}
+
+.cancel-delete-btn{
+    flex:1;
+    border:2px solid #ddd;
+    background:#fff;
+    color:#777;
+    padding:11px;
+    border-radius:11px;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.cancel-delete-btn:hover{
+    background:#f7f7f7;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:768px){
+
+    .products-page{
+        padding:5px 0 30px;
+    }
+
+    .products-header{
+        flex-direction:column;
+        align-items:stretch;
+        text-align:center;
+        padding:20px;
+    }
+
+    .products-header-text h1{
+        font-size:25px;
+    }
+
+    .add-product-btn{
+        width:100%;
+    }
+
+    .products-grid{
+        grid-template-columns:1fr;
+        gap:18px;
+    }
+
+    .product-image-wrapper{
+        height:230px;
+    }
+
+    .product-card-body{
+        padding:18px;
+    }
+
+    .product-actions{
+        grid-template-columns:1fr;
+    }
+
+    .product-modal{
+        padding:10px;
+        align-items:flex-start;
+        padding-top:20px;
+    }
+
+    .product-modal-box{
+        max-height:95vh;
+        border-radius:20px;
+    }
+
+    .modal-header{
+        padding:18px;
+    }
+
+    .modal-header h2{
+        font-size:20px;
+    }
+
+    .product-form{
+        padding:18px;
+    }
+
+    .form-row{
+        grid-template-columns:1fr;
+        gap:0;
+    }
+
+    .modal-actions{
+        flex-direction:column;
+    }
+
+    .save-product-btn,
+    .cancel-product-btn{
+        width:100%;
+    }
+
+    .product-data-grid{
+        grid-template-columns:1fr;
+        padding:18px;
+    }
+
+    .data-modal-footer{
+        padding:0 18px 18px;
+    }
+
+    .delete-content{
+        padding:25px 18px;
+    }
+
+    .delete-actions{
+        flex-direction:column;
+    }
+}
+
+@media(max-width:400px){
+
+    .products-header{
+        padding:17px 14px;
+    }
+
+    .products-header-text h1{
+        font-size:22px;
+    }
+
+    .product-image-wrapper{
+        height:210px;
+    }
+
+    .product-info{
+        grid-template-columns:1fr;
+    }
+
+    .product-modal{
+        padding:5px;
+    }
+}
+
+</style>
 
 
+<!-- =========================================================
+     PRODUCTS PAGE
+========================================================= -->
 
-</h2>
-{% if edit_mode %}
+<div class="products-page">
 
-    {{ "✏️ تعديل المنتج" if current_lang == "ar"
-    else "✏️ Edit Product" }}
+    <div class="products-header">
 
-{% else %}
+        <div class="products-header-text">
 
-{% endif %}
+            <h1>
+                📦
+                {{ "المنتجات" if current_lang == "ar" else "Products" }}
+            </h1>
 
-</h2>
-
-<form method="POST" enctype="multipart/form-data">
-    {{ form.hidden_tag() }}
-
-    <!-- 🧵 Product Name -->
-    <div style="margin-bottom:15px;">
-
-<label>
-    {{ "اسم المنتج" if current_lang == "ar" else "Product Name" }}
-</label>
-        {{ form.name(
-            class="form-control",
-            style="width:100%; padding:8px; border-radius:8px; border:1px solid #ffd4e2;"
-        ) }}
-
-        {% for error in form.name.errors %}
-            <p style="color:red; font-size:14px; margin-top:5px;">
-                ⚠️ {{ error }}
+            <p>
+                {{ "إدارة منتجات متجر روري وإضافة منتجات جديدة."
+                if current_lang == "ar"
+                else "Manage Rory Store products and add new products." }}
             </p>
-        {% endfor %}
+
+        </div>
+
+        <button
+            type="button"
+            class="add-product-btn"
+            onclick="openProductModal()">
+
+            ➕
+            {{ "إضافة منتج جديد"
+            if current_lang == "ar"
+            else "Add New Product" }}
+
+        </button>
 
     </div>
 
-    <!-- 💰 السعر -->
-<div style="margin-bottom:15px;">
 
-  <label>
-    {{ "السعر (ر.س)" if current_lang == "ar" else "Price (SAR)" }}
-  </label><br>
+    <!-- =====================================================
+         PRODUCTS
+    ====================================================== -->
 
-  {{ form.price(
-      class="form-control",
-      style="width:100%; padding:8px; border-radius:8px; border:1px solid #ffd4e2;"
-  ) }}
+    {% if products %}
 
-  {% for error in form.price.errors %}
-    <p style="color:red; font-size:14px; margin-top:5px;">
-      ⚠️ {{ error }}
-    </p>
-  {% endfor %}
+        <div class="products-grid">
 
-</div>
+            {% for product in products %}
 
-    <!-- 📜 الوصف -->
-<!-- 📜 الوصف -->
-<div style="margin-bottom:15px;">
-  {{ "الوصف" if current_lang == "ar" else form.description.label }}<br>
+                <div class="product-card">
 
-  {{ form.description(
-      class="form-control",
-      placeholder=("اكتب وصف المنتج..." if current_lang == "ar" else "Enter product description..."),
-      style="width:100%; padding:8px; border-radius:8px; border:1px solid #ffd4e2; height:120px;"
-  ) }}
+                    <!-- IMAGE -->
 
-  {% for error in form.description.errors %}
-    <p style="color:red; font-size:14px; margin-top:5px;">⚠️ {{ error }}</p>
-  {% endfor %}
-</div>
+                    <div class="product-image-wrapper">
 
-<!-- 🖼️ الصورة -->
-<div style="margin-bottom:15px;">
-  {{ "صورة المنتج" if current_lang == "ar" else form.image.label }}<br>
+                        {% if product.image %}
 
-  {{ form.image(class="form-control-file", style="margin-top:5px;") }}
+                            <img
+                                src="{{ url_for('static', filename='images/' ~ product.image) }}"
+                                alt="{{ product.name }}"
+                            >
 
-  {% for error in form.image.errors %}
-    <p style="color:red; font-size:14px; margin-top:5px;">⚠️ {{ error }}</p>
-  {% endfor %}
+                        {% else %}
 
-  {% if edit_mode and product.image %}
-    <p style="margin-top:10px;">
-      {{ "الصورة الحالية:" if current_lang == "ar" else "Current Image:" }}
-    </p>
+                            <div class="no-product-image">
+                                🧶
+                                <span>
+                                    {{ "لا توجد صورة"
+                                    if current_lang == "ar"
+                                    else "No Image" }}
+                                </span>
+                            </div>
 
-    <img src="{{ url_for('static', filename='images/' ~ product.image) }}"
-         alt="Current Image"
-         style="width:150px; border-radius:10px; border:1px solid #ccc;">
-  {% endif %}
-</div>
+                        {% endif %}
 
-<!-- 🌐 مكان النشر -->
-<div style="margin-bottom:25px;">
-  {{ "مكان النشر" if current_lang == "ar" else form.publish_location.label }}<br>
+                    </div>
 
-  {{ form.publish_location(
-      class="form-control",
-      style="width:100%; padding:8px; border-radius:8px; border:1px solid #ffd4e2;"
-  ) }}
 
-  {% for err in form.publish_location.errors %}
-    <p style="color:red; font-size:14px;">⚠️ {{ err }}</p>
-  {% endfor %}
-</div>
+                    <!-- BODY -->
 
-<!-- 🔘 الأزرار -->
-<div style="text-align:center; margin-top:25px;">
+                    <div class="product-card-body">
 
-  <button type="submit"
-          style="background:#e26fa7; color:white; padding:10px 25px; border:none; border-radius:25px; cursor:pointer;">
+                        <h3 class="product-name">
+                            {{ product.name }}
+                        </h3>
 
-    {% if edit_mode %}
-      {{ "💾 حفظ التعديلات" if current_lang == "ar" else "💾 Save Changes" }}
+
+                        <!-- PRICE -->
+
+                        <div class="product-price-area">
+
+                            {% if product.sale_price %}
+
+                                <span class="original-price">
+
+                                    {{ "%.2f"|format(product.price) }}
+                                    {{ "ريال" if current_lang == "ar" else "SAR" }}
+
+                                </span>
+
+                                <span class="discount-price">
+
+                                    🏷️
+                                    {{ "%.2f"|format(product.sale_price) }}
+                                    {{ "ريال" if current_lang == "ar" else "SAR" }}
+
+                                </span>
+
+                                {% if product.price > 0 %}
+
+                                    <span class="discount-badge">
+
+                                        {{ "%.0f"|format(
+                                            ((product.price - product.sale_price)
+                                            / product.price) * 100
+                                        ) }}%
+
+                                        {{ "خصم" if current_lang == "ar" else "OFF" }}
+
+                                    </span>
+
+                                {% endif %}
+
+                            {% else %}
+
+                                <div class="product-price">
+
+                                    💰
+                                    {{ "%.2f"|format(product.price) }}
+                                    {{ "ريال" if current_lang == "ar" else "SAR" }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- DESCRIPTION -->
+
+                        <p class="product-description">
+
+                            {% if product.description %}
+                                {{ product.description }}
+                            {% else %}
+                                {{ "لا يوجد وصف لهذا المنتج."
+                                if current_lang == "ar"
+                                else "No description available." }}
+                            {% endif %}
+
+                        </p>
+
+
+                        <!-- INFO -->
+
+                        <div class="product-info">
+
+                            <div class="product-info-item">
+
+                                <span class="product-info-label">
+                                    {{ "الكمية" if current_lang == "ar" else "Quantity" }}
+                                </span>
+
+                                <span class="product-info-value">
+                                    {{ product.stock or 0 }}
+                                </span>
+
+                            </div>
+
+
+                            <div class="product-info-item">
+
+                                <span class="product-info-label">
+                                    {{ "مكان العرض" if current_lang == "ar" else "Location" }}
+                                </span>
+
+                                <span class="product-info-value">
+
+                                    {% if product.publish_location %}
+                                        {{ product.publish_location }}
+                                    {% else %}
+                                        {{ "غير محدد"
+                                        if current_lang == "ar"
+                                        else "Not specified" }}
+                                    {% endif %}
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- CUSTOMIZATION -->
+
+                        {% if product.is_customizable %}
+
+                            <div class="customization-status customization-yes">
+
+                                ✨
+                                {{ "التخصيص مسموح"
+                                if current_lang == "ar"
+                                else "Customization Allowed" }}
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="customization-status customization-no">
+
+                                🔒
+                                {{ "التخصيص غير مسموح"
+                                if current_lang == "ar"
+                                else "Customization Disabled" }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- ACTIONS -->
+
+                        <div class="product-actions">
+
+                            <!-- EDIT -->
+
+                            <button
+                                type="button"
+                                class="product-action-btn edit-product-btn"
+                                onclick="openEditModal({{ product.id }})">
+
+                                ✏️
+                                {{ "تعديل"
+                                if current_lang == "ar"
+                                else "Edit" }}
+
+                            </button>
+
+
+                            <!-- DATA -->
+
+                            <button
+                                type="button"
+                                class="product-action-btn product-data-btn"
+                                onclick="openDataModal({{ product.id }})">
+
+                                📊
+                                {{ "بيانات المنتج"
+                                if current_lang == "ar"
+                                else "Product Data" }}
+
+                            </button>
+
+                            <!-- DELETE -->
+
+                            <form
+                                class="delete-product-form"
+                                method="POST"
+                                action="{{ url_for('delete_product', id=product.id) }}"
+                                onsubmit="return confirm('{{ 'هل أنت متأكدة من حذف هذا المنتج؟' if current_lang == 'ar' else 'Are you sure you want to delete this product?' }}');">
+
+                                <button
+                                    type="submit"
+                                    class="product-action-btn delete-product-btn">
+
+                                    🗑️
+                                    {{ "حذف" if current_lang == "ar" else "Delete" }}
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
     {% else %}
-      {{ "➕ إضافة المنتج" if current_lang == "ar" else "➕ Add Product" }}
+
+        <div class="empty-products">
+
+            <div class="empty-products-icon">
+                🧶
+            </div>
+
+            <h2>
+                {{ "لا توجد منتجات حتى الآن"
+                if current_lang == "ar"
+                else "No Products Yet" }}
+            </h2>
+
+            <p>
+                {{ "اضغطي على إضافة منتج جديد لبدء إضافة منتجات متجرك."
+                if current_lang == "ar"
+                else "Click Add New Product to start adding products to your store." }}
+            </p>
+
+        </div>
+
     {% endif %}
 
-  </button>
+</div>
 
-  <a href="{{ url_for('admin_home') }}"
-     style="margin-left:15px; color:#e26fa7; text-decoration:none;">
 
-    {{ "⬅ العودة للوحة التحكم" if current_lang == "ar" else "⬅ Back to Admin Home" }}
+<!-- =========================================================
+     ADD PRODUCT MODAL
+========================================================= -->
 
-  </a>
+<div
+    id="productModal"
+    class="product-modal"
+    onclick="closeModalOutside(event)">
+
+    <div
+        class="product-modal-box"
+        onclick="event.stopPropagation()">
+
+        <div class="modal-header">
+
+            <h2>
+                ➕
+                {{ "إضافة منتج جديد"
+                if current_lang == "ar"
+                else "Add New Product" }}
+            </h2>
+
+            <button
+                type="button"
+                class="close-modal-btn"
+                onclick="closeProductModal()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            class="product-form"
+            action="{{ url_for('add_or_edit_product') }}">
+
+            {{ form.hidden_tag() }}
+
+
+            <!-- NAME -->
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    🧵
+                    {{ "اسم المنتج"
+                    if current_lang == "ar"
+                    else "Product Name" }}
+                </label>
+
+                {{ form.name(
+                    class="form-control",
+                    placeholder=(
+                        "اكتب اسم المنتج..."
+                        if current_lang == "ar"
+                        else "Enter product name..."
+                    )
+                ) }}
+
+                {% for error in form.name.errors %}
+                    <p class="form-error">⚠️ {{ error }}</p>
+                {% endfor %}
+
+            </div>
+
+
+            <!-- PRICE + QUANTITY -->
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        💰
+                        {{ "السعر الأصلي"
+                        if current_lang == "ar"
+                        else "Original Price" }}
+                    </label>
+
+                    {{ form.price(
+                        class="form-control",
+                        placeholder=(
+                            "أدخل السعر الأصلي"
+                            if current_lang == "ar"
+                            else "Enter original price"
+                        )
+                    ) }}
+
+                    {% for error in form.price.errors %}
+                        <p class="form-error">⚠️ {{ error }}</p>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        📦
+                        {{ "كمية المنتج"
+                        if current_lang == "ar"
+                        else "Product Quantity" }}
+                    </label>
+
+                    <input
+                        type="number"
+                        name="quantity"
+                        class="form-control"
+                        min="0"
+                        value="{{ request.form.get('quantity', 1) }}"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- COST + SALE -->
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        🧾
+                        {{ "سعر التكلفة"
+                        if current_lang == "ar"
+                        else "Cost Price" }}
+                    </label>
+
+                    <input
+                        type="number"
+                        name="cost_price"
+                        class="form-control"
+                        min="0"
+                        step="0.01"
+                        value="{{ request.form.get('cost_price', '') }}"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        🏷️
+                        {{ "السعر المخفض"
+                        if current_lang == "ar"
+                        else "Sale Price" }}
+                    </label>
+
+                    <input
+                        type="number"
+                        name="sale_price"
+                        class="form-control"
+                        min="0"
+                        step="0.01"
+                        value="{{ request.form.get('sale_price', '') }}"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    📜
+                    {{ "وصف المنتج"
+                    if current_lang == "ar"
+                    else "Product Description" }}
+                </label>
+
+                {{ form.description(
+                    class="form-control",
+                    placeholder=(
+                        "اكتب وصف المنتج..."
+                        if current_lang == "ar"
+                        else "Enter product description..."
+                    )
+                ) }}
+
+            </div>
+
+
+            <!-- IMAGE -->
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    🖼️
+                    {{ "صورة المنتج"
+                    if current_lang == "ar"
+                    else "Product Image" }}
+                </label>
+
+                {{ form.image(
+                    class="form-control-file",
+                    id="productImageInput"
+                ) }}
+
+                <div
+                    id="imagePreviewBox"
+                    class="image-preview-box">
+
+                    <p>
+                        {{ "معاينة الصورة"
+                        if current_lang == "ar"
+                        else "Image Preview" }}
+                    </p>
+
+                    <img
+                        id="imagePreview"
+                        src=""
+                        alt="Preview">
+
+                </div>
+
+            </div>
+
+
+            <!-- LOCATION -->
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    📍
+                    {{ "مكان عرض المنتج"
+                    if current_lang == "ar"
+                    else "Product Display Location" }}
+                </label>
+
+                {{ form.publish_location(
+                    class="form-control"
+                ) }}
+
+            </div>
+
+
+            <!-- CUSTOMIZATION -->
+
+            <div class="customization-box">
+
+                <label class="customization-label">
+
+                    {{ form.is_customizable() }}
+
+                    <span>
+                        ✨
+                        {{ "السماح بتخصيص المنتج"
+                        if current_lang == "ar"
+                        else "Allow Product Customization" }}
+                    </span>
+
+                </label>
+
+                <p class="customization-description">
+
+                    {{ "عند تفعيل هذا الخيار سيتمكن العميل من تخصيص هذا المنتج قبل إضافته إلى السلة."
+                    if current_lang == "ar"
+                    else "When enabled, customers will be able to customize this product before adding it to the cart." }}
+
+                </p>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="modal-actions">
+
+                <button
+                    type="submit"
+                    class="save-product-btn">
+
+                    ➕
+                    {{ "إضافة المنتج"
+                    if current_lang == "ar"
+                    else "Add Product" }}
+
+                </button>
+
+                <button
+                    type="button"
+                    class="cancel-product-btn"
+                    onclick="closeProductModal()">
+
+                    ✕
+                    {{ "إلغاء"
+                    if current_lang == "ar"
+                    else "Cancel" }}
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
 
 </div>
+
+
+<!-- =========================================================
+     EDIT MODALS
+========================================================= -->
+
+{% for product in products %}
+
+<div
+    id="editModal{{ product.id }}"
+    class="product-modal"
+    onclick="closeEditModalOutside(event, {{ product.id }})">
+
+    <div
+        class="product-modal-box"
+        onclick="event.stopPropagation()">
+
+        <div class="modal-header">
+
+            <h2>
+                ✏️
+                {{ "تعديل المنتج"
+                if current_lang == "ar"
+                else "Edit Product" }}
+            </h2>
+
+            <button
+                type="button"
+                class="close-modal-btn"
+                onclick="closeEditModal({{ product.id }})">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            action="{{ url_for('edit_product', id=product.id) }}"
+            class="product-form">
+
+            {% if csrf_token is defined %}
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+            {% endif %}
+
+
+            <!-- NAME -->
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    🧵
+                    {{ "اسم المنتج"
+                    if current_lang == "ar"
+                    else "Product Name" }}
+                </label>
+
+                <input
+                    type="text"
+                    name="name"
+                    class="form-control"
+                    value="{{ product.name }}"
+                    required
+                >
+
+            </div>
+
+
+            <!-- PRICE + QUANTITY -->
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        💰
+                        {{ "السعر الأصلي"
+                        if current_lang == "ar"
+                        else "Original Price" }}
+                    </label>
+
+                    <input
+                        type="number"
+                        name="price"
+                        class="form-control"
+                        min="0"
+                        step="0.01"
+                        value="{{ product.price }}"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        📦
+                        {{ "الكمية"
+                        if current_lang == "ar"
+                        else "Quantity" }}
+                    </label>
+
+                    <input
+                        type="number"
+                        name="quantity"
+                        class="form-control"
+                        min="0"
+                        value="{{ product.stock or 0 }}"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- COST + SALE -->
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        🧾
+                        {{ "سعر التكلفة"
+                        if current_lang == "ar"
+                        else "Cost Price" }}
+                    </label>
+
+                    <input
+                        type="number"
+                        name="cost_price"
+                        class="form-control"
+                        min="0"
+                        step="0.01"
+                        value="{{ product.cost_price or 0 }}"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        🏷️
+                        {{ "السعر المخفض"
+                        if current_lang == "ar"
+                        else "Sale Price" }}
+                    </label>
+
+                    <input
+                        type="number"
+                        name="sale_price"
+                        class="form-control"
+                        min="0"
+                        step="0.01"
+                        value="{{ product.sale_price or '' }}"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    📜
+                    {{ "وصف المنتج"
+                    if current_lang == "ar"
+                    else "Product Description" }}
+                </label>
+
+                <textarea
+                    name="description"
+                    class="form-control"
+                >{{ product.description or '' }}</textarea>
+
+            </div>
+
+
+            <!-- IMAGE -->
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    🖼️
+                    {{ "تغيير صورة المنتج"
+                    if current_lang == "ar"
+                    else "Change Product Image" }}
+                </label>
+
+                <input
+                    type="file"
+                    name="image"
+                    class="form-control-file"
+                    accept="image/*"
+                >
+
+                {% if product.image %}
+
+                    <div class="current-image-box">
+
+                        <span>
+                            {{ "الصورة الحالية"
+                            if current_lang == "ar"
+                            else "Current Image" }}
+                        </span>
+
+                        <img
+                            src="{{ url_for('static', filename='images/' ~ product.image) }}"
+                            alt="{{ product.name }}"
+                        >
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- LOCATION -->
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    📍
+                    {{ "مكان عرض المنتج"
+                    if current_lang == "ar"
+                    else "Product Display Location" }}
+                </label>
+
+                <select
+                    name="publish_location"
+                    class="form-control">
+
+                    <option
+                        value="products_only"
+                        {% if product.publish_location == "products_only" %}selected{% endif %}>
+
+                        {{ "صفحة المنتجات فقط"
+                        if current_lang == "ar"
+                        else "Products Page Only" }}
+
+                    </option>
+
+                    <option
+                        value="home"
+                        {% if product.publish_location == "home" %}selected{% endif %}>
+
+                        {{ "الصفحة الرئيسية"
+                        if current_lang == "ar"
+                        else "Home Page" }}
+
+                    </option>
+
+                    <option
+                        value="both"
+                        {% if product.publish_location == "both" %}selected{% endif %}>
+
+                        {{ "الصفحة الرئيسية والمنتجات"
+                        if current_lang == "ar"
+                        else "Home & Products" }}
+
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- CUSTOMIZATION -->
+
+            <div class="customization-box">
+
+                <label class="customization-label">
+
+                    <input
+                        type="checkbox"
+                        name="is_customizable"
+                        {% if product.is_customizable %}checked{% endif %}
+                    >
+
+                    <span>
+
+                        ✨
+                        {{ "السماح بتخصيص المنتج"
+                        if current_lang == "ar"
+                        else "Allow Product Customization" }}
+
+                    </span>
+
+                </label>
+
+                <p class="customization-description">
+
+                    {{ "عند تفعيل هذا الخيار سيتمكن العميل من تخصيص المنتج."
+                    if current_lang == "ar"
+                    else "When enabled, customers can customize this product." }}
+
+                </p>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="modal-actions">
+
+                <button
+                    type="submit"
+                    class="save-product-btn">
+
+                    💾
+                    {{ "حفظ التعديلات"
+                    if current_lang == "ar"
+                    else "Save Changes" }}
+
+                </button>
+
+                <button
+                    type="button"
+                    class="cancel-product-btn"
+                    onclick="closeEditModal({{ product.id }})">
+
+                    ✕
+                    {{ "إلغاء"
+                    if current_lang == "ar"
+                    else "Cancel" }}
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+
+<!-- =========================================================
+     DATA MODALS
+========================================================= -->
+
+{% for product in products %}
+
+<div
+    id="dataModal{{ product.id }}"
+    class="product-modal"
+    onclick="closeDataModalOutside(event, {{ product.id }})">
+
+    <div
+        class="product-modal-box data-modal-box"
+        onclick="event.stopPropagation()">
+
+        <div class="modal-header">
+
+            <h2>
+                📊
+                {{ "بيانات المنتج"
+                if current_lang == "ar"
+                else "Product Data" }}
+            </h2>
+
+            <button
+                type="button"
+                class="close-modal-btn"
+                onclick="closeDataModal({{ product.id }})">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <div class="product-data-grid">
+
+            <div class="data-card highlight">
+
+                <span class="data-card-label">
+                    🧶
+                    {{ "المنتج" if current_lang == "ar" else "Product" }}
+                </span>
+
+                <span class="data-card-value">
+                    {{ product.name }}
+                </span>
+
+            </div>
+
+
+            <div class="data-card">
+
+                <span class="data-card-label">
+                    🧾
+                    {{ "سعر التكلفة" if current_lang == "ar" else "Cost Price" }}
+                </span>
+
+                <span class="data-card-value">
+
+                    {{ "%.2f"|format(product.cost_price or 0) }}
+                    {{ "ريال" if current_lang == "ar" else "SAR" }}
+
+                </span>
+
+            </div>
+
+
+            <div class="data-card">
+
+                <span class="data-card-label">
+                    💰
+                    {{ "السعر الأصلي" if current_lang == "ar" else "Original Price" }}
+                </span>
+
+                <span class="data-card-value">
+
+                    {{ "%.2f"|format(product.price or 0) }}
+                    {{ "ريال" if current_lang == "ar" else "SAR" }}
+
+                </span>
+
+            </div>
+
+
+            <div class="data-card highlight">
+
+                <span class="data-card-label">
+                    🏷️
+                    {{ "السعر المخفض" if current_lang == "ar" else "Sale Price" }}
+                </span>
+
+                <span class="data-card-value">
+
+                    {% if product.sale_price %}
+
+                        {{ "%.2f"|format(product.sale_price) }}
+                        {{ "ريال" if current_lang == "ar" else "SAR" }}
+
+                    {% else %}
+
+                        {{ "لا يوجد خصم"
+                        if current_lang == "ar"
+                        else "No Discount" }}
+
+                    {% endif %}
+
+                </span>
+
+            </div>
+
+
+            <div class="data-card">
+
+                <span class="data-card-label">
+                    📉
+                    {{ "نسبة الخصم" if current_lang == "ar" else "Discount" }}
+                </span>
+
+                <span class="data-card-value">
+
+                    {% if product.sale_price and product.price > 0 %}
+
+                        {{ "%.0f"|format(
+                            ((product.price - product.sale_price)
+                            / product.price) * 100
+                        ) }}%
+
+                    {% else %}
+
+                        0%
+
+                    {% endif %}
+
+                </span>
+
+            </div>
+
+
+            <div class="data-card profit">
+
+                <span class="data-card-label">
+                    📈
+                    {{ "الربح لكل قطعة"
+                    if current_lang == "ar"
+                    else "Profit Per Item" }}
+                </span>
+
+                <span class="data-card-value">
+
+                    {% if product.sale_price %}
+
+                        {{ "%.2f"|format(
+                            product.sale_price -
+                            (product.cost_price or 0)
+                        ) }}
+
+                    {% else %}
+
+                        {{ "%.2f"|format(
+                            product.price -
+                            (product.cost_price or 0)
+                        ) }}
+
+                    {% endif %}
+
+                    {{ "ريال" if current_lang == "ar" else "SAR" }}
+
+                </span>
+
+            </div>
+
+
+            <div class="data-card">
+
+                <span class="data-card-label">
+                    📦
+                    {{ "الكمية المتوفرة"
+                    if current_lang == "ar"
+                    else "Available Quantity" }}
+                </span>
+
+                <span class="data-card-value">
+                    {{ product.stock or 0 }}
+                </span>
+
+            </div>
+
+
+            <div class="data-card">
+
+                <span class="data-card-label">
+                    🛒
+                    {{ "عدد مرات الشراء"
+                    if current_lang == "ar"
+                    else "Purchase Count" }}
+                </span>
+
+                <span class="data-card-value">
+                    {{ product.purchase_count or 0 }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="data-modal-footer">
+
+            {% if product.sale_price and product.price > 0 %}
+
+                <div
+                    class="discount-empty"
+                    style="background:#fff0f5;color:#d86f9d;">
+
+                    🏷️
+
+                    {{ "هذا المنتج عليه خصم حاليًا بنسبة "
+                    if current_lang == "ar"
+                    else "This product currently has a " }}
+
+                    <strong>
+
+                        {{ "%.0f"|format(
+                            ((product.price - product.sale_price)
+                            / product.price) * 100
+                        ) }}%
+
+                    </strong>
+
+                    {{ "خصم"
+                    if current_lang == "ar"
+                    else " discount." }}
+
+                </div>
+
+            {% else %}
+
+                <div class="discount-empty">
+
+                    {{ "هذا المنتج لا يحتوي على خصم حاليًا."
+                    if current_lang == "ar"
+                    else "This product currently has no discount." }}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+/* =========================================================
+   BODY SCROLL
+========================================================= */
+
+function lockBody(){
+
+    document.body.style.overflow = "hidden";
+
+}
+
+
+function unlockBody(){
+
+    document.body.style.overflow = "";
+
+}
+
+
+/* =========================================================
+   ADD PRODUCT
+========================================================= */
+
+function openProductModal(){
+
+    const modal =
+        document.getElementById("productModal");
+
+    if(!modal){
+
+        console.error(
+            "❌ productModal not found"
+        );
+
+        return;
+
+    }
+
+    modal.classList.add("show");
+
+    lockBody();
+
+}
+
+
+function closeProductModal(){
+
+    const modal =
+        document.getElementById("productModal");
+
+    if(modal){
+
+        modal.classList.remove("show");
+
+    }
+
+    unlockBody();
+
+}
+
+
+/* =========================================================
+   CLOSE ADD MODAL OUTSIDE
+========================================================= */
+
+function closeModalOutside(event){
+
+    const modal =
+        document.getElementById("productModal");
+
+    if(
+        modal &&
+        event.target === modal
+    ){
+
+        closeProductModal();
+
+    }
+
+}
+
+
+/* =========================================================
+   EDIT PRODUCT
+========================================================= */
+
+function openEditModal(productId){
+
+    const modal =
+        document.getElementById(
+            "editModal" + productId
+        );
+
+    if(!modal){
+
+        console.error(
+            "❌ Edit modal not found for product:",
+            productId
+        );
+
+        return;
+
+    }
+
+    modal.classList.add("show");
+
+    lockBody();
+
+}
+
+
+function closeEditModal(productId){
+
+    const modal =
+        document.getElementById(
+            "editModal" + productId
+        );
+
+    if(modal){
+
+        modal.classList.remove("show");
+
+    }
+
+    unlockBody();
+
+}
+
+
+function closeEditModalOutside(
+    event,
+    productId
+){
+
+    const modal =
+        document.getElementById(
+            "editModal" + productId
+        );
+
+    if(
+        modal &&
+        event.target === modal
+    ){
+
+        closeEditModal(productId);
+
+    }
+
+}
+
+
+/* =========================================================
+   PRODUCT DATA
+========================================================= */
+
+function openDataModal(productId){
+
+    const modal =
+        document.getElementById(
+            "dataModal" + productId
+        );
+
+    if(!modal){
+
+        console.error(
+            "❌ Data modal not found:",
+            productId
+        );
+
+        return;
+
+    }
+
+    modal.classList.add("show");
+
+    lockBody();
+
+}
+
+
+function closeDataModal(productId){
+
+    const modal =
+        document.getElementById(
+            "dataModal" + productId
+        );
+
+    if(modal){
+
+        modal.classList.remove("show");
+
+    }
+
+    unlockBody();
+
+}
+
+
+function closeDataModalOutside(
+    event,
+    productId
+){
+
+    const modal =
+        document.getElementById(
+            "dataModal" + productId
+        );
+
+    if(
+        modal &&
+        event.target === modal
+    ){
+
+        closeDataModal(productId);
+
+    }
+
+}
+
+
+
+/* =========================================================
+   IMAGE PREVIEW
+========================================================= */
+
+const imageInput =
+    document.getElementById(
+        "productImageInput"
+    );
+
+
+const imagePreviewBox =
+    document.getElementById(
+        "imagePreviewBox"
+    );
+
+
+const imagePreview =
+    document.getElementById(
+        "imagePreview"
+    );
+
+
+if(
+    imageInput &&
+    imagePreviewBox &&
+    imagePreview
+){
+
+    imageInput.addEventListener(
+        "change",
+        function(){
+
+            const file =
+                this.files[0];
+
+
+            /* ------------------------------------------------
+               NO FILE
+            ------------------------------------------------ */
+
+            if(!file){
+
+                imagePreviewBox
+                    .classList
+                    .remove("show");
+
+                imagePreview.src = "";
+
+                return;
+
+            }
+
+
+            /* ------------------------------------------------
+               NOT IMAGE
+            ------------------------------------------------ */
+
+            if(
+                !file.type.startsWith(
+                    "image/"
+                )
+            ){
+
+                imagePreviewBox
+                    .classList
+                    .remove("show");
+
+                imagePreview.src = "";
+
+                return;
+
+            }
+
+
+            /* ------------------------------------------------
+               READ IMAGE
+            ------------------------------------------------ */
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                function(event){
+
+                    imagePreview.src =
+                        event.target.result;
+
+                    imagePreviewBox
+                        .classList
+                        .add("show");
+
+                };
+
+
+            reader.readAsDataURL(file);
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ESCAPE KEY
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.key !== "Escape"
+        ){
+
+            return;
+
+        }
+
+
+        /* ---------------------------------------------
+           CLOSE ADD
+        --------------------------------------------- */
+
+        closeProductModal();
+
+
+        /* ---------------------------------------------
+           CLOSE EDIT + DATA MODALS
+        --------------------------------------------- */
+
+        {% if products %}
+
+            {% for product in products %}
+
+                closeEditModal(
+                    {{ product.id }}
+                );
+
+                closeDataModal(
+                    {{ product.id }}
+                );
+
+            {% endfor %}
+
+        {% endif %}
+}
+);
+</script>
+
 {% endblock %}

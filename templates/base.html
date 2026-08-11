@@ -87,41 +87,99 @@
 <!-- القائمة الجانبية -->
 <div id="sideMenu" class="side-menu">
 
-    <button class="close-menu" onclick="closeMenu()">
-        &times;
-    </button>
+<button class="close-menu" onclick="closeMenu()">
+    &times;
+</button>
 
-    <a href="#home">
-        🏠 {{ "الرئيسية" if current_lang == "ar" else "Home" }}
-    </a>
 
-    <a href="#about-me">
-        💗 {{ "من أنا" if current_lang == "ar" else "About Me" }}
-    </a>
+<!-- =========================
+        HOME
+========================= -->
 
-    <a href="#products">
-        🧶 {{ "المنتجات" if current_lang == "ar" else "Products" }}
-    </a>
+<a href="#home">
+    🏠 {{ "الرئيسية" if current_lang == "ar" else "Home" }}
+</a>
 
-    <a href="#reviews">
-        ⭐ {{ "التقييمات" if current_lang == "ar" else "Reviews" }}
-    </a>
 
-    <hr>
+<!-- =========================
+        ABOUT ME
+========================= -->
 
-    <a href="{{ url_for('change_language', lang='en') }}">
-        🇺🇸 English
-    </a>
+<a href="#about-me">
+    💗 {{ "من أنا" if current_lang == "ar" else "About Me" }}
+</a>
 
-    <a href="{{ url_for('change_language', lang='ar') }}">
-        🇸🇦 العربية
-    </a>
 
-    <hr>
+<!-- =========================
+        PRODUCTS
+========================= -->
 
-    <a href="#" onclick="openLogin()">
-        👤 {{ "تسجيل الدخول" if current_lang == "ar" else "Login" }}
-    </a>
+{% if current_user.is_authenticated %}
+
+<a href="{{ url_for('products_page') }}">
+    🧶 {{ "المنتجات" if current_lang == "ar" else "Products" }}
+</a>
+
+{% else %}
+
+<a
+    href="javascript:void(0);"
+    onclick="openLogin(); closeMenu();"
+>
+    🧶 {{ "المنتجات" if current_lang == "ar" else "Products" }}
+</a>
+
+{% endif %}
+
+
+<!-- =========================
+        REVIEWS
+========================= -->
+
+<a href="#reviews">
+    ⭐ {{ "التقييمات" if current_lang == "ar" else "Reviews" }}
+</a>
+
+
+<hr>
+
+
+<!-- =========================
+        LANGUAGE
+========================= -->
+
+<a href="{{ url_for('change_language', lang='en') }}">
+    🇺🇸 English
+</a>
+
+<a href="{{ url_for('change_language', lang='ar') }}">
+    🇸🇦 العربية
+</a>
+
+
+<hr>
+
+
+<!-- =========================
+        LOGIN / ACCOUNT
+========================= -->
+
+{% if current_user.is_authenticated %}
+
+<a href="#">
+    👤 {{ "حسابي" if current_lang == "ar" else "My Account" }}
+</a>
+
+{% else %}
+
+<a
+    href="javascript:void(0);"
+    onclick="openLogin(); closeMenu();"
+>
+    👤 {{ "تسجيل الدخول" if current_lang == "ar" else "Login" }}
+</a>
+
+{% endif %}
 
 </div>
 

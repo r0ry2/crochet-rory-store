@@ -4,31 +4,38 @@
 {{ "الرئيسية" if current_lang == "ar" else "Home" }}
 {% endblock %}
 
+
 {% block content %}
 
 <style>
 
-/* ===========================
-   Dashboard Grid
-=========================== */
+/* =====================================================
+   DASHBOARD GRID
+===================================================== */
 
 .dashboard-grid{
 
     display:grid;
 
-    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    grid-template-columns:
+        repeat(auto-fit,minmax(260px,1fr));
 
     gap:25px;
 
 }
 
-/* ===========================
-   Dashboard Card
-=========================== */
+
+/* =====================================================
+   DASHBOARD CARD
+===================================================== */
 
 .dashboard-card{
 
-    background:#fff;
+    display:block;
+
+    background:#fde7ef;
+
+    border:1px solid #f4bfd0;
 
     border-radius:18px;
 
@@ -38,41 +45,92 @@
 
     color:#444;
 
-    box-shadow:0 8px 20px rgba(0,0,0,.08);
+    box-shadow:
+        0 8px 20px rgba(216,111,157,.12);
 
     transition:.3s;
 
+    position:relative;
+
+    overflow:hidden;
+
 }
+
+
+/* وردي خفيف أعلى الكرت */
+
+.dashboard-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+
+    left:0;
+
+    right:0;
+
+    height:5px;
+
+    background:#e26fa7;
+
+}
+
+
+/* Hover */
 
 .dashboard-card:hover{
 
     transform:translateY(-6px);
 
-    box-shadow:0 12px 30px rgba(0,0,0,.12);
+    background:#fbdce8;
+
+    border-color:#e8a0b9;
+
+    box-shadow:
+        0 12px 30px rgba(216,111,157,.22);
 
 }
+
+
+/* =====================================================
+   CARD TITLE
+===================================================== */
 
 .dashboard-card h3{
 
-    color:#e26fa7;
+    color:#d85f91;
 
     font-size:22px;
 
-    margin-bottom:12px;
+    margin:0 0 12px;
+
+    font-weight:700;
 
 }
+
+
+/* =====================================================
+   CARD DESCRIPTION
+===================================================== */
 
 .dashboard-card p{
 
-    color:#777;
+    color:#6f5a62;
 
     line-height:1.8;
 
+    margin:0;
+
+    font-size:15px;
+
 }
 
-/* ===========================
-   Visitor Counter
-=========================== */
+
+/* =====================================================
+   VISITOR COUNTER
+===================================================== */
 
 .visitor-number{
 
@@ -80,141 +138,358 @@
 
     font-weight:bold;
 
-    color:#e26fa7;
+    color:#d85f91;
 
     margin-top:10px;
 
 }
 
-/* ===========================
-   Responsive
-=========================== */
 
-@media(max-width:768px){
+/* =====================================================
+   VISITOR CARD SPECIAL
+===================================================== */
 
-.dashboard-grid{
+.dashboard-card:has(.visitor-number){
 
-    grid-template-columns:1fr;
-
-}
-
-.dashboard-card{
-
-    padding:20px;
+    background:#f9d5e3;
 
 }
 
-.dashboard-card h3{
 
-    font-size:20px;
+.dashboard-card:has(.visitor-number)::before{
+
+    background:#d86f9d;
 
 }
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width:992px){
+
+    .dashboard-grid{
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+        gap:20px;
+
+    }
+
+
+    .dashboard-card{
+
+        padding:22px;
+
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width:768px){
+
+    .dashboard-grid{
+
+        grid-template-columns:1fr;
+
+        gap:18px;
+
+    }
+
+
+    .dashboard-card{
+
+        padding:20px;
+
+        border-radius:16px;
+
+    }
+
+
+    .dashboard-card h3{
+
+        font-size:20px;
+
+    }
+
+
+    .dashboard-card p{
+
+        font-size:14px;
+
+    }
+
+
+    .visitor-number{
+
+        font-size:36px;
+
+    }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width:400px){
+
+    .dashboard-grid{
+
+        gap:15px;
+
+    }
+
+
+    .dashboard-card{
+
+        padding:18px;
+
+    }
+
+
+    .dashboard-card h3{
+
+        font-size:18px;
+
+    }
+
+
+    .dashboard-card p{
+
+        font-size:13px;
+
+        line-height:1.7;
+
+    }
+
+
+    .visitor-number{
+
+        font-size:32px;
+
+    }
 
 }
 
 </style>
 
+
+
+<!-- =====================================================
+     DASHBOARD
+===================================================== -->
+
 <div class="dashboard-grid">
 
-    <!-- ===========================
-         Basic Settings
-    ============================ -->
 
-    <a href="#" class="dashboard-card">
+    <!-- =================================================
+         BASIC SETTINGS
+    ================================================== -->
+
+    <a
+        href="#"
+        class="dashboard-card">
 
         <h3>
-            ⚙️ {{ "الإعدادات الأساسية" if current_lang=="ar" else "Basic Settings" }}
+
+            ⚙️
+
+            {{
+                "الإعدادات الأساسية"
+                if current_lang=="ar"
+                else "Basic Settings"
+            }}
+
         </h3>
 
+
         <p>
-            {{ "إدارة معلومات المتجر واللغة والعملة والإعدادات العامة."
-            if current_lang=="ar"
-            else "Manage store information, language, currency, and general settings." }}
+
+            {{
+                "إدارة معلومات المتجر واللغة والعملة والإعدادات العامة."
+                if current_lang=="ar"
+                else
+                "Manage store information, language, currency, and general settings."
+            }}
+
         </p>
 
     </a>
 
-    <!-- ===========================
-         Add Product
-    ============================ -->
 
-    <a href="{{ url_for('add_product') }}" class="dashboard-card">
+
+    <!-- =================================================
+         ADD PRODUCT
+    ================================================== -->
+
+<a
+    href="{{ url_for('admin_products') }}"
+    class="dashboard-card">
+
+    <h3>
+
+        📦
+
+        {{
+            "المنتجات"
+            if current_lang=="ar"
+            else "Products"
+        }}
+
+    </h3>
+
+
+    <p>
+
+        {{
+            "عرض وإدارة جميع منتجات المتجر وتعديل بياناتها وأسعارها وصورها."
+            if current_lang=="ar"
+            else
+            "View and manage all store products, including their details, prices, and images."
+        }}
+
+    </p>
+
+</a>
+
+
+
+    <!-- =================================================
+         USERS
+    ================================================== -->
+
+    <a
+        href="{{ url_for('admin_users') }}"
+        class="dashboard-card">
 
         <h3>
-            📦 {{ "إضافة منتج" if current_lang=="ar" else "Add Product" }}
+
+            👥
+
+            {{
+                "المستخدمون"
+                if current_lang=="ar"
+                else "Users"
+            }}
+
         </h3>
 
+
         <p>
-            {{ "إضافة منتجات جديدة وتعديل المنتجات الحالية."
-            if current_lang=="ar"
-            else "Add new products and edit existing products." }}
+
+            {{
+                "إدارة حسابات العملاء والمشرفين."
+                if current_lang=="ar"
+                else
+                "Manage customer and administrator accounts."
+            }}
+
         </p>
 
     </a>
 
-    <!-- ===========================
-         Users
-    ============================ -->
 
-    <a href="{{ url_for('admin_users') }}" class="dashboard-card">
+
+    <!-- =================================================
+         REVIEWS
+    ================================================== -->
+
+    <a
+        href="{{ url_for('admin_reviews') }}"
+        class="dashboard-card">
 
         <h3>
-            👥 {{ "المستخدمون" if current_lang=="ar" else "Users" }}
+
+            ⭐
+
+            {{
+                "التقييمات"
+                if current_lang=="ar"
+                else "Reviews"
+            }}
+
         </h3>
 
+
         <p>
-            {{ "إدارة حسابات العملاء والمشرفين."
-            if current_lang=="ar"
-            else "Manage customer and administrator accounts." }}
+
+            {{
+                "عرض تقييمات العملاء وإدارتها."
+                if current_lang=="ar"
+                else
+                "View and manage customer reviews."
+            }}
+
         </p>
 
     </a>
 
-    <!-- ===========================
-         Reviews
-    ============================ -->
 
-    <a href="{{ url_for('admin_reviews') }}" class="dashboard-card">
+
+    <!-- =================================================
+         MESSAGES
+    ================================================== -->
+
+    <a
+        href="{{ url_for('admin_messages') }}"
+        class="dashboard-card">
 
         <h3>
-            ⭐ {{ "التقييمات" if current_lang=="ar" else "Reviews" }}
+
+            💌
+
+            {{
+                "الرسائل"
+                if current_lang=="ar"
+                else "Messages"
+            }}
+
         </h3>
 
+
         <p>
-            {{ "عرض تقييمات العملاء وإدارتها."
-            if current_lang=="ar"
-            else "View and manage customer reviews." }}
+
+            {{
+                "عرض رسائل العملاء والرد عليها."
+                if current_lang=="ar"
+                else
+                "View and reply to customer messages."
+            }}
+
         </p>
 
     </a>
 
-    <!-- ===========================
-         Messages
-    ============================ -->
 
-    <a href="{{ url_for('admin_messages') }}" class="dashboard-card">
 
-        <h3>
-            💌 {{ "الرسائل" if current_lang=="ar" else "Messages" }}
-        </h3>
+    <!-- =================================================
+         VISITOR COUNTER
+    ================================================== -->
 
-        <p>
-            {{ "عرض رسائل العملاء والرد عليها."
-            if current_lang=="ar"
-            else "View and reply to customer messages." }}
-        </p>
-
-    </a>
-
-    <!-- ===========================
-         Visitor Counter
-    ============================ -->
-
-    <a href="#" class="dashboard-card">
+    <a
+        href="#"
+        class="dashboard-card">
 
         <h3>
-            👀 {{ "عدد الزيارات" if current_lang=="ar" else "Visitors" }}
+
+            👀
+
+            {{
+                "عدد الزيارات"
+                if current_lang=="ar"
+                else "Visitors"
+            }}
+
         </h3>
+
 
         <div class="visitor-number">
 
@@ -222,15 +497,55 @@
 
         </div>
 
+
         <p>
 
-            {{ "إجمالي عدد زوار المتجر." if current_lang=="ar"
-            else "Total number of store visitors." }}
+            {{
+                "إجمالي عدد زوار المتجر."
+                if current_lang=="ar"
+                else
+                "Total number of store visitors."
+            }}
 
         </p>
 
     </a>
+    <!-- =================================================
+     EDIT PRODUCTS
+================================================== -->
+
+<a
+    href="{{ url_for('admin_products') }}"
+    class="dashboard-card">
+
+    <h3>
+
+        ✏️
+
+        {{
+            "تعديل المنتجات"
+            if current_lang=="ar"
+            else "Edit Products"
+        }}
+
+    </h3>
+
+
+    <p>
+
+        {{
+            "عرض المنتجات الحالية وتعديل بياناتها وصورها وأسعارها."
+            if current_lang=="ar"
+            else
+            "View your existing products and edit their details, images, and prices."
+        }}
+
+    </p>
+
+</a>
+
 
 </div>
+
 
 {% endblock %}

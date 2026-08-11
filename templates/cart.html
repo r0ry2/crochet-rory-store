@@ -1,132 +1,433 @@
 {% extends "base_logged.html" %}
 
 {% block title %}
-{{ "سلة التسوق" if current_lang=="ar" else "My Shopping Cart" }}
+{{ "سلة التسوق" if current_lang=="ar" else "Shopping Cart" }}
 {% endblock %}
 
 {% block content %}
 
 <section class="cart-page">
 
-    <h1 class="cart-title">
+    <!-- =====================================
+         PAGE HEADER
+    ====================================== -->
 
-        🛒 {{ "سلة التسوق" if current_lang=="ar" else "My Shopping Cart" }}
+    <div class="cart-header">
 
-    </h1>
+        <div>
+            <h1>
+                🛒 {{ "سلة التسوق" if current_lang=="ar" else "Shopping Cart" }}
+            </h1>
 
-    <div class="cart-layout">
+            <p>
+                {{ "راجعي منتجاتك وتفاصيل طلبك قبل إتمام الشراء."
+                if current_lang=="ar"
+                else "Review your products and order details before checkout." }}
+            </p>
+        </div>
 
-        <!-- ===========================
-             LEFT SIDE
-        ============================ -->
+        <a href="{{ url_for('products_page') }}" class="continue-shopping">
+            ←
+            {{ "متابعة التسوق" if current_lang=="ar" else "Continue Shopping" }}
+        </a>
 
-        <div class="cart-left">
+    </div>
 
-            <!-- Address -->
 
-            <div class="cart-card">
+    <!-- =====================================
+         MAIN CONTENT
+    ====================================== -->
 
-                <div class="card-header">
+    <div class="cart-container">
 
+
+        <!-- =================================
+             ADDRESS
+        ================================== -->
+
+        <div class="cart-section address-section">
+
+            <div class="section-title">
+
+                <div class="title-icon">
+                    📍
+                </div>
+
+                <div>
                     <h2>
-
-                        📍 {{ "عنوان التوصيل" if current_lang=="ar" else "Delivery Address" }}
-
+                        {{ "عنوان التوصيل" if current_lang=="ar" else "Delivery Address" }}
                     </h2>
 
-                    <button class="edit-btn">
+                    <p>
+                        {{ "سيتم استخدام هذا العنوان لتوصيل طلبك."
+                        if current_lang=="ar"
+                        else "This address will be used to deliver your order." }}
+                    </p>
+                </div>
 
-                        {{ "تغيير" if current_lang=="ar" else "Change" }}
+                <button
+                    type="button"
+                    class="change-address-btn"
+                    onclick="toggleAddress()">
 
-                    </button>
+                    {{ "تعديل" if current_lang=="ar" else "Edit" }}
+
+                </button>
+
+            </div>
+
+
+            <!-- Saved Address -->
+
+            <div id="savedAddress" class="saved-address">
+
+                <div class="address-user">
+
+                    <strong>
+                        {{ current_user.username }}
+                    </strong>
+
+                    {% if current_user.phone %}
+                    <span>
+                        {{ current_user.phone }}
+                    </span>
+                    {% endif %}
 
                 </div>
 
-                <div class="address-content">
+                <div id="savedAddressText" class="saved-address-text">
 
-                    <div class="address-name">
-
-                        {{ current_user.name }}
-
-                    </div>
-
-                    <div class="address-phone">
-
-                        {{ current_user.phone }}
-
-                    </div>
-
-                    <div class="address-text">
-
-                        {{ "لم تتم إضافة عنوان بعد." if current_lang=="ar"
-                        else "No address added yet." }}
-
-                    </div>
+                    {{ "لم تتم إضافة عنوان التوصيل بعد."
+                    if current_lang=="ar"
+                    else "No delivery address has been added yet." }}
 
                 </div>
 
             </div>
 
-            <!-- Products -->
 
-            <div class="cart-card">
+            <!-- Address Form -->
 
-                <div class="card-header">
+            <div
+                id="addressForm"
+                class="address-form"
+                style="display:none;">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label>
+                            {{ "الاسم" if current_lang=="ar" else "Name" }}
+                        </label>
+
+                        <input
+                            type="text"
+                            id="customerName"
+                            value="{{ current_user.username }}"
+                            placeholder="{{ 'الاسم الكامل' if current_lang=='ar' else 'Full name' }}">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            {{ "رقم الجوال" if current_lang=="ar" else "Phone" }}
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="customerPhone"
+                            value="{{ current_user.phone or '' }}"
+                            placeholder="{{ 'رقم الجوال' if current_lang=='ar' else 'Phone number' }}">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            {{ "المدينة" if current_lang=="ar" else "City" }}
+                        </label>
+
+                        <input
+                            type="text"
+                            id="customerCity"
+                            placeholder="{{ 'مثال: مكة المكرمة' if current_lang=='ar' else 'Example: Makkah' }}">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            {{ "الحي" if current_lang=="ar" else "District" }}
+                        </label>
+
+                        <input
+                            type="text"
+                            id="customerDistrict"
+                            placeholder="{{ 'اسم الحي' if current_lang=='ar' else 'District' }}">
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        {{ "العنوان بالتفصيل" if current_lang=="ar" else "Full Address" }}
+                    </label>
+
+                    <textarea
+                        id="customerAddress"
+                        placeholder="{{ 'الشارع، رقم المبنى، تفاصيل إضافية...' if current_lang=='ar' else 'Street, building number, additional details...' }}"></textarea>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="save-address-btn"
+                    onclick="saveAddress()">
+
+                    ✓
+                    {{ "حفظ العنوان" if current_lang=="ar" else "Save Address" }}
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================
+             PRODUCTS
+        ================================== -->
+
+        <div class="cart-section">
+
+            <div class="section-title">
+
+                <div class="title-icon">
+                    🛍️
+                </div>
+
+                <div>
 
                     <h2>
-
-                        🛍 {{ "المنتجات" if current_lang=="ar" else "Products" }}
-
+                        {{ "منتجاتك" if current_lang=="ar" else "Your Products" }}
                     </h2>
 
-                    <span id="itemsCount">
-
-                        0 {{ "منتج" if current_lang=="ar" else "Items" }}
-
-                    </span>
-
-                </div>
-
-                <div id="cartItems">
-
-                    <!-- المنتجات ستظهر هنا بواسطة JavaScript -->
-
-                </div>
-
-                <div
-                    id="emptyCart"
-                    class="empty-cart"
-                    style="display:none;">
-
-                    <img
-                        src="{{ url_for('static', filename='images/empty_cart.png') }}"
-                        alt="empty">
-
-                    <h3>
-
-                        {{ "سلتك فارغة 🧺"
-                        if current_lang=="ar"
-                        else "Your Cart is Empty 🧺" }}
-
-                    </h3>
-
-                    <p>
-
-                        {{ "ابدأ بإضافة منتجاتك المفضلة."
-                        if current_lang=="ar"
-                        else "Start adding your favorite products." }}
-
+                    <p id="itemsCount">
+                        0
                     </p>
 
-                    <a
-                        href="{{ url_for('products_page') }}"
-                        class="continue-btn">
+                </div>
 
-                        {{ "متابعة التسوق"
+            </div>
+
+
+            <!-- Cart Items -->
+
+            <div id="cartItems">
+
+            </div>
+
+
+            <!-- Empty Cart -->
+
+            <div
+                id="emptyCart"
+                class="empty-cart"
+                style="display:none;">
+
+                <div class="empty-icon">
+                    🧺
+                </div>
+
+                <h3>
+                    {{ "سلتك فارغة" if current_lang=="ar" else "Your cart is empty" }}
+                </h3>
+
+                <p>
+                    {{ "ابدئي بإضافة منتجاتك المفضلة إلى السلة."
+                    if current_lang=="ar"
+                    else "Start adding your favorite products to your cart." }}
+                </p>
+
+                <a
+                    href="{{ url_for('products_page') }}"
+                    class="shop-btn">
+
+                    {{ "ابدأ التسوق" if current_lang=="ar" else "Start Shopping" }}
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================
+             SHIPPING
+        ================================== -->
+
+        <div class="cart-section">
+
+            <div class="section-title">
+
+                <div class="title-icon">
+                    🚚
+                </div>
+
+                <div>
+
+                    <h2>
+                        {{ "طريقة الشحن" if current_lang=="ar" else "Shipping Method" }}
+                    </h2>
+
+                    <p>
+                        {{ "اختاري طريقة التوصيل المناسبة لك."
                         if current_lang=="ar"
-                        else "Continue Shopping" }}
+                        else "Choose your preferred delivery method." }}
+                    </p>
 
-                    </a>
+                </div>
+
+            </div>
+
+
+            <div class="shipping-list">
+
+
+                <!-- Standard -->
+
+                <label class="shipping-option selected">
+
+                    <input
+                        type="radio"
+                        name="shipping"
+                        value="20"
+                        data-days="3 - 5"
+                        checked
+                        onchange="selectShipping(this)">
+
+                    <div class="shipping-radio"></div>
+
+                    <div class="shipping-info">
+
+                        <strong>
+                            {{ "الشحن العادي" if current_lang=="ar" else "Standard Shipping" }}
+                        </strong>
+
+                        <span>
+                            {{ "التوصيل خلال 3 - 5 أيام"
+                            if current_lang=="ar"
+                            else "Delivery within 3 - 5 days" }}
+                        </span>
+
+                    </div>
+
+                    <div class="shipping-price">
+                        20 {{ "ر.س" if current_lang=="ar" else "SAR" }}
+                    </div>
+
+                </label>
+
+
+
+                <!-- Express -->
+
+                <label class="shipping-option">
+
+                    <input
+                        type="radio"
+                        name="shipping"
+                        value="40"
+                        data-days="1 - 2"
+                        onchange="selectShipping(this)">
+
+                    <div class="shipping-radio"></div>
+
+                    <div class="shipping-info">
+
+                        <strong>
+                            {{ "الشحن السريع" if current_lang=="ar" else "Express Shipping" }}
+                        </strong>
+
+                        <span>
+                            {{ "التوصيل خلال 1 - 2 يوم"
+                            if current_lang=="ar"
+                            else "Delivery within 1 - 2 days" }}
+                        </span>
+
+                    </div>
+
+                    <div class="shipping-price">
+                        40 {{ "ر.س" if current_lang=="ar" else "SAR" }}
+                    </div>
+
+                </label>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================
+             DELIVERY DATE
+        ================================== -->
+
+        <div class="cart-section">
+
+            <div class="section-title">
+
+                <div class="title-icon">
+                    📅
+                </div>
+
+                <div>
+
+                    <h2>
+                        {{ "موعد التسليم المتوقع" if current_lang=="ar" else "Estimated Delivery" }}
+                    </h2>
+
+                    <p>
+                        {{ "سيتم تحديد موعد التسليم من قبل المتجر."
+                        if current_lang=="ar"
+                        else "The store will determine the delivery date." }}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="delivery-box">
+
+                <div class="delivery-icon">
+                    📦
+                </div>
+
+                <div>
+
+                    <strong id="deliveryDate">
+                        {{ "سيتم تحديث تاريخ التسليم بعد تأكيد الطلب."
+                        if current_lang=="ar"
+                        else "The delivery date will be updated after order confirmation." }}
+                    </strong>
+
+                    <span id="deliveryDays">
+                        {{ "الموعد المتوقع يعتمد على طريقة الشحن."
+                        if current_lang=="ar"
+                        else "The estimated date depends on the shipping method." }}
+                    </span>
 
                 </div>
 
@@ -134,259 +435,179 @@
 
         </div>
 
-        <!-- ===========================
-             RIGHT SIDE
-        ============================ -->
 
-        <div class="cart-right">
 
-            <!-- Shipping -->
+        <!-- =================================
+             COUPON
+        ================================== -->
 
-            <div class="cart-card">
+        <div class="cart-section">
 
-                <h2>
+            <div class="section-title">
 
-                    🚚 {{ "طريقة الشحن" if current_lang=="ar" else "Shipping Method" }}
-
-                </h2>
-
-                <label class="shipping-box">
-
-                    <input
-                        type="radio"
-                        name="shipping"
-                        checked>
-
-                    <div>
-
-                        <strong>
-
-                            {{ "شحن عادي"
-                            if current_lang=="ar"
-                            else "Standard Shipping" }}
-
-                        </strong>
-
-                        <p>
-
-                            {{ "3 - 5 أيام"
-                            if current_lang=="ar"
-                            else "3 - 5 Days" }}
-
-                        </p>
-
-                    </div>
-
-                    <span>
-
-                        20 SAR
-
-                    </span>
-
-                </label>
-
-                <label class="shipping-box">
-
-                    <input
-                        type="radio"
-                        name="shipping">
-
-                    <div>
-
-                        <strong>
-
-                            {{ "شحن سريع"
-                            if current_lang=="ar"
-                            else "Express Shipping" }}
-
-                        </strong>
-
-                        <p>
-
-                            {{ "1 - 2 يوم"
-                            if current_lang=="ar"
-                            else "1 - 2 Days" }}
-
-                        </p>
-
-                    </div>
-
-                    <span>
-
-                        40 SAR
-
-                    </span>
-
-                </label>
-
-            </div>
-
-            <!-- Delivery -->
-
-            <div class="cart-card">
-
-                <h2>
-
-                    📅 {{ "موعد التسليم المتوقع"
-                    if current_lang=="ar"
-                    else "Estimated Delivery" }}
-
-                </h2>
-
-                <div class="delivery-date">
-
-                    {{ "سيتم تحديثه بواسطة المتجر"
-                    if current_lang=="ar"
-                    else "Will be updated by the store" }}
-
+                <div class="title-icon">
+                    🎁
                 </div>
 
-            </div>
-                        <!-- Coupon -->
+                <div>
 
-            <div class="cart-card">
+                    <h2>
+                        {{ "كوبون الخصم" if current_lang=="ar" else "Discount Coupon" }}
+                    </h2>
 
-                <h2>
-
-                    🎁 {{ "كوبون الخصم" if current_lang=="ar"
-                    else "Coupon" }}
-
-                </h2>
-
-                <div class="coupon-box">
-
-                    <input
-                        type="text"
-                        id="coupon"
-                        placeholder="{{ 'أدخل الكوبون'
-                        if current_lang=='ar'
-                        else 'Enter coupon code' }}">
-
-                    <button>
-
-                        {{ "تطبيق"
+                    <p>
+                        {{ "إذا كان لديك كوبون خصم، أدخليه هنا."
                         if current_lang=="ar"
-                        else "Apply" }}
-
-                    </button>
+                        else "If you have a discount coupon, enter it here." }}
+                    </p>
 
                 </div>
 
             </div>
 
-            <!-- Summary -->
 
-            <div class="cart-card summary-card">
+            <div class="coupon-area">
 
-                <h2>
-
-                    💳 {{ "ملخص الطلب"
-                    if current_lang=="ar"
-                    else "Order Summary" }}
-
-                </h2>
-
-                <div class="summary-row">
-
-                    <span>
-
-                        {{ "سعر المنتجات"
-                        if current_lang=="ar"
-                        else "Products" }}
-
-                    </span>
-
-                    <span id="productsPrice">
-
-                        0 SAR
-
-                    </span>
-
-                </div>
-
-                <div class="summary-row">
-
-                    <span>
-
-                        {{ "الإضافات"
-                        if current_lang=="ar"
-                        else "Extras" }}
-
-                    </span>
-
-                    <span id="extrasPrice">
-
-                        0 SAR
-
-                    </span>
-
-                </div>
-
-                <div class="summary-row">
-
-                    <span>
-
-                        {{ "الشحن"
-                        if current_lang=="ar"
-                        else "Shipping" }}
-
-                    </span>
-
-                    <span id="shippingPrice">
-
-                        20 SAR
-
-                    </span>
-
-                </div>
-
-                <div class="summary-row">
-
-                    <span>
-
-                        {{ "الخصم"
-                        if current_lang=="ar"
-                        else "Discount" }}
-
-                    </span>
-
-                    <span id="discountPrice">
-
-                        0 SAR
-
-                    </span>
-
-                </div>
-
-                <hr>
-
-                <div class="summary-row total-row">
-
-                    <strong>
-
-                        {{ "الإجمالي"
-                        if current_lang=="ar"
-                        else "Total" }}
-
-                    </strong>
-
-                    <strong id="total">
-
-                        20 SAR
-
-                    </strong>
-
-                </div>
+                <input
+                    type="text"
+                    id="coupon"
+                    placeholder="{{ 'أدخل رمز الكوبون' if current_lang=='ar' else 'Enter coupon code' }}">
 
                 <button
+                    type="button"
+                    onclick="applyCoupon()">
+
+                    {{ "تطبيق الكوبون" if current_lang=="ar" else "Apply Coupon" }}
+
+                </button>
+
+            </div>
+
+            <div id="couponMessage"></div>
+
+        </div>
+
+
+
+        <!-- =================================
+             ORDER SUMMARY
+        ================================== -->
+
+        <div class="cart-section summary-section">
+
+            <div class="section-title">
+
+                <div class="title-icon">
+                    💳
+                </div>
+
+                <div>
+
+                    <h2>
+                        {{ "ملخص الطلب" if current_lang=="ar" else "Order Summary" }}
+                    </h2>
+
+                    <p>
+                        {{ "راجعي الأسعار قبل إتمام الطلب."
+                        if current_lang=="ar"
+                        else "Review the prices before placing your order." }}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="summary-content">
+
+
+                <div class="summary-row">
+
+                    <span>
+                        {{ "سعر المنتجات" if current_lang=="ar" else "Products Price" }}
+                    </span>
+
+                    <strong id="productsPrice">
+                        0 {{ "ر.س" if current_lang=="ar" else "SAR" }}
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-row">
+
+                    <span>
+                        {{ "سعر الإضافات" if current_lang=="ar" else "Extras" }}
+                    </span>
+
+                    <strong id="extrasPrice">
+                        0 {{ "ر.س" if current_lang=="ar" else "SAR" }}
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-row">
+
+                    <span>
+                        {{ "سعر الشحن" if current_lang=="ar" else "Shipping" }}
+                    </span>
+
+                    <strong id="shippingPrice">
+                        20 {{ "ر.س" if current_lang=="ar" else "SAR" }}
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-row discount-row">
+
+                    <span>
+                        {{ "الخصم" if current_lang=="ar" else "Discount" }}
+                    </span>
+
+                    <strong id="discountPrice">
+                        0 {{ "ر.س" if current_lang=="ar" else "SAR" }}
+                    </strong>
+
+                </div>
+
+
+                <div class="summary-line"></div>
+
+
+                <div class="summary-total">
+
+                    <span>
+                        {{ "الإجمالي النهائي" if current_lang=="ar" else "Total" }}
+                    </span>
+
+                    <strong id="total">
+                        0 {{ "ر.س" if current_lang=="ar" else "SAR" }}
+                    </strong>
+
+                </div>
+
+
+                <button
+                    type="button"
                     class="checkout-btn"
                     onclick="checkout()">
 
-                    🛍 {{ "إتمام الطلب"
-                    if current_lang=="ar"
-                    else "Checkout" }}
+                    🛍️
+                    {{ "إتمام الطلب" if current_lang=="ar" else "Place Order" }}
 
                 </button>
+
+
+                <div class="secure-note">
+
+                    🔒
+                    {{ "بيانات طلبك محفوظة وآمنة."
+                    if current_lang=="ar"
+                    else "Your order information is safe and secure." }}
+
+                </div>
 
             </div>
 
@@ -395,265 +616,242 @@
     </div>
 
 </section>
-<style>/* =====================================
-   CART PAGE
+
+
+
+<style>
+
+/* =====================================
+   GLOBAL
 ===================================== */
 
 .cart-page{
-    max-width:1450px;
-    margin:auto;
-    padding:40px 25px;
-}
 
-.cart-title{
-    font-size:34px;
-    font-weight:700;
-    color:#d86d97;
-    margin-bottom:30px;
-}
-
-.cart-layout{
-    display:grid;
-    grid-template-columns:2fr 1fr;
-    gap:25px;
-    align-items:start;
-}
-
-.cart-left,
-.cart-right{
-    display:flex;
-    flex-direction:column;
-    gap:22px;
-}
-
-.cart-card{
-    background:#fff;
-    border-radius:18px;
-    padding:22px;
-    box-shadow:0 8px 25px rgba(0,0,0,.08);
-}
-
-.card-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:18px;
-}
-
-.card-header h2{
-    font-size:22px;
-    color:#444;
-}
-
-.edit-btn{
-    border:none;
-    background:#d88ea4;
-    color:#fff;
-    padding:10px 18px;
-    border-radius:10px;
-    cursor:pointer;
-    transition:.3s;
-}
-
-.edit-btn:hover{
-    background:#c76f89;
-}
-
-.address-name{
-    font-size:20px;
-    font-weight:bold;
-    margin-bottom:8px;
-}
-
-.address-phone{
-    color:#777;
-    margin-bottom:10px;
-}
-
-.address-text{
-    color:#666;
-    line-height:1.8;
-}
-
-.shipping-box{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    border:1px solid #eee;
-    border-radius:15px;
-    padding:18px;
-    margin-top:15px;
-    cursor:pointer;
-    transition:.3s;
-}
-
-.shipping-box:hover{
-    border-color:#d88ea4;
-    background:#fff8fb;
-}
-
-.shipping-box input{
-    margin-right:15px;
-}
-
-.shipping-box strong{
-    color:#444;
-}
-
-.shipping-box p{
-    margin-top:5px;
-    color:#888;
-    font-size:14px;
-}
-
-.delivery-date{
-    margin-top:15px;
-    padding:18px;
-    background:#fff7fa;
-    border-radius:12px;
-    color:#d86d97;
-    font-weight:600;
-    text-align:center;
-}
-
-.coupon-box{
-    display:flex;
-    gap:12px;
-    margin-top:18px;
-}
-
-.coupon-box input{
-    flex:1;
-    padding:13px;
-    border-radius:12px;
-    border:1px solid #ddd;
-    outline:none;
-}
-
-.coupon-box input:focus{
-    border-color:#d88ea4;
-}
-
-.coupon-box button{
-    border:none;
-    background:#d88ea4;
-    color:white;
-    padding:0 22px;
-    border-radius:12px;
-    cursor:pointer;
-    transition:.3s;
-}
-
-.coupon-box button:hover{
-    background:#c76f89;
-}
-
-.summary-row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:13px 0;
-    color:#555;
-}
-
-.total-row{
-    font-size:22px;
-    color:#d86d97;
-}
-
-.checkout-btn{
     width:100%;
-    margin-top:20px;
-    border:none;
-    border-radius:14px;
-    padding:16px;
-    background:#d88ea4;
-    color:white;
-    font-size:18px;
-    font-weight:700;
-    cursor:pointer;
-    transition:.3s;
+    max-width:1050px;
+
+    margin:0 auto;
+
+    padding:35px 20px 70px;
+
+    direction:rtl;
+
+    color:#4f4147;
+
 }
 
-.checkout-btn:hover{
-    background:#c76f89;
+.cart-page *{
+    box-sizing:border-box;
 }
+
 
 /* =====================================
-   PRODUCTS
+   HEADER
 ===================================== */
 
-.cart-product{
+.cart-header{
 
     display:flex;
-    gap:18px;
+
+    justify-content:space-between;
+
     align-items:center;
 
-    border-bottom:1px solid #eee;
+    gap:20px;
 
-    padding:20px 0;
-
-}
-
-.cart-product:last-child{
-
-    border-bottom:none;
+    margin-bottom:25px;
 
 }
 
-.product-check{
+.cart-header h1{
 
-    width:28px;
-
-}
-
-.product-check input{
-
-    width:18px;
-    height:18px;
-
-}
-
-.product-image{
-
-    width:120px;
-    height:120px;
-
-    border-radius:16px;
-
-    object-fit:cover;
-
-    background:#fafafa;
-
-}
-
-.product-info{
-
-    flex:1;
-
-}
-
-.product-info h3{
-
-    font-size:20px;
-    margin-bottom:10px;
-    color:#444;
-
-}
-
-.product-price{
+    margin:0;
 
     color:#d86d97;
 
-    font-size:24px;
+    font-size:32px;
 
-    font-weight:bold;
-
-    margin-bottom:15px;
+    font-weight:800;
 
 }
 
-.qty-box{
+.cart-header p{
+
+    margin:8px 0 0;
+
+    color:#888;
+
+    font-size:14px;
+
+}
+
+.continue-shopping{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    padding:11px 18px;
+
+    border-radius:12px;
+
+    text-decoration:none;
+
+    color:#d86d97;
+
+    background:#fff3f7;
+
+    border:1px solid #f3d5df;
+
+    font-weight:600;
+
+    transition:.25s;
+
+    white-space:nowrap;
+
+}
+
+.continue-shopping:hover{
+
+    background:#d86d97;
+
+    color:#fff;
+
+}
+
+
+/* =====================================
+   SECTION
+===================================== */
+
+.cart-container{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+}
+
+.cart-section{
+
+    width:100%;
+
+    background:#fff;
+
+    border:1px solid #f0e6e9;
+
+    border-radius:20px;
+
+    padding:24px;
+
+    box-shadow:0 7px 25px rgba(60,30,40,.06);
+
+}
+
+.section-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    margin-bottom:22px;
+
+}
+
+.title-icon{
+
+    width:48px;
+
+    height:48px;
+
+    min-width:48px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    background:#fff1f6;
+
+    border-radius:14px;
+
+    font-size:22px;
+
+}
+
+.section-title h2{
+
+    margin:0;
+
+    font-size:20px;
+
+    color:#44383d;
+
+}
+
+.section-title p{
+
+    margin:5px 0 0;
+
+    color:#999;
+
+    font-size:13px;
+
+}
+
+.change-address-btn{
+
+    margin-right:auto;
+
+    border:none;
+
+    background:#d88ea4;
+
+    color:#fff;
+
+    padding:9px 18px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    transition:.25s;
+
+}
+
+.change-address-btn:hover{
+
+    background:#c76f89;
+
+}
+
+
+/* =====================================
+   ADDRESS
+===================================== */
+
+.saved-address{
+
+    background:#fff9fb;
+
+    border:1px solid #f4dce4;
+
+    border-radius:15px;
+
+    padding:18px;
+
+}
+
+.address-user{
 
     display:flex;
 
@@ -661,102 +859,164 @@
 
     gap:15px;
 
+    margin-bottom:8px;
+
+}
+
+.address-user strong{
+
+    font-size:17px;
+
+}
+
+.address-user span{
+
+    color:#888;
+
+}
+
+.saved-address-text{
+
+    color:#777;
+
+    line-height:1.8;
+
+}
+
+.address-form{
+
+    background:#fffafa;
+
+    border:1px solid #f4dce4;
+
+    border-radius:16px;
+
+    padding:20px;
+
+}
+
+.form-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:15px;
+
+}
+
+.form-group{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:8px;
+
     margin-bottom:15px;
 
 }
 
-.qty-box button{
+.form-group label{
 
-    width:38px;
+    font-size:14px;
 
-    height:38px;
+    font-weight:600;
+
+    color:#55474d;
+
+}
+
+.form-group input,
+
+.form-group textarea{
+
+    width:100%;
+
+    border:1px solid #ddd;
+
+    border-radius:12px;
+
+    padding:13px 14px;
+
+    font-family:inherit;
+
+    font-size:14px;
+
+    outline:none;
+
+    transition:.2s;
+
+    background:#fff;
+
+}
+
+.form-group input:focus,
+
+.form-group textarea:focus{
+
+    border-color:#d88ea4;
+
+    box-shadow:0 0 0 3px rgba(216,142,164,.10);
+
+}
+
+.form-group textarea{
+
+    min-height:95px;
+
+    resize:vertical;
+
+}
+
+.save-address-btn{
 
     border:none;
-
-    border-radius:50%;
 
     background:#d88ea4;
 
-    color:white;
+    color:#fff;
+
+    padding:12px 22px;
+
+    border-radius:11px;
 
     cursor:pointer;
 
-    font-size:20px;
-
-    transition:.3s;
+    font-weight:600;
 
 }
 
-.qty-box button:hover{
 
-    background:#c76f89;
-
-}
-
-.qty-box span{
-
-    font-size:18px;
-
-    font-weight:bold;
-
-    min-width:25px;
-
-    text-align:center;
-
-}
-
-.remove-btn{
-
-    border:none;
-
-    background:#ffe9ef;
-
-    color:#d85b8d;
-
-    padding:10px 16px;
-
-    border-radius:10px;
-
-    cursor:pointer;
-
-    transition:.3s;
-
-}
-
-.remove-btn:hover{
-
-    background:#ffd4e2;
-
-}
-/* ===============================
-   CART ITEM
-================================= */
+/* =====================================
+   CART PRODUCTS
+===================================== */
 
 .cart-item{
 
     display:flex;
+
     align-items:center;
+
     gap:18px;
 
-    background:#fff;
+    padding:18px 0;
 
-    border:1px solid #eee;
+    border-bottom:1px solid #f0ecee;
 
-    border-radius:18px;
+}
 
-    padding:18px;
+.cart-item:last-child{
 
-    margin-bottom:18px;
-
-    box-shadow:0 6px 18px rgba(0,0,0,.05);
+    border-bottom:none;
 
 }
 
 .cart-img{
 
-    width:120px;
+    width:105px;
 
-    height:120px;
+    height:105px;
 
     object-fit:cover;
 
@@ -764,35 +1024,41 @@
 
     background:#fafafa;
 
+    border:1px solid #eee;
+
 }
 
 .cart-info{
 
     flex:1;
 
+    min-width:0;
+
 }
 
 .cart-info h3{
 
-    margin-bottom:10px;
+    margin:0 0 8px;
 
-    font-size:20px;
+    font-size:18px;
 
-    color:#444;
+    color:#44383d;
 
 }
 
 .cart-info p{
 
-    color:#e26fa7;
+    margin:0;
 
-    font-weight:bold;
+    color:#d86d97;
 
-    font-size:20px;
+    font-size:17px;
+
+    font-weight:700;
 
 }
 
-.qty-box{
+.cart-actions{
 
     display:flex;
 
@@ -802,145 +1068,294 @@
 
 }
 
+.qty-box{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    border:1px solid #eadde2;
+
+    border-radius:11px;
+
+    padding:4px;
+
+}
+
 .qty-box button{
 
-    width:38px;
+    width:32px;
 
-    height:38px;
+    height:32px;
 
     border:none;
 
-    border-radius:50%;
+    border-radius:8px;
 
-    background:#e26fa7;
+    background:#fff1f6;
 
-    color:#fff;
+    color:#d86d97;
+
+    font-size:19px;
 
     cursor:pointer;
 
-    font-size:20px;
+    transition:.2s;
+
+}
+
+.qty-box button:hover{
+
+    background:#d88ea4;
+
+    color:#fff;
 
 }
 
 .qty-box span{
 
-    width:25px;
+    min-width:25px;
 
     text-align:center;
 
-    font-size:18px;
-
-    font-weight:bold;
+    font-weight:700;
 
 }
 
-/* ===============================
-   ADDRESS
-================================= */
+.remove-btn{
 
-.address-box{
+    border:none;
 
-    background:#fff;
+    background:#fff0f3;
 
-    border-radius:20px;
+    color:#d45c82;
 
-    padding:25px;
+    padding:9px 12px;
 
-    margin-bottom:25px;
-
-    box-shadow:0 5px 15px rgba(0,0,0,.05);
-
-}
-
-.address-box h2{
-
-    margin-bottom:20px;
-
-    color:#d86f9d;
-
-}
-
-.address-box input,
-
-.address-box textarea{
-
-    width:100%;
-
-    padding:14px;
-
-    border:1px solid #ddd;
-
-    border-radius:12px;
-
-    margin-bottom:15px;
-
-    font-size:15px;
-
-}
-
-.address-box textarea{
-
-    resize:none;
-
-    height:90px;
-
-}
-
-/* ===============================
-   SHIPPING
-================================= */
-
-.shipping-box{
-
-    background:#fff;
-
-    border-radius:20px;
-
-    padding:25px;
-
-    margin-bottom:25px;
-
-    box-shadow:0 5px 15px rgba(0,0,0,.05);
-
-}
-
-.shipping-box h2{
-
-    color:#d86f9d;
-
-    margin-bottom:18px;
-
-}
-
-.shipping-box label{
-
-    display:block;
-
-    margin-bottom:12px;
+    border-radius:9px;
 
     cursor:pointer;
 
+    font-size:13px;
+
 }
 
-/* ===============================
-   COUPON
-================================= */
+.remove-btn:hover{
 
-.coupon-box{
+    background:#ffe0e8;
+
+}
+
+
+/* =====================================
+   SHIPPING
+===================================== */
+
+.shipping-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+}
+
+.shipping-option{
+
+    position:relative;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    border:1.5px solid #eee;
+
+    border-radius:15px;
+
+    padding:17px;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.shipping-option:hover{
+
+    border-color:#e6a5b9;
+
+    background:#fffafd;
+
+}
+
+.shipping-option.selected{
+
+    border-color:#d88ea4;
+
+    background:#fff7fa;
+
+}
+
+.shipping-option input{
+
+    display:none;
+
+}
+
+.shipping-radio{
+
+    width:20px;
+
+    height:20px;
+
+    border:2px solid #ccc;
+
+    border-radius:50%;
+
+    position:relative;
+
+    flex-shrink:0;
+
+}
+
+.shipping-option.selected .shipping-radio{
+
+    border-color:#d88ea4;
+
+}
+
+.shipping-option.selected .shipping-radio::after{
+
+    content:"";
+
+    width:9px;
+
+    height:9px;
+
+    background:#d88ea4;
+
+    border-radius:50%;
+
+    position:absolute;
+
+    top:50%;
+
+    left:50%;
+
+    transform:translate(-50%,-50%);
+
+}
+
+.shipping-info{
+
+    flex:1;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:5px;
+
+}
+
+.shipping-info strong{
+
+    color:#44383d;
+
+}
+
+.shipping-info span{
+
+    color:#999;
+
+    font-size:13px;
+
+}
+
+.shipping-price{
+
+    color:#d86d97;
+
+    font-weight:700;
+
+    white-space:nowrap;
+
+}
+
+
+/* =====================================
+   DELIVERY
+===================================== */
+
+.delivery-box{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    padding:18px;
+
+    border-radius:15px;
+
+    background:#fff7fa;
+
+    border:1px solid #f3dce4;
+
+}
+
+.delivery-icon{
+
+    width:50px;
+
+    height:50px;
+
+    min-width:50px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    border-radius:13px;
 
     background:#fff;
 
-    border-radius:20px;
-
-    padding:25px;
-
-    margin-bottom:25px;
-
-    box-shadow:0 5px 15px rgba(0,0,0,.05);
+    font-size:24px;
 
 }
 
-.coupon-input{
+.delivery-box strong{
+
+    display:block;
+
+    color:#d06b91;
+
+    margin-bottom:6px;
+
+}
+
+.delivery-box span{
+
+    color:#888;
+
+    font-size:13px;
+
+}
+
+
+/* =====================================
+   COUPON
+===================================== */
+
+.coupon-area{
 
     display:flex;
 
@@ -948,59 +1363,80 @@
 
 }
 
-.coupon-input input{
+.coupon-area input{
 
     flex:1;
 
-    padding:12px;
+    min-width:0;
+
+    padding:14px;
 
     border:1px solid #ddd;
 
-    border-radius:10px;
+    border-radius:12px;
+
+    outline:none;
+
+    font-family:inherit;
 
 }
 
-.coupon-input button{
+.coupon-area input:focus{
 
-    padding:12px 20px;
+    border-color:#d88ea4;
+
+}
+
+.coupon-area button{
 
     border:none;
 
-    border-radius:10px;
-
-    background:#e26fa7;
+    background:#d88ea4;
 
     color:#fff;
 
+    padding:0 25px;
+
+    border-radius:12px;
+
     cursor:pointer;
+
+    font-weight:600;
 
 }
 
-/* ===============================
-   SUMMARY
-================================= */
+.coupon-area button:hover{
 
-.summary-box{
+    background:#c76f89;
+
+}
+
+#couponMessage{
+
+    margin-top:10px;
+
+    font-size:13px;
+
+}
+
+
+/* =====================================
+   SUMMARY
+===================================== */
+
+.summary-section{
 
     background:#fff;
 
-    border-radius:20px;
-
-    padding:25px;
-
-    box-shadow:0 5px 15px rgba(0,0,0,.05);
-
-    position:sticky;
-
-    top:20px;
-
 }
 
-.summary-box h2{
+.summary-content{
 
-    color:#d86f9d;
+    width:100%;
 
-    margin-bottom:20px;
+    max-width:700px;
+
+    margin:auto;
 
 }
 
@@ -1010,23 +1446,53 @@
 
     justify-content:space-between;
 
-    margin:15px 0;
+    align-items:center;
 
-    font-size:16px;
+    padding:13px 0;
+
+    color:#666;
+
+}
+
+.summary-row strong{
+
+    color:#44383d;
+
+}
+
+.discount-row strong{
+
+    color:#48a675;
+
+}
+
+.summary-line{
+
+    height:1px;
+
+    background:#eee;
+
+    margin:10px 0;
 
 }
 
 .summary-total{
 
-    border-top:1px solid #eee;
+    display:flex;
 
-    padding-top:18px;
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:15px 0 5px;
 
     font-size:22px;
 
-    font-weight:bold;
+}
 
-    color:#d86f9d;
+.summary-total strong{
+
+    color:#d86d97;
 
 }
 
@@ -1034,206 +1500,2538 @@
 
     width:100%;
 
-    margin-top:25px;
-
-    padding:16px;
-
     border:none;
+
+    margin-top:20px;
+
+    padding:17px;
 
     border-radius:14px;
 
-    background:#e26fa7;
+    background:#d88ea4;
 
     color:#fff;
 
-    font-size:17px;
+    font-family:inherit;
+
+    font-size:18px;
+
+    font-weight:700;
 
     cursor:pointer;
 
-    transition:.3s;
+    transition:.25s;
 
 }
 
 .checkout-btn:hover{
 
-    background:#c84f88;
+    background:#c76f89;
+
+    transform:translateY(-1px);
 
 }
 
-/* ===============================
-   MOBILE
-================================= */
-
-@media(max-width:900px){
-
-.cart-container{
-
-    grid-template-columns:1fr;
-
-}
-
-.cart-item{
-
-    flex-direction:column;
+.secure-note{
 
     text-align:center;
 
-}
+    color:#999;
 
-.cart-img{
+    font-size:12px;
 
-    width:180px;
-
-    height:180px;
+    margin-top:12px;
 
 }
 
-.qty-box{
 
-    margin-top:15px;
+/* =====================================
+   EMPTY CART
+===================================== */
 
-}
+.empty-cart{
 
-.summary-box{
+    text-align:center;
 
-    position:static;
-
-}
-
-.coupon-input{
-
-    flex-direction:column;
+    padding:45px 20px;
 
 }
 
+.empty-icon{
+
+    font-size:60px;
+
+    margin-bottom:12px;
+
 }
+
+.empty-cart h3{
+
+    margin:0 0 8px;
+
+    font-size:21px;
+
+}
+
+.empty-cart p{
+
+    color:#999;
+
+    margin-bottom:20px;
+
+}
+
+.shop-btn{
+
+    display:inline-block;
+
+    background:#d88ea4;
+
+    color:#fff;
+
+    text-decoration:none;
+
+    padding:12px 25px;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+}
+
+
+/* =====================================
+   TABLET
+===================================== */
+
+@media(max-width:768px){
+
+    .cart-page{
+
+        padding:25px 15px 50px;
+
+    }
+
+    .cart-header{
+
+        align-items:flex-start;
+
+        flex-direction:column;
+
+    }
+
+    .cart-header h1{
+
+        font-size:27px;
+
+    }
+
+    .continue-shopping{
+
+        width:100%;
+
+        justify-content:center;
+
+    }
+
+    .cart-section{
+
+        padding:18px;
+
+        border-radius:17px;
+
+    }
+
+    .form-grid{
+
+        grid-template-columns:1fr;
+
+        gap:0;
+
+    }
+
+    .cart-item{
+
+        align-items:flex-start;
+
+    }
+
+}
+
+
+/* =====================================
+   MOBILE
+===================================== */
+
+@media(max-width:520px){
+
+    .cart-page{
+
+        padding:20px 10px 40px;
+
+    }
+
+    .cart-header h1{
+
+        font-size:24px;
+
+    }
+
+    .cart-header p{
+
+        font-size:12px;
+
+        line-height:1.7;
+
+    }
+
+    .cart-section{
+
+        padding:15px;
+
+        border-radius:15px;
+
+    }
+
+    .section-title{
+
+        gap:10px;
+
+        align-items:flex-start;
+
+    }
+
+    .title-icon{
+
+        width:40px;
+
+        height:40px;
+
+        min-width:40px;
+
+        font-size:19px;
+
+    }
+
+    .section-title h2{
+
+        font-size:17px;
+
+    }
+
+    .section-title p{
+
+        font-size:11px;
+
+        line-height:1.6;
+
+    }
+
+    .change-address-btn{
+
+        padding:7px 12px;
+
+        font-size:12px;
+
+    }
+
+    .cart-item{
+
+        display:grid;
+
+        grid-template-columns:75px 1fr;
+
+        gap:12px;
+
+    }
+
+    .cart-img{
+
+        width:75px;
+
+        height:75px;
+
+        grid-row:span 2;
+
+    }
+
+    .cart-info h3{
+
+        font-size:15px;
+
+    }
+
+    .cart-info p{
+
+        font-size:14px;
+
+    }
+
+    .cart-actions{
+
+        grid-column:1 / -1;
+
+        justify-content:space-between;
+
+        width:100%;
+
+    }
+
+    .qty-box{
+
+        flex:1;
+
+        justify-content:center;
+
+        max-width:150px;
+
+    }
+
+    .remove-btn{
+
+        padding:9px 12px;
+
+    }
+
+    .shipping-option{
+
+        padding:13px;
+
+        gap:10px;
+
+    }
+
+    .shipping-info strong{
+
+        font-size:14px;
+
+    }
+
+    .shipping-info span{
+
+        font-size:11px;
+
+    }
+
+    .shipping-price{
+
+        font-size:13px;
+
+    }
+
+    .delivery-box{
+
+        padding:14px;
+
+    }
+
+    .delivery-icon{
+
+        width:42px;
+
+        height:42px;
+
+        min-width:42px;
+
+        font-size:20px;
+
+    }
+
+    .delivery-box strong{
+
+        font-size:13px;
+
+        line-height:1.6;
+
+    }
+
+    .delivery-box span{
+
+        font-size:11px;
+
+        line-height:1.6;
+
+    }
+
+    .coupon-area{
+
+        flex-direction:column;
+
+    }
+
+    .coupon-area input{
+
+        width:100%;
+
+    }
+
+    .coupon-area button{
+
+        width:100%;
+
+        padding:13px;
+
+    }
+
+    .summary-total{
+
+        font-size:19px;
+
+    }
+
+    .checkout-btn{
+
+        font-size:16px;
+
+        padding:15px;
+
+    }
+
+}
+
 </style>
 
-<!-- =====================================
-     JavaScript
-===================================== -->
 
 <script>
 
+/* =====================================
+   🛒 CART
+===================================== */
+
 let cart = [];
+
+let shippingPrice = 20;
+
+let discount = 0;
+
+let appliedCouponCode = "";
+
+
+/* =====================================
+   🌐 LANGUAGE
+===================================== */
+
+const currentLang = "{{ current_lang }}";
+
+
+/* =====================================
+   💰 CURRENCY
+===================================== */
+
+function getCurrency(){
+
+    return currentLang === "ar"
+        ? "ر.س"
+        : "SAR";
+
+}
+
+
+/* =====================================
+   🛒 LOAD CART
+===================================== */
 
 async function loadCart(){
 
-    const res = await fetch("/api/cart");
-    const data = await res.json();
+    try{
 
-    cart = data.cart;
+        const response =
+            await fetch("/api/cart");
 
-    renderCart();
+
+        if(!response.ok){
+
+            throw new Error(
+                "Cart API error"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        cart =
+            Array.isArray(data.cart)
+            ? data.cart
+            : [];
+
+
+        renderCart();
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Cart error:",
+            error
+        );
+
+
+        cart = [];
+
+        renderCart();
+
+    }
 
 }
+
+
+/* =====================================
+   🛒 RENDER CART
+===================================== */
 
 function renderCart(){
 
-    const container = document.getElementById("cartItems");
+    const container =
+        document.getElementById(
+            "cartItems"
+        );
 
-    const empty = document.getElementById("emptyCart");
+
+    const empty =
+        document.getElementById(
+            "emptyCart"
+        );
+
+
+    if(!container){
+
+        return;
+
+    }
+
 
     container.innerHTML = "";
 
-    if(cart.length===0){
 
-        empty.style.display="block";
+    /* =================================
+       EMPTY CART
+    ================================= */
 
-        document.getElementById("subtotal").innerText="0 SAR";
-        document.getElementById("shipping").innerText="0 SAR";
-        document.getElementById("total").innerText="0 SAR";
+    if(cart.length === 0){
+
+        if(empty){
+
+            empty.style.display =
+                "block";
+
+        }
+
+
+        discount = 0;
+
+        appliedCouponCode = "";
+
+
+        updateSummary(0);
+
+
+        const itemsCount =
+            document.getElementById(
+                "itemsCount"
+            );
+
+
+        if(itemsCount){
+
+            itemsCount.innerText =
+                currentLang === "ar"
+                ? "0 منتجات"
+                : "0 items";
+
+        }
+
 
         return;
 
     }
 
-    empty.style.display="none";
 
-    let subtotal=0;
+    if(empty){
 
-    cart.forEach(item=>{
+        empty.style.display =
+            "none";
 
-        subtotal += item.price * item.quantity;
+    }
 
-        container.innerHTML += `
 
-<div class="cart-item">
+    let subtotal = 0;
 
-<img src="${item.image}" class="cart-img">
+    let totalItems = 0;
 
-<div class="cart-info">
 
-<h3>${item.name}</h3>
+    /* =================================
+       CART ITEMS
+    ================================= */
 
-<p>${item.price} SAR</p>
+    cart.forEach(item => {
 
-</div>
+        const productId =
+            Number(
+                item.id ||
+                item.product_id
+            );
 
-<div class="qty-box">
 
-<button onclick="changeQty(${item.id},-1)">−</button>
+        const price =
+            Number(item.price) || 0;
 
-<span>${item.quantity}</span>
 
-<button onclick="changeQty(${item.id},1)">+</button>
+        const quantity =
+            Number(item.quantity) || 1;
 
-</div>
 
-</div>
+        subtotal +=
+            price * quantity;
 
-`;
+
+        totalItems +=
+            quantity;
+
+
+        const itemElement =
+            document.createElement(
+                "div"
+            );
+
+
+        itemElement.className =
+            "cart-item";
+
+
+        itemElement.innerHTML = `
+
+            <img
+                src="${escapeHTML(item.image || '')}"
+                class="cart-img"
+                alt="${escapeHTML(item.name || '')}"
+            >
+
+
+            <div class="cart-info">
+
+                <h3>
+                    ${escapeHTML(
+                        item.name || ""
+                    )}
+                </h3>
+
+                <p>
+
+                    ${price.toFixed(2)}
+
+                    ${getCurrency()}
+
+                </p>
+
+            </div>
+
+
+            <div class="cart-actions">
+
+                <div class="qty-box">
+
+                    <button
+                        type="button"
+                        class="quantity-btn"
+                        onclick="changeQty(
+                            ${productId},
+                            -1
+                        )"
+                    >
+                        −
+                    </button>
+
+
+                    <span
+                        id="qty-${productId}"
+                        class="quantity-display"
+                    >
+                        ${quantity}
+                    </span>
+
+
+                    <button
+                        type="button"
+                        class="quantity-btn"
+                        onclick="changeQty(
+                            ${productId},
+                            1
+                        )"
+                    >
+                        +
+                    </button>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="remove-btn"
+                    onclick="removeItem(
+                        ${productId}
+                    )"
+                >
+
+                    🗑
+
+                    ${
+                        currentLang === "ar"
+                        ? "حذف"
+                        : "Remove"
+                    }
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        container.appendChild(
+            itemElement
+        );
 
     });
 
-    const shipping = subtotal>=300 ? 0 : 25;
 
-    document.getElementById("subtotal").innerText=subtotal+" SAR";
-    document.getElementById("shipping").innerText=shipping+" SAR";
-    document.getElementById("total").innerText=(subtotal+shipping)+" SAR";
+    /* =================================
+       ITEMS COUNT
+    ================================= */
+
+    const itemsCount =
+        document.getElementById(
+            "itemsCount"
+        );
+
+
+    if(itemsCount){
+
+        itemsCount.innerText =
+            currentLang === "ar"
+            ? `${totalItems} منتجات`
+            : `${totalItems} items`;
+
+    }
+
+
+    /* =================================
+       UPDATE SUMMARY
+    ================================= */
+
+    updateSummary(
+        subtotal
+    );
 
 }
 
-async function changeQty(productId,change){
 
-    await fetch("/api/cart/add",{
+/* =====================================
+   💰 UPDATE SUMMARY
+===================================== */
 
-        method:"POST",
+function updateSummary(
+    subtotal
+){
 
-        headers:{
-            "Content-Type":"application/json"
+    const extras = 0;
+
+
+    const safeDiscount =
+        Math.min(
+            Number(discount) || 0,
+            Number(subtotal) || 0
+        );
+
+
+    const total =
+        subtotal +
+        extras +
+        shippingPrice -
+        safeDiscount;
+
+
+    const currency =
+        getCurrency();
+
+
+    const productsPrice =
+        document.getElementById(
+            "productsPrice"
+        );
+
+
+    const extrasPrice =
+        document.getElementById(
+            "extrasPrice"
+        );
+
+
+    const shippingPriceElement =
+        document.getElementById(
+            "shippingPrice"
+        );
+
+
+    const discountPrice =
+        document.getElementById(
+            "discountPrice"
+        );
+
+
+    const totalElement =
+        document.getElementById(
+            "total"
+        );
+
+
+    if(productsPrice){
+
+        productsPrice.innerText =
+            `${subtotal.toFixed(2)} ${currency}`;
+
+    }
+
+
+    if(extrasPrice){
+
+        extrasPrice.innerText =
+            `${extras.toFixed(2)} ${currency}`;
+
+    }
+
+
+    if(shippingPriceElement){
+
+        shippingPriceElement.innerText =
+            `${shippingPrice.toFixed(2)} ${currency}`;
+
+    }
+
+
+    if(discountPrice){
+
+        discountPrice.innerText =
+            `- ${safeDiscount.toFixed(2)} ${currency}`;
+
+    }
+
+
+    if(totalElement){
+
+        totalElement.innerText =
+            `${Math.max(
+                total,
+                0
+            ).toFixed(2)} ${currency}`;
+
+    }
+
+}
+
+
+/* =====================================
+   ➕➖ CHANGE QUANTITY
+===================================== */
+
+async function changeQty(
+    productId,
+    change
+){
+
+    const item =
+        cart.find(
+            item =>
+                Number(
+                    item.id ||
+                    item.product_id
+                ) === Number(productId)
+        );
+
+
+    if(!item){
+
+        console.error(
+            "Product not found:",
+            productId
+        );
+
+        return;
+
+    }
+
+
+    const currentQuantity =
+        Number(
+            item.quantity
+        ) || 1;
+
+
+    let newQuantity =
+        currentQuantity +
+        Number(change);
+
+
+    /* =================================
+       MINIMUM
+    ================================= */
+
+    if(newQuantity < 1){
+
+        newQuantity = 1;
+
+    }
+
+
+    /* =================================
+       STOCK
+    ================================= */
+
+    const stock =
+        Number(item.stock);
+
+
+    if(
+        Number.isFinite(stock) &&
+        stock > 0 &&
+        newQuantity > stock
+    ){
+
+        newQuantity = stock;
+
+
+        alert(
+
+            currentLang === "ar"
+
+            ? `المتاح فقط ${stock} قطعة.`
+
+            : `Only ${stock} items are available.`
+
+        );
+
+    }
+
+
+    /* =================================
+       NO CHANGE
+    ================================= */
+
+    if(
+        newQuantity ===
+        currentQuantity
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/cart/update",
+                {
+
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            product_id:
+                                Number(
+                                    productId
+                                ),
+
+                            quantity:
+                                newQuantity
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            throw new Error(
+                data.error ||
+                "Could not update cart"
+            );
+
+        }
+
+
+        item.quantity =
+            Number(
+                data.quantity
+            ) ||
+            newQuantity;
+
+
+        renderCart();
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Quantity update error:",
+            error
+        );
+
+
+        alert(
+
+            currentLang === "ar"
+
+            ? "حدث خطأ أثناء تحديث الكمية."
+
+            : "Could not update your cart."
+
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   🗑 REMOVE ITEM
+===================================== */
+
+async function removeItem(
+    productId
+){
+
+    const confirmed =
+        confirm(
+
+            currentLang === "ar"
+
+            ? "هل تريدين حذف هذا المنتج من السلة؟"
+
+            : "Remove this product from your cart?"
+
+        );
+
+
+    if(!confirmed){
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/cart/remove",
+                {
+
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            product_id:
+                                Number(
+                                    productId
+                                )
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            throw new Error(
+                data.error ||
+                "Remove failed"
+            );
+
+        }
+
+
+        await loadCart();
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Remove error:",
+            error
+        );
+
+
+        alert(
+
+            currentLang === "ar"
+
+            ? "تعذر حذف المنتج."
+
+            : "Could not remove the product."
+
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   🚚 SHIPPING
+===================================== */
+
+function selectShipping(
+    input
+){
+
+    shippingPrice =
+        Number(
+            input.value
+        ) || 0;
+
+
+    document
+        .querySelectorAll(
+            ".shipping-option"
+        )
+        .forEach(
+            option => {
+
+                option.classList.remove(
+                    "selected"
+                );
+
+            }
+        );
+
+
+    const option =
+        input.closest(
+            ".shipping-option"
+        );
+
+
+    if(option){
+
+        option.classList.add(
+            "selected"
+        );
+
+    }
+
+
+    const subtotal =
+        calculateSubtotal();
+
+
+    updateSummary(
+        subtotal
+    );
+
+
+    updateDelivery(
+        input.dataset.days || ""
+    );
+
+}
+
+
+/* =====================================
+   📅 DELIVERY
+===================================== */
+
+function updateDelivery(
+    days
+){
+
+    const dateElement =
+        document.getElementById(
+            "deliveryDate"
+        );
+
+
+    const daysElement =
+        document.getElementById(
+            "deliveryDays"
+        );
+
+
+    if(daysElement){
+
+        daysElement.innerText =
+
+            currentLang === "ar"
+
+            ? `المدة المتوقعة: ${days} أيام`
+
+            : `Estimated time: ${days} days`;
+
+    }
+
+
+    if(dateElement){
+
+        dateElement.innerText =
+
+            currentLang === "ar"
+
+            ? "سيتم تأكيد تاريخ التسليم من قبل المتجر."
+
+            : "The store will confirm the delivery date.";
+
+    }
+
+}
+
+
+/* =====================================
+   🧮 CALCULATE SUBTOTAL
+===================================== */
+
+function calculateSubtotal(){
+
+    return cart.reduce(
+
+        (
+            sum,
+            item
+        ) => {
+
+            const price =
+                Number(
+                    item.price
+                ) || 0;
+
+
+            const quantity =
+                Number(
+                    item.quantity
+                ) || 1;
+
+
+            return sum +
+                (
+                    price *
+                    quantity
+                );
+
         },
 
-        body:JSON.stringify({
-            product_id:productId,
-            quantity:change
-        })
+        0
 
-    });
-
-    loadCart();
+    );
 
 }
 
-function checkout(){
 
-    const name=document.getElementById("customerName").value;
+/* =====================================
+   📍 TOGGLE ADDRESS
+===================================== */
 
-    const address=document.getElementById("customerAddress").value;
+function toggleAddress(){
 
-    if(name==="" || address===""){
+    const form =
+        document.getElementById(
+            "addressForm"
+        );
 
-        alert("يرجى إدخال الاسم والعنوان");
+
+    if(!form){
 
         return;
 
     }
 
-    alert("تم إرسال الطلب بنجاح 💕");
+
+    if(
+        form.style.display === "none" ||
+        form.style.display === ""
+    ){
+
+        form.style.display =
+            "block";
+
+    }
+
+    else{
+
+        form.style.display =
+            "none";
+
+    }
 
 }
 
-loadCart();
+
+/* =====================================
+   💾 SAVE ADDRESS
+===================================== */
+
+function saveAddress(){
+
+    const name =
+        document
+        .getElementById(
+            "customerName"
+        )
+        ?.value
+        .trim();
+
+
+    const phone =
+        document
+        .getElementById(
+            "customerPhone"
+        )
+        ?.value
+        .trim();
+
+
+    const city =
+        document
+        .getElementById(
+            "customerCity"
+        )
+        ?.value
+        .trim();
+
+
+    const district =
+        document
+        .getElementById(
+            "customerDistrict"
+        )
+        ?.value
+        .trim();
+
+
+    const address =
+        document
+        .getElementById(
+            "customerAddress"
+        )
+        ?.value
+        .trim();
+
+
+    /* =================================
+       VALIDATION
+    ================================= */
+
+    if(
+        !name ||
+        !phone ||
+        !city ||
+        !district ||
+        !address
+    ){
+
+        alert(
+
+            currentLang === "ar"
+
+            ? "يرجى تعبئة جميع بيانات العنوان."
+
+            : "Please fill in all address fields."
+
+        );
+
+        return;
+
+    }
+
+
+    const savedAddressData = {
+
+        name:
+            name,
+
+        phone:
+            phone,
+
+        city:
+            city,
+
+        district:
+            district,
+
+        address:
+            address
+
+    };
+
+
+    const key =
+        "crochet_rory_delivery_address_{{ current_user.id }}";
+
+
+    localStorage.setItem(
+
+        key,
+
+        JSON.stringify(
+            savedAddressData
+        )
+
+    );
+
+
+    displaySavedAddress(
+        savedAddressData
+    );
+
+
+    alert(
+
+        currentLang === "ar"
+
+        ? "تم حفظ عنوان التوصيل بنجاح ✓"
+
+        : "Delivery address saved successfully ✓"
+
+    );
+
+}
+
+
+/* =====================================
+   📍 DISPLAY SAVED ADDRESS
+===================================== */
+
+function displaySavedAddress(
+    data
+){
+
+    if(!data){
+
+        return;
+
+    }
+
+
+    const savedAddressText =
+        document.getElementById(
+            "savedAddressText"
+        );
+
+
+    const savedAddress =
+        document.getElementById(
+            "savedAddress"
+        );
+
+
+    const addressForm =
+        document.getElementById(
+            "addressForm"
+        );
+
+
+    const nameInput =
+        document.getElementById(
+            "customerName"
+        );
+
+
+    const phoneInput =
+        document.getElementById(
+            "customerPhone"
+        );
+
+
+    const cityInput =
+        document.getElementById(
+            "customerCity"
+        );
+
+
+    const districtInput =
+        document.getElementById(
+            "customerDistrict"
+        );
+
+
+    const addressInput =
+        document.getElementById(
+            "customerAddress"
+        );
+
+
+    if(nameInput){
+
+        nameInput.value =
+            data.name || "";
+
+    }
+
+
+    if(phoneInput){
+
+        phoneInput.value =
+            data.phone || "";
+
+    }
+
+
+    if(cityInput){
+
+        cityInput.value =
+            data.city || "";
+
+    }
+
+
+    if(districtInput){
+
+        districtInput.value =
+            data.district || "";
+
+    }
+
+
+    if(addressInput){
+
+        addressInput.value =
+            data.address || "";
+
+    }
+
+
+    if(savedAddressText){
+
+        savedAddressText.innerHTML =
+
+            `${escapeHTML(
+                data.city || ""
+            )}
+            -
+            ${escapeHTML(
+                data.district || ""
+            )}
+            <br>
+            ${escapeHTML(
+                data.address || ""
+            )}`;
+
+    }
+
+
+    if(savedAddress){
+
+        savedAddress.style.display =
+            "block";
+
+    }
+
+
+    if(addressForm){
+
+        addressForm.style.display =
+            "none";
+
+    }
+
+}
+
+
+/* =====================================
+   📂 LOAD SAVED ADDRESS
+===================================== */
+
+function loadSavedAddress(){
+
+    const key =
+        "crochet_rory_delivery_address_{{ current_user.id }}";
+
+
+    const saved =
+        localStorage.getItem(
+            key
+        );
+
+
+    if(!saved){
+
+        return;
+
+    }
+
+
+    try{
+
+        const data =
+            JSON.parse(
+                saved
+            );
+
+
+        displaySavedAddress(
+            data
+        );
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Saved address error:",
+            error
+        );
+
+
+        localStorage.removeItem(
+            key
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   🎟️ APPLY COUPON
+===================================== */
+
+async function applyCoupon(){
+
+    const couponInput =
+        document.getElementById(
+            "coupon"
+        );
+
+
+    const message =
+        document.getElementById(
+            "couponMessage"
+        );
+
+
+    /* =================================
+       CHECK INPUT
+    ================================= */
+
+    if(!couponInput){
+
+        return;
+
+    }
+
+
+    const couponCode =
+        couponInput.value
+        .trim()
+        .toUpperCase();
+
+
+    /* =================================
+       EMPTY COUPON
+    ================================= */
+
+    if(!couponCode){
+
+        discount = 0;
+
+        appliedCouponCode = "";
+
+
+        if(message){
+
+            message.style.color =
+                "#d45c82";
+
+
+            message.innerText =
+
+                currentLang === "ar"
+
+                ? "يرجى إدخال رمز الكوبون."
+
+                : "Please enter a coupon code.";
+
+        }
+
+
+        updateSummary(
+            calculateSubtotal()
+        );
+
+
+        return;
+
+    }
+
+
+    /* =================================
+       CALCULATE SUBTOTAL
+    ================================= */
+
+    const subtotal =
+        calculateSubtotal();
+
+
+    /* =================================
+       DISABLE COUPON BUTTON
+    ================================= */
+
+    const couponButton =
+        document.querySelector(
+            ".coupon-btn"
+        );
+
+
+    if(couponButton){
+
+        couponButton.disabled =
+            true;
+
+    }
+
+
+    /* =================================
+       CHECKING MESSAGE
+    ================================= */
+
+    if(message){
+
+        message.style.color =
+            "#d88ea4";
+
+
+        message.innerText =
+
+            currentLang === "ar"
+
+            ? "جارٍ التحقق من الكوبون..."
+
+            : "Checking coupon...";
+
+    }
+
+
+    /* =================================
+       SEND COUPON TO SERVER
+    ================================= */
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/coupon/validate",
+                {
+
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            code:
+                                couponCode,
+
+                            order_amount:
+                                subtotal
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Coupon response:",
+            data
+        );
+
+
+        /* =================================
+           INVALID COUPON
+        ================================= */
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            discount = 0;
+
+            appliedCouponCode = "";
+
+
+            if(message){
+
+                message.style.color =
+                    "#d45c82";
+
+
+                message.innerText =
+
+                    data.error ||
+
+                    (
+
+                        currentLang === "ar"
+
+                        ? "الكوبون غير صحيح أو منتهي."
+
+                        : "Invalid or expired coupon."
+
+                    );
+
+            }
+
+
+            updateSummary(
+                subtotal
+            );
+
+
+            return;
+
+        }
+
+
+        /* =================================
+           VALID COUPON
+        ================================= */
+
+        discount =
+            Number(
+                data.discount
+            ) || 0;
+
+
+        appliedCouponCode =
+            couponCode;
+
+
+        /* =================================
+           SAFETY
+        ================================= */
+
+        if(discount < 0){
+
+            discount = 0;
+
+        }
+
+
+        if(discount > subtotal){
+
+            discount = subtotal;
+
+        }
+
+
+        /* =================================
+           SUCCESS MESSAGE
+        ================================= */
+
+        if(message){
+
+            message.style.color =
+                "#48a675";
+
+
+            message.innerText =
+
+                currentLang === "ar"
+
+                ? `تم تطبيق الكوبون ${couponCode} بنجاح 🎉 خصم ${discount.toFixed(2)} ر.س`
+
+                : `Coupon ${couponCode} applied successfully 🎉 Discount: ${discount.toFixed(2)} SAR`;
+
+        }
+
+
+        /* =================================
+           UPDATE SUMMARY
+        ================================= */
+
+        updateSummary(
+            subtotal
+        );
+
+    }
+
+
+    catch(error){
+
+        console.error(
+            "Coupon error:",
+            error
+        );
+
+
+        discount = 0;
+
+        appliedCouponCode = "";
+
+
+        if(message){
+
+            message.style.color =
+                "#d45c82";
+
+
+            message.innerText =
+
+                currentLang === "ar"
+
+                ? "حدث خطأ أثناء التحقق من الكوبون."
+
+                : "An error occurred while validating the coupon.";
+
+        }
+
+
+        updateSummary(
+            subtotal
+        );
+
+    }
+
+
+    finally{
+
+        if(couponButton){
+
+            couponButton.disabled =
+                false;
+
+        }
+
+    }
+
+}
+
+
+/* =====================================
+   🛍️ CHECKOUT
+===================================== */
+
+async function checkout(){
+
+    /* =================================
+       CHECK CART
+    ================================= */
+
+    if(cart.length === 0){
+
+        alert(
+
+            currentLang === "ar"
+
+            ? "السلة فارغة."
+
+            : "Your cart is empty."
+
+        );
+
+        return;
+
+    }
+
+
+    /* =================================
+       GET SAVED ADDRESS
+    ================================= */
+
+    const savedAddressKey =
+        "crochet_rory_delivery_address_{{ current_user.id }}";
+
+
+    const savedAddressRaw =
+        localStorage.getItem(
+            savedAddressKey
+        );
+
+
+    if(!savedAddressRaw){
+
+        alert(
+
+            currentLang === "ar"
+
+            ? "يرجى حفظ عنوان التوصيل أولاً."
+
+            : "Please save your delivery address first."
+
+        );
+
+
+        const addressForm =
+            document.getElementById(
+                "addressForm"
+            );
+
+
+        if(addressForm){
+
+            addressForm.style.display =
+                "block";
+
+        }
+
+
+        return;
+
+    }
+
+
+    /* =================================
+       READ ADDRESS
+    ================================= */
+
+    let savedAddress;
+
+
+    try{
+
+        savedAddress =
+            JSON.parse(
+                savedAddressRaw
+            );
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Address parsing error:",
+            error
+        );
+
+
+        localStorage.removeItem(
+            savedAddressKey
+        );
+
+
+        alert(
+
+            currentLang === "ar"
+
+            ? "تعذر قراءة العنوان. يرجى حفظه مرة أخرى."
+
+            : "Could not read the address. Please save it again."
+
+        );
+
+
+        return;
+
+    }
+
+
+    /* =================================
+       CHECK ADDRESS
+    ================================= */
+
+    if(
+        !savedAddress.name ||
+        !savedAddress.phone ||
+        !savedAddress.city ||
+        !savedAddress.district ||
+        !savedAddress.address
+    ){
+
+        alert(
+
+            currentLang === "ar"
+
+            ? "يرجى التأكد من اكتمال بيانات العنوان."
+
+            : "Please make sure your delivery information is complete."
+
+        );
+
+
+        const addressForm =
+            document.getElementById(
+                "addressForm"
+            );
+
+
+        if(addressForm){
+
+            addressForm.style.display =
+                "block";
+
+        }
+
+
+        return;
+
+    }
+
+
+    /* =================================
+       SELECT SHIPPING
+    ================================= */
+
+    const selectedShipping =
+        document.querySelector(
+            'input[name="shipping"]:checked'
+        );
+
+
+    let selectedShippingPrice =
+        20;
+
+
+    let selectedShippingMethod =
+
+        currentLang === "ar"
+
+        ? "الشحن العادي"
+
+        : "Standard Shipping";
+
+
+    if(selectedShipping){
+
+        selectedShippingPrice =
+            Number(
+                selectedShipping.value
+            ) || 0;
+
+
+        const shippingOption =
+            selectedShipping.closest(
+                ".shipping-option"
+            );
+
+
+        if(shippingOption){
+
+            const shippingName =
+                shippingOption.querySelector(
+                    ".shipping-info strong"
+                );
+
+
+            if(shippingName){
+
+                selectedShippingMethod =
+                    shippingName.innerText.trim();
+
+            }
+
+        }
+
+    }
+
+
+    /* =================================
+       COUPON
+    ================================= */
+
+    const couponInput =
+        document.getElementById(
+            "coupon"
+        );
+
+
+    let couponCode =
+
+        appliedCouponCode || "";
+
+
+
+    if(!couponCode && couponInput){
+
+        couponCode =
+            couponInput.value
+            .trim()
+            .toUpperCase();
+
+    }
+
+
+    /* =================================
+       PRODUCTS TOTAL
+    ================================= */
+
+    const productsTotal =
+        calculateSubtotal();
+
+
+    /* =================================
+       EXTRAS
+    ================================= */
+
+    const extrasTotal =
+        0;
+
+
+    /* =================================
+       CLIENT DISCOUNT
+    ================================= */
+
+    const clientDiscount =
+        Number(
+            discount
+        ) || 0;
+
+
+    /* =================================
+       CLIENT TOTAL
+    ================================= */
+
+    const clientTotal =
+        Math.max(
+
+            productsTotal +
+            extrasTotal +
+            selectedShippingPrice -
+            clientDiscount,
+
+            0
+
+        );
+
+
+    /* =================================
+       ORDER DATA
+    ================================= */
+
+    const orderData = {
+
+        name:
+            savedAddress.name,
+
+
+        phone:
+            savedAddress.phone,
+
+
+        address:
+            savedAddress.address,
+
+
+        city:
+            savedAddress.city,
+
+
+        district:
+            savedAddress.district,
+
+
+        shipping_cost:
+            selectedShippingPrice,
+
+
+        shipping_method:
+            selectedShippingMethod,
+
+
+        extras_total:
+            extrasTotal,
+
+
+        discount:
+            clientDiscount,
+
+
+        coupon_code:
+            couponCode,
+
+
+        total:
+            clientTotal
+
+    };
+
+
+    /* =================================
+       DEBUG
+    ================================= */
+
+    console.log(
+        "Checkout order data:",
+        orderData
+    );
+
+
+    /* =================================
+       DISABLE BUTTON
+    ================================= */
+
+    const checkoutButton =
+        document.querySelector(
+            ".checkout-btn"
+        );
+
+
+    if(checkoutButton){
+
+        checkoutButton.disabled =
+            true;
+
+
+        checkoutButton.dataset.originalText =
+            checkoutButton.innerHTML;
+
+
+        checkoutButton.innerHTML =
+
+            currentLang === "ar"
+
+            ? "⏳ جارٍ إنشاء الطلب..."
+
+            : "⏳ Creating order...";
+
+    }
+
+
+    /* =================================
+       SEND ORDER
+    ================================= */
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/checkout",
+                {
+
+                    method:
+                        "POST",
+
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+
+                    body:
+                        JSON.stringify(
+                            orderData
+                        )
+
+                }
+            );
+
+
+        /* =================================
+           RESPONSE
+        ================================= */
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Checkout response:",
+            data
+        );
+
+
+        /* =================================
+           ERROR
+        ================================= */
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            throw new Error(
+
+                data.error ||
+
+                (
+
+                    currentLang === "ar"
+
+                    ? "تعذر إنشاء الطلب."
+
+                    : "Checkout failed."
+
+                )
+
+            );
+
+        }
+
+
+        /* =================================
+           SUCCESS
+        ================================= */
+
+        window.location.href =
+            `/checkout?id=${data.order_id}`;
+
+    }
+
+
+    catch(error){
+
+        console.error(
+            "Checkout error:",
+            error
+        );
+
+
+        alert(
+
+            currentLang === "ar"
+
+            ? `تعذر إتمام الطلب.\n${error.message}`
+
+            : `Could not place the order.\n${error.message}`
+
+        );
+
+
+        /* =================================
+           ENABLE BUTTON AGAIN
+        ================================= */
+
+        if(checkoutButton){
+
+            checkoutButton.disabled =
+                false;
+
+
+            checkoutButton.innerHTML =
+                checkoutButton.dataset.originalText ||
+
+                (
+
+                    currentLang === "ar"
+
+                    ? "🛍️ إتمام الطلب"
+
+                    : "🛍️ Place Order"
+
+                );
+
+        }
+
+    }
+
+}
+
+
+/* =====================================
+   🔐 ESCAPE HTML
+===================================== */
+
+function escapeHTML(
+    text
+){
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        text;
+
+
+    return div.innerHTML;
+
+}
+
+
+/* =====================================
+   🚀 START
+===================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        loadSavedAddress();
+
+        loadCart();
+
+
+        /* =============================
+           DEFAULT SHIPPING
+        ============================= */
+
+        const selectedShipping =
+            document.querySelector(
+                'input[name="shipping"]:checked'
+            );
+
+
+        if(selectedShipping){
+
+            shippingPrice =
+                Number(
+                    selectedShipping.value
+                ) || 20;
+
+
+            updateDelivery(
+                selectedShipping.dataset.days || ""
+            );
+
+        }
+
+    }
+);
 
 </script>
+
 {% endblock %}

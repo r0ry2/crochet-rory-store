@@ -17,7 +17,11 @@ from models import (
     User,
     Message,
     Cart,
-    Wishlist
+    Wishlist,
+    ShippingMethod,
+    Coupon,
+    Notification
+
 )
 
 # ==========================================

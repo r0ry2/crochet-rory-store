@@ -24,7 +24,9 @@ from models import (
     AddProductForm,
     db,
     Notification,
-    Visitor
+    Visitor,
+    ShippingMethod,
+    Coupon
 
 
 )
@@ -173,39 +175,85 @@ def merge_session_cart_into_db(user_id):
 # ==========================================
 # 🔍 SEARCH
 # ==========================================
-
 @app.route("/search")
 def search():
-    query = request.args.get("q")
+
+    query = request.args.get("q", "").strip()
+
+    # إذا المستخدم بحث عن كلمة
+    if query:
+
+        products = Product.query.filter(
+            Product.name.ilike(f"%{query}%")
+        ).all()
+
+    # إذا فتح البحث بدون كلمة
+    else:
+
+        products = Product.query.all()
 
     return render_template(
         "products.html",
+        products=products,
         query=query
     )
 
+# ==================================================
+# ✏️ EDIT PRODUCT
+# ==================================================
 
-# ==========================================
-# 📦 ADD PRODUCT
-# ==========================================
-
-@app.route("/admin/add_product", methods=["GET", "POST"])
+@app.route("/admin/edit_product/<int:id>", methods=["POST"])
 @login_required
-def add_product():
+def edit_product(id):
+
+    # ==================================================
+    # 🔐 ADMIN CHECK
+    # ==================================================
 
     if current_user.role != "admin":
-        flash("⚠️ Access denied! Admins only.", "danger")
-        return redirect(url_for("home_logged"))
+
+        flash(
+            "⚠️ Access denied! Admins only.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("home_logged")
+        )
+
+
+    # ==================================================
+    # 📦 GET PRODUCT
+    # ==================================================
+
+    product = Product.query.get_or_404(id)
+
+
+    # ==================================================
+    # 📝 GET FORM
+    # ==================================================
 
     form = ProductForm()
 
-    if form.validate_on_submit():
 
-        filename = None
+    # ==================================================
+    # 🖼️ IMAGE
+    # ==================================================
 
-        if form.image.data:
+    filename = product.image
 
-            image_file = form.image.data
-            filename = secure_filename(image_file.filename)
+
+    if form.image.data:
+
+        image_file = form.image.data
+
+
+        if image_file.filename:
+
+            filename = secure_filename(
+                image_file.filename
+            )
+
 
             image_path = os.path.join(
                 app.root_path,
@@ -214,49 +262,640 @@ def add_product():
                 filename
             )
 
+
             image_file.save(image_path)
 
-        product = Product(
-            name=form.name.data,
-            price=form.price.data,
-            description=form.description.data,
-            image=filename,
-            publish_location=form.publish_location.data
-        )
 
-        db.session.add(product)
-        db.session.commit()
+    # ==================================================
+    # 📦 QUANTITY
+    # ==================================================
 
-        flash("✅ Product added successfully!", "success")
-
-        return redirect(url_for("admin_products"))
-
-    return render_template(
-        "admin/add_product.html",
-        form=form
+    quantity = request.form.get(
+        "quantity",
+        product.stock
     )
 
 
+    try:
+
+        quantity = int(quantity)
+
+    except (TypeError, ValueError):
+
+        quantity = product.stock
+
+
+    # منع الكمية السالبة
+
+    if quantity < 0:
+
+        quantity = 0
+
+
+    # ==================================================
+    # 💰 COST PRICE
+    # سعر التكلفة
+    # ==================================================
+
+    cost_price = request.form.get(
+        "cost_price",
+        product.cost_price
+    )
+
+
+    try:
+
+        cost_price = float(cost_price)
+
+    except (TypeError, ValueError):
+
+        cost_price = product.cost_price or 0
+
+
+    # منع القيمة السالبة
+
+    if cost_price < 0:
+
+        cost_price = 0
+
+
+    # ==================================================
+    # 🏷️ SALE PRICE
+    # السعر المخفض
+    # ==================================================
+
+    sale_price = request.form.get(
+        "sale_price",
+        None
+    )
+
+
+    # إذا ترك المستخدم السعر المخفض فارغًا
+    if sale_price in [None, ""]:
+
+        sale_price = None
+
+    else:
+
+        try:
+
+            sale_price = float(sale_price)
+
+        except (TypeError, ValueError):
+
+            sale_price = None
+
+
+    # منع السعر المخفض من أن يكون سالبًا
+
+    if sale_price is not None and sale_price < 0:
+
+        sale_price = None
+
+
+    # ==================================================
+    # ⚠️ CHECK SALE PRICE
+    # السعر المخفض لا يكون أعلى من السعر الأصلي
+    # ==================================================
+
+    if sale_price is not None:
+
+        if sale_price >= form.price.data:
+
+            sale_price = None
+
+
+    # ==================================================
+    # ✏️ UPDATE PRODUCT
+    # ==================================================
+
+    product.name = form.name.data
+
+
+    # السعر الأصلي
+
+    product.price = form.price.data
+
+
+    # سعر التكلفة
+
+    product.cost_price = cost_price
+
+
+    # السعر المخفض
+
+    product.sale_price = sale_price
+
+
+    # الوصف
+
+    product.description = form.description.data
+
+
+    # الصورة
+
+    product.image = filename
+
+
+    # مكان العرض
+
+    product.publish_location = (
+        form.publish_location.data
+    )
+
+
+    # التخصيص
+
+    product.is_customizable = (
+        form.is_customizable.data
+    )
+
+
+    # الكمية
+
+    product.stock = quantity
+
+
+    # ==================================================
+    # 💾 SAVE CHANGES
+    # ==================================================
+
+    db.session.commit()
+
+
+    # ==================================================
+    # ✅ SUCCESS MESSAGE
+    # ==================================================
+
+    flash(
+        (
+            "✅ تم تعديل المنتج بنجاح!"
+            if current_lang == "ar"
+            else "✅ Product updated successfully!"
+        ),
+        "success"
+    )
+
+
+    # ==================================================
+    # ↩️ BACK TO PRODUCTS
+    # ==================================================
+
+    return redirect(
+        url_for("admin_products")
+    )
+
+# ==================================================
+# 🗑️ DELETE PRODUCT
+# ==================================================
+
+@app.route("/admin/delete_product/<int:id>", methods=["POST"])
+@login_required
+def delete_product(id):
+
+    # ==================================================
+    # 🔐 ADMIN CHECK
+    # ==================================================
+
+    if current_user.role != "admin":
+        flash(
+            "⚠️ Access denied! Admins only.",
+            "danger"
+        )
+        return redirect(url_for("home_logged"))
+
+    # ==================================================
+    # 🌐 CURRENT LANGUAGE
+    # ==================================================
+
+    current_lang = session.get("lang", "ar")
+
+    try:
+
+        # ==================================================
+        # 📦 FIND PRODUCT
+        # ==================================================
+
+        product = Product.query.get_or_404(id)
+
+        # ==================================================
+        # 🛒 REMOVE FROM CART
+        # ==================================================
+
+        Cart.query.filter_by(
+            product_id=product.id
+        ).delete(
+            synchronize_session=False
+        )
+
+        # ==================================================
+        # ❤️ REMOVE FROM WISHLIST
+        # ==================================================
+
+        Wishlist.query.filter_by(
+            product_id=product.id
+        ).delete(
+            synchronize_session=False
+        )
+
+        # ==================================================
+        # 📦 REMOVE FROM ORDER ITEMS
+        # ==================================================
+
+        OrderItem.query.filter_by(
+            product_id=product.id
+        ).delete(
+            synchronize_session=False
+        )
+
+        # ==================================================
+        # 🗑️ DELETE PRODUCT
+        # ==================================================
+
+        db.session.delete(product)
+        db.session.commit()
+
+        # ==================================================
+        # ✅ SUCCESS
+        # ==================================================
+
+        if current_lang == "ar":
+            flash(
+                "🗑️ تم حذف المنتج بنجاح!",
+                "success"
+            )
+        else:
+            flash(
+                "🗑️ Product deleted successfully!",
+                "success"
+            )
+
+    except Exception as e:
+
+        # ==================================================
+        # 🔄 ROLLBACK
+        # ==================================================
+
+        db.session.rollback()
+
+        print("❌ DELETE PRODUCT ERROR:", e)
+
+        # ==================================================
+        # ❌ ERROR
+        # ==================================================
+
+        if current_lang == "ar":
+            flash(
+                "❌ حدث خطأ أثناء حذف المنتج.",
+                "danger"
+            )
+        else:
+            flash(
+                "❌ Error deleting product.",
+                "danger"
+            )
+
+    # ==================================================
+    # 🔙 RETURN TO PRODUCTS
+    # ==================================================
+
+    return redirect(url_for("admin_products"))
+
+# ==================================================
+# ➕ ADD PRODUCT
+# ==================================================
+
+@app.route("/admin/add_product", methods=["GET", "POST"])
+@login_required
+def add_product():
+
+    # ==================================================
+    # 🔐 ADMIN CHECK
+    # ==================================================
+
+    if current_user.role != "admin":
+
+        flash(
+            "⚠️ Access denied! Admins only.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("home_logged")
+        )
+
+    # ==================================================
+    # 📝 PRODUCT FORM
+    # ==================================================
+
+    form = ProductForm()
+
+    # ==================================================
+    # 📦 GET EXISTING PRODUCTS
+    # ==================================================
+
+    products = Product.query.order_by(
+        Product.id.desc()
+    ).all()
+
+    # ==================================================
+    # ✅ FORM SUBMITTED
+    # ==================================================
+
+    if form.validate_on_submit():
+
+        # ==================================================
+        # 🖼️ IMAGE
+        # ==================================================
+
+        filename = None
+
+        if form.image.data:
+
+            image_file = form.image.data
+
+            if image_file.filename:
+
+                filename = secure_filename(
+                    image_file.filename
+                )
+
+                image_path = os.path.join(
+                    app.root_path,
+                    "static",
+                    "images",
+                    filename
+                )
+
+                image_file.save(image_path)
+
+        # ==================================================
+        # 📦 PRODUCT QUANTITY
+        # ==================================================
+
+        quantity = request.form.get(
+            "quantity",
+            1
+        )
+
+        try:
+
+            quantity = int(quantity)
+
+        except (TypeError, ValueError):
+
+            quantity = 1
+
+        # منع الكمية من أن تكون سالبة
+
+        if quantity < 0:
+
+            quantity = 0
+
+        # ==================================================
+        # 💰 COST PRICE
+        # سعر التكلفة
+        # ==================================================
+
+        cost_price = request.form.get(
+            "cost_price",
+            ""
+        )
+
+        try:
+
+            cost_price = float(cost_price)
+
+        except (TypeError, ValueError):
+
+            cost_price = 0
+
+        # منع سعر التكلفة من أن يكون سالبًا
+
+        if cost_price < 0:
+
+            cost_price = 0
+
+        # ==================================================
+        # 🏷️ SALE PRICE
+        # سعر التخفيض
+        # ==================================================
+
+        sale_price = request.form.get(
+            "sale_price",
+            ""
+        )
+
+        try:
+
+            sale_price = float(sale_price)
+
+        except (TypeError, ValueError):
+
+            sale_price = None
+
+        # ==================================================
+        # 🧹 CLEAN SALE PRICE
+        # ==================================================
+
+        if sale_price is not None:
+
+            # منع السعر المخفض من أن يكون سالبًا
+
+            if sale_price < 0:
+
+                sale_price = None
+
+            # إذا كان السعر المخفض أكبر أو يساوي السعر الأصلي
+            # نعتبر أنه لا يوجد خصم
+
+            elif sale_price >= form.price.data:
+
+                sale_price = None
+
+        # ==================================================
+        # 🧸 CREATE PRODUCT
+        # ==================================================
+
+        product = Product(
+
+            # ----------------------------------------------
+            # Product Information
+            # ----------------------------------------------
+
+            name=form.name.data,
+
+            price=form.price.data,
+
+            description=form.description.data,
+
+            # ----------------------------------------------
+            # 💰 Cost Price
+            # ----------------------------------------------
+
+            cost_price=cost_price,
+
+            # ----------------------------------------------
+            # 🏷️ Sale Price
+            # ----------------------------------------------
+
+            sale_price=sale_price,
+
+            # ----------------------------------------------
+            # Product Image
+            # ----------------------------------------------
+
+            image=filename,
+
+            # ----------------------------------------------
+            # Publish Location
+            # ----------------------------------------------
+
+            publish_location=form.publish_location.data,
+
+            # ----------------------------------------------
+            # ✨ Customization
+            # ----------------------------------------------
+
+            is_customizable=form.is_customizable.data,
+
+            # ----------------------------------------------
+            # 📦 Stock / Quantity
+            # ----------------------------------------------
+
+            stock=quantity,
+
+            # ----------------------------------------------
+            # 🆕 New Product
+            # ----------------------------------------------
+
+            is_new=True,
+
+            # ----------------------------------------------
+            # 🛒 Purchase Count
+            # ----------------------------------------------
+
+            purchase_count=0
+
+        )
+
+        # ==================================================
+        # 💾 SAVE PRODUCT
+        # ==================================================
+
+        db.session.add(product)
+
+        db.session.commit()
+
+        # ==================================================
+        # 🔄 REFRESH PRODUCTS
+        # ==================================================
+
+        products = Product.query.order_by(
+            Product.id.desc()
+        ).all()
+
+        # ==================================================
+        # ✅ SUCCESS MESSAGE
+        # ==================================================
+
+        flash(
+            (
+                "✅ تم إضافة المنتج بنجاح!"
+                if current_lang == "ar"
+                else "✅ Product added successfully!"
+            ),
+            "success"
+        )
+
+        # ==================================================
+        # ↩️ REDIRECT
+        # ==================================================
+
+        return redirect(
+            url_for("admin_products")
+        )
+
+    # ==================================================
+    # 🖥️ DISPLAY PRODUCTS PAGE
+    # ==================================================
+
+    return render_template(
+        "admin/add_product.html",
+
+        form=form,
+
+        products=products
+    )
 # ==========================================
-# ✏️ ADD / EDIT PRODUCT (Legacy)
+# ✏️ ADD / EDIT PRODUCT
 # ==========================================
 
 @app.route("/admin/product", methods=["GET", "POST"])
 @app.route("/admin/product/<int:product_id>", methods=["GET", "POST"])
+@login_required
 def add_or_edit_product(product_id=None):
+
+    # ==========================================
+    # 🔐 ADMIN CHECK
+    # ==========================================
+
+    if current_user.role != "admin":
+
+        flash(
+            "⚠️ Access denied! Admins only.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("home_logged")
+        )
+
+    # ==========================================
+    # ✏️ EDIT MODE
+    # ==========================================
 
     edit_mode = product_id is not None
 
-    product = Product.query.get(product_id) if edit_mode else None
+    product = None
 
-    form = AddProductForm(obj=product)
+    if edit_mode:
+
+        product = Product.query.get_or_404(
+            product_id
+        )
+
+    # ==========================================
+    # 📝 FORM
+    # ==========================================
+
+    form = AddProductForm(
+        obj=product
+    )
+
+    # ==========================================
+    # ✅ SUBMIT
+    # ==========================================
 
     if form.validate_on_submit():
 
+        # ======================================
+        # 📦 PRODUCT DATA
+        # ======================================
+
         name = form.name.data
+
         price = form.price.data
+
         description = form.description.data
-        publish_location = form.publish_location.data
+
+        publish_location = (
+            form.publish_location.data
+        )
+
+        # ======================================
+        # 🖼️ IMAGE
+        # ======================================
 
         image_file = form.image.data
 
@@ -266,77 +905,213 @@ def add_or_edit_product(product_id=None):
             else None
         )
 
-        if image_file and allowed_file(image_file.filename):
+        # ======================================
+        # 🖼️ NEW IMAGE
+        # ======================================
 
-            filename = secure_filename(image_file.filename)
+        if (
+            image_file
+            and image_file.filename
+            and allowed_file(
+                image_file.filename
+            )
+        ):
+
+            filename = secure_filename(
+                image_file.filename
+            )
 
             image_path = os.path.join(
                 app.config["UPLOAD_FOLDER"],
                 filename
             )
 
-            image_file.save(image_path)
+            image_file.save(
+                image_path
+            )
+
+        # ======================================
+        # ✏️ UPDATE EXISTING PRODUCT
+        # ======================================
 
         if edit_mode:
 
             product.name = name
+
             product.price = price
+
             product.description = description
-            product.publish_location = publish_location
+
+            product.publish_location = (
+                publish_location
+            )
+
             product.image = filename
 
             flash(
-                "✅ Product updated successfully!",
+                (
+                    "✅ تم تعديل المنتج بنجاح!"
+                    if current_lang == "ar"
+                    else "✅ Product updated successfully!"
+                ),
                 "success"
             )
+
+        # ======================================
+        # ➕ ADD NEW PRODUCT
+        # ======================================
 
         else:
 
             new_product = Product(
+
                 name=name,
+
                 price=price,
+
                 description=description,
+
                 image=filename,
-                publish_location=publish_location
+
+                publish_location=
+                    publish_location,
+
+                is_new=True,
+
+                stock=1,
+
+                purchase_count=0,
+
+                is_customizable=False
             )
 
-            db.session.add(new_product)
+            db.session.add(
+                new_product
+            )
 
             flash(
-                "🧶 Product added successfully!",
+                (
+                    "🧶 تم إضافة المنتج بنجاح!"
+                    if current_lang == "ar"
+                    else "🧶 Product added successfully!"
+                ),
                 "success"
             )
 
+        # ======================================
+        # 💾 SAVE
+        # ======================================
+
         db.session.commit()
 
-        return redirect(url_for("admin_home"))
+        # ======================================
+        # ↩️ BACK TO PRODUCTS
+        # ======================================
+
+        return redirect(
+            url_for("admin_products")
+        )
+
+    # ==========================================
+    # 🖥️ PAGE
+    # ==========================================
 
     return render_template(
+
         "add_product.html",
+
         form=form,
+
         edit_mode=edit_mode,
+
         product=product
     )
-# ==========================================
-# PRODUCT DETAILS
-# ==========================================
+
+# ==================================================
+# 🧸 PRODUCT DETAILS
+# ==================================================
 
 @app.route("/product/<int:product_id>")
+@login_required
 def product_details(product_id):
+
+    # ==========================================
+    # 🧸 البحث عن المنتج
+    # ==========================================
 
     product = Product.query.get_or_404(product_id)
 
+
+    # ==========================================
+    # 🧸 المنتجات المرتبطة
+    # نفس التصنيف
+    # ==========================================
+
     related_products = Product.query.filter(
+
         Product.category == product.category,
+
         Product.id != product.id
+
     ).limit(4).all()
 
-    return render_template(
-        "product_details.html",
-        product=product,
-        related_products=related_products
-    )
 
+    # ==========================================
+    # 👤 المستخدم الحالي
+    # ==========================================
+
+    user_id = session.get("user_id")
+
+
+    # ==========================================
+    # ❤️ المنتجات الموجودة في المفضلة
+    # للمستخدم الحالي
+    # ==========================================
+
+    wishlist_ids = set()
+
+    if user_id:
+
+        wishlist_items = Wishlist.query.filter_by(
+            user_id=user_id
+        ).all()
+
+        wishlist_ids = {
+
+            item.product_id
+
+            for item in wishlist_items
+
+        }
+
+
+    # ==========================================
+    # 👥 عدد مرات شراء المنتج
+    #
+    # نستخدم purchase_count الموجود
+    # داخل Product
+    # ==========================================
+
+    purchased_count = product.purchase_count or 0
+
+
+    # ==========================================
+    # 🧾 عرض صفحة تفاصيل المنتج
+    # ==========================================
+
+    return render_template(
+
+        "product_details.html",
+
+        product=product,
+
+        related_products=related_products,
+
+        wishlist_ids=wishlist_ids,
+
+        purchased_count=purchased_count
+
+    )
 
 
 # ==========================================
@@ -1272,126 +2047,232 @@ def cart_page():
 # 🛒 CART API
 # ==========================================
 
+# ==================================================
+# 🛒 ADD / UPDATE CART
+# ==================================================
+
 @app.route("/api/cart/add", methods=["POST"])
+@login_required
 def api_cart_add():
+
+    # ==========================================
+    # الحصول على البيانات
+    # ==========================================
 
     data = request.get_json() or {}
 
     product_id = data.get("product_id")
-    quantity = int(data.get("quantity", 1))
+
+    try:
+        quantity = int(data.get("quantity", 1))
+    except (TypeError, ValueError):
+        quantity = 1
+
+
+    # ==========================================
+    # التحقق من product_id
+    # ==========================================
 
     if not product_id:
+
         return jsonify({
             "success": False,
             "error": "No product_id provided"
         }), 400
 
+
+    # ==========================================
+    # البحث عن المنتج
+    # ==========================================
+
     product = Product.query.get(product_id)
 
     if not product:
+
         return jsonify({
             "success": False,
             "error": "Product not found"
         }), 404
 
+
+    # ==========================================
+    # التحقق من المستخدم
+    # ==========================================
+
     user_id = session.get("user_id")
 
-    if user_id:
+    if not user_id:
 
-        existing = Cart.query.filter_by(
-            user_id=user_id,
-            product_id=product_id
-        ).first()
+        return jsonify({
+            "success": False,
+            "error": "Please login first"
+        }), 401
 
-        if existing:
-            existing.quantity += quantity
-        else:
-            db.session.add(
-                Cart(
-                    user_id=user_id,
-                    product_id=product_id,
-                    quantity=quantity
-                )
-            )
+
+    # ==========================================
+    # التحقق من الكمية
+    # ==========================================
+
+    if quantity == 0:
+
+        return jsonify({
+            "success": False,
+            "error": "Quantity must be greater than zero"
+        }), 400
+
+
+    # ==========================================
+    # البحث عن المنتج داخل السلة
+    # ==========================================
+
+    existing = Cart.query.filter_by(
+        user_id=user_id,
+        product_id=product_id
+    ).first()
+
+
+    # ==========================================
+    # ➖ إنقاص الكمية
+    #
+    # إذا أرسلنا quantity = -1
+    # ==========================================
+
+    if quantity < 0:
+
+        # المنتج غير موجود في السلة
+        if not existing:
+
+            return jsonify({
+                "success": False,
+                "error": "Product is not in cart"
+            }), 404
+
+
+        # إنقاص الكمية
+        existing.quantity += quantity
+
+
+        # ==========================================
+        # إذا وصلت الكمية إلى صفر أو أقل
+        # نحذف المنتج من السلة
+        # ==========================================
+
+        if existing.quantity <= 0:
+
+            db.session.delete(existing)
+
+            db.session.commit()
+
+            return jsonify({
+
+                "success": True,
+
+                "message": "Product removed from cart",
+
+                "product_id": product_id,
+
+                "quantity": 0
+
+            })
+
+
+        # ==========================================
+        # حفظ الكمية الجديدة
+        # ==========================================
 
         db.session.commit()
 
+
         return jsonify({
+
             "success": True,
-            "message": "Product added to cart (DB)!"
-        })
 
-    cart = session_get_cart()
+            "message": "Cart quantity decreased",
 
-    found = False
-
-    for item in cart:
-
-        if item["product_id"] == product_id:
-            item["quantity"] += quantity
-            found = True
-            break
-
-    if not found:
-
-        cart.append({
             "product_id": product_id,
-            "quantity": quantity
+
+            "quantity": existing.quantity
+
         })
 
-    session_save_cart(cart)
+
+    # ==========================================
+    # ➕ إضافة المنتج / زيادة الكمية
+    # ==========================================
+
+    if existing:
+
+        # المنتج موجود بالفعل في السلة
+        existing.quantity += quantity
+
+    else:
+
+        # المنتج غير موجود في السلة
+        new_item = Cart(
+
+            user_id=user_id,
+
+            product_id=product_id,
+
+            quantity=quantity
+
+        )
+
+        db.session.add(new_item)
+
+
+    # ==========================================
+    # حفظ التغييرات
+    # ==========================================
+
+    db.session.commit()
+
+
+    # ==========================================
+    # الحصول على الكمية الحالية
+    # ==========================================
+
+    current_item = Cart.query.filter_by(
+
+        user_id=user_id,
+
+        product_id=product_id
+
+    ).first()
+
+
+    current_quantity = (
+
+        current_item.quantity
+
+        if current_item
+
+        else 0
+
+    )
+
+
+    # ==========================================
+    # النتيجة
+    # ==========================================
 
     return jsonify({
+
         "success": True,
-        "message": "Product added to cart (Session)!"
+
+        "message": "Product added to cart",
+
+        "product_id": product_id,
+
+        "quantity": current_quantity
+
     })
-
-
-@app.route("/api/cart")
-def api_cart_get():
-
-    user_id = session.get("user_id")
-
-    if user_id:
-
-        cart_items = get_db_cart_items(user_id)
-
-        return jsonify({
-            "cart": cart_items_to_json(cart_items)
-        })
-
-    session_cart = session_get_cart()
-
-    output = []
-
-    for item in session_cart:
-
-        product = Product.query.get(item["product_id"])
-
-        if not product:
-            continue
-
-        output.append({
-            "id": product.id,
-            "name": product.name,
-            "price": product.price,
-            "quantity": item["quantity"],
-            "image": url_for(
-                "static",
-                filename=f"images/{product.image}"
-            ) if product.image else ""
-        })
-
-    return jsonify({
-        "cart": output
-    })
-
-
 # ==========================================
-# 🗑 Remove Product From Cart
+# 🗑 REMOVE CART ITEM
 # ==========================================
 
 @app.route("/api/cart/remove", methods=["POST"])
+@login_required
 def api_cart_remove():
 
     data = request.get_json() or {}
@@ -1406,35 +2287,98 @@ def api_cart_remove():
 
     user_id = session.get("user_id")
 
-    # إذا المستخدم مسجل دخول
-    if user_id:
+    cart_item = Cart.query.filter_by(
+        user_id=user_id,
+        product_id=product_id
+    ).first()
 
-        item = Cart.query.filter_by(
-            user_id=user_id,
-            product_id=product_id
-        ).first()
-
-        if item:
-            db.session.delete(item)
-            db.session.commit()
+    if not cart_item:
 
         return jsonify({
-            "success": True
-        })
+            "success": False,
+            "error": "Product not found in cart"
+        }), 404
 
-    # إذا ضيف (Session)
-    cart = session_get_cart()
+    db.session.delete(cart_item)
 
-    cart = [
-        item for item in cart
-        if item["product_id"] != product_id
-    ]
-
-    session_save_cart(cart)
+    db.session.commit()
 
     return jsonify({
-        "success": True
+        "success": True,
+        "message": "Product removed from cart"
     })
+
+
+# ==========================================
+# 🛒 GET CART
+# ==========================================
+
+@app.route("/api/cart")
+@login_required
+def api_cart_get():
+
+    user_id = session.get("user_id")
+
+    cart_items = Cart.query.filter_by(
+        user_id=user_id
+    ).all()
+
+    output = []
+
+    products_total = 0
+
+    total_items = 0
+
+    for item in cart_items:
+
+        product = item.product
+
+        if not product:
+            continue
+
+        quantity = item.quantity
+
+        item_total = product.price * quantity
+
+        products_total += item_total
+
+        total_items += quantity
+
+        output.append({
+
+            "id": product.id,
+
+            "name": product.name,
+
+            "price": product.price,
+
+            "quantity": quantity,
+
+            "stock": product.stock,
+
+            "description": product.description,
+
+            "image": url_for(
+                "static",
+                filename=f"images/{product.image}"
+            ) if product.image else "",
+
+            "item_total": item_total
+
+        })
+
+    return jsonify({
+
+        "success": True,
+
+        "cart": output,
+
+        "products_total": products_total,
+
+        "total_items": total_items
+
+    })
+
 
 # ==========================================
 # ➕➖ Update Cart Quantity
@@ -1489,153 +2433,274 @@ def api_cart_update():
 # ==========================================
 
 @app.route("/checkout")
+@login_required
 def checkout_page():
+
     return render_template("checkout.html")
 
 
+# ==========================================
+# 💳 CHECKOUT API
+# ==========================================
+
 @app.route("/api/checkout", methods=["POST"])
+@login_required
 def api_checkout():
 
     data = request.get_json() or {}
 
+    # ==========================================
+    # 📌 بيانات العميل
+    # ==========================================
+
     name = data.get("name", "").strip()
     address = data.get("address", "").strip()
 
-    if not name or not address:
+    city = data.get("city", "").strip()
+    district = data.get("district", "").strip()
+
+    phone = data.get("phone", "").strip()
+
+    # ==========================================
+    # ❌ التحقق من البيانات
+    # ==========================================
+
+    if not name:
+
         return jsonify({
-            "error": "Please complete all information."
+            "success": False,
+            "error": "Please enter your name."
         }), 400
 
-    user_id = session.get("user_id")
+    if not address:
 
-    # ===============================
-    # البريد الإلكتروني
-    # ===============================
-    customer_email = ""
+        return jsonify({
+            "success": False,
+            "error": "Please enter your delivery address."
+        }), 400
 
-    if user_id:
-        user = User.query.get(user_id)
-        if user:
-            customer_email = user.email
+    # ==========================================
+    # 👤 المستخدم الحالي
+    # ==========================================
+
+    user_id = current_user.id
+
+    # ==========================================
+    # 📧 البريد الإلكتروني
+    # ==========================================
+
+    customer_email = current_user.email or ""
+
+    # ==========================================
+    # 🛒 تجهيز السلة
+    # ==========================================
+
+    db_cart = get_db_cart_items(user_id)
 
     cart_entries = []
-    total = 0
 
-    # ===============================
-    # مستخدم مسجل
-    # ===============================
-    if user_id:
+    products_total = 0
 
-        db_cart = get_db_cart_items(user_id)
+    # ==========================================
+    # 🛍️ قراءة المنتجات
+    # ==========================================
 
-        for item in db_cart:
+    for item in db_cart:
 
-            product = Product.query.get(item.product_id)
+        product = Product.query.get(item.product_id)
 
-            if not product:
-                continue
+        if not product:
+            continue
 
-            total += product.price * item.quantity
+        quantity = int(item.quantity)
 
-            cart_entries.append({
-                "product": product,
-                "quantity": item.quantity
-            })
+        if quantity <= 0:
+            continue
 
-    # ===============================
-    # زائر
-    # ===============================
-    else:
+        item_total = (
+            float(product.price) *
+            quantity
+        )
 
-        for item in session_get_cart():
+        products_total += item_total
 
-            product = Product.query.get(item["product_id"])
+        cart_entries.append({
 
-            if not product:
-                continue
+            "product": product,
 
-            total += product.price * item["quantity"]
+            "quantity": quantity,
 
-            cart_entries.append({
-                "product": product,
-                "quantity": item["quantity"]
-            })
+            "item_total": item_total
 
-    # ===============================
-    # إذا السلة فارغة
-    # ===============================
+        })
+
+    # ==========================================
+    # 🧺 السلة فارغة
+    # ==========================================
+
     if not cart_entries:
 
         return jsonify({
+
+            "success": False,
+
             "error": "Cart is empty."
+
         }), 400
 
-    # ===============================
-    # إنشاء الطلب
-    # ===============================
+    # ==========================================
+    # 🚚 الشحن
+    # ==========================================
+
+    shipping_cost = float(
+        data.get("shipping_cost", 20) or 20
+    )
+
+    shipping_method = (
+        data.get(
+            "shipping_method",
+            "Standard Shipping"
+        )
+        or "Standard Shipping"
+    )
+
+    # ==========================================
+    # 🎁 الكوبون
+    # ==========================================
+
+    discount = float(
+        data.get("discount", 0) or 0
+    )
+
+    coupon_code = (
+        data.get("coupon_code", "")
+        .strip()
+        .upper()
+    )
+
+    # ==========================================
+    # ➕ الإضافات
+    # ==========================================
+
+    extras_total = float(
+        data.get("extras_total", 0) or 0
+    )
+
+    # ==========================================
+    # 💰 حساب الإجمالي
+    # ==========================================
+
+    total = (
+        products_total
+        + extras_total
+        + shipping_cost
+        - discount
+    )
+
+    # منع الإجمالي من أن يكون سالب
+    total = max(total, 0)
+
+    # ==========================================
+    # 📦 إنشاء الطلب
+    # ==========================================
+
     order = Order(
 
         user_id=user_id,
+
         customer_name=name,
+
         customer_email=customer_email,
+
+        customer_phone=phone,
+
         address=address,
+
+        city=city,
+
+        district=district,
+
         payment_method="",
+
+        products_total=products_total,
+
+        extras_total=extras_total,
+
+        shipping_cost=shipping_cost,
+
+        discount=discount,
+
+        coupon_code=coupon_code or None,
+
         total=total,
 
-        # يبدأ دائماً بانتظار المراجعة
+        shipping_method=shipping_method,
+
         status="Pending Review"
 
     )
 
     db.session.add(order)
+
     db.session.flush()
 
-    # ===============================
-    # إضافة المنتجات
-    # ===============================
+    # ==========================================
+    # 🛍️ إضافة المنتجات للطلب
+    # ==========================================
+
     for entry in cart_entries:
 
         product = entry["product"]
 
-        db.session.add(
+        quantity = entry["quantity"]
 
-            OrderItem(
+        order_item = OrderItem(
 
-                order_id=order.id,
-                product_id=product.id,
-                quantity=entry["quantity"],
-                price=product.price
+            order_id=order.id,
 
-            )
+            product_id=product.id,
+
+            quantity=quantity,
+
+            price=product.price
 
         )
 
-    # ===============================
-    # تفريغ السلة
-    # ===============================
-    if user_id:
+        db.session.add(order_item)
 
-        Cart.query.filter_by(user_id=user_id).delete()
+    # ==========================================
+    # 🗑️ تفريغ السلة
+    # ==========================================
 
-    else:
+    Cart.query.filter_by(
+        user_id=user_id
+    ).delete()
 
-        session_save_cart([])
+    # ==========================================
+    # 🔔 إشعار الأدمن
+    # ==========================================
 
-    # ===============================
-    # إنشاء إشعار للأدمن
-    # ===============================
     notification = Notification(
-        message=f"🛍️ طلب جديد رقم #{order.id} من العميل {order.customer_name}"
+
+        message=(
+            f"🛍️ طلب جديد رقم #{order.id} "
+            f"من العميل {order.customer_name}"
+        )
+
     )
 
     db.session.add(notification)
 
-    # حفظ الطلب والإشعار معاً
+    # ==========================================
+    # 💾 حفظ الطلب
+    # ==========================================
+
     db.session.commit()
 
-    # ===============================
-    # إرسال إيميل للأدمن
-    # ===============================
+    # ==========================================
+    # 📧 إرسال إيميل للأدمن
+    # ==========================================
+
     try:
 
         products_text = ""
@@ -1645,16 +2710,26 @@ def api_checkout():
             product = entry["product"]
 
             products_text += (
+
                 f"• {product.name}\n"
-                f"   الكمية: {entry['quantity']}\n"
-                f"   السعر: {product.price:.2f} ر.س\n\n"
+
+                f"   الكمية: "
+                f"{entry['quantity']}\n"
+
+                f"   السعر: "
+                f"{product.price:.2f} ر.س\n\n"
+
             )
 
         msg = MailMessage(
 
-            subject=f"🛍️ طلب جديد رقم #{order.id}",
+            subject=(
+                f"🛍️ طلب جديد رقم #{order.id}"
+            ),
 
-            recipients=["rema7122002@gmail.com"]
+            recipients=[
+                "rema7122002@gmail.com"
+            ]
 
         )
 
@@ -1672,10 +2747,19 @@ def api_checkout():
 {order.customer_name}
 
 📧 البريد الإلكتروني:
-{order.customer_email if order.customer_email else "لا يوجد"}
+{order.customer_email or "لا يوجد"}
+
+📱 رقم الجوال:
+{order.customer_phone or "لا يوجد"}
 
 📍 عنوان التوصيل:
 {order.address}
+
+🏙️ المدينة:
+{order.city or "لا يوجد"}
+
+🏘️ الحي:
+{order.district or "لا يوجد"}
 
 ━━━━━━━━━━━━━━━━━━━━━━
 
@@ -1685,13 +2769,31 @@ def api_checkout():
 
 ━━━━━━━━━━━━━━━━━━━━━━
 
-💰 إجمالي الطلب:
-{order.total:.2f} ر.س
+💰 سعر المنتجات:
+{order.products_total:.2f} ر.س
+
+🎁 الإضافات:
+{order.extras_total:.2f} ر.س
+
+🚚 الشحن:
+{order.shipping_cost:.2f} ر.س
+
+🏷️ الخصم:
+{order.discount:.2f} ر.س
+
+🎟️ الكوبون:
+{order.coupon_code or "لا يوجد"}
 
 ━━━━━━━━━━━━━━━━━━━━━━
 
-الحالة الحالية:
-بانتظار المراجعة
+💰 الإجمالي النهائي:
+{order.total:.2f} ر.س
+
+🚚 طريقة الشحن:
+{order.shipping_method or "لا يوجد"}
+
+📌 الحالة:
+قيد المراجعة
 
 يرجى تسجيل الدخول إلى لوحة التحكم لمراجعة الطلب.
 
@@ -1703,14 +2805,241 @@ Crochet Rory Store
 
     except Exception as e:
 
-        print("Order Mail Error:", e)
+        print(
+            "Order Mail Error:",
+            e
+        )
+
+    # ==========================================
+    # ✅ النتيجة
+    # ==========================================
 
     return jsonify({
 
         "success": True,
-        "order_id": order.id
 
-    })
+        "message":
+            "Order created successfully",
+
+        "order_id":
+            order.id,
+
+        "address":
+            order.address,
+
+        "total":
+            order.total
+
+    }), 200
+# ==================================================
+# 🎟️ APPLY COUPON
+# ==================================================
+
+@app.route("/api/coupon/validate", methods=["POST"])
+def validate_coupon():
+
+    # ==============================================
+    # GET DATA
+    # ==============================================
+
+    data = request.get_json() or {}
+
+    coupon_code = (
+        data.get("code", "")
+        .strip()
+        .upper()
+    )
+
+    order_amount = data.get(
+        "order_amount",
+        0
+    )
+
+
+    # ==============================================
+    # CHECK COUPON CODE
+    # ==============================================
+
+    if not coupon_code:
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "يرجى إدخال كود الكوبون."
+
+        }), 400
+
+
+    # ==============================================
+    # CHECK ORDER AMOUNT
+    # ==============================================
+
+    try:
+
+        order_amount = float(
+            order_amount
+        )
+
+    except (TypeError, ValueError):
+
+        order_amount = 0
+
+
+    if order_amount < 0:
+
+        order_amount = 0
+
+
+    # ==============================================
+    # FIND COUPON
+    # ==============================================
+
+    coupon = Coupon.query.filter_by(
+        code=coupon_code
+    ).first()
+
+
+    # ==============================================
+    # COUPON NOT FOUND
+    # ==============================================
+
+    if not coupon:
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "الكوبون غير صحيح أو منتهي."
+
+        }), 404
+
+
+    # ==============================================
+    # CHECK VALIDITY
+    # ==============================================
+
+    if not coupon.is_valid(
+        order_amount
+    ):
+
+        # ------------------------------------------
+        # تحديد سبب عدم صلاحية الكوبون
+        # ------------------------------------------
+
+        now = datetime.utcnow()
+
+
+        if not coupon.is_active:
+
+            error_message = (
+                "هذا الكوبون غير مفعل."
+            )
+
+
+        elif (
+            order_amount <
+            (coupon.minimum_order or 0)
+        ):
+
+            minimum = (
+                coupon.minimum_order or 0
+            )
+
+            error_message = (
+                f"الحد الأدنى للطلب "
+                f"لاستخدام هذا الكوبون هو "
+                f"{minimum:.2f} ر.س."
+            )
+
+
+        elif (
+            coupon.start_date
+            and now < coupon.start_date
+        ):
+
+            error_message = (
+                "هذا الكوبون لم يبدأ بعد."
+            )
+
+
+        elif (
+            coupon.expiry_date
+            and now > coupon.expiry_date
+        ):
+
+            error_message = (
+                "هذا الكوبون منتهي."
+            )
+
+
+        elif (
+            coupon.usage_limit is not None
+            and coupon.used_count >= coupon.usage_limit
+        ):
+
+            error_message = (
+                "تم الوصول إلى الحد الأقصى "
+                "لاستخدام هذا الكوبون."
+            )
+
+
+        else:
+
+            error_message = (
+                "الكوبون غير صحيح أو منتهي."
+            )
+
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                error_message
+
+        }), 400
+
+
+    # ==============================================
+    # CALCULATE DISCOUNT
+    # ==============================================
+
+    discount = coupon.calculate_discount(
+        order_amount
+    )
+
+
+    # ==============================================
+    # RETURN RESULT
+    # ==============================================
+
+    return jsonify({
+
+        "success": True,
+
+        "coupon_code":
+            coupon.code,
+
+        "discount":
+            round(discount, 2),
+
+        "discount_type":
+            coupon.discount_type,
+
+        "discount_value":
+            coupon.discount_value,
+
+        "order_amount":
+            round(order_amount, 2),
+
+        "message":
+            "تم تطبيق الكوبون بنجاح."
+
+    }), 200
+
 
 @app.route("/admin/orders/delete", methods=["POST"])
 @login_required
@@ -1879,6 +3208,34 @@ def admin_orders():
         counts=counts,
         current_status=status
     )
+# ==================================================
+# 🎟️ ADMIN COUPONS
+# ==================================================
+
+@app.route("/admin/coupons")
+@login_required
+def admin_coupons():
+
+    # التأكد أن المستخدم أدمن
+    if current_user.role != "admin":
+
+        flash(
+            "غير مسموح لك بالدخول إلى هذه الصفحة."
+            if session.get("lang", "ar") == "ar"
+            else "You are not authorized to access this page.",
+            "error"
+        )
+
+        return redirect(url_for("home_logged"))
+
+    coupons = Coupon.query.order_by(
+        Coupon.created_at.desc()
+    ).all()
+
+    return render_template(
+        "admin/coupons.html",
+        coupons=coupons
+    )
 @app.context_processor
 def inject_admin_notifications():
 
@@ -1888,6 +3245,325 @@ def inject_admin_notifications():
 
     return dict(
         unread_notifications=unread_notifications
+    )
+# ==================================================
+# 🎟️ ADD COUPON PAGE + CREATE COUPON
+# ==================================================
+
+# ==================================================
+# 🎟️ ADD COUPON
+# ==================================================
+
+@app.route("/admin/coupons/add", methods=["POST"])
+@login_required
+def add_coupon():
+
+    # ==========================================
+    # 🌐 اللغة الحالية
+    # ==========================================
+
+    current_lang = session.get(
+        "lang",
+        "ar"
+    )
+
+    # ==========================================
+    # 📋 بيانات النموذج
+    # ==========================================
+
+    code = request.form.get(
+        "code",
+        ""
+    ).strip().upper()
+
+    discount_type = request.form.get(
+        "discount_type",
+        "percentage"
+    ).strip()
+
+    discount_value = request.form.get(
+        "discount_value",
+        "0"
+    ).strip()
+
+    minimum_order = request.form.get(
+        "minimum_order",
+        "0"
+    ).strip()
+
+    maximum_discount = request.form.get(
+        "maximum_discount",
+        ""
+    ).strip()
+
+    usage_limit = request.form.get(
+        "usage_limit",
+        ""
+    ).strip()
+
+    # ==========================================
+    # 🔎 التحقق من الكود
+    # ==========================================
+
+    if not code:
+
+        flash(
+            "يرجى إدخال كود الكوبون."
+            if current_lang == "ar"
+            else "Please enter a coupon code.",
+            "error"
+        )
+
+        return redirect(
+            url_for("admin_coupons")
+        )
+
+    # ==========================================
+    # 🔎 التحقق من نوع الخصم
+    # ==========================================
+
+    if discount_type not in [
+        "percentage",
+        "fixed"
+    ]:
+
+        flash(
+            "نوع الخصم غير صحيح."
+            if current_lang == "ar"
+            else "Invalid discount type.",
+            "error"
+        )
+
+        return redirect(
+            url_for("admin_coupons")
+        )
+
+    # ==========================================
+    # 🚫 منع تكرار الكوبون
+    # ==========================================
+
+    existing_coupon = Coupon.query.filter_by(
+        code=code
+    ).first()
+
+    if existing_coupon:
+
+        flash(
+            "هذا الكوبون موجود بالفعل."
+            if current_lang == "ar"
+            else "This coupon already exists.",
+            "error"
+        )
+
+        return redirect(
+            url_for("admin_coupons")
+        )
+
+    # ==========================================
+    # 🔢 تحويل القيم إلى أرقام
+    # ==========================================
+
+    try:
+
+        discount_value = float(
+            discount_value
+        )
+
+        minimum_order = float(
+            minimum_order or 0
+        )
+
+        maximum_discount = (
+            float(maximum_discount)
+            if maximum_discount
+            else None
+        )
+
+        usage_limit = (
+            int(usage_limit)
+            if usage_limit
+            else None
+        )
+
+    except ValueError:
+
+        flash(
+            "يرجى إدخال أرقام صحيحة."
+            if current_lang == "ar"
+            else "Please enter valid numbers.",
+            "error"
+        )
+
+        return redirect(
+            url_for("admin_coupons")
+        )
+
+    # ==========================================
+    # 💰 التحقق من قيمة الخصم
+    # ==========================================
+
+    if discount_value <= 0:
+
+        flash(
+            "قيمة الخصم يجب أن تكون أكبر من صفر."
+            if current_lang == "ar"
+            else "Discount value must be greater than zero.",
+            "error"
+        )
+
+        return redirect(
+            url_for("admin_coupons")
+        )
+
+    # ==========================================
+    # 🛒 الحد الأدنى للطلب
+    # ==========================================
+
+    if minimum_order < 0:
+
+        flash(
+            "الحد الأدنى للطلب غير صحيح."
+            if current_lang == "ar"
+            else "Invalid minimum order.",
+            "error"
+        )
+
+        return redirect(
+            url_for("admin_coupons")
+        )
+
+    # ==========================================
+    # 📊 التحقق من النسبة المئوية
+    # ==========================================
+
+    if discount_type == "percentage":
+
+        if discount_value > 100:
+
+            flash(
+                "نسبة الخصم لا يمكن أن تتجاوز 100٪."
+                if current_lang == "ar"
+                else "Percentage discount cannot exceed 100%.",
+                "error"
+            )
+
+            return redirect(
+                url_for("admin_coupons")
+            )
+
+        if (
+            maximum_discount is not None
+            and maximum_discount <= 0
+        ):
+
+            flash(
+                "الحد الأقصى للخصم يجب أن يكون أكبر من صفر."
+                if current_lang == "ar"
+                else "Maximum discount must be greater than zero.",
+                "error"
+            )
+
+            return redirect(
+                url_for("admin_coupons")
+            )
+
+    # ==========================================
+    # 💵 الخصم الثابت
+    # ==========================================
+
+    if discount_type == "fixed":
+
+        maximum_discount = None
+
+    # ==========================================
+    # 🔢 حد الاستخدام
+    # ==========================================
+
+    if (
+        usage_limit is not None
+        and usage_limit <= 0
+    ):
+
+        flash(
+            "عدد مرات الاستخدام يجب أن يكون أكبر من صفر."
+            if current_lang == "ar"
+            else "Usage limit must be greater than zero.",
+            "error"
+        )
+
+        return redirect(
+            url_for("admin_coupons")
+        )
+
+    # ==========================================
+    # 🎟️ إنشاء الكوبون
+    # ==========================================
+
+    coupon = Coupon(
+
+        code=code,
+
+        discount_type=discount_type,
+
+        discount_value=discount_value,
+
+        minimum_order=minimum_order,
+
+        maximum_discount=maximum_discount,
+
+        usage_limit=usage_limit,
+
+        used_count=0,
+
+        is_active=True
+
+    )
+
+    # ==========================================
+    # 💾 حفظ الكوبون
+    # ==========================================
+
+    try:
+
+        db.session.add(
+            coupon
+        )
+
+        db.session.commit()
+
+    except Exception as e:
+
+        db.session.rollback()
+
+        print(
+            "Add Coupon Error:",
+            e
+        )
+
+        flash(
+            "حدث خطأ أثناء إنشاء الكوبون."
+            if current_lang == "ar"
+            else "An error occurred while creating the coupon.",
+            "error"
+        )
+
+        return redirect(
+            url_for("admin_coupons")
+        )
+
+    # ==========================================
+    # ✅ نجاح
+    # ==========================================
+
+    flash(
+        "تم إنشاء الكوبون بنجاح 🎉"
+        if current_lang == "ar"
+        else "Coupon created successfully 🎉",
+        "success"
+    )
+
+    return redirect(
+        url_for("admin_coupons")
     )
 # ==========================================
 # 📦 UPDATE ORDER STATUS
@@ -2103,84 +3779,43 @@ def products_page():
 # 🧶 PRODUCTS MANAGEMENT
 # ==========================================
 
-@app.route('/admin/products')
+@app.route("/admin/products")
 @login_required
 def admin_products():
 
-    if current_user.role != "admin":
-        flash("⚠️ Access denied! Admins only.", "danger")
-        return redirect(url_for("home_logged"))
+    # ==================================================
+    # 🔐 ADMIN CHECK
+    # ==================================================
 
-    products = Product.query.all()
+    if current_user.role != "admin":
+
+        flash(
+            "⚠️ Access denied! Admins only.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("home_logged")
+        )
+
+
+    # ==================================================
+    # 📦 GET PRODUCTS
+    # ==================================================
+
+    products = Product.query.order_by(
+        Product.id.desc()
+    ).all()
+
+
+    # ==================================================
+    # 🖥️ PRODUCTS PAGE
+    # ==================================================
 
     return render_template(
         "admin/admin_products.html",
         products=products
     )
-
-
-@app.route('/admin/edit_product/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_product(id):
-
-    if current_user.role != "admin":
-        flash("⚠️ Access denied! Admins only.", "danger")
-        return redirect(url_for("home_logged"))
-
-    product = Product.query.get_or_404(id)
-    form = AddProductForm(obj=product)
-
-    if form.validate_on_submit():
-
-        product.name = form.name.data
-        product.price = form.price.data
-        product.description = form.description.data
-        product.publish_location = form.publish_location.data
-
-        if form.image.data:
-            image = form.image.data
-            filename = secure_filename(image.filename)
-
-            image_path = os.path.join(
-                app.root_path,
-                "static",
-                "images",
-                filename
-            )
-
-            image.save(image_path)
-            product.image = filename
-
-        db.session.commit()
-
-        flash("✅ Product updated successfully!", "success")
-        return redirect(url_for("admin_products"))
-
-    return render_template(
-        "admin/edit_product.html",
-        form=form,
-        product=product,
-        edit_mode=True
-    )
-
-
-@app.route('/admin/delete_product/<int:id>', methods=['POST'])
-@login_required
-def delete_product(id):
-
-    if current_user.role != "admin":
-        flash("⚠️ Access denied! Admins only.", "danger")
-        return redirect(url_for("home_logged"))
-
-    product = Product.query.get_or_404(id)
-
-    db.session.delete(product)
-    db.session.commit()
-
-    flash(f"🗑️ Product '{product.name}' deleted successfully.", "success")
-
-    return redirect(url_for("admin_products"))
-
 
 # ==========================================
 # 👥 USER MANAGEMENT

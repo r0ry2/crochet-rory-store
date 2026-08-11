@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed, FileField
 
 from wtforms import (
+    BooleanField,
     FloatField,
     PasswordField,
     SelectField,
@@ -21,22 +22,45 @@ from wtforms.validators import (
 # ==================================================
 # 🧶 PRODUCT FORM
 # ==================================================
+
 class ProductForm(FlaskForm):
+
+    # ==========================
+    # 🧵 Product Name
+    # ==========================
 
     name = StringField(
         "Product Name",
-        validators=[DataRequired()]
+        validators=[
+            DataRequired()
+        ]
     )
+
+    # ==========================
+    # 💰 Product Price
+    # ==========================
 
     price = FloatField(
         "Price",
-        validators=[DataRequired()]
+        validators=[
+            DataRequired()
+        ]
     )
+
+    # ==========================
+    # 📜 Product Description
+    # ==========================
 
     description = TextAreaField(
         "Description",
-        validators=[DataRequired()]
+        validators=[
+            DataRequired()
+        ]
     )
+
+    # ==========================
+    # 🖼️ Product Image
+    # ==========================
 
     image = FileField(
         "Product Image",
@@ -48,30 +72,68 @@ class ProductForm(FlaskForm):
         ]
     )
 
+    # ==========================
+    # 📍 Publish Location
+    # ==========================
+
     publish_location = SelectField(
         "Publish Product",
         choices=[
-            ("both", "Show in Home + Products pages"),
-            ("products_only", "Show only in Products page")
+            (
+                "both",
+                "Show in Home + Products pages"
+            ),
+            (
+                "products_only",
+                "Show only in Products page"
+            )
         ],
         default="products_only"
     )
 
-    submit = SubmitField("Save")
+    # ==========================
+    # ✨ Customization
+    # هل المنتج قابل للتخصيص؟
+    # ==========================
+
+    is_customizable = BooleanField(
+        "Allow Customization",
+        default=False
+    )
+
+    # ==========================
+    # 💾 Submit
+    # ==========================
+
+    submit = SubmitField(
+        "Save"
+    )
 
 
 # ==================================================
 # 👤 REGISTER FORM
 # ==================================================
+
 class RegisterForm(FlaskForm):
+
+    # ==========================
+    # 👤 Username
+    # ==========================
 
     username = StringField(
         "Username",
         validators=[
             DataRequired(),
-            Length(min=3, max=25)
+            Length(
+                min=3,
+                max=25
+            )
         ]
     )
+
+    # ==========================
+    # 📧 Email
+    # ==========================
 
     email = StringField(
         "Email",
@@ -80,21 +142,39 @@ class RegisterForm(FlaskForm):
             Email()
         ]
     )
+
+    # ==========================
+    # 📱 Phone Number
+    # ==========================
+
     phone = StringField(
-    "Phone Number",
-    validators=[
-        DataRequired(),
-        Length(min=8, max=15)
-    ]
-)
+        "Phone Number",
+        validators=[
+            DataRequired(),
+            Length(
+                min=8,
+                max=15
+            )
+        ]
+    )
+
+    # ==========================
+    # 🔐 Password
+    # ==========================
 
     password = PasswordField(
         "Password",
         validators=[
             DataRequired(),
-            Length(min=6)
+            Length(
+                min=6
+            )
         ]
     )
+
+    # ==========================
+    # 🔐 Confirm Password
+    # ==========================
 
     confirm_password = PasswordField(
         "Confirm Password",
@@ -104,13 +184,24 @@ class RegisterForm(FlaskForm):
         ]
     )
 
-    submit = SubmitField("Register")
+    # ==========================
+    # 📝 Submit
+    # ==========================
+
+    submit = SubmitField(
+        "Register"
+    )
 
 
 # ==================================================
 # 🔐 LOGIN FORM
 # ==================================================
+
 class LoginForm(FlaskForm):
+
+    # ==========================
+    # 📧 Email
+    # ==========================
 
     email = StringField(
         "Email",
@@ -120,25 +211,51 @@ class LoginForm(FlaskForm):
         ]
     )
 
+    # ==========================
+    # 🔑 Password
+    # ==========================
 
     password = PasswordField(
         "Password",
-        validators=[DataRequired()]
+        validators=[
+            DataRequired()
+        ]
     )
 
-    submit = SubmitField("Login")
+    # ==========================
+    # 🔓 Submit
+    # ==========================
+
+    submit = SubmitField(
+        "Login"
+    )
+
 
 # ==================================================
 # 📧 VERIFY EMAIL FORM
 # ==================================================
+
 class VerifyCodeForm(FlaskForm):
+
+    # ==========================
+    # 🔢 Verification Code
+    # ==========================
 
     code = StringField(
         "Verification Code",
         validators=[
             DataRequired(),
-            Length(min=6, max=6)
+            Length(
+                min=6,
+                max=6
+            )
         ]
     )
 
-    submit = SubmitField("Verify")
+    # ==========================
+    # ✅ Submit
+    # ==========================
+
+    submit = SubmitField(
+        "Verify"
+    )
