@@ -11,6 +11,7 @@ from flask import (
 
 
 from app import app, db, mail
+import resend
 
 from models import (
     Product,
@@ -61,6 +62,31 @@ import random
 from sqlalchemy import func
 from flask_login import login_user, logout_user, login_required, current_user
 
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
+
+if RESEND_API_KEY:
+    resend.api_key = RESEND_API_KEY
+
+
+def send_email_via_resend(msg):
+    if not RESEND_API_KEY:
+        print("⚠️ RESEND_API_KEY is not configured.")
+        return False
+
+    try:
+        resend.Emails.send({
+            "from": "Crochet Rory <onboarding@resend.dev>",
+            "to": msg.recipients,
+            "subject": msg.subject,
+            "text": msg.body or ""
+        })
+
+        print("✅ Email sent successfully with Resend.")
+        return True
+
+    except Exception as e:
+        print("❌ Resend Email Error:", e)
+        return False
 
 @app.route("/language/<lang>")
 def change_language(lang):
@@ -1436,7 +1462,7 @@ Please enter this code to activate your account.
 Crochet Rory Team
 """
 
-            mail.send(msg)
+            send_email_via_resend(msg)
 
         except Exception as e:
             print("Mail Error:", e)
@@ -1497,7 +1523,7 @@ This code will expire in 10 minutes.
 Crochet Rory Team
 """
 
-        mail.send(msg)
+        send_email_via_resend(msg)
 
     except Exception as e:
         print("Mail Error:", e)
