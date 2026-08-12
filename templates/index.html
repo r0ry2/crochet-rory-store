@@ -892,8 +892,15 @@ function changeQuantity(productId, change){
             else "We've sent a verification code to your email." }}
         </p>
 
-<form method="POST" action="{% if session.get('reset_email') %}{{ url_for('verify_reset_code') }}{% else %}{{ url_for('verify_email') }}{% endif %}">
-
+<form method="POST"
+      action="{% if session.get('reset_email') %}
+                  {{ url_for('verify_reset_code') }}
+              {% elif session.get('login_verify_email') %}
+                  {{ url_for('verify_login_code') }}
+              {% else %}
+                  {{ url_for('verify_email') }}
+              {% endif %}">
+              
     {{ verify_form.hidden_tag() }}
 
     {{ verify_form.code(

@@ -9,6 +9,7 @@ from flask_babel import Babel
 from flask import session
 
 from config import Config
+
 from models import (
     db,
     Product,
@@ -21,27 +22,42 @@ from models import (
     ShippingMethod,
     Coupon,
     Notification
-
 )
+
+# ==========================================
+# 🔎 DEBUG - CHECK LOADED PRODUCT MODEL
+# ==========================================
+
+print("🔥 MODELS FILE:", Product.__module__)
+print("🔥 PRODUCT COLUMNS:")
+print(Product.__table__.columns.keys())
 
 # ==========================================
 # Load Environment Variables
 # ==========================================
+
 load_dotenv()
 
 # ==========================================
 # Create Flask App
 # ==========================================
+
 app = Flask(__name__)
 app.config.from_object(Config)
 
 app.config["BABEL_DEFAULT_LOCALE"] = "en"
 app.config["BABEL_SUPPORTED_LOCALES"] = ["en", "ar"]
 
+
 def get_locale():
     return session.get("language", "en")
 
-babel = Babel(app, locale_selector=get_locale)
+
+babel = Babel(
+    app,
+    locale_selector=get_locale
+)
+
 
 @app.context_processor
 def inject_locale():
@@ -49,18 +65,30 @@ def inject_locale():
         "current_lang": session.get("language", "en")
     }
 
+
 # ==========================================
 # Secret Key & Database
 # ==========================================
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "supersecretkey")
+
+app.config["SECRET_KEY"] = os.getenv(
+    "SECRET_KEY",
+    "supersecretkey"
+)
 
 database_url = os.getenv("DATABASE_URL")
 
 if database_url:
-    database_url = database_url.replace("postgres://", "postgresql://", 1)
+    database_url = database_url.replace(
+        "postgres://",
+        "postgresql://",
+        1
+    )
+
     app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+
 else:
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.sqlite"
+
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -68,46 +96,76 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 # ==========================================
 # Mail
 # ==========================================
+
 mail = Mail(app)
+
 
 # ==========================================
 # Database
 # ==========================================
+
 db.init_app(app)
-migrate = Migrate(app, db)
+
+migrate = Migrate(
+    app,
+    db
+)
+
+
 with app.app_context():
     db.create_all()
+
 
 # ==========================================
 # Flask Login
 # ==========================================
+
 login_manager = LoginManager()
+
 login_manager.init_app(app)
 
 login_manager.login_view = "login"
+
 login_manager.login_message = "Please log in first."
+
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+
+    return User.query.get(
+        int(user_id)
+    )
+
 
 # ==========================================
 # Print Database
 # ==========================================
-print("📁 Using database:", app.config["SQLALCHEMY_DATABASE_URI"])
+
+print(
+    "📁 Using database:",
+    app.config["SQLALCHEMY_DATABASE_URI"]
+)
+
 
 # ==========================================
 # Import Routes
 # ==========================================
-from routes import *
 
+from routes import *
 
 
 # ==========================================
 # Run App
 # ==========================================
+
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
+
+    port = int(
+        os.environ.get(
+            "PORT",
+            5000
+        )
+    )
 
     app.run(
         host="0.0.0.0",
