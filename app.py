@@ -111,10 +111,63 @@ migrate = Migrate(
     db
 )
 
+# ==========================================
+# Database
+# ==========================================
+
+db.init_app(app)
+
+migrate = Migrate(
+    app,
+    db
+)
+
 
 with app.app_context():
+
     db.create_all()
 
+    # ==========================================
+    # 🔧 Update existing Product table
+    # Add new columns if they don't exist
+    # ==========================================
+
+    from sqlalchemy import inspect, text
+
+    inspector = inspect(db.engine)
+
+    product_columns = {
+        column["name"]
+        for column in inspector.get_columns("product")
+    }
+
+    # Add cost_price if missing
+    if "cost_price" not in product_columns:
+
+        with db.engine.begin() as connection:
+
+            connection.execute(
+                text(
+                    """
+                    ALTER TABLE product
+                    ADD COLUMN cost_price FLOAT DEFAULT 0
+                    """
+                )
+            )
+
+    # Add sale_price if missing
+    if "sale_price" not in product_columns:
+
+        with db.engine.begin() as connection:
+
+            connection.execute(
+                text(
+                    """
+                    ALTER TABLE product
+                    ADD COLUMN sale_price FLOAT
+                    """
+                )
+            )
 
 # ==========================================
 # Flask Login
