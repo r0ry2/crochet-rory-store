@@ -1,4 +1,3 @@
-
 import os
 from dotenv import load_dotenv
 
@@ -23,6 +22,7 @@ from models import (
     Coupon,
     Notification
 )
+
 
 # ==========================================
 # 🔎 DEBUG - CHECK LOADED PRODUCT MODEL
@@ -61,6 +61,10 @@ babel = Babel(
 )
 
 
+# ==========================================
+# Context Processor
+# ==========================================
+
 @app.context_processor
 def inject_locale():
     return {
@@ -77,7 +81,9 @@ app.config["SECRET_KEY"] = os.getenv(
     "supersecretkey"
 )
 
+
 database_url = os.getenv("DATABASE_URL")
+
 
 if database_url:
 
@@ -119,12 +125,32 @@ migrate = Migrate(
 # ==========================================
 # 🔧 Update Existing Product Table
 # ==========================================
+#
+# This checks the existing database and adds
+# missing Product columns.
+#
+# IMPORTANT:
+# It does NOT delete any existing data.
+# ==========================================
 
 with app.app_context():
 
+    from sqlalchemy import inspect, text
+
+    # ------------------------------------------
+    # Create tables that don't exist
+    # ------------------------------------------
+    #
+    # We keep this because the project may use
+    # a fresh database.
+    #
+    # ------------------------------------------
+
     db.create_all()
 
-    from sqlalchemy import inspect, text
+    # ------------------------------------------
+    # Read current product columns
+    # ------------------------------------------
 
     inspector = inspect(db.engine)
 
@@ -133,43 +159,181 @@ with app.app_context():
         for column in inspector.get_columns("product")
     }
 
-    # ------------------------------------------
-    # Add cost_price if missing
-    # ------------------------------------------
+    print(
+        "🔎 PRODUCT DATABASE COLUMNS:",
+        sorted(product_columns)
+    )
+
+    # ==========================================
+    # Add is_customizable
+    # ==========================================
+
+    if "is_customizable" not in product_columns:
+
+        try:
+
+            with db.engine.begin() as connection:
+
+                connection.execute(
+                    text(
+                        """
+                        ALTER TABLE product
+                        ADD COLUMN is_customizable
+                        BOOLEAN NOT NULL DEFAULT FALSE
+                        """
+                    )
+                )
+
+            print(
+                "✅ Added is_customizable column"
+            )
+
+        except Exception as e:
+
+            print(
+                "⚠️ Could not add is_customizable:",
+                e
+            )
+
+    # ==========================================
+    # Add purchase_count
+    # ==========================================
+
+    if "purchase_count" not in product_columns:
+
+        try:
+
+            with db.engine.begin() as connection:
+
+                connection.execute(
+                    text(
+                        """
+                        ALTER TABLE product
+                        ADD COLUMN purchase_count
+                        INTEGER NOT NULL DEFAULT 0
+                        """
+                    )
+                )
+
+            print(
+                "✅ Added purchase_count column"
+            )
+
+        except Exception as e:
+
+            print(
+                "⚠️ Could not add purchase_count:",
+                e
+            )
+
+    # ==========================================
+    # Add created_at
+    # ==========================================
+
+    if "created_at" not in product_columns:
+
+        try:
+
+            with db.engine.begin() as connection:
+
+                connection.execute(
+                    text(
+                        """
+                        ALTER TABLE product
+                        ADD COLUMN created_at
+                        TIMESTAMP
+                        """
+                    )
+                )
+
+            print(
+                "✅ Added created_at column"
+            )
+
+        except Exception as e:
+
+            print(
+                "⚠️ Could not add created_at:",
+                e
+            )
+
+    # ==========================================
+    # Add cost_price
+    # ==========================================
 
     if "cost_price" not in product_columns:
 
-        with db.engine.begin() as connection:
+        try:
 
-            connection.execute(
-                text(
-                    """
-                    ALTER TABLE product
-                    ADD COLUMN cost_price FLOAT DEFAULT 0
-                    """
+            with db.engine.begin() as connection:
+
+                connection.execute(
+                    text(
+                        """
+                        ALTER TABLE product
+                        ADD COLUMN cost_price
+                        FLOAT DEFAULT 0
+                        """
+                    )
                 )
+
+            print(
+                "✅ Added cost_price column"
             )
 
-            print("✅ Added cost_price column")
+        except Exception as e:
 
-    # ------------------------------------------
-    # Add sale_price if missing
-    # ------------------------------------------
+            print(
+                "⚠️ Could not add cost_price:",
+                e
+            )
+
+    # ==========================================
+    # Add sale_price
+    # ==========================================
 
     if "sale_price" not in product_columns:
 
-        with db.engine.begin() as connection:
+        try:
 
-            connection.execute(
-                text(
-                    """
-                    ALTER TABLE product
-                    ADD COLUMN sale_price FLOAT
-                    """
+            with db.engine.begin() as connection:
+
+                connection.execute(
+                    text(
+                        """
+                        ALTER TABLE product
+                        ADD COLUMN sale_price
+                        FLOAT
+                        """
+                    )
                 )
+
+            print(
+                "✅ Added sale_price column"
             )
 
-            print("✅ Added sale_price column")
+        except Exception as e:
+
+            print(
+                "⚠️ Could not add sale_price:",
+                e
+            )
+
+    # ==========================================
+    # 🔄 Re-check Product columns
+    # ==========================================
+
+    inspector = inspect(db.engine)
+
+    final_product_columns = {
+        column["name"]
+        for column in inspector.get_columns("product")
+    }
+
+    print(
+        "✅ FINAL PRODUCT DATABASE COLUMNS:",
+        sorted(final_product_columns)
+    )
 
 
 # ==========================================
