@@ -1,12 +1,12 @@
+
 import os
 from dotenv import load_dotenv
 
-from flask import Flask
+from flask import Flask, session
 from flask_mail import Mail
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_babel import Babel
-from flask import session
 
 from config import Config
 
@@ -32,11 +32,13 @@ print("🔥 MODELS FILE:", Product.__module__)
 print("🔥 PRODUCT COLUMNS:")
 print(Product.__table__.columns.keys())
 
+
 # ==========================================
 # Load Environment Variables
 # ==========================================
 
 load_dotenv()
+
 
 # ==========================================
 # Create Flask App
@@ -67,7 +69,7 @@ def inject_locale():
 
 
 # ==========================================
-# Secret Key & Database
+# 🔐 Secret Key & Database
 # ==========================================
 
 app.config["SECRET_KEY"] = os.getenv(
@@ -78,6 +80,7 @@ app.config["SECRET_KEY"] = os.getenv(
 database_url = os.getenv("DATABASE_URL")
 
 if database_url:
+
     database_url = database_url.replace(
         "postgres://",
         "postgresql://",
@@ -87,6 +90,7 @@ if database_url:
     app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 
 else:
+
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.sqlite"
 
 
@@ -94,14 +98,14 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
 # ==========================================
-# Mail
+# 📧 Mail
 # ==========================================
 
 mail = Mail(app)
 
 
 # ==========================================
-# Database
+# 🗄️ Database
 # ==========================================
 
 db.init_app(app)
@@ -111,26 +115,14 @@ migrate = Migrate(
     db
 )
 
+
 # ==========================================
-# Database
+# 🔧 Update Existing Product Table
 # ==========================================
-
-db.init_app(app)
-
-migrate = Migrate(
-    app,
-    db
-)
-
 
 with app.app_context():
 
     db.create_all()
-
-    # ==========================================
-    # 🔧 Update existing Product table
-    # Add new columns if they don't exist
-    # ==========================================
 
     from sqlalchemy import inspect, text
 
@@ -141,7 +133,10 @@ with app.app_context():
         for column in inspector.get_columns("product")
     }
 
+    # ------------------------------------------
     # Add cost_price if missing
+    # ------------------------------------------
+
     if "cost_price" not in product_columns:
 
         with db.engine.begin() as connection:
@@ -155,7 +150,12 @@ with app.app_context():
                 )
             )
 
+            print("✅ Added cost_price column")
+
+    # ------------------------------------------
     # Add sale_price if missing
+    # ------------------------------------------
+
     if "sale_price" not in product_columns:
 
         with db.engine.begin() as connection:
@@ -169,8 +169,11 @@ with app.app_context():
                 )
             )
 
+            print("✅ Added sale_price column")
+
+
 # ==========================================
-# Flask Login
+# 🔑 Flask Login
 # ==========================================
 
 login_manager = LoginManager()
@@ -191,7 +194,7 @@ def load_user(user_id):
 
 
 # ==========================================
-# Print Database
+# 📁 Print Database
 # ==========================================
 
 print(

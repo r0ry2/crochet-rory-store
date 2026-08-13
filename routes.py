@@ -11,7 +11,6 @@ from flask import (
 
 
 from app import app, db, mail
-import resend
 
 from models import (
     Product,
@@ -62,31 +61,7 @@ import random
 from sqlalchemy import func
 from flask_login import login_user, logout_user, login_required, current_user
 
-RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
 
-if RESEND_API_KEY:
-    resend.api_key = RESEND_API_KEY
-
-
-def send_email_via_resend(msg):
-    if not RESEND_API_KEY:
-        print("⚠️ RESEND_API_KEY is not configured.")
-        return False
-
-    try:
-        resend.Emails.send({
-            "from": "Crochet Rory <onboarding@resend.dev>",
-            "to": msg.recipients,
-            "subject": msg.subject,
-            "text": msg.body or ""
-        })
-
-        print("✅ Email sent successfully with Resend.")
-        return True
-
-    except Exception as e:
-        print("❌ Resend Email Error:", e)
-        return False
 
 @app.route("/language/<lang>")
 def change_language(lang):
@@ -1350,6 +1325,7 @@ def index():
         verify_form=verify_form,
         login_error=login_error
     )
+
 # ==========================================
 # 👤 REGISTER
 # ==========================================
@@ -1364,20 +1340,28 @@ def register():
         username = form.username.data.strip()
         email = form.email.data.strip().lower()
 
+        # ==========================================
         # التحقق من البريد
+        # ==========================================
+
         existing_email = User.query.filter(
             func.lower(User.email) == email
         ).first()
 
         if existing_email:
 
-            flash("⚠️ Email already registered!", "register_warning")
+            flash(
+                "⚠️ Email already registered!",
+                "register_warning"
+            )
 
             login_form = LoginForm()
             verify_form = VerifyCodeForm()
 
             products = Product.query.filter(
-                Product.publish_location.in_(["both", "home_only"])
+                Product.publish_location.in_(
+                    ["both", "home_only"]
+                )
             ).all()
 
             return render_template(
@@ -1389,20 +1373,28 @@ def register():
                 show_register_popup=True
             )
 
+        # ==========================================
         # التحقق من اسم المستخدم
+        # ==========================================
+
         existing_username = User.query.filter(
             func.lower(User.username) == username.lower()
         ).first()
 
         if existing_username:
 
-            flash("⚠️ Username already exists!", "register_warning")
+            flash(
+                "⚠️ Username already exists!",
+                "register_warning"
+            )
 
             login_form = LoginForm()
             verify_form = VerifyCodeForm()
 
             products = Product.query.filter(
-                Product.publish_location.in_(["both", "home_only"])
+                Product.publish_location.in_(
+                    ["both", "home_only"]
+                )
             ).all()
 
             return render_template(
@@ -1414,7 +1406,20 @@ def register():
                 show_register_popup=True
             )
 
-        code = str(random.randint(100000, 999999))
+        # ==========================================
+        # إنشاء كود التحقق
+        # ==========================================
+
+        code = str(
+            random.randint(
+                100000,
+                999999
+            )
+        )
+
+        # ==========================================
+        # إنشاء المستخدم
+        # ==========================================
 
         new_user = User(
             username=username,
@@ -1422,30 +1427,62 @@ def register():
             phone=form.phone.data
         )
 
-        new_user.set_password(form.password.data)
+        new_user.set_password(
+            form.password.data
+        )
+
+        # ==========================================
+        # تحديد الأدمن
+        # ==========================================
 
         if email == "admin@store.com":
             new_user.role = "admin"
 
+        # ==========================================
+        # إعداد التحقق
+        # ==========================================
+
         new_user.confirmed = False
+
         new_user.verification_code = code
+
         new_user.verification_expiry = (
-            datetime.utcnow() + timedelta(minutes=10)
+            datetime.utcnow()
+            + timedelta(minutes=10)
         )
+
+        # ==========================================
+        # حفظ المستخدم في قاعدة البيانات
+        # ==========================================
 
         db.session.add(new_user)
         db.session.commit()
 
+        print(
+            f"✅ New user saved: {new_user.email}"
+        )
+
+        # ==========================================
+        # حفظ البريد في Session
+        # ==========================================
+
         session["verify_email"] = new_user.email
 
+        # ==========================================
+        # إرسال رسالة الترحيب وكود التحقق
+        # Flask-Mail فقط
+        # ==========================================
+
         try:
+
             msg = MailMessage(
                 subject="Verify your Crochet Rory account",
-                recipients=[new_user.email]
+                recipients=[
+                    new_user.email
+                ]
             )
 
-            msg.body = f"""
-Hi {new_user.username},
+            msg.body = f"""Hi {new_user.username},
 
 Welcome to Crochet Rory 💖
 
@@ -1462,18 +1499,41 @@ Please enter this code to activate your account.
 Crochet Rory Team
 """
 
-            send_email_via_resend(msg)
+            mail.send(msg)
+
+            print(
+                f"✅ Verification email sent to {new_user.email}"
+            )
 
         except Exception as e:
-            print("Mail Error:", e)
 
-        return redirect(url_for("index", verify=1))
+            print(
+                "❌ Mail Error:",
+                e
+            )
+
+        # ==========================================
+        # الانتقال إلى نافذة إدخال الكود
+        # ==========================================
+
+        return redirect(
+            url_for(
+                "index",
+                verify=1
+            )
+        )
+
+    # ==========================================
+    # GET / Validation Failed
+    # ==========================================
 
     login_form = LoginForm()
     verify_form = VerifyCodeForm()
 
     products = Product.query.filter(
-        Product.publish_location.in_(["both", "home_only"])
+        Product.publish_location.in_(
+            ["both", "home_only"]
+        )
     ).all()
 
     return render_template(
@@ -1483,34 +1543,69 @@ Crochet Rory Team
         register_form=form,
         verify_form=verify_form
     )
-    
+
+
+# ==========================================
+# 🔑 FORGOT PASSWORD
+# ==========================================
+
 @app.route("/forgot_password", methods=["POST"])
 def forgot_password():
 
-    email = request.form.get("email")
+    email = request.form.get(
+        "email",
+        ""
+    ).strip().lower()
 
-    user = User.query.filter_by(email=email).first()
+    user = User.query.filter(
+        func.lower(User.email) == email
+    ).first()
 
     if not user:
-        flash("❌ Email not found.", "danger")
-        return redirect(url_for("index"))
 
-    code = str(random.randint(100000, 999999))
+        flash(
+            "❌ Email not found.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("index")
+        )
+
+    # ==========================================
+    # إنشاء كود إعادة تعيين كلمة المرور
+    # ==========================================
+
+    code = str(
+        random.randint(
+            100000,
+            999999
+        )
+    )
 
     user.verification_code = code
-    user.verification_expiry = datetime.utcnow() + timedelta(minutes=10)
+
+    user.verification_expiry = (
+        datetime.utcnow()
+        + timedelta(minutes=10)
+    )
 
     db.session.commit()
+
+    # ==========================================
+    # إرسال البريد باستخدام Flask-Mail فقط
+    # ==========================================
 
     try:
 
         msg = MailMessage(
             subject="Reset your Crochet Rory password",
-            recipients=[user.email]
+            recipients=[
+                user.email
+            ]
         )
 
-        msg.body = f"""
-Hi {user.username},
+        msg.body = f"""Hi {user.username},
 
 You requested to reset your password.
 
@@ -1523,16 +1618,36 @@ This code will expire in 10 minutes.
 Crochet Rory Team
 """
 
-        send_email_via_resend(msg)
+        mail.send(msg)
+
+        print(
+            f"✅ Password reset email sent to {user.email}"
+        )
 
     except Exception as e:
-        print("Mail Error:", e)
+
+        print(
+            "❌ Mail Error:",
+            e
+        )
+
+    # ==========================================
+    # حفظ البريد في Session
+    # ==========================================
 
     session["reset_email"] = user.email
 
-    flash("📧 Verification code sent.", "success")
+    flash(
+        "📧 Verification code sent.",
+        "success"
+    )
 
-    return redirect(url_for("index", verify=1))
+    return redirect(
+        url_for(
+            "index",
+            verify=1
+        )
+    )
 
 @app.route("/verify_reset_code", methods=["POST"])
 def verify_reset_code():
@@ -1575,42 +1690,107 @@ def verify_email():
     if not email:
         return redirect(url_for("index"))
 
-    user = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(
+        email=email
+    ).first()
 
     if not user:
-        flash("User not found.", "danger")
-        return redirect(url_for("index"))
+        flash(
+            "User not found.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("index")
+        )
 
     if form.validate_on_submit():
 
-        # انتهت صلاحية الكود
-        if datetime.utcnow() > user.verification_expiry:
-            flash("Verification code has expired.", "danger")
-            return redirect(url_for("index"))
+        # ==========================================
+        # ⏰ التحقق من انتهاء صلاحية الكود
+        # ==========================================
 
-        # الكود خطأ
-        if form.code.data != user.verification_code:
-            flash("Invalid verification code.", "danger")
-            return redirect(url_for("verify_email"))
+        if (
+            not user.verification_expiry
+            or datetime.utcnow() > user.verification_expiry
+        ):
 
-        # نجاح التحقق
+            flash(
+                "Verification code has expired.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("verify_email")
+            )
+
+        # ==========================================
+        # 🔢 التحقق من الكود
+        # ==========================================
+
+        if (
+            form.code.data.strip()
+            != user.verification_code
+        ):
+
+            flash(
+                "Invalid verification code.",
+                "danger"
+            )
+
+            return redirect(
+                url_for("verify_email")
+            )
+
+        # ==========================================
+        # ✅ نجاح التحقق
+        # ==========================================
+
         user.confirmed = True
+
         user.verification_code = None
+
         user.verification_expiry = None
 
         db.session.commit()
 
-        session.pop("verify_email", None)
+        # ==========================================
+        # 🔐 تسجيل دخول العميل تلقائيًا
+        # ==========================================
 
-        flash("🎉 Your account has been verified successfully!", "success")
+        login_user(user)
 
-        return redirect(url_for("index"))
+        # حذف Session التحقق
+        session.pop(
+            "verify_email",
+            None
+        )
+
+        flash(
+            "🎉 Your account has been verified successfully!",
+            "success"
+        )
+
+        # ==========================================
+        # 🏠 دخول العميل للموقع
+        # ==========================================
+
+        return redirect(
+            url_for("home_logged")
+        )
+
+    # ==========================================
+    # GET / Validation Failed
+    # ==========================================
 
     login_form = LoginForm()
+
     register_form = RegisterForm()
 
     products = Product.query.filter(
-        Product.publish_location.in_(["both", "home_only"])
+        Product.publish_location.in_(
+            ["both", "home_only"]
+        )
     ).all()
 
     return render_template(
@@ -1621,7 +1801,6 @@ def verify_email():
         verify_form=form,
         show_verify_popup=True
     )
-
 @app.route("/reset_password", methods=["POST"])
 def reset_password():
 
@@ -1638,25 +1817,78 @@ def reset_password():
         return redirect(url_for("index"))
 
     password = request.form.get("password")
-    confirm = request.form.get("confirm_password")
+    confirm_password = request.form.get("confirm_password")
 
-    if password != confirm:
-        flash("❌ Passwords do not match.", "danger")
-        return redirect(url_for("index", reset=1))
+    # ==========================================
+    # التحقق من كلمات المرور
+    # ==========================================
+
+    if not password or not confirm_password:
+
+        flash(
+            "❌ Please enter both passwords.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("index", reset=1)
+        )
+
+    if password != confirm_password:
+
+        flash(
+            "❌ Passwords do not match.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("index", reset=1)
+        )
+
+    # ==========================================
+    # تغيير كلمة المرور
+    # ==========================================
 
     user.set_password(password)
+
+    # ==========================================
+    # تأكيد الحساب
+    # بما أن المستخدم أدخل كود إعادة التعيين الصحيح
+    # ==========================================
+
+    user.confirmed = True
+
+    # ==========================================
+    # حذف بيانات كود إعادة التعيين
+    # ==========================================
 
     user.verification_code = None
     user.verification_expiry = None
 
+    # ==========================================
+    # حفظ التغييرات
+    # ==========================================
+
     db.session.commit()
+
+    # ==========================================
+    # حذف Session الخاصة بإعادة التعيين
+    # ==========================================
 
     session.pop("reset_email", None)
 
-    flash("✅ Password changed successfully. You can now login.", "success")
+    # ==========================================
+    # رسالة نجاح
+    # ==========================================
 
-    return redirect(url_for("index"))
+    flash(
+        "✅ Password changed successfully. You can now login.",
+        "success"
+    )
 
+    return redirect(
+        url_for("index")
+    )
 @app.route("/change_password", methods=["POST"])
 @login_required
 def change_password():
