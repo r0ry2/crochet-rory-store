@@ -278,6 +278,94 @@
 
 }
 
+
+/* =====================================================
+   WHATSAPP BUTTON
+===================================================== */
+
+.whatsapp-card{
+
+    background:#fff;
+
+    border-radius:28px;
+
+    padding:35px;
+
+    box-shadow:var(--shadow);
+
+    margin-bottom:25px;
+
+    text-align:center;
+
+    border:2px solid #d8f3df;
+
+}
+
+.whatsapp-card h2{
+
+    color:#444;
+
+    margin-bottom:10px;
+
+}
+
+.whatsapp-card p{
+
+    color:#777;
+
+    line-height:1.8;
+
+    margin-bottom:22px;
+
+}
+
+.whatsapp-button{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:10px;
+
+    width:100%;
+
+    box-sizing:border-box;
+
+    padding:17px 25px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:#25D366;
+
+    color:white;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    text-decoration:none;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.whatsapp-button:hover{
+
+    background:#20b957;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 8px 20px rgba(37,211,102,.25);
+
+}
+
+
 /* ===========================
         Mobile
 =========================== */
@@ -294,7 +382,8 @@
     .order-info-card,
     .customer-card,
     .products-card,
-    .summary-card{
+    .summary-card,
+    .whatsapp-card{
 
         padding:22px;
 
@@ -339,7 +428,14 @@
 }
 
 </style>
+
+
 <div class="checkout-page">
+
+
+    <!-- =====================================================
+                    SUCCESS
+    ===================================================== -->
 
     <div class="success-card">
 
@@ -348,34 +444,50 @@
         </div>
 
         <h1>
-            {{ "تم استلام طلبك بنجاح 🎉" if current_lang=="ar"
+
+            {{ "تم استلام طلبك بنجاح 🎉"
+            if current_lang=="ar"
             else "Order Confirmed 🎉" }}
+
         </h1>
 
         <p>
-            {{ "شكراً لتسوقك من Crochet Rory Store، يمكنك متابعة حالة طلبك من حسابك."
+
+            {{ "شكراً لتسوقك من Crochet Rory Store. لإتمام تأكيد الطلب، تواصلي معنا عبر واتساب."
             if current_lang=="ar"
-            else "Thank you for shopping with Crochet Rory Store. You can track your order anytime from your account." }}
+            else "Thank you for shopping with Crochet Rory Store. Please contact us on WhatsApp to confirm your order." }}
+
         </p>
 
     </div>
 
-    <!-- معلومات الطلب -->
+
+    <!-- =====================================================
+                    ORDER INFORMATION
+    ===================================================== -->
 
     <div class="order-info-card">
 
         <h2>
-            {{ "معلومات الطلب" if current_lang=="ar"
+
+            {{ "معلومات الطلب"
+            if current_lang=="ar"
             else "Order Information" }}
+
         </h2>
 
+
         <div class="order-grid">
+
 
             <div class="order-item">
 
                 <small>
-                    {{ "رقم الطلب" if current_lang=="ar"
+
+                    {{ "رقم الطلب"
+                    if current_lang=="ar"
                     else "Order ID" }}
+
                 </small>
 
                 <h3 id="order-id">
@@ -384,11 +496,15 @@
 
             </div>
 
+
             <div class="order-item">
 
                 <small>
-                    {{ "تاريخ الطلب" if current_lang=="ar"
+
+                    {{ "تاريخ الطلب"
+                    if current_lang=="ar"
                     else "Order Date" }}
+
                 </small>
 
                 <h3 id="order-date">
@@ -397,44 +513,59 @@
 
             </div>
 
+
             <div class="order-item">
 
                 <small>
-                    {{ "حالة الطلب" if current_lang=="ar"
+
+                    {{ "حالة الطلب"
+                    if current_lang=="ar"
                     else "Order Status" }}
+
                 </small>
 
                 <h3 id="order-status">
 
-                    {{ "قيد المراجعة" if current_lang=="ar"
+                    {{ "قيد المراجعة"
+                    if current_lang=="ar"
                     else "Pending" }}
 
                 </h3>
 
             </div>
 
+
         </div>
 
     </div>
 
-    <!-- بيانات العميل -->
+
+    <!-- =====================================================
+                    CUSTOMER INFORMATION
+    ===================================================== -->
 
     <div class="customer-card">
 
         <h2>
 
-            {{ "بيانات العميل" if current_lang=="ar"
+            {{ "بيانات العميل"
+            if current_lang=="ar"
             else "Customer Information" }}
 
         </h2>
 
+
         <div class="customer-grid">
+
 
             <div class="customer-item">
 
                 <small>
-                    {{ "الاسم" if current_lang=="ar"
+
+                    {{ "الاسم"
+                    if current_lang=="ar"
                     else "Full Name" }}
+
                 </small>
 
                 <h3 id="customer-name">
@@ -443,11 +574,15 @@
 
             </div>
 
+
             <div class="customer-item">
 
                 <small>
-                    {{ "البريد الإلكتروني" if current_lang=="ar"
+
+                    {{ "البريد الإلكتروني"
+                    if current_lang=="ar"
                     else "Email Address" }}
+
                 </small>
 
                 <h3 id="customer-email">
@@ -456,11 +591,15 @@
 
             </div>
 
+
             <div class="customer-item customer-address">
 
                 <small>
-                    {{ "عنوان التوصيل" if current_lang=="ar"
+
+                    {{ "عنوان التوصيل"
+                    if current_lang=="ar"
                     else "Delivery Address" }}
+
                 </small>
 
                 <h3 id="customer-address">
@@ -469,20 +608,26 @@
 
             </div>
 
+
         </div>
 
     </div>
 
-    <!-- المنتجات -->
+
+    <!-- =====================================================
+                    PRODUCTS
+    ===================================================== -->
 
     <div class="products-card">
 
         <h2>
 
-            {{ "المنتجات" if current_lang=="ar"
+            {{ "المنتجات"
+            if current_lang=="ar"
             else "Ordered Products" }}
 
         </h2>
+
 
         <div id="order-items">
 
@@ -490,22 +635,28 @@
 
     </div>
 
-    <!-- الملخص -->
+
+    <!-- =====================================================
+                    SUMMARY
+    ===================================================== -->
 
     <div class="summary-card">
 
         <h2>
 
-            {{ "ملخص الطلب" if current_lang=="ar"
+            {{ "ملخص الطلب"
+            if current_lang=="ar"
             else "Order Summary" }}
 
         </h2>
+
 
         <div class="summary-row">
 
             <span>
 
-                {{ "المجموع الفرعي" if current_lang=="ar"
+                {{ "المجموع الفرعي"
+                if current_lang=="ar"
                 else "Subtotal" }}
 
             </span>
@@ -518,31 +669,37 @@
 
         </div>
 
+
         <div class="summary-row">
 
             <span>
 
-                {{ "الشحن" if current_lang=="ar"
+                {{ "الشحن"
+                if current_lang=="ar"
                 else "Shipping" }}
 
             </span>
 
             <span>
 
-                {{ "مجاني" if current_lang=="ar"
+                {{ "مجاني"
+                if current_lang=="ar"
                 else "Free" }}
 
             </span>
 
         </div>
 
+
         <hr>
+
 
         <div class="summary-row total-row">
 
             <span>
 
-                {{ "الإجمالي" if current_lang=="ar"
+                {{ "الإجمالي"
+                if current_lang=="ar"
                 else "Total" }}
 
             </span>
@@ -557,134 +714,601 @@
 
     </div>
 
+
+    <!-- =====================================================
+                    WHATSAPP
+    ===================================================== -->
+
+    <div class="whatsapp-card">
+
+        <h2>
+
+            {{ "💬 تأكيد الطلب عبر واتساب"
+            if current_lang=="ar"
+            else "💬 Confirm Your Order via WhatsApp" }}
+
+        </h2>
+
+
+        <p>
+
+            {{ "اضغطي على الزر لإرسال تفاصيل طلبك لنا مباشرة عبر واتساب، وسنتواصل معك لتأكيد الطلب وطريقة الدفع."
+            if current_lang=="ar"
+            else "Click the button below to send your order details to us on WhatsApp. We will contact you to confirm your order and payment method." }}
+
+        </p>
+
+
+        <a
+            href="#"
+            id="whatsapp-button"
+            class="whatsapp-button"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+
+            💬
+
+            {{ "تأكيد الطلب عبر واتساب"
+            if current_lang=="ar"
+            else "Confirm Order via WhatsApp" }}
+
+        </a>
+
+    </div>
+
+
 </div>
 
-<script>
-    async function loadOrderDetails() {
+<!-- ===========================
+     CONTINUE SHOPPING
+=========================== -->
 
-    const params = new URLSearchParams(window.location.search);
-    const orderId = params.get("id");
+<div style="
+    text-align:center;
+    margin:30px 0 60px;
+">
+
+    <a
+       href="{{ url_for('products_page') }}"
+        style="
+            display:inline-block;
+            padding:15px 35px;
+            background:#d88ea4;
+            color:white;
+            text-decoration:none;
+            border-radius:15px;
+            font-size:16px;
+            font-weight:bold;
+            transition:.3s;
+        "
+        onmouseover="this.style.background='#c76f89';"
+        onmouseout="this.style.background='#d88ea4';"
+    >
+
+        🛍️
+        {{ "أكمل التسوق" if current_lang=="ar"
+        else "Continue Shopping" }}
+
+    </a>
+
+</div>
+<script>
+
+async function loadOrderDetails() {
+
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const orderId =
+        params.get("id");
+
 
     if (!orderId) {
-        alert("Order not found");
+
+        alert(
+            "{{ 'لم يتم العثور على الطلب.' if current_lang=='ar' else 'Order not found.' }}"
+        );
+
         return;
-    }
-
-    const response = await fetch(`/api/order/${orderId}`);
-    const data = await response.json();
-
-    if (data.error) {
-        alert(data.error);
-        return;
-    }
-
-    // ==========================
-    // معلومات الطلب
-    // ==========================
-
-    document.getElementById("order-id").textContent =
-        "#" + data.id;
-
-    document.getElementById("order-date").textContent =
-        data.created_at || "--";
-
-    let status = data.status || "--";
-
-    if ("{{ current_lang }}" === "ar") {
-
-        if (status === "Pending")
-            status = "قيد المراجعة";
-
-        else if (status === "Processing")
-            status = "جاري التجهيز";
-
-        else if (status === "Shipped")
-            status = "تم الشحن";
-
-        else if (status === "Delivered")
-            status = "تم التسليم";
-
-        else if (status === "Cancelled")
-            status = "تم الإلغاء";
 
     }
 
-    document.getElementById("order-status").textContent = status;
 
-    // ==========================
-    // بيانات العميل
-    // ==========================
+    try {
 
-    document.getElementById("customer-name").textContent =
-        data.customer_name || "--";
 
-    document.getElementById("customer-email").textContent =
-        data.customer_email || "--";
+        const response =
+            await fetch(
+                `/api/order/${orderId}`
+            );
 
-    document.getElementById("customer-address").textContent =
-        data.address || "--";
 
-    // ==========================
-    // الإجمالي
-    // ==========================
+        const data =
+            await response.json();
 
-    document.getElementById("subtotal").textContent =
-        Number(data.total).toFixed(2) + " {{ 'ر.س' if current_lang=='ar' else 'SAR' }}";
 
-    document.getElementById("total").textContent =
-        Number(data.total).toFixed(2) + " {{ 'ر.س' if current_lang=='ar' else 'SAR' }}";
+        if (
+            !response.ok ||
+            data.error
+        ) {
 
-    // ==========================
-    // المنتجات
-    // ==========================
+            alert(
+                data.error ||
+                "{{ 'حدث خطأ أثناء تحميل الطلب.' if current_lang=='ar' else 'Could not load the order.' }}"
+            );
 
-    const itemsBox = document.getElementById("order-items");
-    itemsBox.innerHTML = "";
+            return;
 
-    data.items.forEach(item => {
+        }
 
-        itemsBox.innerHTML += `
 
-        <div class="order-product">
+        /* =====================================================
+                        ORDER INFORMATION
+        ===================================================== */
 
-            <img
-                src="/static/images/${item.image}"
-                alt="${item.name}"
-                onerror="this.src='/static/images/default.png'">
 
-            <div class="product-details">
+        document.getElementById(
+            "order-id"
+        ).textContent =
+            "#" + data.id;
 
-                <h3>${item.name}</h3>
 
-                <p>
-                    {{ "الكمية" if current_lang=="ar" else "Quantity" }}:
-                    ${item.quantity}
-                </p>
+        document.getElementById(
+            "order-date"
+        ).textContent =
+            data.created_at || "--";
 
-                <p>
-                    {{ "السعر" if current_lang=="ar" else "Price" }}:
-                    ${Number(item.price).toFixed(2)}
-                    {{ "ر.س" if current_lang=="ar" else "SAR" }}
-                </p>
 
-            </div>
+        let status =
+            data.status || "--";
 
-            <div class="product-price">
 
-                ${(Number(item.price) * Number(item.quantity)).toFixed(2)}
-                {{ "ر.س" if current_lang=="ar" else "SAR" }}
+        if (
+            "{{ current_lang }}"
+            === "ar"
+        ) {
 
-            </div>
 
-        </div>
+            if (
+                status === "Pending"
+            )
+                status =
+                    "قيد المراجعة";
 
-        `;
 
-    });
+            else if (
+                status === "Processing"
+            )
+                status =
+                    "جاري التجهيز";
+
+
+            else if (
+                status === "Shipped"
+            )
+                status =
+                    "تم الشحن";
+
+
+            else if (
+                status === "Delivered"
+            )
+                status =
+                    "تم التسليم";
+
+
+            else if (
+                status === "Cancelled"
+            )
+                status =
+                    "تم الإلغاء";
+
+        }
+
+
+        document.getElementById(
+            "order-status"
+        ).textContent =
+            status;
+
+
+        /* =====================================================
+                        CUSTOMER
+        ===================================================== */
+
+
+        const customerName =
+            data.customer_name || "--";
+
+
+        const customerEmail =
+            data.customer_email || "--";
+
+
+        const customerAddress =
+            data.address || "--";
+
+
+        document.getElementById(
+            "customer-name"
+        ).textContent =
+            customerName;
+
+
+        document.getElementById(
+            "customer-email"
+        ).textContent =
+            customerEmail;
+
+
+        document.getElementById(
+            "customer-address"
+        ).textContent =
+            customerAddress;
+
+
+        /* =====================================================
+                        TOTAL
+        ===================================================== */
+
+
+        const total =
+            Number(data.total || 0);
+
+
+        const currency =
+            "{{ 'ر.س' if current_lang=='ar' else 'SAR' }}";
+
+
+        document.getElementById(
+            "subtotal"
+        ).textContent =
+            total.toFixed(2)
+            + " "
+            + currency;
+
+
+        document.getElementById(
+            "total"
+        ).textContent =
+            total.toFixed(2)
+            + " "
+            + currency;
+
+
+        /* =====================================================
+                        PRODUCTS
+        ===================================================== */
+
+
+        const itemsBox =
+            document.getElementById(
+                "order-items"
+            );
+
+
+        itemsBox.innerHTML = "";
+
+
+        if (
+            data.items &&
+            data.items.length
+        ) {
+
+
+            data.items.forEach(
+                item => {
+
+
+                    const itemPrice =
+                        Number(
+                            item.price || 0
+                        );
+
+
+                    const quantity =
+                        Number(
+                            item.quantity || 0
+                        );
+
+
+                    const itemTotal =
+                        itemPrice *
+                        quantity;
+
+
+                    itemsBox.innerHTML += `
+
+                        <div class="order-product">
+
+                            <img
+                                src="/static/images/${item.image}"
+                                alt="${item.name}"
+                                onerror="this.src='/static/images/default.png'"
+                            >
+
+                            <div class="product-details">
+
+                                <h3>
+                                    ${item.name}
+                                </h3>
+
+                                <p>
+
+                                    ${
+                                        "{{ 'الكمية' if current_lang=='ar' else 'Quantity' }}"
+                                    }:
+
+                                    ${quantity}
+
+                                </p>
+
+                                <p>
+
+                                    ${
+                                        "{{ 'السعر' if current_lang=='ar' else 'Price' }}"
+                                    }:
+
+                                    ${itemPrice.toFixed(2)}
+
+                                    ${currency}
+
+                                </p>
+
+                            </div>
+
+                            <div class="product-price">
+
+                                ${itemTotal.toFixed(2)}
+                                ${currency}
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+                    WHATSAPP MESSAGE
+        ===================================================== */
+
+
+        let message = "";
+
+
+        if (
+            "{{ current_lang }}"
+            === "ar"
+        ) {
+
+
+            message +=
+                "السلام عليكم 🌷\\n";
+
+
+            message +=
+                "أرغب في تأكيد طلبي من Crochet Rory Store 🧶💕\\n\\n";
+
+
+            message +=
+                "📦 رقم الطلب: #"
+                + data.id
+                + "\\n";
+
+
+            message +=
+                "👤 الاسم: "
+                + customerName
+                + "\\n";
+
+
+            message +=
+                "📍 عنوان التوصيل: "
+                + customerAddress
+                + "\\n\\n";
+
+
+            message +=
+                "🛍️ المنتجات:\\n";
+
+
+            if (
+                data.items &&
+                data.items.length
+            ) {
+
+
+                data.items.forEach(
+                    item => {
+
+
+                        const price =
+                            Number(
+                                item.price || 0
+                            );
+
+
+                        const quantity =
+                            Number(
+                                item.quantity || 0
+                            );
+
+
+                        const itemTotal =
+                            price *
+                            quantity;
+
+
+                        message +=
+                            "• "
+                            + item.name
+                            + " × "
+                            + quantity
+                            + " — "
+                            + itemTotal.toFixed(2)
+                            + " ر.س\\n";
+
+                    }
+                );
+
+            }
+
+
+            message +=
+                "\\n💰 الإجمالي: "
+                + total.toFixed(2)
+                + " ر.س\\n\\n";
+
+
+            message +=
+                "أرغب في تأكيد الطلب ومعرفة طريقة الدفع. شكرًا 🤍";
+
+
+        } else {
+
+
+            message +=
+                "Hello 🌷\\n";
+
+
+            message +=
+                "I would like to confirm my order from Crochet Rory Store 🧶💕\\n\\n";
+
+
+            message +=
+                "📦 Order ID: #"
+                + data.id
+                + "\\n";
+
+
+            message +=
+                "👤 Name: "
+                + customerName
+                + "\\n";
+
+
+            message +=
+                "📍 Delivery Address: "
+                + customerAddress
+                + "\\n\\n";
+
+
+            message +=
+                "🛍️ Products:\\n";
+
+
+            if (
+                data.items &&
+                data.items.length
+            ) {
+
+
+                data.items.forEach(
+                    item => {
+
+
+                        const price =
+                            Number(
+                                item.price || 0
+                            );
+
+
+                        const quantity =
+                            Number(
+                                item.quantity || 0
+                            );
+
+
+                        const itemTotal =
+                            price *
+                            quantity;
+
+
+                        message +=
+                            "• "
+                            + item.name
+                            + " × "
+                            + quantity
+                            + " — "
+                            + itemTotal.toFixed(2)
+                            + " SAR\\n";
+
+                    }
+                );
+
+            }
+
+
+            message +=
+                "\\n💰 Total: "
+                + total.toFixed(2)
+                + " SAR\\n\\n";
+
+
+            message +=
+                "I would like to confirm the order and know the payment method. Thank you 🤍";
+
+        }
+
+
+        /* =====================================================
+                    WHATSAPP LINK
+        ===================================================== */
+
+
+        const whatsappNumber =
+            "966508148477";
+
+
+        const whatsappUrl =
+            "https://wa.me/"
+            + whatsappNumber
+            + "?text="
+            + encodeURIComponent(
+                message
+            );
+
+
+        document.getElementById(
+            "whatsapp-button"
+        ).href =
+            whatsappUrl;
+
+
+    }
+
+
+    catch(error) {
+
+
+        console.error(
+            "Order loading error:",
+            error
+        );
+
+
+        alert(
+            "{{ 'حدث خطأ أثناء تحميل بيانات الطلب.' if current_lang=='ar' else 'An error occurred while loading the order.' }}"
+        );
+
+    }
 
 }
 
+
 loadOrderDetails();
+
 </script>
 
 {% endblock %}

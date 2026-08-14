@@ -499,7 +499,45 @@ body{
 }
 
 
+/* =====================================================
+   PRODUCT PRICE
+===================================================== */
+
 .product-price{
+
+    margin-bottom:15px;
+
+    display:flex;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+    gap:8px;
+
+    line-height:1.6;
+
+}
+
+
+/* ORIGINAL PRICE */
+
+.original-price{
+
+    text-decoration:line-through;
+
+    color:#999;
+
+    font-size:17px;
+
+    font-weight:normal;
+
+}
+
+
+/* SALE PRICE */
+
+.sale-price{
 
     font-size:26px;
 
@@ -507,10 +545,46 @@ body{
 
     color:var(--primary-dark);
 
-    margin-bottom:15px;
+}
+
+
+/* NORMAL PRICE */
+
+.normal-price{
+
+    font-size:26px;
+
+    font-weight:bold;
+
+    color:var(--primary-dark);
 
 }
 
+
+/* DISCOUNT */
+
+.discount-badge{
+
+    display:inline-block;
+
+    background:#ff4d6d;
+
+    color:white;
+
+    font-size:13px;
+
+    font-weight:bold;
+
+    padding:5px 9px;
+
+    border-radius:20px;
+
+}
+
+
+/* =====================================================
+   RATING
+===================================================== */
 
 .rating{
 
@@ -524,14 +598,27 @@ body{
 
 
 /* =====================================================
-   ADD CART
+   ACTION BUTTONS
 ===================================================== */
 
-.add-cart{
+.product-actions{
+
+    display:flex;
+
+    gap:10px;
 
     width:100%;
 
-    padding:15px;
+}
+
+
+/* ADD TO CART */
+
+.add-cart{
+
+    flex:1;
+
+    padding:14px 10px;
 
     border:none;
 
@@ -541,7 +628,7 @@ body{
 
     color:white;
 
-    font-size:16px;
+    font-size:15px;
 
     font-weight:bold;
 
@@ -566,6 +653,57 @@ body{
 
 
 .add-cart:disabled{
+
+    opacity:.7;
+
+    cursor:not-allowed;
+
+    transform:none;
+
+}
+
+
+/* BUY NOW */
+
+.buy-now{
+
+    flex:1;
+
+    padding:14px 10px;
+
+    border:none;
+
+    border-radius:15px;
+
+    background:#333;
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    position:relative;
+
+    z-index:10;
+
+}
+
+
+.buy-now:hover{
+
+    background:#222;
+
+    transform:translateY(-2px);
+
+}
+
+
+.buy-now:disabled{
 
     opacity:.7;
 
@@ -706,7 +844,8 @@ body{
 
     }
 
-    .product-price{
+    .sale-price,
+    .normal-price{
 
         font-size:23px;
 
@@ -816,13 +955,39 @@ body{
 
     }
 
-    .product-price{
+    .sale-price,
+    .normal-price{
 
         font-size:23px;
 
     }
 
-    .add-cart{
+    .original-price{
+
+        font-size:15px;
+
+    }
+
+    .discount-badge{
+
+        font-size:12px;
+
+        padding:4px 8px;
+
+    }
+
+    .product-actions{
+
+        flex-direction:column;
+
+        gap:8px;
+
+    }
+
+    .add-cart,
+    .buy-now{
+
+        width:100%;
 
         padding:14px;
 
@@ -937,7 +1102,6 @@ body{
 
     <div class="category-filter">
 
-
         <button
             type="button"
             class="category-btn active"
@@ -1002,7 +1166,6 @@ body{
 
         </button>
 
-
     </div>
 
 </section>
@@ -1045,15 +1208,12 @@ body{
 
 {% if products %}
 
-
 <section
     class="products-grid"
     id="productsGrid"
 >
 
-
     {% for product in products %}
-
 
     <div
         class="product-card"
@@ -1074,7 +1234,6 @@ body{
         <!-- IMAGE -->
 
         <div class="product-image">
-
 
             {% if product.image %}
 
@@ -1132,7 +1291,6 @@ body{
 
             </form>
 
-
         </div>
 
 
@@ -1155,30 +1313,119 @@ body{
             </div>
 
 
+            <!-- =================================================
+                 PRICE
+            ================================================== -->
+
             <div class="product-price">
 
-                {{ product.price }}
+                {% if product.sale_price is not none and product.sale_price < product.price %}
 
-                {{ "ر.س"
-                   if current_lang == "ar"
-                   else "SAR" }}
+
+                    <!-- ORIGINAL PRICE -->
+
+                    <span class="original-price">
+
+                        {{ "%.2f"|format(product.price) }}
+
+                        {{ "ر.س"
+                           if current_lang == "ar"
+                           else "SAR" }}
+
+                    </span>
+
+
+                    <!-- SALE PRICE -->
+
+                    <span class="sale-price">
+
+                        {{ "%.2f"|format(product.sale_price) }}
+
+                        {{ "ر.س"
+                           if current_lang == "ar"
+                           else "SAR" }}
+
+                    </span>
+
+
+                    <!-- DISCOUNT -->
+
+                    <span class="discount-badge">
+
+                        {% set discount_percent =
+                            ((product.price - product.sale_price) / product.price) * 100
+                        %}
+
+                        {{ "%.2f"|format(discount_percent) }}%
+
+                        {{
+                            "خصم"
+                            if current_lang == "ar"
+                            else "OFF"
+                        }}
+
+                    </span>
+
+
+                {% else %}
+
+
+                    <!-- NORMAL PRICE -->
+
+                    <span class="normal-price">
+
+                        {{ "%.2f"|format(product.price) }}
+
+                        {{ "ر.س"
+                           if current_lang == "ar"
+                           else "SAR" }}
+
+                    </span>
+
+
+                {% endif %}
 
             </div>
 
 
-            <!-- ADD CART -->
+            <!-- =================================================
+                 ACTION BUTTONS
+            ================================================== -->
 
-            <button
-                type="button"
-                class="add-cart"
-                data-id="{{ product.id }}"
-            >
+            <div class="product-actions">
 
-                {{ "🛒 أضف إلى السلة"
-                   if current_lang == "ar"
-                   else "🛒 Add to Cart" }}
 
-            </button>
+                <!-- ADD TO CART -->
+
+                <button
+                    type="button"
+                    class="add-cart"
+                    data-id="{{ product.id }}"
+                >
+
+                    {{ "🛒 أضف للسلة"
+                       if current_lang == "ar"
+                       else "🛒 Add to Cart" }}
+
+                </button>
+
+
+                <!-- BUY NOW -->
+
+                <button
+                    type="button"
+                    class="buy-now"
+                    data-id="{{ product.id }}"
+                >
+
+                    {{ "⚡ اشتري الآن"
+                       if current_lang == "ar"
+                       else "⚡ Buy Now" }}
+
+                </button>
+
+
+            </div>
 
 
         </div>
@@ -1186,9 +1433,7 @@ body{
 
     </div>
 
-
     {% endfor %}
-
 
 </section>
 
@@ -1267,10 +1512,6 @@ const cards =
         ".product-card"
     );
 
-
-/*
-    البحث الفوري داخل المنتجات
-*/
 
 if(searchInput){
 
@@ -1417,11 +1658,6 @@ cards.forEach(card => {
         "click",
         function(event){
 
-            /*
-                لا نفتح التفاصيل إذا ضغط
-                على المفضلة أو السلة.
-            */
-
             if(
                 event.target.closest(
                     ".favorite-btn"
@@ -1429,6 +1665,10 @@ cards.forEach(card => {
 
                 event.target.closest(
                     ".add-cart"
+                ) ||
+
+                event.target.closest(
+                    ".buy-now"
                 )
             ){
 
@@ -1462,6 +1702,148 @@ document
     .querySelectorAll(".add-cart")
     .forEach(btn => {
 
+        btn.addEventListener(
+            "click",
+            async function(event){
+
+                event.stopPropagation();
+
+
+                const button =
+                    this;
+
+
+                const productId =
+                    button.dataset.id;
+
+
+                button.disabled =
+                    true;
+
+
+                const originalText =
+                    button.innerHTML;
+
+
+                try{
+
+                    const response =
+                        await fetch(
+                            "/api/cart/add",
+                            {
+
+                                method:
+                                    "POST",
+
+                                headers:{
+
+                                    "Content-Type":
+                                        "application/json"
+
+                                },
+
+                                body:
+                                    JSON.stringify({
+
+                                        product_id:
+                                            productId,
+
+                                        quantity:
+                                            1
+
+                                    })
+
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    if(
+                        !response.ok ||
+                        !data.success
+                    ){
+
+                        throw new Error(
+
+                            data.error ||
+
+                            (
+                                currentLang === "ar"
+
+                                ? "تعذر إضافة المنتج إلى السلة."
+
+                                : "Could not add the product to cart."
+
+                            )
+
+                        );
+
+                    }
+
+
+                    button.innerHTML =
+
+                        currentLang === "ar"
+
+                        ? "✓ تمت الإضافة"
+
+                        : "✓ Added";
+
+
+                    setTimeout(
+                        function(){
+
+                            button.innerHTML =
+                                originalText;
+
+                            button.disabled =
+                                false;
+
+                        },
+                        1500
+                    );
+
+
+                }
+
+                catch(error){
+
+                    console.error(
+                        "Add to cart error:",
+                        error
+                    );
+
+
+                    alert(
+                        error.message
+                    );
+
+
+                    button.innerHTML =
+                        originalText;
+
+
+                    button.disabled =
+                        false;
+
+                }
+
+            }
+        );
+
+    });
+
+
+/* =====================================================
+                BUY NOW
+===================================================== */
+
+document
+    .querySelectorAll(".buy-now")
+    .forEach(btn => {
 
         btn.addEventListener(
             "click",
@@ -1478,10 +1860,6 @@ document
                     button.dataset.id;
 
 
-                /*
-                    منع الضغط المتكرر
-                */
-
                 button.disabled =
                     true;
 
@@ -1490,8 +1868,16 @@ document
                     button.innerHTML;
 
 
-                try{
+                button.innerHTML =
 
+                    currentLang === "ar"
+
+                    ? "⏳ جارٍ الإضافة..."
+
+                    : "⏳ Adding...";
+
+
+                try{
 
                     const response =
                         await fetch(
@@ -1551,40 +1937,24 @@ document
 
 
                     /*
-                        نجاح
-                    */
+                     * تمت الإضافة بنجاح
+                     * الآن ننتقل إلى صفحة السلة.
+                     *
+                     * مهم:
+                     * لا نستخدم url_for('checkout')
+                     * لأن زر شراء الآن هنا يذهب للسلة فقط.
+                     */
 
-                    button.innerHTML =
-
-                        currentLang === "ar"
-
-                        ? "✓ تمت الإضافة"
-
-                        : "✓ Added";
-
-
-                    setTimeout(
-                        function(){
-
-                            button.innerHTML =
-                                originalText;
-
-                            button.disabled =
-                                false;
-
-                        },
-                        1500
-                    );
+                    window.location.href =
+                        "/cart";
 
 
                 }
 
-
                 catch(error){
 
-
                     console.error(
-                        "Add to cart error:",
+                        "Buy now error:",
                         error
                     );
 
@@ -1620,10 +1990,6 @@ document
         btn.addEventListener(
             "click",
             function(event){
-
-                /*
-                    منع فتح صفحة المنتج
-                */
 
                 event.stopPropagation();
 

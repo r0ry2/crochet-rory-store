@@ -1300,31 +1300,6 @@ textarea.form-control {
 
         <!-- COST -->
 
-        <div class="form-group">
-
-            <label class="form-label">
-
-                🧾
-
-                {{
-                    "سعر التكلفة"
-                    if current_lang == "ar"
-                    else
-                    "Cost Price"
-                }}
-
-            </label>
-
-            <input
-                type="number"
-                name="cost_price"
-                class="form-control"
-                min="0"
-                step="0.01"
-                value="{{ request.form.get('cost_price', '') }}"
-            >
-
-        </div>
 
 
         <!-- DISCOUNT -->
@@ -1604,7 +1579,7 @@ textarea.form-control {
 </div>
 
 <!-- =========================================================
-     EDIT MODALS
+     EDIT PRODUCT MODALS
 ========================================================= -->
 
 {% for product in products %}
@@ -1614,202 +1589,204 @@ textarea.form-control {
     class="product-modal"
     onclick="closeEditModalOutside(event, {{ product.id }})">
 
+    <div
+        class="product-modal-box"
+        onclick="event.stopPropagation()">
 
-<div
-    class="product-modal-box"
-    onclick="event.stopPropagation()">
+        <!-- =========================
+             HEADER
+        ========================== -->
 
-    <div class="modal-header">
+        <div class="modal-header">
 
-        <h2>
+            <h2>
+                ✏️
+                {{
+                    "تعديل المنتج"
+                    if current_lang == "ar"
+                    else
+                    "Edit Product"
+                }}
+            </h2>
 
-            ✏️
+            <button
+                type="button"
+                class="close-modal-btn"
+                onclick="closeEditModal({{ product.id }})">
+                ×
+            </button>
 
-            {{
-                "تعديل المنتج"
-                if current_lang == "ar"
-                else
-                "Edit Product"
-            }}
-
-        </h2>
-
-        <button
-            type="button"
-            class="close-modal-btn"
-            onclick="closeEditModal({{ product.id }})">
-
-            ×
-
-        </button>
-
-    </div>
+        </div>
 
 
-    <form
-        method="POST"
-        enctype="multipart/form-data"
-        action="{{ url_for('edit_product', id=product.id) }}"
-        class="product-form">
+        <!-- =========================
+             FORM
+        ========================== -->
 
-        {% if csrf_token is defined %}
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+            action="{{ url_for('edit_product', id=product.id) }}"
+            class="product-form">
 
+            {% if csrf_token is defined %}
             <input
                 type="hidden"
                 name="csrf_token"
-                value="{{ csrf_token() }}"
-            >
-
-        {% endif %}
+                value="{{ csrf_token() }}">
+            {% endif %}
 
 
-        <!-- NAME -->
-
-        <div class="form-group">
-
-            <label class="form-label">
-
-                🧵
-
-                {{
-                    "اسم المنتج"
-                    if current_lang == "ar"
-                    else
-                    "Product Name"
-                }}
-
-            </label>
-
-            <input
-                type="text"
-                name="name"
-                class="form-control"
-                value="{{ product.name }}"
-                required
-            >
-
-        </div>
-
-
-        <!-- PRICE + QUANTITY -->
-
-        <div class="form-row">
+            <!-- =========================
+                 PRODUCT NAME
+            ========================== -->
 
             <div class="form-group">
 
                 <label class="form-label">
-
-                    💰
-
+                    🧵
                     {{
-                        "السعر الأصلي"
+                        "اسم المنتج"
                         if current_lang == "ar"
                         else
-                        "Original Price"
+                        "Product Name"
                     }}
-
                 </label>
 
                 <input
-                    type="number"
-                    name="price"
-                    id="editOriginalPrice{{ product.id }}"
-                    class="form-control edit-original-price"
-                    data-product-id="{{ product.id }}"
-                    min="0"
-                    step="0.01"
-                    value="{{ product.price }}"
-                    required
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label class="form-label">
-
-                    📦
-
-                    {{
-                        "الكمية"
-                        if current_lang == "ar"
-                        else
-                        "Quantity"
-                    }}
-
-                </label>
-
-                <input
-                    type="number"
-                    name="quantity"
+                    type="text"
+                    name="name"
                     class="form-control"
-                    min="0"
-                    value="{{ product.stock or 0 }}"
-                >
+                    value="{{ product.name }}"
+                    required>
 
             </div>
 
-        </div>
 
-
-        <!-- COST -->
-
-        <div class="form-group">
-
-            <label class="form-label">
-
-                🧾
-
-                {{
-                    "سعر التكلفة"
-                    if current_lang == "ar"
-                    else
-                    "Cost Price"
-                }}
-
-            </label>
-
-            <input
-                type="number"
-                name="cost_price"
-                class="form-control"
-                min="0"
-                step="0.01"
-                value="{{ product.cost_price or 0 }}"
-            >
-
-        </div>
-
-
-        <!-- DISCOUNT -->
-
-        <div class="discount-box">
-
-            <div class="discount-box-title">
-
-                🏷️
-
-                {{
-                    "الخصم"
-                    if current_lang == "ar"
-                    else
-                    "Discount"
-                }}
-
-            </div>
-
+            <!-- =========================
+                 PRICE + QUANTITY
+            ========================== -->
 
             <div class="form-row">
 
-                <!-- DISCOUNT PERCENT -->
+                <!-- ORIGINAL PRICE -->
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        💰
+                        {{
+                            "السعر الأصلي"
+                            if current_lang == "ar"
+                            else
+                            "Original Price"
+                        }}
+                    </label>
+
+                    <input
+                        type="number"
+                        name="price"
+                        id="editOriginalPrice{{ product.id }}"
+                        class="form-control edit-original-price"
+                        data-product-id="{{ product.id }}"
+                        value="{{ product.price }}"
+                        min="0"
+                        step="0.01"
+                        required>
+
+                </div>
+
+
+                <!-- QUANTITY -->
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        📦
+                        {{
+                            "الكمية"
+                            if current_lang == "ar"
+                            else
+                            "Quantity"
+                        }}
+                    </label>
+
+                    <input
+                        type="number"
+                        name="quantity"
+                        class="form-control"
+                        value="{{ product.stock or 0 }}"
+                        min="0">
+
+                </div>
+
+            </div>
+
+
+
+
+
+            <!-- =====================================================
+                 DISCOUNT SECTION
+            ====================================================== -->
+
+            <div class="discount-box">
+
+                <div class="discount-box-title">
+
+                    🏷️
+                    {{
+                        "الخصم"
+                        if current_lang == "ar"
+                        else
+                        "Discount"
+                    }}
+
+                </div>
+
+
+                <!-- =========================
+                     DISCOUNT AMOUNT
+                     USER ENTERS THIS
+                ========================== -->
 
                 <div class="form-group">
 
                     <label class="form-label">
 
-                        %
+                        💸
+                        {{
+                            "قيمة الخصم"
+                            if current_lang == "ar"
+                            else
+                            "Discount Amount"
+                        }}
 
+                    </label>
+
+                    <input
+                        type="number"
+                        id="editDiscountAmount{{ product.id }}"
+                        class="form-control edit-discount-amount"
+                        data-product-id="{{ product.id }}"
+                        value="{% if product.sale_price is not none and product.price %}{{ '%.2f'|format(product.price - product.sale_price) }}{% endif %}"
+                        min="0"
+                        step="0.01"
+                        placeholder="مثال: 20">
+
+                </div>
+
+
+                <!-- =========================
+                     DISCOUNT PERCENTAGE
+                     AUTOMATIC
+                ========================== -->
+
+                <div class="form-group">
+
+                    <label class="form-label">
+
+                        📊
                         {{
                             "نسبة الخصم"
                             if current_lang == "ar"
@@ -1820,336 +1797,363 @@ textarea.form-control {
                     </label>
 
                     <input
-                        type="number"
+                        type="text"
                         id="editDiscountPercent{{ product.id }}"
                         class="form-control edit-discount-percent"
                         data-product-id="{{ product.id }}"
-                        min="0"
-                        max="99.99"
-                        step="0.01"
-                        value="{% if product.sale_price and product.price %}{{ (((product.price - product.sale_price) / product.price) * 100)|round(2) }}{% endif %}"
-                        placeholder="مثال: 20"
-                    >
+                        value="{% if product.sale_price is not none and product.price and product.sale_price < product.price %}{{ '%.2f'|format(((product.price - product.sale_price) / product.price) * 100) }}%{% endif %}"
+                        placeholder="تحسب تلقائيًا"
+                        readonly>
 
                 </div>
 
 
-                <!-- SALE PRICE -->
+                <!-- =========================
+                     SALE PRICE
+                     AUTOMATIC
+                ========================== -->
 
                 <div class="form-group">
 
                     <label class="form-label">
 
                         🏷️
-
                         {{
                             "السعر بعد الخصم"
                             if current_lang == "ar"
                             else
-                            "Sale Price"
+                            "Price After Discount"
                         }}
 
                     </label>
 
                     <input
-                        type="number"
+                        type="text"
                         name="sale_price"
                         id="editSalePrice{{ product.id }}"
                         class="form-control edit-sale-price"
                         data-product-id="{{ product.id }}"
-                        min="0"
-                        step="0.01"
-                        value="{{ product.sale_price or '' }}"
-                        placeholder="80.00"
-                    >
+                        value="{% if product.sale_price is not none %}{{ '%.2f'|format(product.sale_price) }}{% endif %}"
+                        placeholder="يحسب تلقائيًا"
+                        readonly>
+
+                </div>
+
+
+                <!-- =================================================
+                     PREVIEW
+                ================================================== -->
+
+                <div
+                    id="editDiscountPreview{{ product.id }}"
+                    class="discount-preview {% if product.sale_price is not none and product.sale_price < product.price %}show{% endif %}">
+
+                    <!-- ORIGINAL PRICE -->
+
+                    <span class="old">
+
+                        {{ "%.2f"|format(product.price) }}
+
+                        {{
+                            "ريال"
+                            if current_lang == "ar"
+                            else
+                            "SAR"
+                        }}
+
+                    </span>
+
+
+                    <span class="arrow">
+                        →
+                    </span>
+
+
+                    <!-- SALE PRICE -->
+
+                    <span
+                        class="new"
+                        id="editNewPricePreview{{ product.id }}">
+
+                        {% if product.sale_price is not none and product.sale_price < product.price %}
+
+                            {{ "%.2f"|format(product.sale_price) }}
+
+                            {{
+                                "ريال"
+                                if current_lang == "ar"
+                                else
+                                "SAR"
+                            }}
+
+                        {% endif %}
+
+                    </span>
+
+
+                    <!-- DISCOUNT PERCENTAGE -->
+
+                    <span
+                        class="percent"
+                        id="editPercentPreview{{ product.id }}">
+
+                        {% if product.sale_price is not none and product.price and product.sale_price < product.price %}
+
+                            {{ "%.2f"|format(((product.price - product.sale_price) / product.price) * 100) }}%
+
+                            {{
+                                "خصم"
+                                if current_lang == "ar"
+                                else
+                                "OFF"
+                            }}
+
+                        {% endif %}
+
+                    </span>
 
                 </div>
 
             </div>
 
 
-            <div
-                id="editDiscountPreview{{ product.id }}"
-                class="discount-preview {% if product.sale_price %}show{% endif %}">
+            <!-- =========================
+                 DESCRIPTION
+            ========================== -->
 
-                <span class="old">
+            <div class="form-group">
 
-                    {{ "%.2f"|format(product.price) }}
-                    {{ "ريال" if current_lang == "ar" else "SAR" }}
+                <label class="form-label">
 
-                </span>
+                    📜
+                    {{
+                        "وصف المنتج"
+                        if current_lang == "ar"
+                        else
+                        "Product Description"
+                    }}
 
-                <span
-                    class="new"
-                    id="editNewPricePreview{{ product.id }}">
+                </label>
 
-                    {% if product.sale_price %}
-                        {{ "%.2f"|format(product.sale_price) }}
-                    {% endif %}
-
-                </span>
-
-                <span
-                    class="percent"
-                    id="editPercentPreview{{ product.id }}">
-
-                    {% if product.sale_price and product.price %}
-                        {{
-                            "%.0f"|format(
-                                ((product.price - product.sale_price) / product.price) * 100
-                            )
-                        }}%
-                        {{ "خصم" if current_lang == "ar" else "OFF" }}
-                    {% endif %}
-
-                </span>
+                <textarea
+                    name="description"
+                    class="form-control">{{ product.description or '' }}</textarea>
 
             </div>
 
-        </div>
+
+            <!-- =========================
+                 IMAGE
+            ========================== -->
+
+            <div class="form-group">
+
+                <label class="form-label">
+
+                    🖼️
+                    {{
+                        "تغيير صورة المنتج"
+                        if current_lang == "ar"
+                        else
+                        "Change Product Image"
+                    }}
+
+                </label>
+
+                <input
+                    type="file"
+                    name="image"
+                    class="form-control-file"
+                    accept="image/*">
 
 
-        <!-- DESCRIPTION -->
-
-        <div class="form-group">
-
-            <label class="form-label">
-
-                📜
-
-                {{
-                    "وصف المنتج"
-                    if current_lang == "ar"
-                    else
-                    "Product Description"
-                }}
-
-            </label>
-
-            <textarea
-                name="description"
-                class="form-control"
-            >{{ product.description or '' }}</textarea>
-
-        </div>
-
-
-        <!-- IMAGE -->
-
-        <div class="form-group">
-
-            <label class="form-label">
-
-                🖼️
-
-                {{
-                    "تغيير صورة المنتج"
-                    if current_lang == "ar"
-                    else
-                    "Change Product Image"
-                }}
-
-            </label>
-
-            <input
-                type="file"
-                name="image"
-                class="form-control-file"
-                accept="image/*"
-            >
-
-            {% if product.image %}
+                {% if product.image %}
 
                 <div class="current-image-box">
 
                     <span>
-
                         {{
                             "الصورة الحالية"
                             if current_lang == "ar"
                             else
                             "Current Image"
                         }}
-
                     </span>
 
                     <img
                         src="{{ url_for('static', filename='images/' ~ product.image) }}"
-                        alt="{{ product.name }}"
-                    >
+                        alt="{{ product.name }}">
 
                 </div>
 
-            {% endif %}
+                {% endif %}
 
-        </div>
+            </div>
 
 
-        <!-- LOCATION -->
+            <!-- =========================
+                 PUBLISH LOCATION
+            ========================== -->
 
-        <div class="form-group">
+            <div class="form-group">
 
-            <label class="form-label">
+                <label class="form-label">
 
-                📍
-
-                {{
-                    "مكان عرض المنتج"
-                    if current_lang == "ar"
-                    else
-                    "Product Display Location"
-                }}
-
-            </label>
-
-            <select
-                name="publish_location"
-                class="form-control">
-
-                <option
-                    value="products_only"
-                    {% if product.publish_location == "products_only" %}
-                        selected
-                    {% endif %}
-                >
-
+                    📍
                     {{
-                        "صفحة المنتجات فقط"
+                        "مكان عرض المنتج"
                         if current_lang == "ar"
                         else
-                        "Products Page Only"
+                        "Product Display Location"
                     }}
 
-                </option>
+                </label>
 
+                <select
+                    name="publish_location"
+                    class="form-control">
 
-                <option
-                    value="home"
-                    {% if product.publish_location == "home" %}
+                    <option
+                        value="products_only"
+                        {% if product.publish_location == "products_only" %}
                         selected
-                    {% endif %}
-                >
+                        {% endif %}>
 
-                    {{
-                        "الصفحة الرئيسية"
-                        if current_lang == "ar"
-                        else
-                        "Home Page"
-                    }}
+                        {{
+                            "صفحة المنتجات فقط"
+                            if current_lang == "ar"
+                            else
+                            "Products Page Only"
+                        }}
 
-                </option>
+                    </option>
 
 
-                <option
-                    value="both"
-                    {% if product.publish_location == "both" %}
+                    <option
+                        value="home"
+                        {% if product.publish_location == "home" %}
                         selected
-                    {% endif %}
-                >
+                        {% endif %}>
 
-                    {{
-                        "الصفحة الرئيسية والمنتجات"
-                        if current_lang == "ar"
-                        else
-                        "Home & Products"
-                    }}
+                        {{
+                            "الصفحة الرئيسية"
+                            if current_lang == "ar"
+                            else
+                            "Home Page"
+                        }}
 
-                </option>
-
-            </select>
-
-        </div>
+                    </option>
 
 
-        <!-- CUSTOMIZATION -->
+                    <option
+                        value="both"
+                        {% if product.publish_location == "both" %}
+                        selected
+                        {% endif %}>
 
-        <div class="customization-box">
+                        {{
+                            "الصفحة الرئيسية والمنتجات"
+                            if current_lang == "ar"
+                            else
+                            "Home & Products"
+                        }}
 
-            <label class="customization-label">
+                    </option>
 
-                <input
-                    type="checkbox"
-                    name="is_customizable"
-                    {% if product.is_customizable %}
+                </select>
+
+            </div>
+
+
+            <!-- =========================
+                 CUSTOMIZATION
+            ========================== -->
+
+            <div class="customization-box">
+
+                <label class="customization-label">
+
+                    <input
+                        type="checkbox"
+                        name="is_customizable"
+                        {% if product.is_customizable %}
                         checked
-                    {% endif %}
-                >
+                        {% endif %}>
 
-                <span>
+                    <span>
 
-                    ✨
+                        ✨
+                        {{
+                            "السماح بتخصيص المنتج"
+                            if current_lang == "ar"
+                            else
+                            "Allow Product Customization"
+                        }}
+
+                    </span>
+
+                </label>
+
+
+                <p class="customization-description">
 
                     {{
-                        "السماح بتخصيص المنتج"
+                        "عند تفعيل هذا الخيار سيتمكن العميل من تخصيص المنتج."
                         if current_lang == "ar"
                         else
-                        "Allow Product Customization"
+                        "When enabled, customers can customize this product."
                     }}
 
-                </span>
+                </p>
 
-            </label>
-
-            <p class="customization-description">
-
-                {{
-                    "عند تفعيل هذا الخيار سيتمكن العميل من تخصيص المنتج."
-                    if current_lang == "ar"
-                    else
-                    "When enabled, customers can customize this product."
-                }}
-
-            </p>
-
-        </div>
+            </div>
 
 
-        <!-- ACTIONS -->
+            <!-- =========================
+                 BUTTONS
+            ========================== -->
 
-        <div class="modal-actions">
+            <div class="modal-actions">
 
-            <button
-                type="submit"
-                class="save-product-btn">
+                <button
+                    type="submit"
+                    class="save-product-btn">
 
-                💾
+                    💾
+                    {{
+                        "حفظ التعديلات"
+                        if current_lang == "ar"
+                        else
+                        "Save Changes"
+                    }}
 
-                {{
-                    "حفظ التعديلات"
-                    if current_lang == "ar"
-                    else
-                    "Save Changes"
-                }}
-
-            </button>
+                </button>
 
 
-            <button
-                type="button"
-                class="cancel-product-btn"
-                onclick="closeEditModal({{ product.id }})">
+                <button
+                    type="button"
+                    class="cancel-product-btn"
+                    onclick="closeEditModal({{ product.id }})">
 
-                ✕
+                    ✕
+                    {{
+                        "إلغاء"
+                        if current_lang == "ar"
+                        else
+                        "Cancel"
+                    }}
 
-                {{
-                    "إلغاء"
-                    if current_lang == "ar"
-                    else
-                    "Cancel"
-                }}
+                </button>
 
-            </button>
+            </div>
 
-        </div>
+        </form>
 
-    </form>
-
-</div>
+    </div>
 
 </div>
 
 {% endfor %}
-
 <!-- =========================================================
      JAVASCRIPT
 ========================================================= -->
@@ -2157,28 +2161,28 @@ textarea.form-control {
 <script>
 
 /* =========================================================
-   BODY SCROLL
+   BODY LOCK
 ========================================================= */
 
 function lockBody() {
-    document.body.style.overflow = "hidden";
+    document.body.classList.add("modal-open");
 }
 
 function unlockBody() {
-    document.body.style.overflow = "";
+    document.body.classList.remove("modal-open");
 }
 
 
 /* =========================================================
-   ADD PRODUCT MODAL
+   PRODUCT MODAL
 ========================================================= */
 
 function openProductModal() {
 
-    const modal = document.getElementById("productModal");
+    const modal =
+        document.getElementById("productModal");
 
     if (!modal) {
-        console.error("productModal not found");
         return;
     }
 
@@ -2190,7 +2194,8 @@ function openProductModal() {
 
 function closeProductModal() {
 
-    const modal = document.getElementById("productModal");
+    const modal =
+        document.getElementById("productModal");
 
     if (modal) {
         modal.classList.remove("show");
@@ -2202,7 +2207,8 @@ function closeProductModal() {
 
 function closeModalOutside(event) {
 
-    const modal = document.getElementById("productModal");
+    const modal =
+        document.getElementById("productModal");
 
     if (
         modal &&
@@ -2235,6 +2241,12 @@ function openEditModal(productId) {
     }
 
     modal.classList.add("show");
+
+    /*
+       عند فتح النافذة نحسب الخصم مرة واحدة
+       بناءً على البيانات الموجودة.
+    */
+    calculateEditDiscount(productId);
 
     lockBody();
 }
@@ -2269,7 +2281,9 @@ function closeEditModalOutside(
         modal &&
         event.target === modal
     ) {
+
         closeEditModal(productId);
+
     }
 }
 
@@ -2326,10 +2340,14 @@ function calculateAddDiscount() {
 
 
     const price =
-        parseFloat(priceInput.value);
+        parseFloat(
+            priceInput.value
+        );
 
     const discount =
-        parseFloat(discountInput.value);
+        parseFloat(
+            discountInput.value
+        );
 
 
     if (
@@ -2339,7 +2357,9 @@ function calculateAddDiscount() {
         discount <= 0
     ) {
 
-        preview.classList.remove("show");
+        if (preview) {
+            preview.classList.remove("show");
+        }
 
         if (
             discountInput.value === ""
@@ -2353,7 +2373,10 @@ function calculateAddDiscount() {
 
     const safeDiscount =
         Math.min(
-            Math.max(discount, 0),
+            Math.max(
+                discount,
+                0
+            ),
             99.99
         );
 
@@ -2371,28 +2394,54 @@ function calculateAddDiscount() {
         salePrice.toFixed(2);
 
 
-    oldPreview.textContent =
-        price.toFixed(2) +
-        " {{ 'ريال' if current_lang == 'ar' else 'SAR' }}";
+    if (oldPreview) {
+
+        oldPreview.textContent =
+            price.toFixed(2) +
+            " {{ 'ريال' if current_lang == 'ar' else 'SAR' }}";
+
+    }
 
 
-    newPreview.textContent =
-        salePrice.toFixed(2) +
-        " {{ 'ريال' if current_lang == 'ar' else 'SAR' }}";
+    if (newPreview) {
+
+        newPreview.textContent =
+            salePrice.toFixed(2) +
+            " {{ 'ريال' if current_lang == 'ar' else 'SAR' }}";
+
+    }
 
 
-    percentPreview.textContent =
-        safeDiscount.toFixed(0) +
-        "% " +
-        "{{ 'خصم' if current_lang == 'ar' else 'OFF' }}";
+    if (percentPreview) {
+
+        percentPreview.textContent =
+            safeDiscount.toFixed(2) +
+            "% " +
+            "{{ 'خصم' if current_lang == 'ar' else 'OFF' }}";
+
+    }
 
 
-    preview.classList.add("show");
+    if (preview) {
+        preview.classList.add("show");
+    }
 }
 
 
 /* =========================================================
    EDIT DISCOUNT CALCULATOR
+
+   السعر الأصلي:
+   قابل للتعديل يدويًا
+
+   قيمة الخصم:
+   تدخل يدويًا
+
+   نسبة الخصم:
+   تلقائية
+
+   السعر بعد الخصم:
+   تلقائي
 ========================================================= */
 
 function calculateEditDiscount(productId) {
@@ -2402,7 +2451,12 @@ function calculateEditDiscount(productId) {
             "editOriginalPrice" + productId
         );
 
-    const discountInput =
+    const amountInput =
+        document.getElementById(
+            "editDiscountAmount" + productId
+        );
+
+    const percentInput =
         document.getElementById(
             "editDiscountPercent" + productId
         );
@@ -2417,6 +2471,11 @@ function calculateEditDiscount(productId) {
             "editDiscountPreview" + productId
         );
 
+    const oldPreview =
+        preview
+            ? preview.querySelector(".old")
+            : null;
+
     const newPreview =
         document.getElementById(
             "editNewPricePreview" + productId
@@ -2428,33 +2487,54 @@ function calculateEditDiscount(productId) {
         );
 
 
+    /* ---------------------------------------------------------
+       التأكد أن جميع الحقول موجودة
+    --------------------------------------------------------- */
+
     if (
         !priceInput ||
-        !discountInput ||
+        !amountInput ||
+        !percentInput ||
         !saleInput
     ) {
+
+        console.error(
+            "Discount fields not found for product:",
+            productId
+        );
+
         return;
     }
 
 
+    /* ---------------------------------------------------------
+       قراءة السعر والخصم
+    --------------------------------------------------------- */
+
     const price =
-        parseFloat(priceInput.value);
+        parseFloat(
+            priceInput.value
+        );
 
-    const discount =
-        parseFloat(discountInput.value);
+    let discountAmount =
+        parseFloat(
+            amountInput.value
+        );
 
+
+    /* ---------------------------------------------------------
+       إذا السعر غير صحيح
+    --------------------------------------------------------- */
 
     if (
         isNaN(price) ||
-        price <= 0 ||
-        isNaN(discount) ||
-        discount <= 0
+        price <= 0
     ) {
 
-        if (
-            discountInput.value === ""
-        ) {
-            saleInput.value = "";
+        percentInput.value = "";
+        saleInput.value = "";
+
+        if (preview) {
             preview.classList.remove("show");
         }
 
@@ -2462,43 +2542,133 @@ function calculateEditDiscount(productId) {
     }
 
 
-    const safeDiscount =
+    /* ---------------------------------------------------------
+       إذا لا يوجد خصم
+    --------------------------------------------------------- */
+
+    if (
+        isNaN(discountAmount) ||
+        discountAmount <= 0
+    ) {
+
+        percentInput.value = "";
+        saleInput.value = "";
+
+        if (preview) {
+            preview.classList.remove("show");
+        }
+
+        return;
+    }
+
+
+    /* ---------------------------------------------------------
+       الخصم لا يمكن أن يتجاوز السعر الأصلي
+    --------------------------------------------------------- */
+
+    discountAmount =
         Math.min(
-            Math.max(discount, 0),
-            99.99
+            Math.max(
+                discountAmount,
+                0
+            ),
+            price
         );
 
+
+    /* ---------------------------------------------------------
+       حساب السعر بعد الخصم
+    --------------------------------------------------------- */
 
     const salePrice =
         price -
-        (
-            price *
-            safeDiscount /
-            100
-        );
+        discountAmount;
 
+
+    /* ---------------------------------------------------------
+       حساب نسبة الخصم
+    --------------------------------------------------------- */
+
+    const discountPercent =
+        (
+            discountAmount /
+            price
+        ) * 100;
+
+
+    /* ---------------------------------------------------------
+       تحديث نسبة الخصم
+    --------------------------------------------------------- */
+
+    percentInput.value =
+        discountPercent.toFixed(2) +
+        "%";
+
+
+    /* ---------------------------------------------------------
+       تحديث السعر بعد الخصم
+    --------------------------------------------------------- */
 
     saleInput.value =
         salePrice.toFixed(2);
 
 
-    newPreview.textContent =
-        salePrice.toFixed(2) +
-        " {{ 'ريال' if current_lang == 'ar' else 'SAR' }}";
+    /* ---------------------------------------------------------
+       تحديث السعر الأصلي في المعاينة
+    --------------------------------------------------------- */
+
+    if (oldPreview) {
+
+        oldPreview.textContent =
+            price.toFixed(2) +
+            " {{ 'ريال' if current_lang == 'ar' else 'SAR' }}";
+
+    }
 
 
-    percentPreview.textContent =
-        safeDiscount.toFixed(0) +
-        "% " +
-        "{{ 'خصم' if current_lang == 'ar' else 'OFF' }}";
+    /* ---------------------------------------------------------
+       تحديث السعر الجديد في المعاينة
+    --------------------------------------------------------- */
+
+    if (newPreview) {
+
+        newPreview.textContent =
+            salePrice.toFixed(2) +
+            " {{ 'ريال' if current_lang == 'ar' else 'SAR' }}";
+
+    }
 
 
-    preview.classList.add("show");
+    /* ---------------------------------------------------------
+       تحديث نسبة الخصم في المعاينة
+    --------------------------------------------------------- */
+
+    if (percentPreview) {
+
+        percentPreview.textContent =
+            discountPercent.toFixed(2) +
+            "% " +
+            "{{ 'خصم' if current_lang == 'ar' else 'OFF' }}";
+
+    }
+
+
+    /* ---------------------------------------------------------
+       إظهار المعاينة
+    --------------------------------------------------------- */
+
+    if (preview) {
+
+        preview.classList.add(
+            "show"
+        );
+
+    }
 }
 
 
 /* =========================================================
-   EVENTS
+   DOM CONTENT LOADED
 ========================================================= */
 
 document.addEventListener(
@@ -2506,9 +2676,9 @@ document.addEventListener(
     function () {
 
 
-        /* ---------------------------------------------
-           ADD DISCOUNT
-        --------------------------------------------- */
+        /* =====================================================
+           ADD PRODUCT DISCOUNT
+        ===================================================== */
 
         const addPrice =
             document.getElementById(
@@ -2541,9 +2711,12 @@ document.addEventListener(
         }
 
 
-        /* ---------------------------------------------
-           EDIT DISCOUNTS
-        --------------------------------------------- */
+        /* =====================================================
+           EDIT ORIGINAL PRICE
+           
+           إذا غيرتي السعر الأصلي:
+           يعاد حساب النسبة والسعر بعد الخصم.
+        ===================================================== */
 
         document
             .querySelectorAll(
@@ -2555,30 +2728,6 @@ document.addEventListener(
                     const productId =
                         input.dataset.productId;
 
-                    input.addEventListener(
-                        "input",
-                        function () {
-
-                            calculateEditDiscount(
-                                productId
-                            );
-
-                        }
-                    );
-
-                }
-            );
-
-
-        document
-            .querySelectorAll(
-                ".edit-discount-percent"
-            )
-            .forEach(
-                function (input) {
-
-                    const productId =
-                        input.dataset.productId;
 
                     input.addEventListener(
                         "input",
@@ -2595,13 +2744,15 @@ document.addEventListener(
             );
 
 
-        /* ---------------------------------------------
-           SALE PRICE MANUAL EDIT
-        --------------------------------------------- */
+        /* =====================================================
+           EDIT DISCOUNT AMOUNT
+           
+           قيمة الخصم هي الوحيدة التي تدخلينها.
+        ===================================================== */
 
         document
             .querySelectorAll(
-                ".edit-sale-price"
+                ".edit-discount-amount"
             )
             .forEach(
                 function (input) {
@@ -2609,72 +2760,25 @@ document.addEventListener(
                     const productId =
                         input.dataset.productId;
 
+
                     input.addEventListener(
                         "input",
                         function () {
 
-                            const priceInput =
-                                document.getElementById(
-                                    "editOriginalPrice" +
-                                    productId
-                                );
-
-                            const discountInput =
-                                document.getElementById(
-                                    "editDiscountPercent" +
-                                    productId
-                                );
-
-                            const price =
-                                parseFloat(
-                                    priceInput.value
-                                );
-
-                            const sale =
-                                parseFloat(
-                                    input.value
-                                );
-
-
-                            if (
-                                !isNaN(price) &&
-                                price > 0 &&
-                                !isNaN(sale) &&
-                                sale >= 0 &&
-                                sale < price
-                            ) {
-
-                                const discount =
-                                    (
-                                        (
-                                            price -
-                                            sale
-                                        ) /
-                                        price
-                                    ) *
-                                    100;
-
-
-                                discountInput.value =
-                                    discount.toFixed(2);
-
-                            } else {
-
-                                discountInput.value = "";
-
-                            }
+                            calculateEditDiscount(
+                                productId
+                            );
 
                         }
-
                     );
 
                 }
             );
 
 
-        /* ---------------------------------------------
+        /* =====================================================
            IMAGE PREVIEW
-        --------------------------------------------- */
+        ===================================================== */
 
         const imageInput =
             document.getElementById(
@@ -2706,6 +2810,8 @@ document.addEventListener(
                         this.files[0];
 
 
+                    /* لا يوجد ملف */
+
                     if (!file) {
 
                         imagePreviewBox
@@ -2718,6 +2824,8 @@ document.addEventListener(
 
                     }
 
+
+                    /* الملف ليس صورة */
 
                     if (
                         !file.type.startsWith(
@@ -2753,7 +2861,9 @@ document.addEventListener(
                         };
 
 
-                    reader.readAsDataURL(file);
+                    reader.readAsDataURL(
+                        file
+                    );
 
                 }
             );
@@ -2779,8 +2889,12 @@ document.addEventListener(
         }
 
 
+        /* إغلاق نافذة إضافة المنتج */
+
         closeProductModal();
 
+
+        /* إغلاق جميع نوافذ التعديل */
 
         {% if products %}
 

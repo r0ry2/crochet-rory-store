@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ current_lang }}">
+<html lang="{{ current_lang }}" dir="{{ 'rtl' if current_lang == 'ar' else 'ltr' }}">
 
 <head>
 
@@ -9,9 +9,11 @@
           content="width=device-width, initial-scale=1.0">
 
     <title>
-        {{ "متجر روري للكروشيه"
-        if current_lang == "ar"
-        else "Crochet Rory Store" }}
+        {{
+            "متجر روري للكروشيه"
+            if current_lang == "ar"
+            else "Crochet Rory Store"
+        }}
     </title>
 
     <link rel="stylesheet"
@@ -27,101 +29,216 @@
      HEADER
 ===================================================== -->
 
-<div class="header-top">
+<header class="main-header">
 
-    <div class="left-icons">
+    <!-- =========================
+         TOP BAR
+    ========================== -->
 
-        <button
-            type="button"
-            class="menu-btn"
-            onclick="toggleMenu()">
+    <div class="header-top">
 
-            ☰
+        <div class="left-icons">
 
-        </button>
+            <button
+                type="button"
+                class="menu-btn"
+                onclick="toggleMenu()">
 
+                ☰
 
-        <form
-            action="{{ url_for('search') }}"
-            method="GET"
-            class="search-box">
-
-            <input
-                type="text"
-                name="q"
-                placeholder="{{
-                    'ابحث...'
-                    if current_lang == 'ar'
-                    else 'Search...'
-                }}"
-                required>
-
-            <button type="submit">
-                🔍
             </button>
 
-        </form>
+
+            <form
+                action="{{ url_for('search') }}"
+                method="GET"
+                class="search-box">
+
+                <input
+                    type="text"
+                    name="q"
+                    placeholder="{{
+                        'ابحث...'
+                        if current_lang == 'ar'
+                        else 'Search...'
+                    }}"
+                    required>
+
+                <button type="submit">
+                    🔍
+                </button>
+
+            </form>
 
 
-        <a
-            href="{{ url_for('cart_page') }}"
-            class="cart-icon">
+            <a
+                href="{{ url_for('cart_page') }}"
+                class="header-icon cart-icon">
 
-            🛒
+                🛒
 
-        </a>
-
-
-        <a
-            href="{{ url_for('wishlist_page') }}"
-            class="wishlist-icon">
-
-            ❤️
-
-        </a>
+            </a>
 
 
-        <a
-            href="{{ url_for('profile') }}"
-            class="profile-icon">
+            <a
+                href="{{ url_for('wishlist_page') }}"
+                class="header-icon wishlist-icon">
 
-            👤
+                ❤️
 
-        </a>
+            </a>
+
+
+            <a
+                href="{{ url_for('profile') }}"
+                class="header-icon profile-icon">
+
+                👤
+
+            </a>
+
+        </div>
+
+
+        <div class="logo-section">
+
+            <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                class="logo"
+                alt="Crochet Rory Store">
+
+        </div>
 
     </div>
 
 
-    <div class="logo-section">
+    <!-- =========================
+         STORE BRAND
+    ========================== -->
 
-        <img
-            src="{{ url_for('static', filename='images/logo.png') }}"
-            class="logo"
-            alt="Crochet Rory Store">
+    <div class="store-brand">
+
+        <h1>
+
+            {{
+                "متجر روري للكروشيه"
+                if current_lang == "ar"
+                else "Crochet Rory Store"
+            }}
+
+        </h1>
+
+
+        <p>
+
+            {{
+                "Handmade Crochet with Love 🧶💗"
+                if current_lang == "ar"
+                else "Handmade Crochet with Love 🧶💗"
+            }}
+
+        </p>
 
     </div>
 
-</div>
+
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+
+    <nav class="main-navbar">
+
+        <ul class="nav-links">
+
+            <li>
+
+                <a
+                    href="{{ url_for('home_logged') }}"
+                    class="nav-link">
+
+                    {{
+                        "الرئيسية"
+                        if current_lang == "ar"
+                        else "Home"
+                    }}
+
+                </a>
+
+            </li>
 
 
+            <li>
 
-<!-- =====================================================
-     STORE TITLE
-===================================================== -->
+                <a
+                    href="{{ url_for('products_page') }}"
+                    class="nav-link">
 
-<div class="section-title">
+                    {{
+                        "المنتجات"
+                        if current_lang == "ar"
+                        else "Products"
+                    }}
 
-    <h1>
+                </a>
 
-        {{
-            "متجر روري للكروشيه"
-            if current_lang == "ar"
-            else "Crochet Rory Store"
-        }}
+            </li>
 
-    </h1>
 
-</div>
+            <li>
+
+                <a
+                    href="{{ url_for('home_logged') }}#reviews"
+                    class="nav-link">
+
+                    {{
+                        "التقييمات"
+                        if current_lang == "ar"
+                        else "Reviews"
+                    }}
+
+                </a>
+
+            </li>
+
+
+            <li>
+
+                <a
+                    href="{{ url_for('contact_page') }}"
+                    class="nav-link">
+
+                    {{
+                        "تواصل معنا"
+                        if current_lang == "ar"
+                        else "Contact"
+                    }}
+
+                </a>
+
+            </li>
+
+
+            <li>
+
+                <a
+                    href="{{ url_for('logout') }}"
+                    class="nav-link">
+
+                    {{
+                        "تسجيل الخروج"
+                        if current_lang == "ar"
+                        else "Logout"
+                    }}
+
+                </a>
+
+            </li>
+
+        </ul>
+
+    </nav>
+
+</header>
 
 
 
@@ -218,120 +335,12 @@
 
 
 <!-- =====================================================
-     NAVBAR
-===================================================== -->
-
-<div class="top-header">
-
-    <nav class="navbar">
-
-        <ul class="nav-links">
-
-            <li>
-
-                <a
-                    href="{{ url_for('home_logged') }}"
-                    class="nav-link">
-
-                    {{
-                        "الرئيسية"
-                        if current_lang == "ar"
-                        else "Home"
-                    }}
-
-                </a>
-
-            </li>
-
-
-            <li>
-
-                <a
-                    href="{{ url_for('products_page') }}"
-                    class="nav-link">
-
-                    {{
-                        "المنتجات"
-                        if current_lang == "ar"
-                        else "Products"
-                    }}
-
-                </a>
-
-            </li>
-
-
-            <li>
-
-                <a
-                    href="{{ url_for('home_logged') }}#reviews"
-                    class="nav-link">
-
-                    {{
-                        "التقييمات"
-                        if current_lang == "ar"
-                        else "Reviews"
-                    }}
-
-                </a>
-
-            </li>
-
-
-            <li>
-
-                <a
-                    href="{{ url_for('contact_page') }}"
-                    class="nav-link">
-
-                    {{
-                        "تواصل معنا"
-                        if current_lang == "ar"
-                        else "Contact"
-                    }}
-
-                </a>
-
-            </li>
-
-
-            <li>
-
-                <a
-                    href="{{ url_for('logout') }}"
-                    class="nav-link">
-
-                    {{
-                        "تسجيل الخروج"
-                        if current_lang == "ar"
-                        else "Logout"
-                    }}
-
-                </a>
-
-            </li>
-
-        </ul>
-
-    </nav>
-
-</div>
-
-
-
-<!-- =====================================================
      WELCOME
 ===================================================== -->
 
-<section
-    style="
-        text-align:center;
-        padding:20px 70px;
-        width:90%;
-        margin:auto;
-    ">
+<section class="welcome-section">
 
-    <h1 style="color:#e26fa7;">
+    <h1>
 
         {{
             "مرحبًا،"
@@ -343,18 +352,15 @@
 
         💕
 
+
     </h1>
 
 
-    <p
-        style="
-            color:#555;
-            font-size:1.2rem;
-        ">
+    <p>
 
         {{
             "استكشف مجموعات الكروشيه المفضلة لديك!"
-            if current_lang == "ar"
+            if current_lang == 'ar'
             else
             "Explore your favorite crochet collections!"
         }}
@@ -371,27 +377,16 @@
 
 <section
     id="home"
-    class="hero"
-    style="
-        text-align:center;
-        padding:20px 70px;
-    ">
+    class="hero">
 
 
     <img
         src="{{ url_for('static', filename='images/hero.png') }}"
         class="hero_image"
-        alt="Hero"
-        style="
-            border-radius:20px;
-        ">
+        alt="Hero">
 
 
     <div class="hero-content">
-
-        <!-- =================================================
-             تم إضافة class خاص للعنوان
-        ================================================== -->
 
         <h1 class="hero-main-title">
 
@@ -736,20 +731,434 @@
 
 <style>
 
+/* =====================================================
+   TOP HEADER - NEW DESIGN
+===================================================== */
 
-.product-section{
+.main-header{
 
     width:100%;
-    max-width:1400px;
-    margin:auto;
-    padding:40px 25px 60px;
+
+    background:#fde4ef;
+
+    border-bottom:1px solid #f4c7da;
+
+    box-shadow:
+        0 5px 18px rgba(216,111,157,.10);
+
+    position:relative;
+
+    z-index:100;
 
 }
 
 
+/* =====================================================
+   HEADER TOP
+===================================================== */
+
+.main-header .header-top{
+
+    min-height:82px;
+
+    padding:12px 30px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    box-sizing:border-box;
+
+    background:#fde4ef;
+
+}
+
+
+/* =====================================================
+   LEFT ICONS
+===================================================== */
+
+.main-header .left-icons{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+
+/* =====================================================
+   MENU BUTTON
+===================================================== */
+
+.main-header .menu-btn{
+
+    width:42px;
+
+    height:42px;
+
+    border:none;
+
+    background:transparent;
+
+    color:#c45b91;
+
+    font-size:29px;
+
+    cursor:pointer;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    transition:.25s;
+
+}
+
+
+.main-header .menu-btn:hover{
+
+    transform:scale(1.08);
+
+    color:#a94478;
+
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+.main-header .search-box{
+
+    width:180px;
+
+    height:40px;
+
+    display:flex;
+
+    align-items:center;
+
+    border:2px solid #f3a9c8;
+
+    border-radius:25px;
+
+    background:#fff;
+
+    overflow:hidden;
+
+    box-sizing:border-box;
+
+}
+
+
+.main-header .search-box input{
+
+    width:100%;
+
+    height:100%;
+
+    border:none;
+
+    outline:none;
+
+    padding:0 13px;
+
+    background:transparent;
+
+    color:#555;
+
+    font-size:13px;
+
+}
+
+
+.main-header .search-box button{
+
+    width:42px;
+
+    height:100%;
+
+    border:none;
+
+    background:transparent;
+
+    cursor:pointer;
+
+    font-size:17px;
+
+}
+
+
+/* =====================================================
+   HEADER ICONS
+===================================================== */
+
+.main-header .header-icon{
+
+    text-decoration:none;
+
+    font-size:21px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    width:32px;
+
+    height:38px;
+
+    transition:.25s;
+
+}
+
+
+.main-header .header-icon:hover{
+
+    transform:translateY(-3px) scale(1.08);
+
+}
+
+
+/* =====================================================
+   LOGO
+===================================================== */
+
+.main-header .logo-section{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+
+.main-header .logo{
+
+    width:65px;
+
+    height:65px;
+
+    object-fit:contain;
+
+    border-radius:50%;
+
+}
+
+
+/* =====================================================
+   STORE BRAND
+===================================================== */
+
+.store-brand{
+
+    text-align:center;
+
+    padding:12px 20px 10px;
+
+    background:#fde4ef;
+
+}
+
+
+.store-brand h1{
+
+    margin:0;
+
+    color:#d86f9d;
+
+    font-size:clamp(2.2rem, 5vw, 4.3rem);
+
+    font-weight:800;
+
+    line-height:1.15;
+
+    letter-spacing:.5px;
+
+}
+
+
+.store-brand p{
+
+    margin:6px 0 0;
+
+    color:#8d6678;
+
+    font-size:14px;
+
+    font-weight:500;
+
+}
+
+
+/* =====================================================
+   NAVBAR
+===================================================== */
+
+.main-navbar{
+
+    width:calc(100% - 100px);
+
+    max-width:1200px;
+
+    margin:8px auto 16px;
+
+    padding:4px;
+
+    background:#fff;
+
+    border:1px solid #f3ccdd;
+
+    border-radius:35px;
+
+    box-shadow:
+        0 5px 16px rgba(216,111,157,.10);
+
+    box-sizing:border-box;
+
+}
+
+
+.main-navbar .nav-links{
+
+    list-style:none;
+
+    margin:0;
+
+    padding:0;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:5px;
+
+}
+
+
+.main-navbar .nav-links li{
+
+    margin:0;
+
+    padding:0;
+
+}
+
+
+.main-navbar .nav-link{
+
+    display:block;
+
+    padding:11px 23px;
+
+    border-radius:25px;
+
+    text-decoration:none;
+
+    color:#563846;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    transition:.25s;
+
+}
+
+
+.main-navbar .nav-link:hover{
+
+    background:#fde4ef;
+
+    color:#c6538b;
+
+    transform:translateY(-1px);
+
+}
+
+
+/* =====================================================
+   WELCOME
+===================================================== */
+
+.welcome-section{
+
+    text-align:center;
+
+    width:90%;
+
+    max-width:1100px;
+
+    margin:0 auto;
+
+    padding:28px 20px 22px;
+
+    box-sizing:border-box;
+
+}
+
+
+.welcome-section h1{
+
+    margin:0 0 6px;
+
+    color:#e26fa7;
+
+    font-size:30px;
+
+}
+
+
+.welcome-section p{
+
+    margin:0;
+
+    color:#555;
+
+    font-size:17px;
+
+}
+
+
+/* =====================================================
+   PRODUCT SECTION
+===================================================== */
+
+.product-section{
+
+    width:100%;
+
+    max-width:1400px;
+
+    margin:auto;
+
+    padding:40px 25px 60px;
+
+    box-sizing:border-box;
+
+}
+
+
+/* =====================================================
+   SECTION TITLE
+===================================================== */
+
 .section-title{
 
     text-align:center;
+
     margin-bottom:40px;
 
 }
@@ -758,8 +1167,11 @@
 .section-title h2{
 
     font-size:38px;
+
     color:#d86f9d;
+
     font-weight:700;
+
     margin-bottom:12px;
 
 }
@@ -768,27 +1180,45 @@
 .section-title p{
 
     max-width:650px;
+
     margin:auto;
+
     color:#777;
+
     font-size:16px;
+
     line-height:1.8;
 
 }
 
+
+/* =====================================================
+   PRODUCT GRID
+===================================================== */
 
 .product-grid{
 
     display:grid;
 
     grid-template-columns:
-        repeat(auto-fit,minmax(260px,1fr));
+        repeat(auto-fill, 300px);
+
+    justify-content:center;
 
     gap:25px;
+
+    width:100%;
 
 }
 
 
+/* =====================================================
+   PRODUCT CARD
+===================================================== */
+
 .product{
+
+    width:300px;
 
     background:#fff;
 
@@ -805,9 +1235,9 @@
 
     flex-direction:column;
 
-    height:100%;
-
     cursor:pointer;
+
+    box-sizing:border-box;
 
 }
 
@@ -822,11 +1252,15 @@
 }
 
 
+/* =====================================================
+   PRODUCT IMAGE
+===================================================== */
+
 .product img{
 
     width:100%;
 
-    aspect-ratio:1/1;
+    height:300px;
 
     object-fit:cover;
 
@@ -846,6 +1280,10 @@
 }
 
 
+/* =====================================================
+   PRODUCT NAME
+===================================================== */
+
 .product h3{
 
     padding:16px 16px 8px;
@@ -856,12 +1294,20 @@
 
     font-weight:600;
 
+    margin:0;
+
 }
 
+
+/* =====================================================
+   DESCRIPTION
+===================================================== */
 
 .description{
 
     padding:0 16px;
+
+    margin:0;
 
     color:#777;
 
@@ -882,6 +1328,10 @@
 }
 
 
+/* =====================================================
+   RATING
+===================================================== */
+
 .rating{
 
     padding:10px 16px 5px;
@@ -893,18 +1343,28 @@
 }
 
 
+/* =====================================================
+   PRICE
+===================================================== */
+
 .price{
 
     padding:0 16px;
 
+    margin:8px 0;
+
     color:#d86f9d;
 
-    font-size:28px;
+    font-size:24px;
 
     font-weight:bold;
 
 }
 
+
+/* =====================================================
+   BOTTOM
+===================================================== */
 
 .bottom{
 
@@ -914,6 +1374,10 @@
 
 }
 
+
+/* =====================================================
+   QUANTITY
+===================================================== */
 
 .quantity-box{
 
@@ -973,6 +1437,10 @@
 }
 
 
+/* =====================================================
+   ADD CART
+===================================================== */
+
 .add-cart-btn{
 
     width:100%;
@@ -1005,6 +1473,10 @@
 }
 
 
+/* =====================================================
+   NO PRODUCTS
+===================================================== */
+
 .no-products{
 
     text-align:center;
@@ -1016,249 +1488,6 @@
     padding:60px;
 
 }
-
-
-
-/* =====================================================
-   TABLET
-===================================================== */
-
-@media (max-width:992px){
-
-    .section-title h2{
-
-        font-size:46px;
-
-    }
-
-
-    .section-title p{
-
-        font-size:18px;
-
-    }
-
-
-    .product-section{
-
-        padding:35px 20px;
-
-    }
-
-
-    .product-grid{
-
-        grid-template-columns:
-            repeat(3,1fr);
-
-        gap:20px;
-
-    }
-
-}
-
-
-
-/* =====================================================
-   MOBILE
-===================================================== */
-
-@media (max-width:768px){
-
-    .section-title{
-
-        padding:30px 15px 25px;
-
-        margin-bottom:30px;
-
-    }
-
-
-    .section-title h2{
-
-        font-size:34px;
-
-    }
-
-
-    .section-title p{
-
-        font-size:15px;
-
-    }
-
-
-    .product-section{
-
-        padding:25px 15px;
-
-    }
-
-
-    .product-grid{
-
-        grid-template-columns:
-            repeat(2,1fr);
-
-        gap:15px;
-
-    }
-
-
-    .product h3{
-
-        font-size:15px;
-
-    }
-
-
-    .description{
-
-        font-size:12px;
-
-        min-height:58px;
-
-    }
-
-
-    .price{
-
-        font-size:20px;
-
-    }
-
-
-    .quantity-btn{
-
-        width:34px;
-
-        height:34px;
-
-        font-size:18px;
-
-    }
-
-
-    .add-cart-btn{
-
-        font-size:13px;
-
-        padding:10px;
-
-    }
-
-}
-
-
-
-/* =====================================================
-   SMALL MOBILE
-===================================================== */
-
-@media (max-width:480px){
-
-    .product-grid{
-
-        gap:12px;
-
-    }
-
-
-    .section-title h2{
-
-        font-size:22px;
-
-    }
-
-
-    .description{
-
-        -webkit-line-clamp:2;
-
-        min-height:42px;
-
-    }
-
-
-    .price{
-
-        font-size:18px;
-
-    }
-
-
-    .quantity-btn{
-
-        width:30px;
-
-        height:30px;
-
-        font-size:17px;
-
-    }
-
-
-    .add-cart-btn{
-
-        font-size:12px;
-
-    }
-
-}
-
-
-
-/* =====================================================
-   ⭐ HERO TITLE - MOBILE
-===================================================== */
-
-/*
-   هذا التنسيق خاص فقط بعنوان:
-   مرحبًا بك في متجر روري
-
-   ما يغير اللابتوب أو الآيباد.
-*/
-
-.hero-main-title{
-
-    font-size:inherit;
-
-}
-
-
-@media (max-width:768px){
-
-    .hero-main-title{
-
-        font-size:42px !important;
-
-        line-height:1.35 !important;
-
-        margin:0 10px 18px !important;
-
-        font-weight:800 !important;
-
-    }
-
-}
-
-
-@media (max-width:480px){
-
-    .hero-main-title{
-
-        font-size:36px !important;
-
-        line-height:1.4 !important;
-
-        margin:0 8px 18px !important;
-
-        font-weight:800 !important;
-
-    }
-
-}
-
 
 
 /* =====================================================
@@ -1306,18 +1535,321 @@
 }
 
 
-@media (max-width:992px){
+/* =====================================================
+   HERO TITLE
+===================================================== */
 
-    .store-banner{
+.hero-main-title{
 
-        padding:50px 20px;
+    font-size:inherit;
+
+}
+
+
+@media (max-width:768px){
+
+    .hero-main-title{
+
+        font-size:42px !important;
+
+        line-height:1.35 !important;
+
+        margin:0 10px 18px !important;
+
+        font-weight:800 !important;
 
     }
 
 }
 
 
+@media (max-width:480px){
+
+    .hero-main-title{
+
+        font-size:36px !important;
+
+        line-height:1.4 !important;
+
+        margin:0 8px 18px !important;
+
+        font-weight:800 !important;
+
+    }
+
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width:992px){
+
+    .main-header .header-top{
+
+        padding:12px 20px;
+
+    }
+
+
+    .main-navbar{
+
+        width:calc(100% - 50px);
+
+    }
+
+
+    .main-navbar .nav-link{
+
+        padding:10px 16px;
+
+    }
+
+
+    .product-section{
+
+        padding:35px 20px;
+
+    }
+
+
+    .product-grid{
+
+        grid-template-columns:
+            repeat(2, 300px);
+
+        justify-content:center;
+
+        gap:20px;
+
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
 @media (max-width:768px){
+
+    .main-header .header-top{
+
+        min-height:72px;
+
+        padding:9px 12px;
+
+    }
+
+
+    .main-header .left-icons{
+
+        gap:8px;
+
+    }
+
+
+    .main-header .search-box{
+
+        width:135px;
+
+        height:37px;
+
+    }
+
+
+    .main-header .header-icon{
+
+        font-size:18px;
+
+        width:27px;
+
+    }
+
+
+    .main-header .logo{
+
+        width:55px;
+
+        height:55px;
+
+    }
+
+
+    .store-brand{
+
+        padding:10px 15px 8px;
+
+    }
+
+
+    .store-brand h1{
+
+        font-size:clamp(1.8rem, 9vw, 3rem);
+
+    }
+
+
+    .store-brand p{
+
+        font-size:12px;
+
+    }
+
+
+    .main-navbar{
+
+        width:calc(100% - 25px);
+
+        margin:7px auto 12px;
+
+        border-radius:25px;
+
+    }
+
+
+    .main-navbar .nav-links{
+
+        gap:0;
+
+        flex-wrap:wrap;
+
+    }
+
+
+    .main-navbar .nav-link{
+
+        padding:8px 11px;
+
+        font-size:12px;
+
+    }
+
+
+    .welcome-section{
+
+        padding:22px 12px 18px;
+
+    }
+
+
+    .welcome-section h1{
+
+        font-size:25px;
+
+    }
+
+
+    .welcome-section p{
+
+        font-size:14px;
+
+    }
+
+
+    .section-title{
+
+        padding:30px 15px 25px;
+
+        margin-bottom:30px;
+
+    }
+
+
+    .section-title h2{
+
+        font-size:34px;
+
+    }
+
+
+    .section-title p{
+
+        font-size:15px;
+
+    }
+
+
+    .product-section{
+
+        padding:25px 15px;
+
+    }
+
+
+    .product-grid{
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap:15px;
+
+    }
+
+
+    .product{
+
+        width:100%;
+
+    }
+
+
+    .product img{
+
+        width:100%;
+
+        height:auto;
+
+        aspect-ratio:1 / 1;
+
+        object-fit:cover;
+
+    }
+
+
+    .product h3{
+
+        font-size:15px;
+
+    }
+
+
+    .description{
+
+        font-size:12px;
+
+        min-height:58px;
+
+    }
+
+
+    .price{
+
+        font-size:20px;
+
+    }
+
+
+    .quantity-btn{
+
+        width:34px;
+
+        height:34px;
+
+        font-size:18px;
+
+    }
+
+
+    .add-cart-btn{
+
+        font-size:13px;
+
+        padding:10px;
+
+    }
+
 
     .store-banner{
 
@@ -1331,6 +1863,133 @@
         max-width:90%;
 
         margin:15px auto 0;
+
+    }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width:480px){
+
+    .main-header .header-top{
+
+        padding:8px 8px;
+
+    }
+
+
+    .main-header .left-icons{
+
+        gap:5px;
+
+    }
+
+
+    .main-header .search-box{
+
+        width:112px;
+
+    }
+
+
+    .main-header .logo{
+
+        width:48px;
+
+        height:48px;
+
+    }
+
+
+    .main-header .header-icon{
+
+        font-size:17px;
+
+        width:24px;
+
+    }
+
+
+    .main-header .menu-btn{
+
+        font-size:25px;
+
+        width:34px;
+
+    }
+
+
+    .store-brand h1{
+
+        font-size:30px;
+
+    }
+
+
+    .store-brand p{
+
+        font-size:11px;
+
+    }
+
+
+    .main-navbar .nav-link{
+
+        padding:7px 8px;
+
+        font-size:11px;
+
+    }
+
+
+    .product-grid{
+
+        gap:12px;
+
+    }
+
+
+    .section-title h2{
+
+        font-size:22px;
+
+    }
+
+
+    .description{
+
+        -webkit-line-clamp:2;
+
+        min-height:42px;
+
+    }
+
+
+    .price{
+
+        font-size:18px;
+
+    }
+
+
+    .quantity-btn{
+
+        width:30px;
+
+        height:30px;
+
+        font-size:17px;
+
+    }
+
+
+    .add-cart-btn{
+
+        font-size:12px;
 
     }
 
