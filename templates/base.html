@@ -2,205 +2,453 @@
 <html lang="{{ current_lang }}" dir="{{ 'rtl' if current_lang == 'ar' else 'ltr' }}">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>
-        {{ "متجر روري للكروشيه" if current_lang == "ar" else "Crochet Rory Store" }}
+        {{
+            "متجر روري للكروشيه"
+            if current_lang == "ar"
+            else "Crochet Rory Store"
+        }}
     </title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
-          <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
 </head>
+
 
 <body>
 
-<!-- العنوان الرئيسي -->
+
+<!-- =====================================================
+     HEADER TOP
+===================================================== -->
+
 <div class="header-top">
 
-    <!-- ☰ + البحث + السلة + الحساب -->
+
+    <!-- =================================================
+         LEFT ICONS
+    ================================================== -->
+
     <div class="left-icons">
 
-        <button class="menu-btn" onclick="toggleMenu()">
+
+        <!-- MENU -->
+
+        <button
+            type="button"
+            class="menu-btn"
+            onclick="toggleMenu()">
+
             ☰
+
         </button>
 
-        <form action="{{ url_for('search') }}"
-              method="GET"
-              class="search-box">
+
+        <!-- SEARCH -->
+
+        <form
+            action="{{ url_for('search') }}"
+            method="GET"
+            class="search-box">
 
             <input
                 type="text"
                 name="q"
-                placeholder="{{ 'ابحث...' if current_lang == 'ar' else 'Search...' }}"
+                placeholder="{{
+                    'ابحث...'
+                    if current_lang == 'ar'
+                    else 'Search...'
+                }}"
                 required>
 
-            <button type="submit">🔍</button>
+            <button type="submit">
+                🔍
+            </button>
 
         </form>
 
-{% if current_user.is_authenticated %}
-<a href="{{ url_for('cart_page') }}" class="cart-icon">
-    🛒
-</a>
-{% else %}
-<a href="#" onclick="openLogin(); return false;" class="cart-icon">
-    🛒
-</a>
-{% endif %}
 
-{% if current_user.is_authenticated %}
-<a href="{{ url_for('profile') }}" class="profile-icon">
-    👤
-</a>
-{% else %}
-<a href="#" onclick="openLogin(); return false;" class="profile-icon">
-    👤
-</a>
-{% endif %}
+        <!-- CART -->
+
+        {% if current_user.is_authenticated %}
+
+            <a
+                href="{{ url_for('cart_page') }}"
+                class="cart-icon">
+
+                🛒
+
+            </a>
+
+        {% else %}
+
+            <a
+                href="#"
+                onclick="openLogin(); return false;"
+                class="cart-icon">
+
+                🛒
+
+            </a>
+
+        {% endif %}
+
+
+        <!-- PROFILE -->
+
+        {% if current_user.is_authenticated %}
+
+            <a
+                href="{{ url_for('profile') }}"
+                class="profile-icon">
+
+                👤
+
+            </a>
+
+        {% else %}
+
+            <a
+                href="#"
+                onclick="openLogin(); return false;"
+                class="profile-icon">
+
+                👤
+
+            </a>
+
+        {% endif %}
+
 
     </div>
 
-    <!-- اسم المتجر + اللوقو -->
+
+    <!-- =================================================
+         LOGO
+    ================================================== -->
+
     <div class="logo-section">
 
-        <img src="{{ url_for('static', filename='images/logo.png') }}"
-             class="logo">
+        <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            class="logo"
+            alt="Crochet Rory Store">
 
     </div>
+
 
 </div>
 
+
+
+<!-- =====================================================
+     STORE BANNER
+===================================================== -->
+
 <section class="store-banner">
 
-    <h1>Crochet Rory Store</h1>
+    <h1>
+
+        {{
+            "متجر روري للكروشيه"
+            if current_lang == "ar"
+            else "Crochet Rory Store"
+        }}
+
+    </h1>
+
 
     <p>
-        Handmade Crochet with Love 🧶💗
+
+        {{
+            "Handmade Crochet with Love 🧶💗"
+            if current_lang == "ar"
+            else "Handmade Crochet with Love 🧶💗"
+        }}
+
     </p>
 
 </section>
 
 
-<!-- القائمة الجانبية -->
+
+<!-- =====================================================
+     SIDE MENU
+===================================================== -->
+
 <div id="sideMenu" class="side-menu">
 
-<button class="close-menu" onclick="closeMenu()">
-    &times;
-</button>
+
+    <button
+        type="button"
+        class="close-menu"
+        onclick="closeMenu()">
+
+        &times;
+
+    </button>
 
 
-<!-- =========================
-        HOME
-========================= -->
 
-<a href="#home">
-    🏠 {{ "الرئيسية" if current_lang == "ar" else "Home" }}
-</a>
+    <!-- =========================
+         HOME
+    ========================== -->
 
+    <a href="#home">
 
-<!-- =========================
-        ABOUT ME
-========================= -->
+        🏠
 
-<a href="#about-me">
-    💗 {{ "من أنا" if current_lang == "ar" else "About Me" }}
-</a>
+        {{
+            "الرئيسية"
+            if current_lang == "ar"
+            else "Home"
+        }}
 
-
-<!-- =========================
-        PRODUCTS
-========================= -->
-
-{% if current_user.is_authenticated %}
-
-<a href="{{ url_for('products_page') }}">
-    🧶 {{ "المنتجات" if current_lang == "ar" else "Products" }}
-</a>
-
-{% else %}
-
-<a
-    href="javascript:void(0);"
-    onclick="openLogin(); closeMenu();"
->
-    🧶 {{ "المنتجات" if current_lang == "ar" else "Products" }}
-</a>
-
-{% endif %}
+    </a>
 
 
-<!-- =========================
-        REVIEWS
-========================= -->
 
-<a href="#reviews">
-    ⭐ {{ "التقييمات" if current_lang == "ar" else "Reviews" }}
-</a>
+    <!-- =========================
+         ABOUT ME
+    ========================== -->
 
+    <a href="#about-me">
 
-<hr>
+        💗
 
+        {{
+            "من أنا"
+            if current_lang == "ar"
+            else "About Me"
+        }}
 
-<!-- =========================
-        LANGUAGE
-========================= -->
-
-<a href="{{ url_for('change_language', lang='en') }}">
-    🇺🇸 English
-</a>
-
-<a href="{{ url_for('change_language', lang='ar') }}">
-    🇸🇦 العربية
-</a>
+    </a>
 
 
-<hr>
+
+    <!-- =========================
+         PRODUCTS
+    ========================== -->
+
+    {% if current_user.is_authenticated %}
+
+        <a href="{{ url_for('products_page') }}">
+
+            🧶
+
+            {{
+                "المنتجات"
+                if current_lang == "ar"
+                else "Products"
+            }}
+
+        </a>
+
+    {% else %}
+
+        <a
+            href="javascript:void(0);"
+            onclick="openLogin(); closeMenu();">
+
+            🧶
+
+            {{
+                "المنتجات"
+                if current_lang == "ar"
+                else "Products"
+            }}
+
+        </a>
+
+    {% endif %}
 
 
-<!-- =========================
-        LOGIN / ACCOUNT
-========================= -->
 
-{% if current_user.is_authenticated %}
+    <!-- =========================
+         REVIEWS
+    ========================== -->
 
-<a href="#">
-    👤 {{ "حسابي" if current_lang == "ar" else "My Account" }}
-</a>
+    <a href="#reviews">
 
-{% else %}
+        ⭐
 
-<a
-    href="javascript:void(0);"
-    onclick="openLogin(); closeMenu();"
->
-    👤 {{ "تسجيل الدخول" if current_lang == "ar" else "Login" }}
-</a>
+        {{
+            "التقييمات"
+            if current_lang == "ar"
+            else "Reviews"
+        }}
 
-{% endif %}
+    </a>
+
+
+
+    <hr>
+
+
+
+    <!-- =========================
+         LANGUAGE
+    ========================== -->
+
+    <a href="{{ url_for('change_language', lang='en') }}">
+
+        🇺🇸 English
+
+    </a>
+
+
+    <a href="{{ url_for('change_language', lang='ar') }}">
+
+        🇸🇦 العربية
+
+    </a>
+
+
+
+    <hr>
+
+
+
+    <!-- =========================
+         LOGIN / ACCOUNT
+    ========================== -->
+
+    {% if current_user.is_authenticated %}
+
+        <a href="#">
+
+            👤
+
+            {{
+                "حسابي"
+                if current_lang == "ar"
+                else "My Account"
+            }}
+
+        </a>
+
+    {% else %}
+
+        <a
+            href="javascript:void(0);"
+            onclick="openLogin(); closeMenu();">
+
+            👤
+
+            {{
+                "تسجيل الدخول"
+                if current_lang == "ar"
+                else "Login"
+            }}
+
+        </a>
+
+    {% endif %}
+
 
 </div>
 
-  <!-- رسائل النجاح -->
+
+
+<!-- =====================================================
+     FLASH SUCCESS MESSAGES
+===================================================== -->
+
 {% with messages = get_flashed_messages(with_categories=true) %}
+
     {% if messages %}
-        <div style="max-width:600px; margin:20px auto;">
+
+        <div class="flash-messages">
 
             {% for category, message in messages %}
 
                 {% if category == 'success' %}
 
-                    <div style="
-                        padding:10px;
-                        border-radius:8px;
-                        margin-bottom:10px;
-                        text-align:center;
-                        background:#e26fa7;
-                        color:white;
-                    ">
-                        💖 {{ message }}
+                    <div class="flash-success">
+
+
+                        <span class="flash-icon">
+                            💖
+                        </span>
+
+
+                        <span class="flash-text">
+
+                            {% if message == "Profile updated successfully" %}
+
+                                {{
+                                    "تم تحديث الملف الشخصي بنجاح"
+                                    if current_lang == "ar"
+                                    else "Profile updated successfully"
+                                }}
+
+                            {% elif message == "Registration successful" %}
+
+                                {{
+                                    "تم التسجيل بنجاح"
+                                    if current_lang == "ar"
+                                    else "Registration successful"
+                                }}
+
+                            {% elif message == "Login successful" %}
+
+                                {{
+                                    "تم تسجيل الدخول بنجاح"
+                                    if current_lang == "ar"
+                                    else "Login successful"
+                                }}
+
+                            {% elif message == "Password changed successfully" %}
+
+                                {{
+                                    "تم تغيير كلمة المرور بنجاح"
+                                    if current_lang == "ar"
+                                    else "Password changed successfully"
+                                }}
+
+                            {% elif message == "Product added successfully" %}
+
+                                {{
+                                    "تمت إضافة المنتج بنجاح"
+                                    if current_lang == "ar"
+                                    else "Product added successfully"
+                                }}
+
+                            {% elif message == "Product updated successfully" %}
+
+                                {{
+                                    "تم تحديث المنتج بنجاح"
+                                    if current_lang == "ar"
+                                    else "Product updated successfully"
+                                }}
+
+                            {% elif message == "Product deleted successfully" %}
+
+                                {{
+                                    "تم حذف المنتج بنجاح"
+                                    if current_lang == "ar"
+                                    else "Product deleted successfully"
+                                }}
+
+                            {% else %}
+
+                                {{ message }}
+
+                            {% endif %}
+
+                        </span>
+
+
                     </div>
 
                 {% endif %}
@@ -208,39 +456,326 @@
             {% endfor %}
 
         </div>
+
     {% endif %}
+
 {% endwith %}
-<!-- محتوى الصفحة -->
+
+
+
+<!-- =====================================================
+     PAGE CONTENT
+===================================================== -->
+
 <main>
+
     {% block content %}
+
     {% endblock %}
+
 </main>
 
+
+
+<!-- =====================================================
+     FLASH MESSAGE CSS
+===================================================== -->
+
+<style>
+
+
+/* =====================================================
+   FLASH CONTAINER
+===================================================== */
+
+.flash-messages {
+
+    width: 100%;
+
+    max-width: 520px;
+
+    margin: 16px auto;
+
+    padding: 0 15px;
+
+    box-sizing: border-box;
+
+}
+
+
+
+/* =====================================================
+   SUCCESS MESSAGE
+===================================================== */
+
+.flash-success {
+
+    width: 100%;
+
+    min-height: 42px;
+
+    padding: 9px 14px;
+
+    box-sizing: border-box;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    background: #e26fa7;
+
+    color: #ffffff;
+
+    border-radius: 9px;
+
+    text-align: center;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    line-height: 1.4;
+
+    box-shadow:
+        0 4px 12px rgba(226, 111, 167, 0.18);
+
+}
+
+
+
+/* =====================================================
+   ICON
+===================================================== */
+
+.flash-icon {
+
+    flex-shrink: 0;
+
+    font-size: 15px;
+
+    line-height: 1;
+
+}
+
+
+
+/* =====================================================
+   TEXT
+===================================================== */
+
+.flash-text {
+
+    display: block;
+
+    word-break: break-word;
+
+}
+
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width: 768px) {
+
+    .flash-messages {
+
+        width: 100%;
+
+        max-width: none;
+
+        margin: 12px auto;
+
+        padding: 0 12px;
+
+    }
+
+
+    .flash-success {
+
+        min-height: 40px;
+
+        padding: 8px 12px;
+
+        border-radius: 8px;
+
+        font-size: 13px;
+
+        gap: 6px;
+
+    }
+
+
+    .flash-icon {
+
+        font-size: 14px;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
+
+    .flash-messages {
+
+        margin: 10px auto;
+
+        padding: 0 9px;
+
+    }
+
+
+    .flash-success {
+
+        min-height: 38px;
+
+        padding: 7px 10px;
+
+        border-radius: 8px;
+
+        font-size: 12px;
+
+        line-height: 1.35;
+
+        gap: 5px;
+
+    }
+
+
+    .flash-icon {
+
+        font-size: 13px;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   VERY SMALL MOBILE
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .flash-messages {
+
+        padding: 0 7px;
+
+    }
+
+
+    .flash-success {
+
+        min-height: 36px;
+
+        padding: 6px 8px;
+
+        font-size: 11px;
+
+    }
+
+
+    .flash-icon {
+
+        font-size: 12px;
+
+    }
+
+}
+
+</style>
+
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
 <footer
-style="text-align:center;
-padding:20px;
-background:#f59a9c
-color:#555;">
+    style="
+        text-align:center;
+        padding:20px;
+        background:#f59a9c;
+        color:#555;
+    ">
 
     © 2026
-    {{ "متجر روري للكروشيه. جميع الحقوق محفوظة." if current_lang == "ar"
-    else "Crochet Rory Store. All rights reserved." }}
+
+    {{
+        "متجر روري للكروشيه. جميع الحقوق محفوظة."
+        if current_lang == "ar"
+        else "Crochet Rory Store. All rights reserved."
+    }}
 
 </footer>
 
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
 <script>
+
+
 function toggleMenu() {
-    document.getElementById("sideMenu").classList.toggle("active");
+
+    const menu =
+        document.getElementById("sideMenu");
+
+    if (menu) {
+
+        menu.classList.toggle("active");
+
+    }
+
 }
+
+
 
 function openMenu() {
-    document.getElementById("sideMenu").classList.add("active");
+
+    const menu =
+        document.getElementById("sideMenu");
+
+    if (menu) {
+
+        menu.classList.add("active");
+
+    }
+
 }
+
+
 
 function closeMenu() {
-    document.getElementById("sideMenu").classList.remove("active");
+
+    const menu =
+        document.getElementById("sideMenu");
+
+    if (menu) {
+
+        menu.classList.remove("active");
+
+    }
+
 }
+
 </script>
 
+
 </body>
+
 </html>

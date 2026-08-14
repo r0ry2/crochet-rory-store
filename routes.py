@@ -1567,10 +1567,6 @@ def add_review():
     flash("تم إرسال تقييمك بنجاح 💕")
 
     return redirect(url_for("home_logged"))
-# ==========================================
-# 👤 PROFILE
-# ==========================================
-
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
@@ -1620,6 +1616,7 @@ def profile():
     wishlist_count = Wishlist.query.filter_by(
         user_id=current_user.id
     ).count()
+
 
     # ==========================
     # Orders Lists
@@ -1673,6 +1670,7 @@ def profile():
         Order.created_at.desc()
     ).all()
 
+
     # ==========================
     # Update Profile
     # ==========================
@@ -1680,11 +1678,17 @@ def profile():
     if request.method == "POST":
 
         current_user.username = request.form.get("username")
+
         current_user.email = request.form.get("email")
+
         current_user.phone = request.form.get("phone")
+
         current_user.birthday = request.form.get("birthday")
+
         current_user.gender = request.form.get("gender")
+
         current_user.nationality = request.form.get("nationality")
+
 
         # ==========================
         # Upload Profile Image
@@ -1694,7 +1698,9 @@ def profile():
 
         if image and image.filename != "":
 
-            filename = secure_filename(image.filename)
+            filename = secure_filename(
+                image.filename
+            )
 
             upload_folder = os.path.join(
                 app.root_path,
@@ -1703,22 +1709,45 @@ def profile():
                 "profile"
             )
 
-            os.makedirs(upload_folder, exist_ok=True)
+            os.makedirs(
+                upload_folder,
+                exist_ok=True
+            )
 
             image.save(
-                os.path.join(upload_folder, filename)
+                os.path.join(
+                    upload_folder,
+                    filename
+                )
             )
 
             current_user.profile_image = filename
 
+
+        # ==========================
+        # Save Changes
+        # ==========================
+
         db.session.commit()
 
-        flash("Profile updated successfully 💕", "success")
 
-        return redirect(url_for("profile"))
+        # ==========================
+        # Success Message
+        # ==========================
+
+        flash(
+            "profile_updated_successfully",
+            "success"
+        )
+
+
+        return redirect(
+            url_for("profile")
+        )
+
 
     # ==========================
-    # Render
+    # Render Profile
     # ==========================
 
     return render_template(
@@ -1730,23 +1759,35 @@ def profile():
         total_orders=total_orders,
 
         pending_payment_orders=pending_payment_orders,
+
         pending_review_orders=pending_review_orders,
+
         processing_orders=processing_orders,
+
         shipping_orders=shipping_orders,
+
         delivered_orders=delivered_orders,
+
         cancelled_orders=cancelled_orders,
 
         cart_count=cart_count,
+
         wishlist_count=wishlist_count,
 
         orders=all_orders,
 
         pending_payment_list=pending_payment_list,
+
         pending_review_list=pending_review_list,
+
         processing_list=processing_list,
+
         shipping_list=shipping_list,
+
         delivered_list=delivered_list,
+
         cancelled_list=cancelled_list
+
     )
 # ==========================================
 # 📦 GET USER ORDERS BY STATUS
@@ -1973,15 +2014,39 @@ def login():
 @login_required
 def logout():
 
-    print("Before logout:", current_user.is_authenticated)
+    print(
+        "Before logout:",
+        current_user.is_authenticated
+    )
 
     logout_user()
 
-    print("After logout:", current_user.is_authenticated)
+    print(
+        "After logout:",
+        current_user.is_authenticated
+    )
 
-    flash("👋 You have been logged out.", "info")
+    # ==========================
+    # Logout Message
+    # ==========================
 
-    return redirect(url_for("index"))
+    if session.get("lang", "ar") == "ar":
+
+        flash(
+            "👋 تم تسجيل الخروج بنجاح.",
+            "success"
+        )
+
+    else:
+
+        flash(
+            "👋 You have been logged out successfully.",
+            "success"
+        )
+
+    return redirect(
+        url_for("index")
+    )
 
 # ==========================================
 # 🛒 CART PAGE

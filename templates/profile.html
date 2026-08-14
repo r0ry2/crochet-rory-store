@@ -291,6 +291,7 @@ body{
     color:#b15f77;
     margin-bottom:8px;
 }
+
 .quick-card p{
     color:#777;
     font-size:14px;
@@ -406,6 +407,10 @@ body{
     background:#c76f89;
 }
 
+.review-btn{
+    background:#8570eb !important;
+}
+
 /*==========================
       MODALS
 ==========================*/
@@ -474,7 +479,8 @@ body{
 }
 
 .edit-form input,
-.edit-form select{
+.edit-form select,
+.edit-form textarea{
     width:100%;
     padding:13px 16px;
     border-radius:14px;
@@ -483,7 +489,8 @@ body{
 }
 
 .edit-form input:focus,
-.edit-form select:focus{
+.edit-form select:focus,
+.edit-form textarea:focus{
     border-color:#d88ea4;
 }
 
@@ -519,21 +526,316 @@ body{
 
 }
 
+/*==========================
+      MOBILE
+==========================*/
 
+@media(max-width:768px){
 
-@media (max-width:768px){
+    .profile-cover{
+        height:210px;
+    }
+
+    .profile-card{
+        width:94%;
+        margin:-70px auto 35px;
+        padding:20px 14px 25px;
+        border-radius:22px;
+    }
+
+    .profile-avatar{
+        width:115px;
+        height:115px;
+        margin-top:-75px;
+        border-width:5px;
+    }
+
+    .profile-card h1{
+        font-size:24px;
+        margin-top:14px;
+    }
+
+    .email{
+        font-size:13px;
+        word-break:break-word;
+    }
+
+    .profile-info{
+        margin-top:25px;
+        grid-template-columns:1fr;
+        gap:12px;
+    }
+
+    .info-card{
+        padding:14px;
+        border-radius:17px;
+        gap:12px;
+    }
+
+    .info-card span{
+        width:48px;
+        height:48px;
+        font-size:21px;
+    }
+
+    .info-card small{
+        font-size:12px;
+    }
+
+    .info-card p{
+        font-size:13px;
+    }
+
+    .profile-actions{
+        margin-top:25px;
+        flex-direction:column;
+        gap:10px;
+    }
+
+    .edit-btn,
+    .logout-btn,
+    .password-btn,
+    .delete-btn{
+        width:100%;
+        padding:12px 16px;
+        font-size:13px;
+    }
+
+    .danger-zone{
+        margin-top:20px;
+        padding-top:20px;
+    }
+
+    .quick-actions,
+    .orders-status,
+    .orders-list{
+        width:94%;
+        margin-bottom:35px;
+    }
+
+    .section-header{
+        margin-bottom:20px;
+    }
+
+    .section-header h2{
+        font-size:24px;
+    }
+
+    .section-header p{
+        font-size:13px;
+    }
+
+    .quick-grid{
+        grid-template-columns:repeat(2,1fr);
+        gap:10px;
+    }
+
+    .quick-card{
+        padding:18px 10px;
+        border-radius:18px;
+    }
+
+    .quick-card .icon{
+        width:52px;
+        height:52px;
+        font-size:24px;
+        margin-bottom:10px;
+    }
+
+    .quick-card h3{
+        font-size:14px;
+    }
+
+    .quick-card p{
+        font-size:11px;
+        line-height:1.5;
+    }
 
     .status-grid{
-        grid-template-columns:repeat(3,1fr);
+        grid-template-columns:repeat(2,1fr);
         gap:10px;
     }
 
     .status-card{
-        padding:12px 6px;
+        padding:14px 7px;
+        border-radius:17px;
     }
 
     .status-icon{
+        font-size:22px;
+        margin-bottom:7px;
+    }
+
+    .status-count{
         font-size:20px;
+        margin-bottom:5px;
+    }
+
+    .status-card p{
+        font-size:11px;
+    }
+
+    .empty-orders{
+        padding:45px 15px;
+        border-radius:18px;
+    }
+
+    .empty-orders div{
+        font-size:45px !important;
+    }
+
+    .empty-orders h3{
+        font-size:18px;
+    }
+
+    .empty-orders p{
+        font-size:13px;
+    }
+
+    .order-card{
+        padding:18px 14px;
+        border-radius:18px;
+        margin-bottom:14px;
+    }
+
+    .order-card h3{
+        font-size:17px;
+    }
+
+    .order-card p{
+        font-size:13px;
+        margin:8px 0;
+    }
+
+    .order-card h4{
+        font-size:15px;
+    }
+
+    .order-card a{
+        width:100%;
+        padding:10px 15px;
+        font-size:13px;
+        margin-top:10px;
+    }
+
+    .modal{
+        padding:10px;
+        align-items:center;
+    }
+
+    .modal-content{
+        max-width:100%;
+        max-height:92vh;
+        padding:24px 16px;
+        border-radius:20px;
+    }
+
+    .modal-content h2{
+        font-size:20px;
+        margin-bottom:20px;
+        padding:0 25px;
+    }
+
+    .close-modal{
+        top:8px;
+        right:12px;
+        font-size:27px;
+    }
+
+    .edit-form{
+        gap:11px;
+    }
+
+    .edit-form label{
+        font-size:13px;
+    }
+
+    .edit-form input,
+    .edit-form select,
+    .edit-form textarea{
+        padding:11px 12px;
+        font-size:13px;
+        border-radius:11px;
+    }
+
+    .save-btn{
+        padding:12px;
+        font-size:14px;
+    }
+
+}
+
+/*==========================
+      SMALL MOBILE
+==========================*/
+
+@media(max-width:480px){
+
+    .profile-cover{
+        height:180px;
+    }
+
+    .profile-card{
+        margin-top:-55px;
+        padding:18px 10px 22px;
+    }
+
+    .profile-avatar{
+        width:100px;
+        height:100px;
+        margin-top:-65px;
+    }
+
+    .profile-card h1{
+        font-size:21px;
+    }
+
+    .email{
+        font-size:12px;
+    }
+
+    .info-card{
+        padding:11px;
+    }
+
+    .info-card span{
+        width:43px;
+        height:43px;
+        font-size:19px;
+    }
+
+    .info-card small{
+        font-size:11px;
+    }
+
+    .info-card p{
+        font-size:12px;
+    }
+
+    .quick-card{
+        padding:15px 7px;
+    }
+
+    .quick-card .icon{
+        width:45px;
+        height:45px;
+        font-size:21px;
+    }
+
+    .quick-card h3{
+        font-size:13px;
+    }
+
+    .quick-card p{
+        font-size:10px;
+    }
+
+    .status-card{
+        padding:11px 5px;
+    }
+
+    .status-icon{
+        font-size:19px;
     }
 
     .status-count{
@@ -541,12 +843,14 @@ body{
     }
 
     .status-card p{
-        font-size:11px;
+        font-size:10px;
     }
 
 }
-}
+
 </style>
+
+
 <div class="profile-page">
 
     <!-- ==========================
@@ -557,11 +861,13 @@ body{
 
         <img
             src="{{ url_for('static', filename='images/hero.png') }}"
-            class="cover-image">
+            class="cover-image"
+            alt="Cover">
 
         <div class="cover-overlay"></div>
 
     </section>
+
 
     <!-- ==========================
             PROFILE CARD
@@ -574,15 +880,19 @@ body{
             <img
                 id="profilePreview"
                 src="{{ url_for('static', filename='uploads/profile/' ~ current_user.profile_image) }}"
-                onerror="this.src='{{ url_for('static', filename='images/profile.png') }}'">
+                onerror="this.src='{{ url_for('static', filename='images/profile.png') }}'"
+                alt="Profile">
 
         </div>
 
-        <h1>{{ current_user.username }}</h1>
+        <h1>
+            {{ current_user.username }}
+        </h1>
 
         <p class="email">
             {{ current_user.email }}
         </p>
+
 
         <!-- ==========================
                 USER INFO
@@ -596,13 +906,18 @@ body{
 
                 <div>
 
-                    <small>البريد الإلكتروني</small>
+                    <small>
+                        {{ "البريد الإلكتروني" if current_lang=="ar" else "Email" }}
+                    </small>
 
-                    <p>{{ current_user.email }}</p>
+                    <p>
+                        {{ current_user.email }}
+                    </p>
 
                 </div>
 
             </div>
+
 
             <div class="info-card">
 
@@ -610,13 +925,23 @@ body{
 
                 <div>
 
-                    <small>رقم الجوال</small>
+                    <small>
+                        {{ "رقم الجوال" if current_lang=="ar" else "Phone Number" }}
+                    </small>
 
-                    <p>{{ current_user.phone or "غير مضاف" }}</p>
+                    <p>
+                        {{
+                            current_user.phone
+                            if current_user.phone
+                            else
+                            ("غير مضاف" if current_lang=="ar" else "Not added")
+                        }}
+                    </p>
 
                 </div>
 
             </div>
+
 
             <div class="info-card">
 
@@ -624,13 +949,23 @@ body{
 
                 <div>
 
-                    <small>تاريخ الميلاد</small>
+                    <small>
+                        {{ "تاريخ الميلاد" if current_lang=="ar" else "Birthday" }}
+                    </small>
 
-                    <p>{{ current_user.birthday or "غير مضاف" }}</p>
+                    <p>
+                        {{
+                            current_user.birthday
+                            if current_user.birthday
+                            else
+                            ("غير مضاف" if current_lang=="ar" else "Not added")
+                        }}
+                    </p>
 
                 </div>
 
             </div>
+
 
             <div class="info-card">
 
@@ -638,15 +973,25 @@ body{
 
                 <div>
 
-                    <small>الجنس</small>
+                    <small>
+                        {{ "الجنس" if current_lang=="ar" else "Gender" }}
+                    </small>
 
-                    <p>{{ current_user.gender or "غير مضاف" }}</p>
+                    <p>
+                        {{
+                            current_user.gender
+                            if current_user.gender
+                            else
+                            ("غير مضاف" if current_lang=="ar" else "Not added")
+                        }}
+                    </p>
 
                 </div>
 
             </div>
 
         </div>
+
 
         <!-- ==========================
                 ACTION BUTTONS
@@ -658,18 +1003,22 @@ body{
                 class="edit-btn"
                 onclick="openEditModal()">
 
-                ✏️ تعديل الملف الشخصي
+                ✏️
+                {{ "تعديل الملف الشخصي" if current_lang=="ar" else "Edit Profile" }}
 
             </button>
+
 
             <button
                 class="password-btn"
                 type="button"
                 onclick="openPasswordModal()">
 
-                🔒 تغيير كلمة المرور
+                🔒
+                {{ "تغيير كلمة المرور" if current_lang=="ar" else "Change Password" }}
 
             </button>
+
 
             <a href="{{ url_for('logout') }}">
 
@@ -677,7 +1026,8 @@ body{
                     class="logout-btn"
                     type="button">
 
-                    🚪 تسجيل الخروج
+                    🚪
+                    {{ "تسجيل الخروج" if current_lang=="ar" else "Logout" }}
 
                 </button>
 
@@ -685,19 +1035,22 @@ body{
 
         </div>
 
+
         <div class="danger-zone">
 
             <button
                 class="delete-btn"
                 onclick="confirmDeleteAccount()">
 
-                🗑️ حذف الحساب
+                🗑️
+                {{ "حذف الحساب" if current_lang=="ar" else "Delete Account" }}
 
             </button>
 
         </div>
 
     </section>
+
 
     <!-- ==========================
             QUICK ACTIONS
@@ -707,11 +1060,21 @@ body{
 
         <div class="section-header">
 
-            <h2>الإجراءات السريعة</h2>
+            <h2>
+                {{ "الإجراءات السريعة" if current_lang=="ar" else "Quick Actions" }}
+            </h2>
 
-            <p>الوصول السريع إلى أهم صفحات حسابك.</p>
+            <p>
+                {{
+                    "الوصول السريع إلى أهم صفحات حسابك."
+                    if current_lang=="ar"
+                    else
+                    "Quick access to the most important account pages."
+                }}
+            </p>
 
         </div>
+
 
         <div class="quick-grid">
 
@@ -721,11 +1084,16 @@ body{
 
                 <div class="icon">🛒</div>
 
-                <h3>السلة</h3>
+                <h3>
+                    {{ "السلة" if current_lang=="ar" else "Cart" }}
+                </h3>
 
-                <p>عرض وإدارة السلة</p>
+                <p>
+                    {{ "عرض وإدارة السلة" if current_lang=="ar" else "View and manage your cart" }}
+                </p>
 
             </a>
+
 
             <a
                 href="{{ url_for('wishlist_page') }}"
@@ -733,424 +1101,668 @@ body{
 
                 <div class="icon">❤️</div>
 
-                <h3>المفضلة</h3>
+                <h3>
+                    {{ "المفضلة" if current_lang=="ar" else "Wishlist" }}
+                </h3>
 
-                <p>المنتجات المحفوظة</p>
+                <p>
+                    {{ "المنتجات المحفوظة" if current_lang=="ar" else "Saved products" }}
+                </p>
 
             </a>
 
-<a href="javascript:void(0)"
-   class="quick-card"
-   onclick="openReviewModal()">
 
-    <div class="icon">💬</div>
+            <a
+                href="javascript:void(0)"
+                class="quick-card"
+                onclick="openReviewModal()">
 
-    <h3>التقييمات</h3>
+                <div class="icon">💬</div>
 
-    <p>اكتب رأيك عن طلبك</p>
+                <h3>
+                    {{ "التقييمات" if current_lang=="ar" else "Reviews" }}
+                </h3>
 
-</a>
-<a
-    href="{{ url_for('contact_page') }}"
-    class="quick-card">
+                <p>
+                    {{ "اكتب رأيك عن طلبك" if current_lang=="ar" else "Write a review about your order" }}
+                </p>
 
-    <div class="icon">💬</div>
+            </a>
 
-    <h3>خدمة العملاء</h3>
 
-    <p>تواصل معنا للمساعدة</p>
+            <a
+                href="{{ url_for('contact_page') }}"
+                class="quick-card">
 
-</a>
+                <div class="icon">📞</div>
+
+                <h3>
+                    {{ "خدمة العملاء" if current_lang=="ar" else "Customer Service" }}
+                </h3>
+
+                <p>
+                    {{
+                        "تواصل معنا للمساعدة"
+                        if current_lang=="ar"
+                        else
+                        "Contact us for help"
+                    }}
+                </p>
+
+            </a>
 
         </div>
-
 
     </section>
-<!-- ==========================
-        REVIEW MODAL
-========================== -->
 
-<div class="modal" id="reviewModal">
 
-    <div class="modal-content">
+    <!-- ==========================
+            REVIEW MODAL
+    ========================== -->
 
-        <span class="close-modal"
-              onclick="closeReviewModal()">
-            &times;
-        </span>
+    <div class="modal" id="reviewModal">
 
-        <h2>💬 اكتب تقييمك</h2>
+        <div class="modal-content">
 
-        <form action="{{ url_for('add_review') }}"
-              method="POST"
-              class="edit-form">
+            <span
+                class="close-modal"
+                onclick="closeReviewModal()">
 
-            <label>التقييم</label>
+                &times;
 
-            <select name="stars" required>
-
-                <option value="5">★★★★★ ممتاز</option>
-                <option value="4">★★★★☆ جيد</option>
-                <option value="3">★★★☆☆ متوسط</option>
-                <option value="2">★★☆☆☆ ضعيف</option>
-                <option value="1">★☆☆☆☆ سيئ</option>
-
-            </select>
-
-            <label>تعليقك</label>
-
-            <textarea
-                name="message"
-                rows="5"
-                placeholder="اكتب تجربتك مع منتجات Rory Store..."
-                style="padding:14px;border:1px solid #f2bfd0;border-radius:14px;resize:none;"
-                required></textarea>
-
-            <button
-                class="save-btn"
-                type="submit">
-
-                💕 إرسال التقييم
-
-            </button>
-
-        </form>
-
-    </div>
-
-</div>
-
-<!-- ==========================
-        ORDER STATUS
-========================== -->
-
-<section class="orders-status">
-
-    <div class="section-header">
-
-        <h2>طلباتي</h2>
-
-        <p>اختر حالة الطلب لعرض الطلبات.</p>
-
-    </div>
-
-    <div class="status-grid">
-
-        <!-- بانتظار المعالجة -->
-        <div class="status-card active"
-             data-status="Pending Review">
-
-            <div class="status-icon">📝</div>
-
-            <span class="status-count">
-                {{ pending_review_orders }}
             </span>
 
-            <p>بانتظار المعالجة</p>
 
-        </div>
+            <h2>
+                💬
+                {{ "اكتب تقييمك" if current_lang=="ar" else "Write Your Review" }}
+            </h2>
 
-        <!-- بانتظار الدفع -->
-        <div class="status-card"
-             data-status="Pending Payment">
 
-            <div class="status-icon">💳</div>
+            <form
+                action="{{ url_for('add_review') }}"
+                method="POST"
+                class="edit-form">
 
-            <span class="status-count">
-                {{ pending_payment_orders }}
-            </span>
 
-            <p>بانتظار الدفع</p>
+                <label>
+                    {{ "التقييم" if current_lang=="ar" else "Rating" }}
+                </label>
 
-        </div>
 
-        <!-- قيد التنفيذ -->
-        <div class="status-card"
-             data-status="Processing">
+                <select name="stars" required>
 
-            <div class="status-icon">⚙️</div>
+                    <option value="5">
+                        ★★★★★
+                        {{ "ممتاز" if current_lang=="ar" else "Excellent" }}
+                    </option>
 
-            <span class="status-count">
-                {{ processing_orders }}
-            </span>
+                    <option value="4">
+                        ★★★★☆
+                        {{ "جيد" if current_lang=="ar" else "Good" }}
+                    </option>
 
-            <p>قيد التنفيذ</p>
+                    <option value="3">
+                        ★★★☆☆
+                        {{ "متوسط" if current_lang=="ar" else "Average" }}
+                    </option>
 
-        </div>
+                    <option value="2">
+                        ★★☆☆☆
+                        {{ "ضعيف" if current_lang=="ar" else "Poor" }}
+                    </option>
 
-        <!-- تم التنفيذ -->
-        <div class="status-card"
-             data-status="Completed">
+                    <option value="1">
+                        ★☆☆☆☆
+                        {{ "سيئ" if current_lang=="ar" else "Bad" }}
+                    </option>
 
-            <div class="status-icon">✅</div>
+                </select>
 
-            <span class="status-count">
-                {{ completed_orders }}
-            </span>
 
-            <p>تم التنفيذ</p>
+                <label>
+                    {{ "تعليقك" if current_lang=="ar" else "Your Comment" }}
+                </label>
 
-        </div>
 
-        <!-- جاري التوصيل -->
-        <div class="status-card"
-             data-status="Shipping">
+                <textarea
+                    name="message"
+                    rows="5"
+                    placeholder="{{
+                        'اكتب تجربتك مع منتجات Rory Store...'
+                        if current_lang=='ar'
+                        else
+                        'Write your experience with Rory Store products...'
+                    }}"
+                    required></textarea>
 
-            <div class="status-icon">🚚</div>
 
-            <span class="status-count">
-                {{ shipping_orders }}
-            </span>
+                <button
+                    class="save-btn"
+                    type="submit">
 
-            <p>جاري التوصيل</p>
+                    💕
+                    {{ "إرسال التقييم" if current_lang=="ar" else "Submit Review" }}
 
-        </div>
+                </button>
 
-        <!-- تم الاستلام -->
-        <div class="status-card"
-             data-status="Delivered">
-
-            <div class="status-icon">📦</div>
-
-            <span class="status-count">
-                {{ delivered_orders }}
-            </span>
-
-            <p>تم الاستلام</p>
-
-        </div>
-
-        <!-- ملغاة -->
-        <div class="status-card"
-             data-status="Cancelled">
-
-            <div class="status-icon">❌</div>
-
-            <span class="status-count">
-                {{ cancelled_orders }}
-            </span>
-
-            <p>ملغاة</p>
+            </form>
 
         </div>
 
     </div>
 
-</section>
 
-<!-- ==========================
-        ORDERS LIST
-========================== -->
+    <!-- ==========================
+            ORDER STATUS
+    ========================== -->
 
-<section class="orders-list">
+    <section class="orders-status">
 
-    <div class="section-header">
+        <div class="section-header">
 
-        <h2>تفاصيل الطلبات</h2>
+            <h2>
+                {{ "طلباتي" if current_lang=="ar" else "My Orders" }}
+            </h2>
 
-        <p>اضغط على أي حالة لعرض الطلبات الخاصة بها.</p>
-
-    </div>
-
-    <div id="ordersContainer">
-
-        <div class="empty-orders">
-
-            <div style="font-size:60px;margin-bottom:15px;">
-                📦
-            </div>
-
-            <h3>اختر حالة الطلب</h3>
-
-            <p style="margin-top:10px;">
-                سيتم عرض الطلبات هنا.
+            <p>
+                {{
+                    "اختر حالة الطلب لعرض الطلبات."
+                    if current_lang=="ar"
+                    else
+                    "Choose an order status to view your orders."
+                }}
             </p>
 
         </div>
 
-    </div>
 
-</section>
-<!-- ==========================
-        EDIT PROFILE MODAL
-========================== -->
+        <div class="status-grid">
 
-<div class="modal" id="editModal">
 
-    <div class="modal-content">
+            <div
+                class="status-card active"
+                data-status="Pending Review">
 
-        <span class="close-modal"
-              onclick="closeEditModal()">&times;</span>
+                <div class="status-icon">📝</div>
 
-        <h2>✏️ تعديل الملف الشخصي</h2>
+                <span class="status-count">
+                    {{ pending_review_orders }}
+                </span>
 
-        <form method="POST"
-              enctype="multipart/form-data"
-              class="edit-form">
+                <p>
+                    {{ "بانتظار المعالجة" if current_lang=="ar" else "Pending Review" }}
+                </p>
 
-            <label>الصورة الشخصية</label>
+            </div>
 
-            <input type="file"
-                   name="profile_image"
-                   accept="image/*">
 
-            <label>اسم المستخدم</label>
+            <div
+                class="status-card"
+                data-status="Pending Payment">
 
-            <input type="text"
-                   name="username"
-                   value="{{ current_user.username }}"
-                   required>
+                <div class="status-icon">💳</div>
 
-            <label>البريد الإلكتروني</label>
+                <span class="status-count">
+                    {{ pending_payment_orders }}
+                </span>
 
-            <input type="email"
-                   name="email"
-                   value="{{ current_user.email }}"
-                   required>
+                <p>
+                    {{ "بانتظار الدفع" if current_lang=="ar" else "Pending Payment" }}
+                </p>
 
-            <label>رقم الجوال</label>
+            </div>
 
-            <input type="text"
-                   name="phone"
-                   value="{{ current_user.phone or '' }}">
 
-            <label>تاريخ الميلاد</label>
+            <div
+                class="status-card"
+                data-status="Processing">
 
-            <input type="date"
-                   name="birthday"
-                   value="{{ current_user.birthday or '' }}">
+                <div class="status-icon">⚙️</div>
 
-            <label>الجنس</label>
+                <span class="status-count">
+                    {{ processing_orders }}
+                </span>
 
-            <select name="gender">
+                <p>
+                    {{ "قيد التنفيذ" if current_lang=="ar" else "Processing" }}
+                </p>
 
-                <option value="">اختر</option>
+            </div>
 
-                <option value="ذكر"
-                    {% if current_user.gender=="ذكر" %}selected{% endif %}>
-                    ذكر
-                </option>
 
-                <option value="أنثى"
-                    {% if current_user.gender=="أنثى" %}selected{% endif %}>
-                    أنثى
-                </option>
+            <div
+                class="status-card"
+                data-status="Completed">
 
-            </select>
+                <div class="status-icon">✅</div>
 
-            <label>الجنسية</label>
+                <span class="status-count">
+                    {{ completed_orders }}
+                </span>
 
-            <input type="text"
-                   name="nationality"
-                   value="{{ current_user.nationality or '' }}">
+                <p>
+                    {{ "تم التنفيذ" if current_lang=="ar" else "Completed" }}
+                </p>
 
-            <button type="submit"
+            </div>
+
+
+            <div
+                class="status-card"
+                data-status="Shipping">
+
+                <div class="status-icon">🚚</div>
+
+                <span class="status-count">
+                    {{ shipping_orders }}
+                </span>
+
+                <p>
+                    {{ "جاري التوصيل" if current_lang=="ar" else "Shipping" }}
+                </p>
+
+            </div>
+
+
+            <div
+                class="status-card"
+                data-status="Delivered">
+
+                <div class="status-icon">📦</div>
+
+                <span class="status-count">
+                    {{ delivered_orders }}
+                </span>
+
+                <p>
+                    {{ "تم الاستلام" if current_lang=="ar" else "Delivered" }}
+                </p>
+
+            </div>
+
+
+            <div
+                class="status-card"
+                data-status="Cancelled">
+
+                <div class="status-icon">❌</div>
+
+                <span class="status-count">
+                    {{ cancelled_orders }}
+                </span>
+
+                <p>
+                    {{ "ملغاة" if current_lang=="ar" else "Cancelled" }}
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================
+            ORDERS LIST
+    ========================== -->
+
+    <section class="orders-list">
+
+        <div class="section-header">
+
+            <h2>
+                {{ "تفاصيل الطلبات" if current_lang=="ar" else "Order Details" }}
+            </h2>
+
+            <p>
+                {{
+                    "اضغط على أي حالة لعرض الطلبات الخاصة بها."
+                    if current_lang=="ar"
+                    else
+                    "Click on any status to view its orders."
+                }}
+            </p>
+
+        </div>
+
+
+        <div id="ordersContainer">
+
+            <div class="empty-orders">
+
+                <div style="font-size:60px;margin-bottom:15px;">
+                    📦
+                </div>
+
+                <h3>
+                    {{ "اختر حالة الطلب" if current_lang=="ar" else "Choose an Order Status" }}
+                </h3>
+
+                <p style="margin-top:10px;">
+                    {{
+                        "سيتم عرض الطلبات هنا."
+                        if current_lang=="ar"
+                        else
+                        "Orders will be displayed here."
+                    }}
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================
+            EDIT PROFILE MODAL
+    ========================== -->
+
+    <div class="modal" id="editModal">
+
+        <div class="modal-content">
+
+            <span
+                class="close-modal"
+                onclick="closeEditModal()">
+
+                &times;
+
+            </span>
+
+
+            <h2>
+                ✏️
+                {{ "تعديل الملف الشخصي" if current_lang=="ar" else "Edit Profile" }}
+            </h2>
+
+
+            <form
+                method="POST"
+                enctype="multipart/form-data"
+                class="edit-form">
+
+
+                <label>
+                    {{ "الصورة الشخصية" if current_lang=="ar" else "Profile Picture" }}
+                </label>
+
+                <input
+                    type="file"
+                    name="profile_image"
+                    accept="image/*">
+
+
+                <label>
+                    {{ "اسم المستخدم" if current_lang=="ar" else "Username" }}
+                </label>
+
+                <input
+                    type="text"
+                    name="username"
+                    value="{{ current_user.username }}"
+                    required>
+
+
+                <label>
+                    {{ "البريد الإلكتروني" if current_lang=="ar" else "Email" }}
+                </label>
+
+                <input
+                    type="email"
+                    name="email"
+                    value="{{ current_user.email }}"
+                    required>
+
+
+                <label>
+                    {{ "رقم الجوال" if current_lang=="ar" else "Phone Number" }}
+                </label>
+
+                <input
+                    type="text"
+                    name="phone"
+                    value="{{ current_user.phone or '' }}">
+
+
+                <label>
+                    {{ "تاريخ الميلاد" if current_lang=="ar" else "Birthday" }}
+                </label>
+
+                <input
+                    type="date"
+                    name="birthday"
+                    value="{{ current_user.birthday or '' }}">
+
+
+                <label>
+                    {{ "الجنس" if current_lang=="ar" else "Gender" }}
+                </label>
+
+                <select name="gender">
+
+                    <option value="">
+                        {{ "اختر" if current_lang=="ar" else "Select" }}
+                    </option>
+
+                    <option
+                        value="ذكر"
+                        {% if current_user.gender=="ذكر" %}selected{% endif %}>
+
+                        {{ "ذكر" if current_lang=="ar" else "Male" }}
+
+                    </option>
+
+                    <option
+                        value="أنثى"
+                        {% if current_user.gender=="أنثى" %}selected{% endif %}>
+
+                        {{ "أنثى" if current_lang=="ar" else "Female" }}
+
+                    </option>
+
+                </select>
+
+
+                <label>
+                    {{ "الجنسية" if current_lang=="ar" else "Nationality" }}
+                </label>
+
+                <input
+                    type="text"
+                    name="nationality"
+                    value="{{ current_user.nationality or '' }}">
+
+
+                <button
+                    type="submit"
                     class="save-btn">
 
-                💾 حفظ التعديلات
+                    💾
+                    {{ "حفظ التعديلات" if current_lang=="ar" else "Save Changes" }}
 
-            </button>
+                </button>
 
-        </form>
+            </form>
+
+        </div>
 
     </div>
 
-</div>
 
-<!-- ==========================
-        CHANGE PASSWORD MODAL
-========================== -->
+    <!-- ==========================
+            CHANGE PASSWORD MODAL
+    ========================== -->
 
-<div class="modal" id="passwordModal">
+    <div class="modal" id="passwordModal">
 
-    <div class="modal-content">
+        <div class="modal-content">
 
-        <span class="close-modal"
-              onclick="closePasswordModal()">&times;</span>
+            <span
+                class="close-modal"
+                onclick="closePasswordModal()">
 
-        <h2>🔒 تغيير كلمة المرور</h2>
+                &times;
 
-        <form action="{{ url_for('change_password') }}"
-              method="POST"
-              class="edit-form">
+            </span>
 
-            <label>كلمة المرور الحالية</label>
 
-            <input type="password"
-                   name="current_password"
-                   required>
+            <h2>
+                🔒
+                {{ "تغيير كلمة المرور" if current_lang=="ar" else "Change Password" }}
+            </h2>
 
-            <label>كلمة المرور الجديدة</label>
 
-            <input type="password"
-                   name="new_password"
-                   required>
+            <form
+                action="{{ url_for('change_password') }}"
+                method="POST"
+                class="edit-form">
 
-            <label>تأكيد كلمة المرور</label>
 
-            <input type="password"
-                   name="confirm_password"
-                   required>
+                <label>
+                    {{ "كلمة المرور الحالية" if current_lang=="ar" else "Current Password" }}
+                </label>
 
-            <button type="submit"
+                <input
+                    type="password"
+                    name="current_password"
+                    required>
+
+
+                <label>
+                    {{ "كلمة المرور الجديدة" if current_lang=="ar" else "New Password" }}
+                </label>
+
+                <input
+                    type="password"
+                    name="new_password"
+                    required>
+
+
+                <label>
+                    {{ "تأكيد كلمة المرور" if current_lang=="ar" else "Confirm Password" }}
+                </label>
+
+                <input
+                    type="password"
+                    name="confirm_password"
+                    required>
+
+
+                <button
+                    type="submit"
                     class="save-btn">
 
-                🔒 تغيير كلمة المرور
+                    🔒
+                    {{ "تغيير كلمة المرور" if current_lang=="ar" else "Change Password" }}
 
-            </button>
+                </button>
 
-        </form>
+            </form>
+
+        </div>
 
     </div>
 
 </div>
 
-</div>
+
 <script>
 
-// ===========================
-// MODALS
-// ===========================
+/* ===========================
+   MODALS
+=========================== */
 
-const editModal = document.getElementById("editModal");
-const passwordModal = document.getElementById("passwordModal");
+const editModal =
+    document.getElementById("editModal");
+
+const passwordModal =
+    document.getElementById("passwordModal");
+
+const reviewModal =
+    document.getElementById("reviewModal");
+
 
 function openEditModal(){
+
     editModal.style.display = "flex";
+
 }
+
 
 function closeEditModal(){
+
     editModal.style.display = "none";
+
 }
+
 
 function openPasswordModal(){
+
     passwordModal.style.display = "flex";
+
 }
+
 
 function closePasswordModal(){
+
     passwordModal.style.display = "none";
+
 }
 
-// إغلاق النوافذ عند الضغط خارجها
+
+function openReviewModal(){
+
+    reviewModal.style.display = "flex";
+
+}
+
+
+function closeReviewModal(){
+
+    reviewModal.style.display = "none";
+
+}
+
+
+/* ===========================
+   CLOSE MODALS
+=========================== */
+
 window.addEventListener("click",function(e){
 
-    if(e.target===editModal){
+    if(e.target === editModal){
+
         closeEditModal();
+
     }
 
-    if(e.target===passwordModal){
+    if(e.target === passwordModal){
+
         closePasswordModal();
+
+    }
+
+    if(e.target === reviewModal){
+
+        closeReviewModal();
+
     }
 
 });
 
-// ===========================
-// DELETE ACCOUNT
-// ===========================
+
+/* ===========================
+   DELETE ACCOUNT
+=========================== */
 
 function confirmDeleteAccount(){
 
-    if(confirm("هل أنت متأكد من حذف الحساب؟ لا يمكن التراجع عن هذه العملية.")){
+    const message =
+        "{{ 'هل أنت متأكد من حذف الحساب؟ لا يمكن التراجع عن هذه العملية.' if current_lang=='ar' else 'Are you sure you want to delete your account? This action cannot be undone.' }}";
+
+    if(confirm(message)){
 
         window.location.href="/delete-account";
 
@@ -1158,40 +1770,59 @@ function confirmDeleteAccount(){
 
 }
 
-// ===========================
-// ORDERS
-// ===========================
 
-const cards = document.querySelectorAll(".status-card");
-const container = document.getElementById("ordersContainer");
+/* ===========================
+   ORDERS
+=========================== */
 
-cards.forEach(card=>{
+const cards =
+    document.querySelectorAll(".status-card");
 
-    card.addEventListener("click",()=>{
+const container =
+    document.getElementById("ordersContainer");
 
-        cards.forEach(c=>c.classList.remove("active"));
+
+cards.forEach(card => {
+
+    card.addEventListener("click", () => {
+
+        cards.forEach(c => {
+
+            c.classList.remove("active");
+
+        });
 
         card.classList.add("active");
 
-        fetch(`/get-orders/${encodeURIComponent(card.dataset.status)}`)
 
-        .then(res=>res.json())
+        fetch(
+            `/get-orders/${encodeURIComponent(card.dataset.status)}`
+        )
 
-        .then(data=>{
+        .then(res => res.json())
 
-            container.innerHTML="";
+        .then(data => {
 
-            if(data.length===0){
+            container.innerHTML = "";
 
-                container.innerHTML=`
 
-                <div class="empty-orders">
+            if(data.length === 0){
 
-                    <div style="font-size:60px;">📦</div>
+                container.innerHTML = `
 
-                    <h3>لا توجد طلبات</h3>
+                    <div class="empty-orders">
 
-                </div>
+                        <div style="font-size:50px;">
+                            📦
+                        </div>
+
+                        <h3>
+                            ${
+                                "{{ 'لا توجد طلبات' if current_lang=='ar' else 'No Orders Found' }}"
+                            }
+                        </h3>
+
+                    </div>
 
                 `;
 
@@ -1199,17 +1830,24 @@ cards.forEach(card=>{
 
             }
 
-            data.forEach(order=>{
 
-                let products="";
+            data.forEach(order => {
+
+                let products = "";
+
 
                 if(order.items){
 
-                    order.items.forEach(item=>{
+                    order.items.forEach(item => {
 
-                        products+=`
+                        products += `
 
-                        <p>🧸 ${item.product_name} × ${item.quantity}</p>
+                            <p>
+                                🧸
+                                ${item.product_name}
+                                ×
+                                ${item.quantity}
+                            </p>
 
                         `;
 
@@ -1217,71 +1855,155 @@ cards.forEach(card=>{
 
                 }
 
-                container.innerHTML+=`
 
-                <div class="order-card">
+                const totalText =
+                    "{{ 'الإجمالي' if current_lang=='ar' else 'Total' }}";
 
-                    <h3>📦 طلب #${order.id}</h3>
+                const dateText =
+                    "{{ 'التاريخ' if current_lang=='ar' else 'Date' }}";
 
-                    <p><strong>💰 الإجمالي:</strong> ${order.total} ريال</p>
+                const statusText =
+                    "{{ 'الحالة' if current_lang=='ar' else 'Status' }}";
 
-                    <p><strong>📅 التاريخ:</strong> ${order.date}</p>
+                const productsText =
+                    "{{ 'المنتجات' if current_lang=='ar' else 'Products' }}";
 
-                    <p><strong>🔄 الحالة:</strong> ${order.status}</p>
+                const shippingText =
+                    "{{ 'شركة الشحن' if current_lang=='ar' else 'Shipping Company' }}";
 
-                    <h4>🛒 المنتجات</h4>
+                const trackingText =
+                    "{{ 'رقم التتبع' if current_lang=='ar' else 'Tracking Number' }}";
 
-                    ${products}
+                const detailsText =
+                    "{{ 'عرض التفاصيل' if current_lang=='ar' else 'View Details' }}";
 
-                    ${order.shipping_company ? `
-                    <p><strong>🚚 شركة الشحن:</strong> ${order.shipping_company}</p>
-                    ` : ""}
+                const reviewText =
+                    "{{ '⭐ تقييم المنتج' if current_lang=='ar' else '⭐ Review Product' }}";
 
-                    ${order.tracking_number ? `
-                    <p><strong>🔎 رقم التتبع:</strong> ${order.tracking_number}</p>
-                    ` : ""}
-                    ${order.status === "Delivered" ? `
 
-<a href="/add-review/${order.id}"
-class="review-btn">
+                container.innerHTML += `
 
-⭐ تقييم المنتج
+                    <div class="order-card">
 
-</a>
+                        <h3>
+                            📦
+                            ${
+                                "{{ 'طلب' if current_lang=='ar' else 'Order' }}"
+                            }
+                            #${order.id}
+                        </h3>
 
-` : ""}
 
-                    <a href="/my-order/${order.id}">
-                        عرض التفاصيل
-                    </a>
+                        <p>
+                            <strong>💰 ${totalText}:</strong>
+                            ${order.total}
+                            SAR
+                        </p>
 
-                </div>
+
+                        <p>
+                            <strong>📅 ${dateText}:</strong>
+                            ${order.date}
+                        </p>
+
+
+                        <p>
+                            <strong>🔄 ${statusText}:</strong>
+                            ${order.status}
+                        </p>
+
+
+                        <h4>
+                            🛒 ${productsText}
+                        </h4>
+
+
+                        ${products}
+
+
+                        ${
+                            order.shipping_company
+                            ? `
+                                <p>
+                                    <strong>🚚 ${shippingText}:</strong>
+                                    ${order.shipping_company}
+                                </p>
+                              `
+                            : ""
+                        }
+
+
+                        ${
+                            order.tracking_number
+                            ? `
+                                <p>
+                                    <strong>🔎 ${trackingText}:</strong>
+                                    ${order.tracking_number}
+                                </p>
+                              `
+                            : ""
+                        }
+
+
+                        ${
+                            order.status === "Delivered"
+                            ? `
+
+                                <a
+                                    href="/add-review/${order.id}"
+                                    class="review-btn">
+
+                                    ${reviewText}
+
+                                </a>
+
+                              `
+                            : ""
+                        }
+
+
+                        <a href="/my-order/${order.id}">
+
+                            ${detailsText}
+
+                        </a>
+
+                    </div>
 
                 `;
 
             });
 
+        })
+
+        .catch(error => {
+
+            console.error(
+                "Orders error:",
+                error
+            );
+
+            container.innerHTML = `
+
+                <div class="empty-orders">
+
+                    <div style="font-size:45px;">
+                        ⚠️
+                    </div>
+
+                    <h3>
+                        ${
+                            "{{ 'حدث خطأ أثناء تحميل الطلبات' if current_lang=='ar' else 'An error occurred while loading orders' }}"
+                        }
+                    </h3>
+
+                </div>
+
+            `;
+
         });
 
     });
-
-});
-const reviewModal =
-document.getElementById("reviewModal");
-
-function openReviewModal(){
-    reviewModal.style.display = "flex";
-}
-
-function closeReviewModal(){
-    reviewModal.style.display = "none";
-}
-
-window.addEventListener("click", function(e){
-
-    if(e.target === reviewModal){
-        closeReviewModal();
-    }
 
 });
 

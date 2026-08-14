@@ -2,131 +2,296 @@
 <html lang="{{ current_lang }}" dir="{{ 'rtl' if current_lang == 'ar' else 'ltr' }}">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>
-        {{ "متجر روري للكروشيه" if current_lang == "ar" else "Crochet Rory Store" }}
+        {{
+            "متجر روري للكروشيه"
+            if current_lang == "ar"
+            else "Crochet Rory Store"
+        }}
     </title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
 </head>
+
 
 <body>
 
-<!-- العنوان الرئيسي -->
+
+<!-- =====================================================
+     HEADER TOP
+===================================================== -->
+
 <div class="header-top">
 
-    <!-- ☰ + البحث + السلة + الحساب -->
+    <!-- =========================
+         LEFT ICONS
+    ========================== -->
+
     <div class="left-icons">
 
-        <button class="menu-btn" onclick="toggleMenu()">
+        <button
+            type="button"
+            class="menu-btn"
+            onclick="toggleMenu()">
+
             ☰
+
         </button>
 
-        <form action="{{ url_for('search') }}"
-              method="GET"
-              class="search-box">
+
+        <form
+            action="{{ url_for('search') }}"
+            method="GET"
+            class="search-box">
 
             <input
                 type="text"
                 name="q"
-                placeholder="{{ 'ابحث...' if current_lang == 'ar' else 'Search...' }}"
+                placeholder="{{
+                    'ابحث...'
+                    if current_lang == 'ar'
+                    else 'Search...'
+                }}"
                 required>
 
-            <button type="submit">🔍</button>
+            <button type="submit">
+                🔍
+            </button>
 
         </form>
 
-        <a href="{{ url_for('cart_page') }}"
-           class="cart-icon">
+
+        <!-- CART -->
+
+        <a
+            href="{{ url_for('cart_page') }}"
+            class="cart-icon"
+            aria-label="{{
+                'السلة'
+                if current_lang == 'ar'
+                else 'Cart'
+            }}">
+
             🛒
+
         </a>
 
-{% if current_user.is_authenticated %}
-<a href="{{ url_for('profile') }}" class="profile-icon">
-    👤
-</a>
-{% else %}
-<a href="#" onclick="openLogin(); return false;" class="profile-icon">
-    👤
-</a>
-{% endif %}
+
+        <!-- PROFILE -->
+
+        {% if current_user.is_authenticated %}
+
+            <a
+                href="{{ url_for('profile') }}"
+                class="profile-icon"
+                aria-label="{{
+                    'حسابي'
+                    if current_lang == 'ar'
+                    else 'Profile'
+                }}">
+
+                👤
+
+            </a>
+
+        {% else %}
+
+            <a
+                href="#"
+                onclick="openLogin(); return false;"
+                class="profile-icon"
+                aria-label="{{
+                    'تسجيل الدخول'
+                    if current_lang == 'ar'
+                    else 'Login'
+                }}">
+
+                👤
+
+            </a>
+
+        {% endif %}
 
     </div>
 
-    <!-- اسم المتجر + اللوقو -->
+
+    <!-- =========================
+         LOGO
+    ========================== -->
+
     <div class="logo-section">
 
-        <img src="{{ url_for('static', filename='images/logo.png') }}"
-             class="logo">
+        <img
+            src="{{ url_for('static', filename='images/logo.png') }}"
+            class="logo"
+            alt="Crochet Rory Store">
 
     </div>
 
 </div>
 
+
+
+<!-- =====================================================
+     STORE BANNER
+===================================================== -->
+
 <section class="store-banner">
 
-    <h1>Crochet Rory Store</h1>
+    <h1>
+
+        {{
+            "متجر روري للكروشيه"
+            if current_lang == "ar"
+            else "Crochet Rory Store"
+        }}
+
+    </h1>
+
 
     <p>
-        Handmade Crochet with Love 🧶💗
+
+        {{
+            "كروشيه مصنوع يدويًا بكل حب 🧶💗"
+            if current_lang == "ar"
+            else "Handmade Crochet with Love 🧶💗"
+        }}
+
     </p>
 
 </section>
 
 
-<!-- القائمة الجانبية -->
-<div id="sideMenu" class="side-menu">
 
-    <button class="close-menu" onclick="closeMenu()">
+<!-- =====================================================
+     SIDE MENU
+===================================================== -->
+
+<div
+    id="sideMenu"
+    class="side-menu">
+
+
+    <button
+        type="button"
+        class="close-menu"
+        onclick="closeMenu()">
+
         &times;
+
     </button>
 
- <a href="{{ url_for('home_logged') }}">
-    🏠 {{ "الرئيسية" if current_lang == "ar" else "Home" }}
-</a>
 
-<a href="{{ url_for('profile') }}">
-    👤 {{ "حسابي" if current_lang == "ar" else "My Profile" }}
-</a>
 
-<hr>
+    <!-- HOME -->
 
-<a href="{{ url_for('change_language', lang='en') }}">
-    🇺🇸 English
-</a>
+    <a href="{{ url_for('home_logged') }}">
 
-<a href="{{ url_for('change_language', lang='ar') }}">
-    🇸🇦 العربية
-</a>
+        🏠
 
-<hr>
+        {{
+            "الرئيسية"
+            if current_lang == "ar"
+            else "Home"
+        }}
 
-<a href="{{ url_for('logout') }}">
-    🚪 {{ "تسجيل الخروج" if current_lang == "ar" else "Logout" }}
-</a>
+    </a>
+
+
+
+    <!-- PROFILE -->
+
+    <a href="{{ url_for('profile') }}">
+
+        👤
+
+        {{
+            "حسابي"
+            if current_lang == "ar"
+            else "My Profile"
+        }}
+
+    </a>
+
+
+
+    <hr>
+
+
+
+    <!-- LANGUAGE -->
+
+    <a
+        href="{{ url_for('change_language', lang='en') }}">
+
+        🇺🇸 English
+
+    </a>
+
+
+    <a
+        href="{{ url_for('change_language', lang='ar') }}">
+
+        🇸🇦 العربية
+
+    </a>
+
+
+
+    <hr>
+
+
+
+    <!-- LOGOUT -->
+
+    <a href="{{ url_for('logout') }}">
+
+        🚪
+
+        {{
+            "تسجيل الخروج"
+            if current_lang == "ar"
+            else "Logout"
+        }}
+
+    </a>
+
 </div>
 
-  <!-- رسائل النجاح -->
+
+
+<!-- =====================================================
+     FLASH SUCCESS MESSAGES
+===================================================== -->
+
 {% with messages = get_flashed_messages(with_categories=true) %}
+
     {% if messages %}
-        <div style="max-width:600px; margin:20px auto;">
+
+        <div class="flash-messages">
 
             {% for category, message in messages %}
 
                 {% if category == 'success' %}
 
-                    <div style="
-                        padding:10px;
-                        border-radius:8px;
-                        margin-bottom:10px;
-                        text-align:center;
-                        background:#e26fa7;
-                        color:white;
-                    ">
-                        💖 {{ message }}
+                    <div class="flash-success">
+
+                        <span class="flash-icon">
+                            💖
+                        </span>
+
+                        <span class="flash-text">
+                            {{ message }}
+                        </span>
+
                     </div>
 
                 {% endif %}
@@ -134,39 +299,794 @@
             {% endfor %}
 
         </div>
+
     {% endif %}
+
 {% endwith %}
-<!-- محتوى الصفحة -->
+
+
+
+<!-- =====================================================
+     PAGE CONTENT
+===================================================== -->
+
 <main>
+
     {% block content %}
     {% endblock %}
+
 </main>
 
-<footer
-style="text-align:center;
-padding:20px;
-background:#f59a9c
-color:#555;">
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="main-footer">
 
     © 2026
-    {{ "متجر روري للكروشيه. جميع الحقوق محفوظة." if current_lang == "ar"
-    else "Crochet Rory Store. All rights reserved." }}
+
+    {{
+        "متجر روري للكروشيه. جميع الحقوق محفوظة."
+        if current_lang == "ar"
+        else "Crochet Rory Store. All rights reserved."
+    }}
 
 </footer>
 
-<script>
-function toggleMenu() {
-    document.getElementById("sideMenu").classList.toggle("active");
+
+
+<!-- =====================================================
+     PAGE CSS
+===================================================== -->
+
+<style>
+
+
+/* =====================================================
+   HEADER TOP
+===================================================== */
+
+.header-top {
+
+    width:100%;
+
+    min-height:82px;
+
+    padding:12px 30px;
+
+    box-sizing:border-box;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    background:#fde4ef;
+
 }
+
+
+
+/* =====================================================
+   LEFT ICONS
+===================================================== */
+
+.left-icons {
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+}
+
+
+
+/* =====================================================
+   MENU BUTTON
+===================================================== */
+
+.menu-btn {
+
+    width:42px;
+
+    height:42px;
+
+    border:none;
+
+    background:transparent;
+
+    color:#c45b91;
+
+    font-size:28px;
+
+    cursor:pointer;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+.search-box {
+
+    width:180px;
+
+    height:40px;
+
+    display:flex;
+
+    align-items:center;
+
+    border:2px solid #f3a9c8;
+
+    border-radius:25px;
+
+    background:#ffffff;
+
+    overflow:hidden;
+
+    box-sizing:border-box;
+
+}
+
+
+.search-box input {
+
+    width:100%;
+
+    height:100%;
+
+    border:none;
+
+    outline:none;
+
+    padding:0 12px;
+
+    background:transparent;
+
+    color:#555;
+
+    font-size:13px;
+
+}
+
+
+.search-box button {
+
+    width:40px;
+
+    height:100%;
+
+    border:none;
+
+    background:transparent;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+}
+
+
+
+/* =====================================================
+   CART + PROFILE
+===================================================== */
+
+.cart-icon,
+.profile-icon {
+
+    text-decoration:none;
+
+    font-size:21px;
+
+    width:34px;
+
+    height:38px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    transition:.2s;
+
+}
+
+
+.cart-icon:hover,
+.profile-icon:hover {
+
+    transform:scale(1.08);
+
+}
+
+
+
+/* =====================================================
+   LOGO
+===================================================== */
+
+.logo-section {
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+
+.logo {
+
+    width:65px;
+
+    height:65px;
+
+    object-fit:contain;
+
+}
+
+
+
+/* =====================================================
+   STORE BANNER
+===================================================== */
+
+.store-banner {
+
+    width:100%;
+
+    box-sizing:border-box;
+
+    text-align:center;
+
+    padding:18px 20px 22px;
+
+    background:#fde4ef;
+
+}
+
+
+.store-banner h1 {
+
+    margin:0;
+
+    color:#2f2f2f;
+
+    font-size:clamp(2.4rem, 5vw, 4.5rem);
+
+    font-weight:800;
+
+    line-height:1.15;
+
+    letter-spacing:.3px;
+
+}
+
+
+.store-banner p {
+
+    margin:12px 0 0;
+
+    color:#666;
+
+    font-size:18px;
+
+    line-height:1.5;
+
+}
+
+
+
+/* =====================================================
+   FLASH MESSAGES
+===================================================== */
+
+.flash-messages {
+
+    width:100%;
+
+    max-width:600px;
+
+    margin:18px auto;
+
+    padding:0 20px;
+
+    box-sizing:border-box;
+
+}
+
+
+.flash-success {
+
+    width:100%;
+
+    min-height:46px;
+
+    padding:10px 16px;
+
+    box-sizing:border-box;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:7px;
+
+    background:#e26fa7;
+
+    color:#ffffff;
+
+    border-radius:11px;
+
+    text-align:center;
+
+    font-size:15px;
+
+    font-weight:500;
+
+    line-height:1.4;
+
+    box-shadow:
+        0 5px 15px rgba(226,111,167,.18);
+
+}
+
+
+.flash-icon {
+
+    flex-shrink:0;
+
+    font-size:16px;
+
+}
+
+
+.flash-text {
+
+    overflow-wrap:anywhere;
+
+    word-break:break-word;
+
+}
+
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.main-footer {
+
+    width:100%;
+
+    box-sizing:border-box;
+
+    text-align:center;
+
+    padding:20px;
+
+    background:#f59a9c;
+
+    color:#555;
+
+    font-size:14px;
+
+    line-height:1.6;
+
+}
+
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (max-width:768px) {
+
+
+    .header-top {
+
+        min-height:70px;
+
+        padding:9px 14px;
+
+    }
+
+
+    .left-icons {
+
+        gap:9px;
+
+    }
+
+
+    .menu-btn {
+
+        width:36px;
+
+        height:36px;
+
+        font-size:24px;
+
+    }
+
+
+    .search-box {
+
+        width:140px;
+
+        height:36px;
+
+    }
+
+
+    .search-box input {
+
+        font-size:12px;
+
+        padding:0 10px;
+
+    }
+
+
+    .search-box button {
+
+        width:34px;
+
+        font-size:15px;
+
+    }
+
+
+    .cart-icon,
+    .profile-icon {
+
+        width:28px;
+
+        height:34px;
+
+        font-size:18px;
+
+    }
+
+
+    .logo {
+
+        width:54px;
+
+        height:54px;
+
+    }
+
+
+    /* =========================
+       STORE BANNER MOBILE
+    ========================== */
+
+    .store-banner {
+
+        padding:14px 12px 18px;
+
+    }
+
+
+    .store-banner h1 {
+
+        font-size:clamp(2rem, 9vw, 3rem);
+
+        line-height:1.12;
+
+        letter-spacing:0;
+
+    }
+
+
+    .store-banner p {
+
+        margin-top:8px;
+
+        font-size:14px;
+
+        line-height:1.5;
+
+    }
+
+
+    /* =========================
+       FLASH MOBILE
+    ========================== */
+
+    .flash-messages {
+
+        width:100%;
+
+        margin:14px auto;
+
+        padding:0 10px;
+
+    }
+
+
+    .flash-success {
+
+        min-height:42px;
+
+        padding:8px 10px;
+
+        border-radius:9px;
+
+        font-size:13px;
+
+        gap:5px;
+
+    }
+
+
+    .flash-icon {
+
+        font-size:14px;
+
+    }
+
+
+    .main-footer {
+
+        padding:16px 12px;
+
+        font-size:12px;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width:480px) {
+
+
+    .header-top {
+
+        min-height:62px;
+
+        padding:7px 8px;
+
+    }
+
+
+    .left-icons {
+
+        gap:5px;
+
+    }
+
+
+    .menu-btn {
+
+        width:31px;
+
+        height:31px;
+
+        font-size:22px;
+
+    }
+
+
+    .search-box {
+
+        width:112px;
+
+        height:33px;
+
+    }
+
+
+    .search-box input {
+
+        font-size:11px;
+
+        padding:0 8px;
+
+    }
+
+
+    .search-box button {
+
+        width:30px;
+
+        font-size:14px;
+
+    }
+
+
+    .cart-icon,
+    .profile-icon {
+
+        width:23px;
+
+        height:30px;
+
+        font-size:16px;
+
+    }
+
+
+    .logo {
+
+        width:46px;
+
+        height:46px;
+
+    }
+
+
+    /* =========================
+       STORE BANNER
+    ========================== */
+
+    .store-banner {
+
+        padding:12px 10px 15px;
+
+    }
+
+
+    .store-banner h1 {
+
+        font-size:30px;
+
+        line-height:1.12;
+
+        white-space:normal;
+
+    }
+
+
+    .store-banner p {
+
+        margin-top:7px;
+
+        font-size:12px;
+
+    }
+
+
+    /* =========================
+       FLASH
+    ========================== */
+
+    .flash-messages {
+
+        margin:10px auto;
+
+        padding:0 7px;
+
+    }
+
+
+    .flash-success {
+
+        min-height:40px;
+
+        padding:8px 9px;
+
+        border-radius:8px;
+
+        font-size:12px;
+
+        line-height:1.35;
+
+    }
+
+
+    .flash-icon {
+
+        font-size:13px;
+
+    }
+
+
+    /* =========================
+       FOOTER
+    ========================== */
+
+    .main-footer {
+
+        padding:14px 10px;
+
+        font-size:11px;
+
+        line-height:1.5;
+
+    }
+
+}
+
+</style>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script>
+
+
+function toggleMenu() {
+
+    const sideMenu =
+        document.getElementById("sideMenu");
+
+    if (!sideMenu) {
+
+        return;
+
+    }
+
+    sideMenu.classList.toggle("active");
+
+}
+
+
 
 function openMenu() {
-    document.getElementById("sideMenu").classList.add("active");
+
+    const sideMenu =
+        document.getElementById("sideMenu");
+
+    if (!sideMenu) {
+
+        return;
+
+    }
+
+    sideMenu.classList.add("active");
+
 }
+
+
 
 function closeMenu() {
-    document.getElementById("sideMenu").classList.remove("active");
+
+    const sideMenu =
+        document.getElementById("sideMenu");
+
+    if (!sideMenu) {
+
+        return;
+
+    }
+
+    sideMenu.classList.remove("active");
+
 }
+
 </script>
 
+
 </body>
+
 </html>
