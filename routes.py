@@ -10,7 +10,7 @@ from flask import (
 
 
 
-from app import app, db, mail
+from app import app, db
 
 from models import (
     Product,
@@ -45,19 +45,14 @@ from flask_login import (
     current_user
 )
 
-from flask_mail import Message as MailMessage
-from app import mail
 
 from werkzeug.utils import secure_filename
-from itsdangerous import URLSafeTimedSerializer
 
 from datetime import datetime
 import os
 
-import random
-from datetime import datetime, timedelta
+from datetime import datetime
 from flask import jsonify
-import random
 from sqlalchemy import func
 from flask_login import login_user, logout_user, login_required, current_user
 
@@ -87,9 +82,6 @@ def allowed_file(filename):
 # ==========================================
 # 🔐 Email Confirmation Serializer
 # ==========================================
-
-s = URLSafeTimedSerializer(app.config["SECRET_KEY"])
-
 
 # ==========================================
 # 🛒 CART HELPERS
@@ -1330,6 +1322,10 @@ def index():
 # 👤 REGISTER
 # ==========================================
 
+# ==========================================
+# 👤 REGISTER
+# ==========================================
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
 
@@ -1407,18 +1403,7 @@ def register():
             )
 
         # ==========================================
-        # إنشاء كود التحقق
-        # ==========================================
-
-        code = str(
-            random.randint(
-                100000,
-                999999
-            )
-        )
-
-        # ==========================================
-        # إنشاء المستخدم
+        # إنشاء المستخدم بدون تحقق بالإيميل
         # ==========================================
 
         new_user = User(
@@ -1431,6 +1416,11 @@ def register():
             form.password.data
         )
 
+        # الحساب مفعل مباشرة
+        new_user.confirmed = True
+        new_user.verification_code = None
+        new_user.verification_expiry = None
+
         # ==========================================
         # تحديد الأدمن
         # ==========================================
@@ -1439,20 +1429,7 @@ def register():
             new_user.role = "admin"
 
         # ==========================================
-        # إعداد التحقق
-        # ==========================================
-
-        new_user.confirmed = False
-
-        new_user.verification_code = code
-
-        new_user.verification_expiry = (
-            datetime.utcnow()
-            + timedelta(minutes=10)
-        )
-
-        # ==========================================
-        # حفظ المستخدم في قاعدة البيانات
+        # حفظ المستخدم
         # ==========================================
 
         db.session.add(new_user)
@@ -1463,64 +1440,30 @@ def register():
         )
 
         # ==========================================
-        # حفظ البريد في Session
+        # تسجيل الدخول مباشرة
         # ==========================================
 
-        session["verify_email"] = new_user.email
+        login_user(new_user, remember=True)
+
+        session["user_id"] = new_user.id
+        session["is_admin"] = (
+            new_user.role == "admin"
+        )
+
+        # دمج السلة المؤقتة إن وجدت
+        merge_session_cart_into_db(new_user.id)
 
         # ==========================================
-        # إرسال رسالة الترحيب وكود التحقق
-        # Flask-Mail فقط
+        # الانتقال حسب نوع الحساب
         # ==========================================
 
-        try:
-
-            msg = MailMessage(
-                subject="Verify your Crochet Rory account",
-                recipients=[
-                    new_user.email
-                ]
+        if new_user.role == "admin":
+            return redirect(
+                url_for("admin_home")
             )
-
-            msg.body = f"""Hi {new_user.username},
-
-Welcome to Crochet Rory 💖
-
-Thank you for registering.
-
-Your verification code is:
-
-{code}
-
-This code will expire in 10 minutes.
-
-Please enter this code to activate your account.
-
-Crochet Rory Team
-"""
-
-            mail.send(msg)
-
-            print(
-                f"✅ Verification email sent to {new_user.email}"
-            )
-
-        except Exception as e:
-
-            print(
-                "❌ Mail Error:",
-                e
-            )
-
-        # ==========================================
-        # الانتقال إلى نافذة إدخال الكود
-        # ==========================================
 
         return redirect(
-            url_for(
-                "index",
-                verify=1
-            )
+            url_for("home_logged")
         )
 
     # ==========================================
@@ -1546,349 +1489,45 @@ Crochet Rory Team
 
 
 # ==========================================
-# 🔑 FORGOT PASSWORD
+# 🔑 PASSWORD RECOVERY
+# بدون بريد إلكتروني: لا يوجد استرجاع كلمة مرور بالكود
 # ==========================================
 
 @app.route("/forgot_password", methods=["POST"])
 def forgot_password():
-
-    email = request.form.get(
-        "email",
-        ""
-    ).strip().lower()
-
-    user = User.query.filter(
-        func.lower(User.email) == email
-    ).first()
-
-    if not user:
-
-        flash(
-            "❌ Email not found.",
-            "danger"
-        )
-
-        return redirect(
-            url_for("index")
-        )
-
-    # ==========================================
-    # إنشاء كود إعادة تعيين كلمة المرور
-    # ==========================================
-
-    code = str(
-        random.randint(
-            100000,
-            999999
-        )
-    )
-
-    user.verification_code = code
-
-    user.verification_expiry = (
-        datetime.utcnow()
-        + timedelta(minutes=10)
-    )
-
-    db.session.commit()
-
-    # ==========================================
-    # إرسال البريد باستخدام Flask-Mail فقط
-    # ==========================================
-
-    try:
-
-        msg = MailMessage(
-            subject="Reset your Crochet Rory password",
-            recipients=[
-                user.email
-            ]
-        )
-
-        msg.body = f"""Hi {user.username},
-
-You requested to reset your password.
-
-Your verification code is:
-
-{code}
-
-This code will expire in 10 minutes.
-
-Crochet Rory Team
-"""
-
-        mail.send(msg)
-
-        print(
-            f"✅ Password reset email sent to {user.email}"
-        )
-
-    except Exception as e:
-
-        print(
-            "❌ Mail Error:",
-            e
-        )
-
-    # ==========================================
-    # حفظ البريد في Session
-    # ==========================================
-
-    session["reset_email"] = user.email
-
     flash(
-        "📧 Verification code sent.",
-        "success"
+        "Password recovery by email is currently unavailable.",
+        "danger"
     )
+    return redirect(url_for("index"))
 
-    return redirect(
-        url_for(
-            "index",
-            verify=1
-        )
-    )
 
 @app.route("/verify_reset_code", methods=["POST"])
 def verify_reset_code():
+    flash(
+        "Email verification is no longer required.",
+        "info"
+    )
+    return redirect(url_for("index"))
 
-    code = request.form.get("code")
-
-    email = session.get("reset_email")
-
-    if not email:
-        return redirect(url_for("index"))
-
-    user = User.query.filter_by(email=email).first()
-
-    if not user:
-        flash("User not found.", "danger")
-        return redirect(url_for("index"))
-
-    if datetime.utcnow() > user.verification_expiry:
-        flash("❌ Verification code expired.", "danger")
-        return redirect(url_for("index"))
-
-    if code != user.verification_code:
-        flash("❌ Invalid verification code.", "danger")
-        return redirect(url_for("index", verify=1))
-
-    print("✅ Correct reset code")
-
-    return redirect(url_for("index", reset=1))
-# ==========================================
-# 📧 VERIFY EMAIL
-# ==========================================
 
 @app.route("/verify_email", methods=["GET", "POST"])
 def verify_email():
-
-    form = VerifyCodeForm()
-
-    email = session.get("verify_email")
-
-    if not email:
-        return redirect(url_for("index"))
-
-    user = User.query.filter_by(
-        email=email
-    ).first()
-
-    if not user:
-        flash(
-            "User not found.",
-            "danger"
-        )
-
-        return redirect(
-            url_for("index")
-        )
-
-    if form.validate_on_submit():
-
-        # ==========================================
-        # ⏰ التحقق من انتهاء صلاحية الكود
-        # ==========================================
-
-        if (
-            not user.verification_expiry
-            or datetime.utcnow() > user.verification_expiry
-        ):
-
-            flash(
-                "Verification code has expired.",
-                "danger"
-            )
-
-            return redirect(
-                url_for("verify_email")
-            )
-
-        # ==========================================
-        # 🔢 التحقق من الكود
-        # ==========================================
-
-        if (
-            form.code.data.strip()
-            != user.verification_code
-        ):
-
-            flash(
-                "Invalid verification code.",
-                "danger"
-            )
-
-            return redirect(
-                url_for("verify_email")
-            )
-
-        # ==========================================
-        # ✅ نجاح التحقق
-        # ==========================================
-
-        user.confirmed = True
-
-        user.verification_code = None
-
-        user.verification_expiry = None
-
-        db.session.commit()
-
-        # ==========================================
-        # 🔐 تسجيل دخول العميل تلقائيًا
-        # ==========================================
-
-        login_user(user)
-
-        # حذف Session التحقق
-        session.pop(
-            "verify_email",
-            None
-        )
-
-        flash(
-            "🎉 Your account has been verified successfully!",
-            "success"
-        )
-
-        # ==========================================
-        # 🏠 دخول العميل للموقع
-        # ==========================================
-
-        return redirect(
-            url_for("home_logged")
-        )
-
-    # ==========================================
-    # GET / Validation Failed
-    # ==========================================
-
-    login_form = LoginForm()
-
-    register_form = RegisterForm()
-
-    products = Product.query.filter(
-        Product.publish_location.in_(
-            ["both", "home_only"]
-        )
-    ).all()
-
-    return render_template(
-        "index.html",
-        products=products,
-        form=login_form,
-        register_form=register_form,
-        verify_form=form,
-        show_verify_popup=True
+    flash(
+        "Email verification is no longer required.",
+        "info"
     )
+    return redirect(url_for("index"))
+
+
 @app.route("/reset_password", methods=["POST"])
 def reset_password():
-
-    email = session.get("reset_email")
-
-    if not email:
-        flash("Session expired.", "danger")
-        return redirect(url_for("index"))
-
-    user = User.query.filter_by(email=email).first()
-
-    if not user:
-        flash("User not found.", "danger")
-        return redirect(url_for("index"))
-
-    password = request.form.get("password")
-    confirm_password = request.form.get("confirm_password")
-
-    # ==========================================
-    # التحقق من كلمات المرور
-    # ==========================================
-
-    if not password or not confirm_password:
-
-        flash(
-            "❌ Please enter both passwords.",
-            "danger"
-        )
-
-        return redirect(
-            url_for("index", reset=1)
-        )
-
-    if password != confirm_password:
-
-        flash(
-            "❌ Passwords do not match.",
-            "danger"
-        )
-
-        return redirect(
-            url_for("index", reset=1)
-        )
-
-    # ==========================================
-    # تغيير كلمة المرور
-    # ==========================================
-
-    user.set_password(password)
-
-    # ==========================================
-    # تأكيد الحساب
-    # بما أن المستخدم أدخل كود إعادة التعيين الصحيح
-    # ==========================================
-
-    user.confirmed = True
-
-    # ==========================================
-    # حذف بيانات كود إعادة التعيين
-    # ==========================================
-
-    user.verification_code = None
-    user.verification_expiry = None
-
-    # ==========================================
-    # حفظ التغييرات
-    # ==========================================
-
-    db.session.commit()
-
-    # ==========================================
-    # حذف Session الخاصة بإعادة التعيين
-    # ==========================================
-
-    session.pop("reset_email", None)
-
-    # ==========================================
-    # رسالة نجاح
-    # ==========================================
-
     flash(
-        "✅ Password changed successfully. You can now login.",
-        "success"
+        "Password recovery by email is currently unavailable.",
+        "danger"
     )
+    return redirect(url_for("index"))
 
-    return redirect(
-        url_for("index")
-    )
 @app.route("/change_password", methods=["POST"])
 @login_required
 def change_password():
@@ -2184,6 +1823,10 @@ def upload_profile_image():
 # 🔐 LOGIN
 # ==========================================
 
+# ==========================================
+# 🔐 LOGIN
+# ==========================================
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
@@ -2192,7 +1835,9 @@ def login():
     verify_form = VerifyCodeForm()
 
     products = Product.query.filter(
-        Product.publish_location.in_(["both", "home_only"])
+        Product.publish_location.in_(
+            ["both", "home_only"]
+        )
     ).all()
 
     if form.validate_on_submit():
@@ -2256,94 +1901,20 @@ def login():
             )
 
         # ==========================================
-        # الحساب غير مفعل
-        # إرسال كود جديد عند تسجيل الدخول
+        # تسجيل الدخول مباشرة بدون تحقق بالإيميل
         # ==========================================
 
+        # المستخدمون القدامى الذين كانوا غير مفعلين
+        # يتم تفعيلهم الآن لأن التحقق بالإيميل ألغي.
         if not user.confirmed:
-
-            # إنشاء كود جديد
-            code = str(random.randint(100000, 999999))
-
-            user.verification_code = code
-            user.verification_expiry = (
-                datetime.utcnow() + timedelta(minutes=10)
-            )
-
+            user.confirmed = True
+            user.verification_code = None
+            user.verification_expiry = None
             db.session.commit()
-
-            # حفظ الإيميل في Session
-            session["verify_email"] = user.email
-
-            # ==========================================
-            # إرسال كود التحقق
-            # ==========================================
-
-            try:
-
-                msg = MailMessage(
-                    subject="Verify your Crochet Rory account",
-                    recipients=[user.email]
-                )
-
-                msg.body = f"""
-Hi {user.username},
-
-You tried to log in to your Crochet Rory account.
-
-Your verification code is:
-
-{code}
-
-This code will expire in 10 minutes.
-
-Please enter this code to verify your email and continue logging in.
-
-Crochet Rory Team
-"""
-
-                mail.send(msg)
-
-                if session.get("language") == "ar":
-                    flash(
-                        "📧 أرسلنا رمز تحقق جديد إلى بريدك الإلكتروني.",
-                        "login_warning"
-                    )
-                else:
-                    flash(
-                        "📧 A new verification code has been sent to your email.",
-                        "login_warning"
-                    )
-
-            except Exception as e:
-
-                print("❌ Mail Error:", e)
-
-                if session.get("language") == "ar":
-                    flash(
-                        "❌ تعذر إرسال رمز التحقق إلى البريد الإلكتروني.",
-                        "login_error"
-                    )
-                else:
-                    flash(
-                        "❌ Unable to send the verification code.",
-                        "login_error"
-                    )
-
-            return redirect(
-                url_for("index", verify=1)
-            )
-
-        # ==========================================
-        # تسجيل الدخول
-        # ==========================================
 
         login_user(user, remember=True)
 
-        # حفظ معرف المستخدم
         session["user_id"] = user.id
-
-        # تحديد هل المستخدم Admin
         session["is_admin"] = (
             user.role == "admin"
         )
@@ -2393,6 +1964,7 @@ Crochet Rory Team
         verify_form=verify_form,
         login_error=True
     )
+
 # ==========================================
 # 🚪 LOGOUT
 # ==========================================
@@ -3072,119 +2644,6 @@ def api_checkout():
     # ==========================================
 
     db.session.commit()
-
-    # ==========================================
-    # 📧 إرسال إيميل للأدمن
-    # ==========================================
-
-    try:
-
-        products_text = ""
-
-        for entry in cart_entries:
-
-            product = entry["product"]
-
-            products_text += (
-
-                f"• {product.name}\n"
-
-                f"   الكمية: "
-                f"{entry['quantity']}\n"
-
-                f"   السعر: "
-                f"{product.price:.2f} ر.س\n\n"
-
-            )
-
-        msg = MailMessage(
-
-            subject=(
-                f"🛍️ طلب جديد رقم #{order.id}"
-            ),
-
-            recipients=[
-                "rema7122002@gmail.com"
-            ]
-
-        )
-
-        msg.body = f"""
-السلام عليكم،
-
-لديك طلب جديد في متجر Crochet Rory Store 🎉
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-📦 رقم الطلب:
-#{order.id}
-
-👤 اسم العميل:
-{order.customer_name}
-
-📧 البريد الإلكتروني:
-{order.customer_email or "لا يوجد"}
-
-📱 رقم الجوال:
-{order.customer_phone or "لا يوجد"}
-
-📍 عنوان التوصيل:
-{order.address}
-
-🏙️ المدينة:
-{order.city or "لا يوجد"}
-
-🏘️ الحي:
-{order.district or "لا يوجد"}
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-🛍️ تفاصيل الطلب:
-
-{products_text}
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-💰 سعر المنتجات:
-{order.products_total:.2f} ر.س
-
-🎁 الإضافات:
-{order.extras_total:.2f} ر.س
-
-🚚 الشحن:
-{order.shipping_cost:.2f} ر.س
-
-🏷️ الخصم:
-{order.discount:.2f} ر.س
-
-🎟️ الكوبون:
-{order.coupon_code or "لا يوجد"}
-
-━━━━━━━━━━━━━━━━━━━━━━
-
-💰 الإجمالي النهائي:
-{order.total:.2f} ر.س
-
-🚚 طريقة الشحن:
-{order.shipping_method or "لا يوجد"}
-
-📌 الحالة:
-قيد المراجعة
-
-يرجى تسجيل الدخول إلى لوحة التحكم لمراجعة الطلب.
-
-مع تحيات،
-Crochet Rory Store
-"""
-
-        mail.send(msg)
-
-    except Exception as e:
-
-        print(
-            "Order Mail Error:",
-            e
-        )
 
     # ==========================================
     # ✅ النتيجة
