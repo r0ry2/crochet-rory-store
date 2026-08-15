@@ -6,45 +6,49 @@
 <div class="top-header">
     <nav class="navbar">
         <ul class="nav-links">
-<li>
-    <a href="#home" class="nav-link">
-        {{ "الرئيسية" if current_lang == "ar" else "Home" }}
-    </a>
-</li>
 
-<li>
-    <a href="#about-me" class="nav-link">
-        {{ "من أنا" if current_lang == "ar" else "About Me" }}
-    </a>
-</li>
+            <li>
+                <a href="#home" class="nav-link">
+                    {{ "الرئيسية" if current_lang == "ar" else "Home" }}
+                </a>
+            </li>
 
-<li>
-    <a href="#"
-       class="nav-link"
-       onclick="openLogin(); return false;">
+            <li>
+                <a href="#about-me" class="nav-link">
+                    {{ "من أنا" if current_lang == "ar" else "About Me" }}
+                </a>
+            </li>
 
-        {{ "المنتجات" if current_lang == "ar" else "Products" }}
+            <li>
+                <a href="#"
+                   class="nav-link"
+                   onclick="openLogin(); return false;">
+                    {{ "المنتجات" if current_lang == "ar" else "Products" }}
+                </a>
+            </li>
 
-    </a>
-</li>
+            <li>
+                <a href="#reviews" class="nav-link">
+                    {{ "التقييمات" if current_lang == "ar" else "Reviews" }}
+                </a>
+            </li>
 
-<li>
-    <a href="#reviews" class="nav-link">
-        {{ "التقييمات" if current_lang == "ar" else "Reviews" }}
-    </a>
-</li>
+            <li>
+                <a href="#"
+                   class="nav-link login-link"
+                   onclick="openLogin(); return false;">
+                    {{ "تسجيل الدخول" if current_lang == "ar" else "Login" }}
+                </a>
+            </li>
 
-<li>
-    <a href="#" class="nav-link login-link" onclick="openLogin(); return false;">
-        {{ "تسجيل الدخول" if current_lang == "ar" else "Login" }}
-    </a>
-</li>
         </ul>
     </nav>
 </div>
 
+
 <!-- ====== HERO SECTION ====== -->
 <section id="home" class="hero">
+
     <img src="{{ url_for('static', filename='images/hero.png') }}"
          alt="image"
          class="hero_image">
@@ -53,12 +57,16 @@
 
         <h1>Welcome To Crochet Rory</h1>
 
-<button onclick="openLogin()">
-    {{ "استكشف المنتجات" if current_lang == "ar" else "Explore Products" }}
-</button> 
+        <button onclick="openLogin()">
+            {{ "استكشف المنتجات" if current_lang == "ar" else "Explore Products" }}
+        </button>
 
     </div>
+
 </section>
+
+
+<!-- ====== ABOUT ME ====== -->
 <section id="about-me">
 
     <h2 class="about-title">
@@ -97,6 +105,7 @@
 </section>
 
 
+<!-- ====== CATEGORIES ====== -->
 <section id="categories">
 
     <h2 class="section-title">
@@ -106,28 +115,34 @@
     <div class="categories-grid">
 
         <a href="{{ url_for('login') }}" class="category-card">
-            <img src="{{ url_for('static', filename='images/dolls.jpg') }}" alt="Dolls">
+            <img src="{{ url_for('static', filename='images/dolls.jpg') }}"
+                 alt="Dolls">
             <span>{{ "دمى" if current_lang == "ar" else "Dolls" }}</span>
         </a>
 
         <a href="{{ url_for('login') }}" class="category-card">
-            <img src="{{ url_for('static', filename='images/keychain.jpg') }}" alt="Keychains">
+            <img src="{{ url_for('static', filename='images/keychain.jpg') }}"
+                 alt="Keychains">
             <span>{{ "ميداليات" if current_lang == "ar" else "Keychains" }}</span>
         </a>
 
         <a href="{{ url_for('login') }}" class="category-card">
-            <img src="{{ url_for('static', filename='images/pattron.jpg') }}" alt="Pattern">
+            <img src="{{ url_for('static', filename='images/pattron.jpg') }}"
+                 alt="Pattern">
             <span>{{ "باترونات" if current_lang == "ar" else "Pattern" }}</span>
         </a>
 
         <a href="{{ url_for('login') }}" class="category-card">
-            <img src="{{ url_for('static', filename='images/Coaster.jpg') }}" alt="Coaster">
+            <img src="{{ url_for('static', filename='images/Coaster.jpg') }}"
+                 alt="Coaster">
             <span>{{ "كوسترات" if current_lang == "ar" else "Coaster" }}</span>
         </a>
 
     </div>
 
+
 <style>
+
 /* ===========================
    PRODUCTS
 =========================== */
@@ -145,8 +160,6 @@
     gap:25px;
 }
 
-/* Card */
-
 .product{
     background:#fff;
     border-radius:18px;
@@ -163,8 +176,6 @@
     box-shadow:0 15px 35px rgba(0,0,0,.12);
 }
 
-/* Image */
-
 .product img{
     width:100%;
     aspect-ratio:1/1;
@@ -172,8 +183,6 @@
     display:block;
     background:#fafafa;
 }
-
-/* Product Content */
 
 .product h3{
     padding:16px 16px 8px;
@@ -188,12 +197,10 @@
     color:#777;
     font-size:14px;
     line-height:1.7;
-
     display:-webkit-box;
     -webkit-line-clamp:3;
     -webkit-box-orient:vertical;
     overflow:hidden;
-
     min-height:72px;
 }
 
@@ -270,17 +277,19 @@
     padding:60px;
 }
 
+
 /* ===========================
    Laptop
 =========================== */
 
 @media (min-width:1200px){
 
-.product-grid{
-    grid-template-columns:repeat(4,1fr);
-}
+    .product-grid{
+        grid-template-columns:repeat(4,1fr);
+    }
 
 }
+
 
 /* ===========================
    Tablet
@@ -288,24 +297,25 @@
 
 @media (max-width:992px){
 
-.product-section{
-    padding:35px 20px;
+    .product-section{
+        padding:35px 20px;
+    }
+
+    .product-grid{
+        grid-template-columns:repeat(3,1fr);
+        gap:20px;
+    }
+
+    .product h3{
+        font-size:17px;
+    }
+
+    .price{
+        font-size:26px;
+    }
+
 }
 
-.product-grid{
-    grid-template-columns:repeat(3,1fr);
-    gap:20px;
-}
-
-.product h3{
-    font-size:17px;
-}
-
-.price{
-    font-size:26px;
-}
-
-}
 
 /* ===========================
    Mobile
@@ -313,60 +323,61 @@
 
 @media (max-width:768px){
 
-.product-section{
-    padding:25px 15px;
+    .product-section{
+        padding:25px 15px;
+    }
+
+    .product-grid{
+        grid-template-columns:repeat(2,1fr);
+        gap:15px;
+    }
+
+    .product img{
+        aspect-ratio:1/1;
+    }
+
+    .product h3{
+        font-size:15px;
+        padding:12px 12px 6px;
+    }
+
+    .description{
+        font-size:12px;
+        padding:0 12px;
+        min-height:60px;
+    }
+
+    .rating{
+        padding:8px 12px 4px;
+        font-size:14px;
+    }
+
+    .price{
+        padding:0 12px;
+        font-size:20px;
+    }
+
+    .bottom{
+        padding:12px;
+    }
+
+    .quantity-btn{
+        width:34px;
+        height:34px;
+        font-size:18px;
+    }
+
+    .quantity-display{
+        font-size:16px;
+    }
+
+    .add-cart-btn{
+        font-size:13px;
+        padding:10px;
+    }
+
 }
 
-.product-grid{
-    grid-template-columns:repeat(2,1fr);
-    gap:15px;
-}
-
-.product img{
-    aspect-ratio:1/1;
-}
-
-.product h3{
-    font-size:15px;
-    padding:12px 12px 6px;
-}
-
-.description{
-    font-size:12px;
-    padding:0 12px;
-    min-height:60px;
-}
-
-.rating{
-    padding:8px 12px 4px;
-    font-size:14px;
-}
-
-.price{
-    padding:0 12px;
-    font-size:20px;
-}
-
-.bottom{
-    padding:12px;
-}
-
-.quantity-btn{
-    width:34px;
-    height:34px;
-    font-size:18px;
-}
-
-.quantity-display{
-    font-size:16px;
-}
-
-.add-cart-btn{
-    font-size:13px;
-    padding:10px;
-}
-
-}
 
 .section-title{
     text-align:center;
@@ -387,6 +398,8 @@
     margin:auto;
     line-height:1.8;
 }
+
+
 /* ==========================
    Reviews
 ========================== */
@@ -453,93 +466,140 @@
 
 @media(max-width:768px){
 
-.reviews-section{
-    padding:50px 15px;
-}
+    .reviews-section{
+        padding:50px 15px;
+    }
 
-.review-card{
-    padding:18px;
-}
+    .review-card{
+        padding:18px;
+    }
 
-.stars{
-    font-size:20px;
-}
+    .stars{
+        font-size:20px;
+    }
 
 }
 
 @media (max-width:768px){
 
-.section-title{
-    margin-bottom:30px;
+    .section-title{
+        margin-bottom:30px;
+    }
+
+    .section-title h2{
+        font-size:28px;
+    }
+
+    .section-title p{
+        font-size:14px;
+        padding:0 10px;
+    }
+
 }
 
-.section-title h2{
-    font-size:28px;
-}
 
-.section-title p{
-    font-size:14px;
-    padding:0 10px;
-}
-
-}
 /* ===========================
    Small Mobile
 =========================== */
 
 @media (max-width:480px){
 
-.product-section{
-    padding:20px 10px;
+    .product-section{
+        padding:20px 10px;
+    }
+
+    .product-grid{
+        gap:12px;
+    }
+
+    .product h3{
+        font-size:14px;
+    }
+
+    .description{
+        -webkit-line-clamp:2;
+        min-height:42px;
+    }
+
+    .price{
+        font-size:18px;
+    }
+
+    .quantity-box{
+        gap:10px;
+    }
+
+    .quantity-btn{
+        width:30px;
+        height:30px;
+    }
+
+    .add-cart-btn{
+        font-size:12px;
+    }
+
 }
 
-.product-grid{
-    gap:12px;
+
+/* =====================================================
+   EMAIL ERROR
+===================================================== */
+
+.email-error{
+    display:none;
+    color:#d9534f;
+    font-size:13px;
+    margin-top:6px;
+    margin-bottom:10px;
+    line-height:1.5;
 }
 
-.product h3{
-    font-size:14px;
+.email-error.show{
+    display:block;
 }
 
-.description{
-    -webkit-line-clamp:2;
-    min-height:42px;
+.email-input-error{
+    border:2px solid #d9534f !important;
+    outline:none;
 }
 
-.price{
-    font-size:18px;
+
+/* =====================================================
+   SERVER ERROR
+===================================================== */
+
+.server-field-error{
+    color:#d9534f;
+    font-size:13px;
+    margin-top:6px;
+    margin-bottom:10px;
+    line-height:1.5;
+    display:block;
 }
 
-.quantity-box{
-    gap:10px;
-}
-
-.quantity-btn{
-    width:30px;
-    height:30px;
-}
-
-.add-cart-btn{
-    font-size:12px;
-}
-
-}
 </style>
 
+
+<!-- ====== PRODUCTS ====== -->
 
 <section class="product-section">
 
     <div class="section-title">
 
         <h2>
-            {{ "✨ مجموعة روري المميزة" if current_lang=="ar" else "✨ Rory's Featured Collection" }}
+            {{ "✨ مجموعة روري المميزة"
+            if current_lang=="ar"
+            else "✨ Rory's Featured Collection" }}
         </h2>
 
         <p>
-            {{ "اكتشف أجمل منتجات الكروشيه المصنوعة يدويًا بكل حب وعناية." if current_lang=="ar" else "Discover our handmade crochet creations, crafted with love and care." }}
+            {{ "اكتشف أجمل منتجات الكروشيه المصنوعة يدويًا بكل حب وعناية."
+            if current_lang=="ar"
+            else "Discover our handmade crochet creations, crafted with love and care." }}
         </p>
 
     </div>
+
 
     <div class="product-grid">
 
@@ -590,7 +650,10 @@
                     <button class="add-cart-btn"
                             onclick="window.location.href='{{ url_for('login') }}'">
 
-                        🛒 {{ "إضافة للسلة" if current_lang=="ar" else "Add to Cart" }}
+                        🛒
+                        {{ "إضافة للسلة"
+                        if current_lang=="ar"
+                        else "Add to Cart" }}
 
                     </button>
 
@@ -603,7 +666,9 @@
         {% else %}
 
             <p class="no-products">
-                {{ "لا توجد منتجات حالياً." if current_lang=="ar" else "No products available yet." }}
+                {{ "لا توجد منتجات حالياً."
+                if current_lang=="ar"
+                else "No products available yet." }}
             </p>
 
         {% endif %}
@@ -611,12 +676,17 @@
     </div>
 
 </section>
+
+
+<!-- ====== REVIEWS ====== -->
+
 <section id="reviews" class="reviews-section">
 
     <div class="section-title">
 
         <h2>
-            {{ "💬 آراء العملاء 💬" if current_lang=="ar"
+            {{ "💬 آراء العملاء 💬"
+            if current_lang=="ar"
             else "💬 Customer Reviews 💬" }}
         </h2>
 
@@ -628,6 +698,7 @@
 
     </div>
 
+
     <div class="reviews-container">
 
         {% for review in reviews %}
@@ -635,8 +706,15 @@
         <div class="review-card">
 
             <div class="stars">
-                {% for i in range(review.stars) %}★{% endfor %}
-                {% for i in range(5-review.stars) %}☆{% endfor %}
+
+                {% for i in range(review.stars) %}
+                    ★
+                {% endfor %}
+
+                {% for i in range(5-review.stars) %}
+                    ☆
+                {% endfor %}
+
             </div>
 
             <p class="review-message">
@@ -646,6 +724,7 @@
             <strong class="review-name">
                 - {{ review.name }}
             </strong>
+
 
             {% if review.admin_reply %}
 
@@ -657,7 +736,9 @@
                     else "💌 Admin Reply" }}
                 </strong>
 
-                <p>{{ review.admin_reply }}</p>
+                <p>
+                    {{ review.admin_reply }}
+                </p>
 
             </div>
 
@@ -681,76 +762,103 @@
 
 </section>
 
-<script>
-function changeQuantity(productId, change){
 
-    const qtyElement = document.getElementById(`qty-${productId}`);
+<!-- =====================================================
+     LOGIN POPUP
+===================================================== -->
 
-    let qty = parseInt(qtyElement.textContent);
-
-    qty = Math.max(1, qty + change);
-
-    qtyElement.textContent = qty;
-}
-</script>
-
-
-
-<!-- Login Popup -->
 <div id="loginPopup" class="login-popup">
 
     <div class="login-box">
 
         {% with messages = get_flashed_messages(with_categories=true) %}
+
             {% if messages %}
+
                 {% for category, message in messages %}
-                    {% if category == "login_error" or category == "login_warning" %}
+
+                    {% if category == "login_error"
+                       or category == "login_warning" %}
+
                         <div class="flash-message {{ category }}">
                             {{ message }}
                         </div>
+
                     {% endif %}
+
                 {% endfor %}
+
             {% endif %}
+
         {% endwith %}
 
-        <span class="close-btn" onclick="closeLogin()">&times;</span>
+
+        <span class="close-btn"
+              onclick="closeLogin()">
+            &times;
+        </span>
+
 
         <h2>
-            {{ "مرحبًا بعودتك 💕" if current_lang=="ar" else "Welcome Back 💕" }}
+            {{ "مرحبًا بعودتك 💕"
+            if current_lang=="ar"
+            else "Welcome Back 💕" }}
         </h2>
 
-        <form method="POST" action="{{ url_for('login') }}">
+
+        <form method="POST"
+              action="{{ url_for('login') }}">
 
             {{ form.hidden_tag() }}
 
             <label>
-                {{ "البريد الإلكتروني" if current_lang=="ar" else "Email" }}
+                {{ "البريد الإلكتروني"
+                if current_lang=="ar"
+                else "Email" }}
             </label>
+
             {{ form.email() }}
 
+
             <label>
-                {{ "كلمة المرور" if current_lang=="ar" else "Password" }}
+                {{ "كلمة المرور"
+                if current_lang=="ar"
+                else "Password" }}
             </label>
 
+
             <div class="password-container">
+
                 {{ form.password(id="login_password") }}
+
                 <span class="toggle-password"
                       onclick="togglePassword('login_password', this)">
+
                     <i class="fa-regular fa-eye"></i>
+
                 </span>
+
             </div>
+
 
             {{ form.submit(class="login-btn") }}
 
+
             <p style="margin-top:10px; text-align:center;">
+
                 <a href="#"
                    onclick="closeLogin(); openForgotPassword(); return false;">
-                    {{ "نسيت كلمة المرور؟" if current_lang=="ar"
+
+                    {{ "نسيت كلمة المرور؟"
+                    if current_lang=="ar"
                     else "Forgot Password?" }}
+
                 </a>
+
             </p>
 
         </form>
+
 
         <p>
 
@@ -758,7 +866,8 @@ function changeQuantity(productId, change){
 
                 ليس لديك حساب؟
 
-                <a href="#" onclick="closeLogin(); openRegister(); return false;">
+                <a href="#"
+                   onclick="closeLogin(); openRegister(); return false;">
                     إنشاء حساب
                 </a>
 
@@ -766,7 +875,8 @@ function changeQuantity(productId, change){
 
                 Don't have an account?
 
-                <a href="#" onclick="closeLogin(); openRegister(); return false;">
+                <a href="#"
+                   onclick="closeLogin(); openRegister(); return false;">
                     Register
                 </a>
 
@@ -778,76 +888,196 @@ function changeQuantity(productId, change){
 
 </div>
 
-<!-- Register Popup -->
-<!-- Register Popup -->
+
+
+<!-- =====================================================
+     REGISTER POPUP
+===================================================== -->
+
 <div id="registerPopup" class="login-popup">
 
     <div class="login-box">
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    {% if category == "register_warning" %}
-                        <div class="flash-message warning">
-                            {{ message }}
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+        <span class="close-btn"
+              onclick="closeRegister()">
+            &times;
+        </span>
 
-        <span class="close-btn" onclick="closeRegister()">&times;</span>
 
         <h2>
-            {{ "إنشاء حساب 💖" if current_lang=="ar" else "Create Account 💖" }}
+            {{ "إنشاء حساب 💖"
+            if current_lang=="ar"
+            else "Create Account 💖" }}
         </h2>
 
-        <form method="POST" action="{{ url_for('register') }}">
+
+        <!-- SERVER ERROR MESSAGE -->
+
+        {% if register_form.email.errors %}
+
+            <div class="server-field-error">
+
+                {% for error in register_form.email.errors %}
+
+                    {% if "مسجل بالفعل" in error %}
+
+                        {{ "هذا البريد الإلكتروني مسجل بالفعل."
+                        if current_lang=="ar"
+                        else "This email is already registered." }}
+
+                    {% else %}
+
+                        {{ error }}
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
+        <form method="POST"
+              action="{{ url_for('register') }}"
+              id="registerForm">
 
             {{ register_form.hidden_tag() }}
 
+
+            <!-- USERNAME -->
+
             <label>
-                {{ "اسم المستخدم" if current_lang=="ar" else "Username" }}
+                {{ "اسم المستخدم"
+                if current_lang=="ar"
+                else "Username" }}
             </label>
+
             {{ register_form.username() }}
 
-            <label>
-                {{ "البريد الإلكتروني" if current_lang=="ar" else "Email" }}
-            </label>
-            {{ register_form.email() }}
+
+            <!-- EMAIL -->
 
             <label>
-                {{ "رقم الجوال" if current_lang=="ar" else "Phone Number" }}
+                {{ "البريد الإلكتروني"
+                if current_lang=="ar"
+                else "Email" }}
             </label>
+
+            {{ register_form.email(
+                id="register_email",
+                type="email",
+                placeholder="example@gmail.com",
+                autocomplete="email",
+                pattern="[A-Za-z0-9._%+-]+@(gmail\.com|googlemail\.com|hotmail\.com|outlook\.com|live\.com|msn\.com|yahoo\.com|ymail\.com|icloud\.com|me\.com|aol\.com|protonmail\.com|proton\.me)"
+            ) }}
+
+
+            <!-- EMAIL SERVER ERROR UNDER INPUT -->
+
+            {% if register_form.email.errors %}
+
+                {% for error in register_form.email.errors %}
+
+                    <div class="server-field-error">
+
+                        {% if "مسجل بالفعل" in error %}
+
+                            {{ "هذا البريد الإلكتروني مسجل بالفعل."
+                            if current_lang=="ar"
+                            else "This email is already registered." }}
+
+                        {% else %}
+
+                            {{ error }}
+
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+
+            <!-- JAVASCRIPT EMAIL ERROR -->
+
+            <div id="emailError"
+                 class="email-error">
+
+                {{ "صيغة البريد الإلكتروني غير صحيحة. مثال: example@gmail.com"
+                if current_lang=="ar"
+                else "Invalid email format. Example: example@gmail.com" }}
+
+            </div>
+
+
+            <!-- PHONE -->
+
+            <label>
+                {{ "رقم الجوال"
+                if current_lang=="ar"
+                else "Phone Number" }}
+            </label>
+
             {{ register_form.phone() }}
 
+
+            <!-- PASSWORD -->
+
             <label>
-                {{ "كلمة المرور" if current_lang=="ar" else "Password" }}
+                {{ "كلمة المرور"
+                if current_lang=="ar"
+                else "Password" }}
             </label>
 
             <div class="password-container">
-                {{ register_form.password(id="register_password") }}
+
+                {{ register_form.password(
+                    id="register_password"
+                ) }}
+
                 <span class="toggle-password"
                       onclick="togglePassword('register_password', this)">
+
                     <i class="fa-regular fa-eye"></i>
+
                 </span>
+
             </div>
 
+
+            <!-- CONFIRM PASSWORD -->
+
             <label>
-                {{ "تأكيد كلمة المرور" if current_lang=="ar" else "Confirm Password" }}
+                {{ "تأكيد كلمة المرور"
+                if current_lang=="ar"
+                else "Confirm Password" }}
             </label>
 
             <div class="password-container">
-                {{ register_form.confirm_password(id="confirm_password") }}
+
+                {{ register_form.confirm_password(
+                    id="confirm_password"
+                ) }}
+
                 <span class="toggle-password"
                       onclick="togglePassword('confirm_password', this)">
+
                     <i class="fa-regular fa-eye"></i>
+
                 </span>
+
             </div>
 
-            {{ register_form.submit(class="login-btn") }}
+
+            {{ register_form.submit(
+                class="login-btn",
+                id="registerSubmit"
+            ) }}
 
         </form>
+
 
         <p>
 
@@ -855,7 +1085,8 @@ function changeQuantity(productId, change){
 
                 لديك حساب بالفعل؟
 
-                <a href="#" onclick="closeRegister(); openLogin(); return false;">
+                <a href="#"
+                   onclick="closeRegister(); openLogin(); return false;">
                     تسجيل الدخول
                 </a>
 
@@ -863,7 +1094,8 @@ function changeQuantity(productId, change){
 
                 Already have an account?
 
-                <a href="#" onclick="closeRegister(); openLogin(); return false;">
+                <a href="#"
+                   onclick="closeRegister(); openLogin(); return false;">
                     Login
                 </a>
 
@@ -874,15 +1106,25 @@ function changeQuantity(productId, change){
     </div>
 
 </div>
-<!-- Verify Email Popup -->
+
+
+
+<!-- =====================================================
+     VERIFY EMAIL POPUP
+===================================================== -->
+
 <div id="verifyPopup" class="login-popup">
 
     <div class="login-box">
 
-        <span class="close-btn" onclick="closeVerify()">&times;</span>
+        <span class="close-btn"
+              onclick="closeVerify()">
+            &times;
+        </span>
 
         <h2>
-            {{ "تأكيد البريد الإلكتروني 📧" if current_lang=="ar"
+            {{ "تأكيد البريد الإلكتروني 📧"
+            if current_lang=="ar"
             else "Verify Email 📧" }}
         </h2>
 
@@ -892,40 +1134,47 @@ function changeQuantity(productId, change){
             else "We've sent a verification code to your email." }}
         </p>
 
-<form method="POST"
-      action="{% if session.get('reset_email') %}
-                  {{ url_for('verify_reset_code') }}
-              {% elif session.get('login_verify_email') %}
-                  {{ url_for('verify_login_code') }}
-              {% else %}
-                  {{ url_for('verify_email') }}
-              {% endif %}">
-              
-    {{ verify_form.hidden_tag() }}
+        <form method="POST"
+              action="{% if session.get('reset_email') %}
+                          {{ url_for('verify_reset_code') }}
+                      {% elif session.get('login_verify_email') %}
+                          {{ url_for('verify_login_code') }}
+                      {% else %}
+                          {{ url_for('verify_email') }}
+                      {% endif %}">
 
-    {{ verify_form.code(
-        class="form-control",
-        placeholder="Enter verification code"
-    ) }}
+            {{ verify_form.hidden_tag() }}
 
-    {{ verify_form.submit(
-        class="login-btn",
-        value="Verify"
-    ) }}
+            {{ verify_form.code(
+                class="form-control",
+                placeholder="Enter verification code"
+            ) }}
 
-</form>
+            {{ verify_form.submit(
+                class="login-btn",
+                value="Verify"
+            ) }}
+
+        </form>
 
     </div>
 
 </div>
 
-<!-- Forgot Password Popup -->
+
+
+<!-- =====================================================
+     FORGOT PASSWORD POPUP
+===================================================== -->
+
 <div id="forgotPopup" class="login-popup">
 
     <div class="login-box">
 
         <span class="close-btn"
-              onclick="closeForgotPassword()">&times;</span>
+              onclick="closeForgotPassword()">
+            &times;
+        </span>
 
         <h2>
             {{ "نسيت كلمة المرور؟ 🔑"
@@ -934,11 +1183,9 @@ function changeQuantity(productId, change){
         </h2>
 
         <p>
-
-        {{ "أدخل بريدك الإلكتروني وسنرسل لك رمز التحقق."
-        if current_lang=="ar"
-        else "Enter your email and we'll send you a verification code." }}
-
+            {{ "أدخل بريدك الإلكتروني وسنرسل لك رمز التحقق."
+            if current_lang=="ar"
+            else "Enter your email and we'll send you a verification code." }}
         </p>
 
         <form method="POST"
@@ -968,13 +1215,20 @@ function changeQuantity(productId, change){
 
 </div>
 
-<!-- Reset Password Popup -->
+
+
+<!-- =====================================================
+     RESET PASSWORD POPUP
+===================================================== -->
+
 <div id="resetPasswordPopup" class="login-popup">
 
     <div class="login-box">
 
         <span class="close-btn"
-              onclick="closeResetPassword()">&times;</span>
+              onclick="closeResetPassword()">
+            &times;
+        </span>
 
         <h2>
             {{ "تغيير كلمة المرور 🔒"
@@ -1023,7 +1277,17 @@ function changeQuantity(productId, change){
 
 </div>
 
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
 <script>
+
+/* =========================
+   LOGIN
+========================= */
 
 function openLogin() {
     document.getElementById("loginPopup").style.display = "flex";
@@ -1033,6 +1297,11 @@ function closeLogin() {
     document.getElementById("loginPopup").style.display = "none";
 }
 
+
+/* =========================
+   REGISTER
+========================= */
+
 function openRegister() {
     document.getElementById("registerPopup").style.display = "flex";
 }
@@ -1040,6 +1309,11 @@ function openRegister() {
 function closeRegister() {
     document.getElementById("registerPopup").style.display = "none";
 }
+
+
+/* =========================
+   VERIFY
+========================= */
 
 function openVerify() {
     document.getElementById("verifyPopup").style.display = "flex";
@@ -1049,6 +1323,11 @@ function closeVerify() {
     document.getElementById("verifyPopup").style.display = "none";
 }
 
+
+/* =========================
+   FORGOT PASSWORD
+========================= */
+
 function openForgotPassword() {
     document.getElementById("forgotPopup").style.display = "flex";
 }
@@ -1056,6 +1335,11 @@ function openForgotPassword() {
 function closeForgotPassword() {
     document.getElementById("forgotPopup").style.display = "none";
 }
+
+
+/* =========================
+   RESET PASSWORD
+========================= */
 
 function openResetPassword() {
     document.getElementById("resetPasswordPopup").style.display = "flex";
@@ -1065,22 +1349,122 @@ function closeResetPassword() {
     document.getElementById("resetPasswordPopup").style.display = "none";
 }
 
+
+/* =========================
+   PASSWORD VISIBILITY
+========================= */
+
 function togglePassword(id, icon) {
 
     const input = document.getElementById(id);
     const eye = icon.querySelector("i");
 
     if (input.type === "password") {
+
         input.type = "text";
+
         eye.classList.remove("fa-eye");
         eye.classList.add("fa-eye-slash");
+
     } else {
+
         input.type = "password";
+
         eye.classList.remove("fa-eye-slash");
         eye.classList.add("fa-eye");
+
+    }
+}
+
+
+/* =====================================================
+   EMAIL VALIDATION
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const emailInput =
+        document.getElementById("register_email");
+
+    const emailError =
+        document.getElementById("emailError");
+
+    const registerForm =
+        document.getElementById("registerForm");
+
+
+    if (!emailInput || !emailError || !registerForm) {
+        return;
     }
 
-}
+
+    function validateEmail() {
+
+        const email =
+            emailInput.value.trim().toLowerCase();
+
+
+        const emailPattern =
+            /^[A-Za-z0-9._%+-]+@(gmail\.com|googlemail\.com|hotmail\.com|outlook\.com|live\.com|msn\.com|yahoo\.com|ymail\.com|icloud\.com|me\.com|aol\.com|protonmail\.com|proton\.me)$/;
+
+
+        if (email === "") {
+
+            emailError.classList.remove("show");
+            emailInput.classList.remove("email-input-error");
+
+            return false;
+        }
+
+
+        if (!emailPattern.test(email)) {
+
+            emailError.classList.add("show");
+            emailInput.classList.add("email-input-error");
+
+            return false;
+        }
+
+
+        emailError.classList.remove("show");
+        emailInput.classList.remove("email-input-error");
+
+        return true;
+    }
+
+
+    emailInput.addEventListener(
+        "input",
+        validateEmail
+    );
+
+
+    emailInput.addEventListener(
+        "blur",
+        validateEmail
+    );
+
+
+    registerForm.addEventListener(
+        "submit",
+        function(event) {
+
+            if (!validateEmail()) {
+
+                event.preventDefault();
+
+                emailInput.focus();
+            }
+
+        }
+    );
+
+});
+
+
+/* =========================
+   PAGE LOAD
+========================= */
 
 window.onload = function () {
 
@@ -1088,13 +1472,16 @@ window.onload = function () {
         openRegister();
     {% endif %}
 
+
     {% if login_error %}
         openLogin();
     {% endif %}
 
+
     {% if request.args.get("verify") == "1" %}
         openVerify();
     {% endif %}
+
 
     {% if request.args.get("reset") == "1" %}
         closeVerify();
@@ -1104,5 +1491,6 @@ window.onload = function () {
 };
 
 </script>
+
 
 {% endblock %}

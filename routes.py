@@ -8,7 +8,7 @@ from flask import (
     flash,
     
 )
-
+import re
 
 
 from app import app, db
@@ -1339,7 +1339,47 @@ def register():
         email = form.email.data.strip().lower()
 
         # ==========================================
-        # التحقق من البريد
+        # 📧 التحقق من صيغة البريد الإلكتروني
+        # مثال:
+        # example@gmail.com
+        # name@hotmail.com
+        # user@outlook.com
+        # user@yahoo.com
+        # ==========================================
+
+        email_pattern = (
+            r"^[A-Za-z0-9._%+-]+@"
+            r"[A-Za-z0-9.-]+\."
+            r"[A-Za-z]{2,}$"
+        )
+
+        if not re.match(email_pattern, email):
+
+            form.email.errors.append(
+                "صيغة البريد الإلكتروني غير صحيحة. "
+                "مثال: example@gmail.com"
+            )
+
+            login_form = LoginForm()
+            verify_form = VerifyCodeForm()
+
+            products = Product.query.filter(
+                Product.publish_location.in_(
+                    ["both", "home_only"]
+                )
+            ).all()
+
+            return render_template(
+                "index.html",
+                products=products,
+                form=login_form,
+                register_form=form,
+                verify_form=verify_form,
+                show_register_popup=True
+            )
+
+        # ==========================================
+        # 📧 التحقق من أن الإيميل غير مستخدم
         # ==========================================
 
         existing_email = User.query.filter(
@@ -1348,9 +1388,8 @@ def register():
 
         if existing_email:
 
-            flash(
-                "⚠️ Email already registered!",
-                "register_warning"
+            form.email.errors.append(
+                "هذا البريد الإلكتروني مسجل بالفعل."
             )
 
             login_form = LoginForm()
@@ -1372,40 +1411,10 @@ def register():
             )
 
         # ==========================================
-        # التحقق من اسم المستخدم
-        # ==========================================
-
-        existing_username = User.query.filter(
-            func.lower(User.username) == username.lower()
-        ).first()
-
-        if existing_username:
-
-            flash(
-                "⚠️ Username already exists!",
-                "register_warning"
-            )
-
-            login_form = LoginForm()
-            verify_form = VerifyCodeForm()
-
-            products = Product.query.filter(
-                Product.publish_location.in_(
-                    ["both", "home_only"]
-                )
-            ).all()
-
-            return render_template(
-                "index.html",
-                products=products,
-                form=login_form,
-                register_form=form,
-                verify_form=verify_form,
-                show_register_popup=True
-            )
-
-        # ==========================================
-        # إنشاء المستخدم
+        # 👤 إنشاء المستخدم
+        #
+        # ملاحظة:
+        # اسم المستخدم مسموح يتكرر
         # ==========================================
 
         new_user = User(
@@ -1414,17 +1423,26 @@ def register():
             phone=form.phone.data
         )
 
+        # ==========================================
+        # 🔐 تشفير كلمة المرور
+        # ==========================================
+
         new_user.set_password(
             form.password.data
         )
 
-        # الحساب مفعل مباشرة
+        # ==========================================
+        # ✅ الحساب مفعل مباشرة
+        # ==========================================
+
         new_user.confirmed = True
+
         new_user.verification_code = None
+
         new_user.verification_expiry = None
 
         # ==========================================
-        # تحديد الأدمن
+        # 👑 تحديد الأدمن
         # ==========================================
 
         if email == "admin@store.com":
@@ -1432,10 +1450,11 @@ def register():
             new_user.role = "admin"
 
         # ==========================================
-        # حفظ المستخدم
+        # 💾 حفظ المستخدم
         # ==========================================
 
         db.session.add(new_user)
+
         db.session.commit()
 
         print(
@@ -1486,7 +1505,7 @@ def register():
             )
 
         # ==========================================
-        # تسجيل الدخول مباشرة
+        # 🔐 تسجيل الدخول مباشرة
         # ==========================================
 
         login_user(
@@ -1501,7 +1520,7 @@ def register():
         )
 
         # ==========================================
-        # دمج السلة المؤقتة
+        # 🛒 دمج السلة المؤقتة
         # ==========================================
 
         merge_session_cart_into_db(
@@ -1509,7 +1528,7 @@ def register():
         )
 
         # ==========================================
-        # الانتقال حسب نوع الحساب
+        # 🚀 الانتقال حسب نوع الحساب
         # ==========================================
 
         if new_user.role == "admin":
@@ -1527,6 +1546,7 @@ def register():
     # ==========================================
 
     login_form = LoginForm()
+
     verify_form = VerifyCodeForm()
 
     products = Product.query.filter(
