@@ -26,6 +26,7 @@
     --dark:#333;
     --gray:#777;
 
+
     --border:#F1D8DE;
 
     --shadow:
@@ -1154,17 +1155,17 @@ body{
         </button>
 
 
-        <button
-            type="button"
-            class="category-btn"
-            data-category="Custom"
-        >
+<button
+    type="button"
+    class="category-btn"
+    data-category="Custom"
+>
 
-            {{ "حسب الطلب"
-               if current_lang == "ar"
-               else "Custom" }}
+    {{ "طلب فوري"
+       if current_lang == "ar"
+       else "Instant Order" }}
 
-        </button>
+</button>
 
     </div>
 

@@ -1,9 +1,8 @@
 {% extends "admin/admin_base.html" %}
 
-
 {% block title %}
 
-{{ "الزوار" if current_lang == "ar" else "Visitors" }}
+{{ "المستخدمون" if current_lang == "ar" else "Users" }}
 
 {% endblock %}
 
@@ -16,7 +15,7 @@
    PAGE
 ===================================================== */
 
-.visitors-page {
+.users-page {
     width: 100%;
 }
 
@@ -25,18 +24,18 @@
    HEADER
 ===================================================== */
 
-.visitors-header {
+.users-header {
     margin-bottom: 25px;
 }
 
-.visitors-header h2 {
+.users-header h2 {
     margin: 0;
     color: #d86f9d;
     font-size: 28px;
     font-weight: 800;
 }
 
-.visitors-header p {
+.users-header p {
     margin: 7px 0 0;
     color: #777;
     font-size: 14px;
@@ -44,174 +43,50 @@
 
 
 /* =====================================================
-   STAT CARDS
+   STAT
 ===================================================== */
 
-.visitor-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 18px;
-    margin-bottom: 30px;
-}
-
-.visitor-stat {
+.users-stat {
     background: #fff0f5;
     border: 1px solid #f3c4d4;
     border-radius: 18px;
     padding: 22px;
-    box-shadow: 0 8px 22px rgba(216, 142, 164, .12);
-    transition: .3s;
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    user-select: none;
-}
-
-.visitor-stat::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    height: 4px;
-    background: #d86f9d;
-}
-
-.visitor-stat:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 28px rgba(216, 142, 164, .20);
-}
-
-.visitor-stat.active-filter {
-    transform: translateY(-5px);
-    box-shadow:
-        0 0 0 3px rgba(216, 95, 145, .18),
-        0 12px 28px rgba(216, 142, 164, .25);
-}
-
-
-/* =====================================================
-   ICON
-===================================================== */
-
-.visitor-stat-icon {
-    font-size: 26px;
-    margin-bottom: 10px;
-}
-
-
-/* =====================================================
-   TITLE
-===================================================== */
-
-.visitor-stat-title {
-    color: #806773;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 8px;
-}
-
-
-/* =====================================================
-   NUMBER
-===================================================== */
-
-.visitor-stat-number {
-    color: #d85f91;
-    font-size: 34px;
-    font-weight: 800;
-    line-height: 1;
-}
-
-
-/* =====================================================
-   CARD COLORS
-===================================================== */
-
-.today-stat {
-    background: #fde7ef;
-}
-
-.today-stat::before {
-    background: #e26fa7;
-}
-
-.active-stat {
-    background: #fce8ef;
-}
-
-.active-stat::before {
-    background: #52c878;
-}
-
-.active-stat .visitor-stat-number {
-    color: #4caf70;
-}
-
-.registered-stat {
-    background: #fff0f5;
-}
-
-.registered-stat::before {
-    background: #d88ea4;
-}
-
-.guest-stat {
-    background: #faf5f7;
-}
-
-.guest-stat::before {
-    background: #aaa;
-}
-
-
-/* =====================================================
-   FILTER INFO
-===================================================== */
-
-.filter-info {
-    display: none;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    padding: 13px 18px;
-    margin-bottom: 15px;
-    background: #fff0f5;
-    border: 1px solid #f3c4d4;
-    border-radius: 12px;
-}
-
-.filter-info.show {
+    margin-bottom: 25px;
+    box-shadow: 0 8px 22px rgba(216, 142, 164, .10);
     display: flex;
+    align-items: center;
+    gap: 18px;
 }
 
-.filter-info-text {
-    color: #c34f82;
-    font-size: 14px;
-    font-weight: 700;
+.users-stat-icon {
+    width: 55px;
+    height: 55px;
+    border-radius: 15px;
+    background: #fde0eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 27px;
 }
 
-.clear-filter {
-    border: none;
-    background: #d85f91;
-    color: white;
-    padding: 7px 14px;
-    border-radius: 9px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: 700;
+.users-stat-title {
+    color: #806773;
+    font-size: 13px;
+    margin-bottom: 5px;
 }
 
-.clear-filter:hover {
-    background: #c34f82;
+.users-stat-number {
+    color: #d85f91;
+    font-size: 30px;
+    font-weight: 800;
 }
 
 
 /* =====================================================
-   TABLE CONTAINER
+   TABLE BOX
 ===================================================== */
 
-.visitor-table-box {
+.users-table-box {
     background: #ffffff;
     border: 1px solid #f3c4d4;
     border-radius: 18px;
@@ -224,23 +99,26 @@
    TABLE HEADER
 ===================================================== */
 
-.table-header {
+.users-table-header {
     padding: 20px 22px;
     background: #fff8fa;
     border-bottom: 1px solid #f3dce3;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 15px;
+
+    flex-wrap: wrap;
 }
 
-.table-header h3 {
+.users-table-title h3 {
     margin: 0;
     color: #d85f91;
     font-size: 20px;
 }
 
-.table-header p {
+.users-table-title p {
     margin: 5px 0 0;
     color: #888;
     font-size: 13px;
@@ -248,10 +126,49 @@
 
 
 /* =====================================================
+   SEARCH
+===================================================== */
+
+.users-search {
+    display: flex;
+    gap: 8px;
+}
+
+.users-search input {
+    width: 240px;
+    padding: 10px 13px;
+    border: 1px solid #edc6d4;
+    border-radius: 10px;
+    outline: none;
+    font-size: 13px;
+    background: white;
+}
+
+.users-search input:focus {
+    border-color: #d86f9d;
+    box-shadow: 0 0 0 3px rgba(216,111,157,.10);
+}
+
+.search-btn {
+    border: none;
+    background: #d85f91;
+    color: white;
+    border-radius: 10px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.search-btn:hover {
+    background: #c34f82;
+}
+
+
+/* =====================================================
    TABLE WRAPPER
 ===================================================== */
 
-.visitor-table-wrapper {
+.users-table-wrapper {
     width: 100%;
     overflow-x: auto;
 }
@@ -261,18 +178,13 @@
    TABLE
 ===================================================== */
 
-.visitor-table {
+.users-table {
     width: 100%;
+    min-width: 850px;
     border-collapse: collapse;
-
-    /*
-       أكبر لأن عندنا الآن:
-       اسم + إيميل
-    */
-    min-width: 1200px;
 }
 
-.visitor-table th {
+.users-table th {
     background: #fde7ef;
     color: #8b5269;
     padding: 15px 12px;
@@ -282,7 +194,7 @@
     white-space: nowrap;
 }
 
-.visitor-table td {
+.users-table td {
     padding: 15px 12px;
     text-align: center;
     border-top: 1px solid #f5e0e6;
@@ -291,167 +203,160 @@
     white-space: nowrap;
 }
 
-.visitor-table tbody tr {
+.users-table tbody tr {
     transition: .2s;
 }
 
-.visitor-table tbody tr:hover {
+.users-table tbody tr:hover {
     background: #fff8fa;
 }
 
 
 /* =====================================================
-   HIDDEN ROW
+   USER
 ===================================================== */
 
-.visitor-row.hidden {
-    display: none;
-}
-
-
-/* =====================================================
-   VISITOR ID
-===================================================== */
-
-.visitor-id {
-    font-family: monospace;
-    color: #9b647b;
-    font-size: 12px;
-}
-
-
-/* =====================================================
-   USER BOX
-===================================================== */
-
-.user-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    min-width: 170px;
+.user-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #f3c4d4;
 }
 
 .user-name {
     color: #c34f82;
     font-weight: 800;
-    font-size: 13px;
 }
 
 .user-email {
-    color: #888;
-    font-size: 11px;
+    color: #777;
     direction: ltr;
 }
 
-.user-number {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 3px 8px;
-    border-radius: 8px;
-    background: #f9e1ea;
-    color: #c34f82;
-    font-size: 10px;
-    font-weight: 700;
-}
-
 
 /* =====================================================
-   GUEST USER
+   ROLE
 ===================================================== */
 
-.guest-user {
-    color: #999;
-    font-size: 12px;
-}
-
-
-/* =====================================================
-   PAGE
-===================================================== */
-
-.page-value {
-    color: #d85f91;
-    font-weight: 600;
-}
-
-
-/* =====================================================
-   BADGES
-===================================================== */
-
-.visitor-badge {
+.user-role {
     display: inline-flex;
     align-items: center;
     gap: 5px;
     padding: 6px 12px;
     border-radius: 20px;
+    background: #f9d7e5;
+    color: #c34f82;
     font-size: 12px;
     font-weight: 700;
 }
 
-.visitor-badge.registered {
-    background: #f9d7e5;
+.user-role.admin {
+    background: #eadcf8;
+    color: #8153a5;
+}
+
+
+/* =====================================================
+   CONFIRMED
+===================================================== */
+
+.confirmed-badge {
+    display: inline-flex;
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.confirmed-yes {
+    background: #e5f7eb;
+    color: #3e9b5d;
+}
+
+.confirmed-no {
+    background: #f5eeee;
+    color: #999;
+}
+
+
+/* =====================================================
+   ACTIONS
+===================================================== */
+
+.user-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.action-btn {
+    border: none;
+    border-radius: 9px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    transition: .2s;
+}
+
+.password-btn {
+    background: #f9e1ea;
     color: #c34f82;
 }
 
-.visitor-badge.guest {
-    background: #f2eeee;
-    color: #777;
+.password-btn:hover {
+    background: #f3cbd9;
+}
+
+.delete-btn {
+    background: #ffe4e4;
+    color: #c94b4b;
+}
+
+.delete-btn:hover {
+    background: #ffd1d1;
 }
 
 
 /* =====================================================
-   ACTIVE BADGE
+   PASSWORD FORM
 ===================================================== */
 
-.active-badge {
-    display: inline-flex;
-    align-items: center;
+.password-form {
+    display: none;
+    margin-top: 10px;
+}
+
+.password-form.show {
+    display: flex;
+    justify-content: center;
     gap: 6px;
-    padding: 6px 11px;
-    border-radius: 20px;
-    background: #e5f7eb;
-    color: #3e9b5d;
+}
+
+.password-input {
+    width: 150px;
+    padding: 8px 10px;
+    border: 1px solid #e4c6d2;
+    border-radius: 8px;
+    outline: none;
     font-size: 12px;
+}
+
+.password-input:focus {
+    border-color: #d86f9d;
+}
+
+.save-password {
+    border: none;
+    background: #d85f91;
+    color: white;
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    font-size: 11px;
     font-weight: 700;
-}
-
-.active-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #52c878;
-    box-shadow: 0 0 0 3px rgba(82, 200, 120, .12);
-}
-
-
-/* =====================================================
-   INACTIVE BADGE
-===================================================== */
-
-.inactive-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 11px;
-    border-radius: 20px;
-    background: #f3f3f3;
-    color: #888;
-    font-size: 12px;
-    font-weight: 700;
-}
-
-
-/* =====================================================
-   IP
-===================================================== */
-
-.ip-address {
-    font-family: monospace;
-    color: #777;
-    font-size: 12px;
 }
 
 
@@ -459,46 +364,18 @@
    EMPTY
 ===================================================== */
 
-.empty-visitors {
+.empty-users {
     text-align: center;
     padding: 70px 20px;
     color: #888;
 }
 
-.empty-visitors-icon {
+.empty-users-icon {
     font-size: 45px;
     margin-bottom: 15px;
 }
 
-.empty-visitors-title {
-    color: #d85f91;
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 8px;
-}
-
-
-/* =====================================================
-   NO FILTER
-===================================================== */
-
-.no-filter-results {
-    display: none;
-    text-align: center;
-    padding: 60px 20px;
-    color: #888;
-}
-
-.no-filter-results.show {
-    display: block;
-}
-
-.no-filter-results-icon {
-    font-size: 42px;
-    margin-bottom: 12px;
-}
-
-.no-filter-results-title {
+.empty-users-title {
     color: #d85f91;
     font-size: 18px;
     font-weight: 700;
@@ -510,67 +387,27 @@
    RESPONSIVE
 ===================================================== */
 
-@media(max-width: 1100px) {
-
-    .visitor-stats {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-}
-
-
 @media(max-width: 700px) {
 
-    .visitor-stats {
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-    }
-
-    .visitor-stat {
-        padding: 17px;
-        border-radius: 15px;
-    }
-
-    .visitor-stat-icon {
-        font-size: 22px;
-    }
-
-    .visitor-stat-title {
-        font-size: 12px;
-    }
-
-    .visitor-stat-number {
-        font-size: 28px;
-    }
-
-    .visitors-header h2 {
+    .users-header h2 {
         font-size: 23px;
     }
 
-    .table-header {
-        padding: 17px;
-    }
-
-    .table-header h3 {
-        font-size: 17px;
-    }
-
-    .filter-info {
-        align-items: flex-start;
+    .users-table-header {
+        align-items: stretch;
         flex-direction: column;
     }
 
-}
-
-
-@media(max-width: 450px) {
-
-    .visitor-stats {
-        grid-template-columns: 1fr;
+    .users-search {
+        width: 100%;
     }
 
-    .visitor-stat-number {
-        font-size: 30px;
+    .users-search input {
+        width: 100%;
+    }
+
+    .users-stat {
+        padding: 17px;
     }
 
 }
@@ -578,29 +415,24 @@
 </style>
 
 
-<div class="visitors-page">
+<div class="users-page">
 
 
     <!-- =================================================
          HEADER
     ================================================= -->
 
-    <div class="visitors-header">
+    <div class="users-header">
 
         <h2>
 
-            👀
+            👥
 
             {{
-
-                "تفاصيل الزوار"
-
+                "المستخدمون المسجلون"
                 if current_lang == "ar"
-
                 else
-
-                "Visitor Details"
-
+                "Registered Users"
             }}
 
         </h2>
@@ -608,15 +440,10 @@
         <p>
 
             {{
-
-                "إحصائيات ومعلومات تفصيلية عن زوار المتجر."
-
+                "إدارة المستخدمين المسجلين في المتجر."
                 if current_lang == "ar"
-
                 else
-
-                "Statistics and detailed information about store visitors."
-
+                "Manage registered users of the store."
             }}
 
         </p>
@@ -625,326 +452,33 @@
 
 
     <!-- =================================================
-         FIRST ROW
+         STAT
     ================================================= -->
 
-    <div class="visitor-stats">
+    <div class="users-stat">
 
+        <div class="users-stat-icon">
+            👥
+        </div>
 
-        <!-- TOTAL -->
+        <div>
 
-        <div
-            class="visitor-stat"
-            data-filter="all"
-            onclick="filterVisitors('all')"
-        >
-
-            <div class="visitor-stat-icon">
-                👀
-            </div>
-
-            <div class="visitor-stat-title">
+            <div class="users-stat-title">
 
                 {{
-
-                    "إجمالي الزيارات"
-
+                    "إجمالي المستخدمين"
                     if current_lang == "ar"
-
                     else
-
-                    "Total Visits"
-
+                    "Total Users"
                 }}
 
             </div>
 
-            <div class="visitor-stat-number">
-                {{ total_visitors }}
+            <div class="users-stat-number">
+                {{ users_count }}
             </div>
 
         </div>
-
-
-        <!-- TODAY -->
-
-        <div
-            class="visitor-stat today-stat"
-            data-filter="today"
-            onclick="filterVisitors('today')"
-        >
-
-            <div class="visitor-stat-icon">
-                📅
-            </div>
-
-            <div class="visitor-stat-title">
-
-                {{
-
-                    "زيارات اليوم"
-
-                    if current_lang == "ar"
-
-                    else
-
-                    "Today's Visits"
-
-                }}
-
-            </div>
-
-            <div class="visitor-stat-number">
-                {{ today_visitors }}
-            </div>
-
-        </div>
-
-
-        <!-- ACTIVE -->
-
-        <div
-            class="visitor-stat active-stat"
-            data-filter="active"
-            onclick="filterVisitors('active')"
-        >
-
-            <div class="visitor-stat-icon">
-                🟢
-            </div>
-
-            <div class="visitor-stat-title">
-
-                {{
-
-                    "الزوار الآن"
-
-                    if current_lang == "ar"
-
-                    else
-
-                    "Visitors Now"
-
-                }}
-
-            </div>
-
-            <div class="visitor-stat-number">
-                {{ active_count }}
-            </div>
-
-        </div>
-
-
-        <!-- REGISTERED -->
-
-        <div
-            class="visitor-stat registered-stat"
-            data-filter="registered"
-            onclick="filterVisitors('registered')"
-        >
-
-            <div class="visitor-stat-icon">
-                👤
-            </div>
-
-            <div class="visitor-stat-title">
-
-                {{
-
-                    "المستخدمون المسجلون"
-
-                    if current_lang == "ar"
-
-                    else
-
-                    "Registered Visitors"
-
-                }}
-
-            </div>
-
-            <div class="visitor-stat-number">
-                {{ registered_visitors }}
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =================================================
-         SECOND ROW
-    ================================================= -->
-
-    <div class="visitor-stats">
-
-
-        <!-- GUESTS -->
-
-        <div
-            class="visitor-stat guest-stat"
-            data-filter="guest"
-            onclick="filterVisitors('guest')"
-        >
-
-            <div class="visitor-stat-icon">
-                🕵️
-            </div>
-
-            <div class="visitor-stat-title">
-
-                {{
-
-                    "الزوار غير المسجلين"
-
-                    if current_lang == "ar"
-
-                    else
-
-                    "Guest Visitors"
-
-                }}
-
-            </div>
-
-            <div class="visitor-stat-number">
-                {{ guest_visitors }}
-            </div>
-
-        </div>
-
-
-        <!-- ACTIVE REGISTERED -->
-
-        <div
-            class="visitor-stat registered-stat"
-            data-filter="active_registered"
-            onclick="filterVisitors('active_registered')"
-        >
-
-            <div class="visitor-stat-icon">
-                👤
-            </div>
-
-            <div class="visitor-stat-title">
-
-                {{
-
-                    "المسجلون الآن"
-
-                    if current_lang == "ar"
-
-                    else
-
-                    "Registered Now"
-
-                }}
-
-            </div>
-
-            <div class="visitor-stat-number">
-                {{ active_registered }}
-            </div>
-
-        </div>
-
-
-        <!-- ACTIVE GUESTS -->
-
-        <div
-            class="visitor-stat guest-stat"
-            data-filter="active_guests"
-            onclick="filterVisitors('active_guests')"
-        >
-
-            <div class="visitor-stat-icon">
-                🕵️
-            </div>
-
-            <div class="visitor-stat-title">
-
-                {{
-
-                    "الزوار بدون تسجيل الآن"
-
-                    if current_lang == "ar"
-
-                    else
-
-                    "Guests Now"
-
-                }}
-
-            </div>
-
-            <div class="visitor-stat-number">
-                {{ active_guests }}
-            </div>
-
-        </div>
-
-
-        <!-- TODAY GUESTS -->
-
-        <div
-            class="visitor-stat today-stat"
-            data-filter="today_guest"
-            onclick="filterVisitors('today_guest')"
-        >
-
-            <div class="visitor-stat-icon">
-                📈
-            </div>
-
-            <div class="visitor-stat-title">
-
-                {{
-
-                    "زوار اليوم بدون تسجيل"
-
-                    if current_lang == "ar"
-
-                    else
-
-                    "Today's Guests"
-
-                }}
-
-            </div>
-
-            <div class="visitor-stat-number">
-                {{ today_guest_count }}
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- =================================================
-         FILTER INFO
-    ================================================= -->
-
-    <div
-        id="filterInfo"
-        class="filter-info"
-    >
-
-        <div
-            id="filterInfoText"
-            class="filter-info-text"
-        ></div>
-
-        <button
-            type="button"
-            class="clear-filter"
-            onclick="filterVisitors('all')"
-        >
-
-            {{ "عرض الكل" if current_lang == "ar" else "Show All" }}
-
-        </button>
 
     </div>
 
@@ -953,27 +487,22 @@
          TABLE
     ================================================= -->
 
-    <div class="visitor-table-box">
+    <div class="users-table-box">
 
 
-        <div class="table-header">
+        <div class="users-table-header">
 
-            <div>
+            <div class="users-table-title">
 
                 <h3>
 
-                    👀
+                    👤
 
                     {{
-
-                        "سجل الزيارات"
-
+                        "قائمة المستخدمين"
                         if current_lang == "ar"
-
                         else
-
-                        "Visitor Log"
-
+                        "Users List"
                     }}
 
                 </h3>
@@ -981,31 +510,64 @@
                 <p>
 
                     {{
-
-                        "تفاصيل الزوار والصفحات التي تمت زيارتها."
-
+                        "يمكنك تغيير كلمة المرور أو حذف المستخدم."
                         if current_lang == "ar"
-
                         else
-
-                        "Details about visitors and the pages they visited."
-
+                        "You can change a password or delete a user."
                     }}
 
                 </p>
 
             </div>
 
+
+            <!-- SEARCH -->
+
+            <form
+                method="GET"
+                action="{{ url_for('admin_users') }}"
+                class="users-search"
+            >
+
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search }}"
+                    placeholder="{{
+                        'ابحث بالاسم أو الإيميل'
+                        if current_lang == 'ar'
+                        else
+                        'Search username or email'
+                    }}"
+                >
+
+                <button
+                    type="submit"
+                    class="search-btn"
+                >
+
+                    🔎
+
+                    {{
+                        "بحث"
+                        if current_lang == "ar"
+                        else
+                        "Search"
+                    }}
+
+                </button>
+
+            </form>
+
         </div>
 
 
-        {% if visitors %}
+        {% if users %}
 
 
-        <div class="visitor-table-wrapper">
+        <div class="users-table-wrapper">
 
-            <table class="visitor-table">
-
+            <table class="users-table">
 
                 <thead>
 
@@ -1014,151 +576,60 @@
                         <th>#</th>
 
                         <th>
-
                             {{
-
-                                "نوع الزائر"
-
-                                if current_lang == "ar"
-
-                                else
-
-                                "Visitor Type"
-
-                            }}
-
-                        </th>
-
-                        <th>
-
-                            {{
-
-                                "معرف الزائر"
-
-                                if current_lang == "ar"
-
-                                else
-
-                                "Visitor ID"
-
-                            }}
-
-                        </th>
-
-                        <th>
-
-                            {{
-
                                 "المستخدم"
-
                                 if current_lang == "ar"
-
                                 else
-
                                 "User"
-
                             }}
-
                         </th>
 
                         <th>
-
                             {{
-
-                                "الصفحة"
-
+                                "الإيميل"
                                 if current_lang == "ar"
-
                                 else
-
-                                "Page"
-
+                                "Email"
                             }}
-
                         </th>
 
                         <th>
-
                             {{
-
-                                "وقت الدخول"
-
+                                "الصلاحية"
                                 if current_lang == "ar"
-
                                 else
-
-                                "Started"
-
+                                "Role"
                             }}
-
                         </th>
 
                         <th>
-
                             {{
-
-                                "آخر نشاط"
-
-                                if current_lang == "ar"
-
-                                else
-
-                                "Last Activity"
-
-                            }}
-
-                        </th>
-
-                        <th>
-
-                            {{
-
                                 "الحالة"
-
                                 if current_lang == "ar"
-
                                 else
-
                                 "Status"
-
                             }}
-
                         </th>
 
-                        <th>IP</th>
+                        <th>
+                            {{
+                                "الإجراءات"
+                                if current_lang == "ar"
+                                else
+                                "Actions"
+                            }}
+                        </th>
 
                     </tr>
 
                 </thead>
 
 
-                <tbody id="visitorTableBody">
+                <tbody>
 
+                    {% for user in users %}
 
-                    {% for visitor in visitors %}
-
-                    {% set user = users.get(visitor.user_id) if visitor.user_id else none %}
-
-
-                    <tr
-                        class="visitor-row"
-
-                        data-visitor-type="{{ visitor.visitor_type }}"
-
-                        data-user-id="{{ 'yes' if visitor.user_id else 'no' }}"
-
-                        data-last-activity="{{
-                            visitor.last_activity.isoformat()
-                            if visitor.last_activity
-                            else ''
-                        }}"
-
-                        data-visited-at="{{
-                            visitor.visited_at.isoformat()
-                            if visitor.visited_at
-                            else ''
-                        }}"
-                    >
+                    <tr>
 
 
                         <!-- NUMBER -->
@@ -1168,208 +639,118 @@
                         </td>
 
 
-                        <!-- TYPE -->
+                        <!-- USER -->
 
                         <td>
 
-                            {% if visitor.user_id %}
+                            {% if user.profile_image %}
 
-                                <span class="visitor-badge registered">
+                                <img
+                                    src="{{ url_for(
+                                        'static',
+                                        filename='uploads/' + user.profile_image
+                                    ) }}"
+                                    class="user-avatar"
+                                    onerror="this.style.display='none'"
+                                >
+
+                            {% endif %}
+
+                            <div class="user-name">
+
+                                👤
+
+                                {{ user.username }}
+
+                            </div>
+
+                        </td>
+
+
+                        <!-- EMAIL -->
+
+                        <td>
+
+                            <span class="user-email">
+
+                                📧
+
+                                {{ user.email }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- ROLE -->
+
+                        <td>
+
+                            <span
+                                class="user-role {{
+                                    'admin'
+                                    if user.role == 'admin'
+                                    else ''
+                                }}"
+                            >
+
+                                {% if user.role == "admin" %}
+
+                                    👑
+                                    {{
+                                        "أدمن"
+                                        if current_lang == "ar"
+                                        else
+                                        "Admin"
+                                    }}
+
+                                {% else %}
 
                                     👤
-
                                     {{
-
-                                        "مسجل"
-
+                                        "مستخدم"
                                         if current_lang == "ar"
-
                                         else
-
-                                        "Registered"
-
+                                        "User"
                                     }}
 
-                                </span>
-
-                            {% else %}
-
-                                <span class="visitor-badge guest">
-
-                                    👀
-
-                                    {{
-
-                                        "زائر"
-
-                                        if current_lang == "ar"
-
-                                        else
-
-                                        "Guest"
-
-                                    }}
-
-                                </span>
-
-                            {% endif %}
-
-                        </td>
-
-
-                        <!-- VISITOR ID -->
-
-                        <td>
-
-                            <span class="visitor-id">
-
-                                {{ visitor.visitor_id or "—" }}
+                                {% endif %}
 
                             </span>
 
                         </td>
 
 
-                        <!-- USER NAME + EMAIL -->
+                        <!-- CONFIRMED -->
 
                         <td>
 
-                            {% if user %}
+                            {% if user.confirmed %}
 
-                                <div class="user-info">
+                                <span class="confirmed-badge confirmed-yes">
 
-                                    <div class="user-name">
+                                    ✅
 
-                                        👤
-
-                                        {{ user.username }}
-
-                                    </div>
-
-                                    <div class="user-email">
-
-                                        📧
-
-                                        {{ user.email }}
-
-                                    </div>
-
-                                    <div class="user-number">
-
-                                        ID #{{ user.id }}
-
-                                    </div>
-
-                                </div>
-
-                            {% else %}
-
-                                <span class="guest-user">
-
-                                    {{ "زائر غير مسجل" if current_lang == "ar" else "Guest" }}
+                                    {{
+                                        "مؤكد"
+                                        if current_lang == "ar"
+                                        else
+                                        "Confirmed"
+                                    }}
 
                                 </span>
 
-                            {% endif %}
+                            {% else %}
 
-                        </td>
-
-
-                        <!-- PAGE -->
-
-                        <td>
-
-                            <span class="page-value">
-
-                                {{ visitor.page or "—" }}
-
-                            </span>
-
-                        </td>
-
-
-                        <!-- STARTED -->
-
-                        <td>
-
-                            {{
-
-                                visitor.started_at.strftime(
-                                    "%Y-%m-%d %H:%M"
-                                )
-
-                                if visitor.started_at
-
-                                else
-
-                                "—"
-
-                            }}
-
-                        </td>
-
-
-                        <!-- LAST ACTIVITY -->
-
-                        <td>
-
-                            {{
-
-                                visitor.last_activity.strftime(
-                                    "%Y-%m-%d %H:%M"
-                                )
-
-                                if visitor.last_activity
-
-                                else
-
-                                "—"
-
-                            }}
-
-                        </td>
-
-
-                        <!-- STATUS -->
-
-                        <td>
-
-                            {% if visitor.last_activity %}
-
-                                <span class="inactive-badge visitor-status">
+                                <span class="confirmed-badge confirmed-no">
 
                                     ⚪
 
                                     {{
-
-                                        "مسجل"
-
+                                        "غير مؤكد"
                                         if current_lang == "ar"
-
                                         else
-
-                                        "Recorded"
-
-                                    }}
-
-                                </span>
-
-                            {% else %}
-
-                                <span class="inactive-badge">
-
-                                    ⚪
-
-                                    {{
-
-                                        "غير نشط"
-
-                                        if current_lang == "ar"
-
-                                        else
-
-                                        "Inactive"
-
+                                        "Not Confirmed"
                                     }}
 
                                 </span>
@@ -1379,21 +760,121 @@
                         </td>
 
 
-                        <!-- IP -->
+                        <!-- ACTIONS -->
 
                         <td>
 
-                            <span class="ip-address">
+                            <div class="user-actions">
 
-                                {{ visitor.ip_address or "—" }}
 
-                            </span>
+                                <!-- CHANGE PASSWORD -->
+
+                                <button
+                                    type="button"
+                                    class="action-btn password-btn"
+                                    onclick="togglePasswordForm({{ user.id }})"
+                                >
+
+                                    🔑
+
+                                    {{
+                                        "تغيير كلمة السر"
+                                        if current_lang == "ar"
+                                        else
+                                        "Change Password"
+                                    }}
+
+                                </button>
+
+
+                                <!-- DELETE -->
+
+                                {% if user.id != current_user.id and user.email != "admin@store.com" %}
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for(
+                                        'delete_user',
+                                        id=user.id
+                                    ) }}"
+                                    onsubmit="return confirmDelete(
+                                        '{{ user.username|e }}'
+                                    )"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="action-btn delete-btn"
+                                    >
+
+                                        🗑️
+
+                                        {{
+                                            "حذف"
+                                            if current_lang == "ar"
+                                            else
+                                            "Delete"
+                                        }}
+
+                                    </button>
+
+                                </form>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- PASSWORD FORM -->
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'change_user_password',
+                                    id=user.id
+                                ) }}"
+                                class="password-form"
+                                id="passwordForm{{ user.id }}"
+                                onsubmit="return validatePassword({{ user.id }})"
+                            >
+
+                                <input
+                                    type="password"
+                                    name="new_password"
+                                    id="passwordInput{{ user.id }}"
+                                    class="password-input"
+                                    minlength="6"
+                                    placeholder="{{
+                                        'كلمة المرور الجديدة'
+                                        if current_lang == 'ar'
+                                        else
+                                        'New password'
+                                    }}"
+                                    required
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="save-password"
+                                >
+
+                                    💾
+
+                                    {{
+                                        "حفظ"
+                                        if current_lang == "ar"
+                                        else
+                                        "Save"
+                                    }}
+
+                                </button>
+
+                            </form>
 
                         </td>
 
 
                     </tr>
-
 
                     {% endfor %}
 
@@ -1404,71 +885,22 @@
         </div>
 
 
-        <div
-            id="noFilterResults"
-            class="no-filter-results"
-        >
-
-            <div class="no-filter-results-icon">
-                👀
-            </div>
-
-            <div class="no-filter-results-title">
-
-                {{
-
-                    "لا يوجد زوار في هذا التصنيف"
-
-                    if current_lang == "ar"
-
-                    else
-
-                    "No visitors in this category"
-
-                }}
-
-            </div>
-
-            <div>
-
-                {{
-
-                    "لم يتم العثور على أي نتائج."
-
-                    if current_lang == "ar"
-
-                    else
-
-                    "No matching visitors were found."
-
-                }}
-
-            </div>
-
-        </div>
-
-
         {% else %}
 
 
-        <div class="empty-visitors">
+        <div class="empty-users">
 
-            <div class="empty-visitors-icon">
-                👀
+            <div class="empty-users-icon">
+                👥
             </div>
 
-            <div class="empty-visitors-title">
+            <div class="empty-users-title">
 
                 {{
-
-                    "لا توجد زيارات حتى الآن"
-
+                    "لا يوجد مستخدمون"
                     if current_lang == "ar"
-
                     else
-
-                    "No visits yet"
-
+                    "No Users Found"
                 }}
 
             </div>
@@ -1476,15 +908,10 @@
             <div>
 
                 {{
-
-                    "ستظهر هنا تفاصيل الزوار بمجرد زيارة المتجر."
-
+                    "لم يتم العثور على أي مستخدم."
                     if current_lang == "ar"
-
                     else
-
-                    "Visitor details will appear here when someone visits the store."
-
+                    "No users were found."
                 }}
 
             </div>
@@ -1503,521 +930,89 @@
 <script>
 
 /* =====================================================
-   FILTER VISITORS
+   TOGGLE PASSWORD FORM
 ===================================================== */
 
-function filterVisitors(filter) {
+function togglePasswordForm(userId) {
 
-    const rows =
-        document.querySelectorAll(
-            ".visitor-row"
-        );
-
-    const cards =
-        document.querySelectorAll(
-            ".visitor-stat"
-        );
-
-    const filterInfo =
+    const form =
         document.getElementById(
-            "filterInfo"
+            "passwordForm" + userId
         );
 
-    const filterInfoText =
-        document.getElementById(
-            "filterInfoText"
-        );
-
-    const noResults =
-        document.getElementById(
-            "noFilterResults"
-        );
-
-
-    /* =================================================
-       إزالة التحديد
-    ================================================= */
-
-    cards.forEach(function(card) {
-
-        card.classList.remove(
-            "active-filter"
-        );
-
-    });
-
-
-    /* =================================================
-       عرض الكل
-    ================================================= */
-
-    if (filter === "all") {
-
-        rows.forEach(function(row) {
-
-            row.classList.remove(
-                "hidden"
-            );
-
-        });
-
-        filterInfo.classList.remove(
-            "show"
-        );
-
-        noResults.classList.remove(
-            "show"
-        );
-
+    if (!form) {
         return;
     }
 
+    form.classList.toggle("show");
 
-    /* =================================================
-       تحديد الكرت
-    ================================================= */
+    if (form.classList.contains("show")) {
 
-    cards.forEach(function(card) {
-
-        if (
-            card.dataset.filter === filter
-        ) {
-
-            card.classList.add(
-                "active-filter"
+        const input =
+            document.getElementById(
+                "passwordInput" + userId
             );
 
+        if (input) {
+            input.focus();
         }
-
-    });
-
-
-    let visibleCount = 0;
+    }
+}
 
 
-    /* =================================================
-       الوقت الحالي
-    ================================================= */
+/* =====================================================
+   PASSWORD VALIDATION
+===================================================== */
 
-    const now =
-        new Date();
+function validatePassword(userId) {
 
-
-    const thirtyMinutesAgo =
-        new Date(
-            now.getTime() -
-            (30 * 60 * 1000)
+    const input =
+        document.getElementById(
+            "passwordInput" + userId
         );
 
-
-    /* =================================================
-       بداية اليوم
-    ================================================= */
-
-    const todayStart =
-        new Date();
-
-    todayStart.setHours(
-        0,
-        0,
-        0,
-        0
-    );
-
-
-    /* =================================================
-       نهاية اليوم
-    ================================================= */
-
-    const tomorrowStart =
-        new Date(
-            todayStart
-        );
-
-    tomorrowStart.setDate(
-        tomorrowStart.getDate() + 1
-    );
-
-
-    /* =================================================
-       فلترة الصفوف
-    ================================================= */
-
-    rows.forEach(function(row) {
-
-        const user =
-            row.dataset.userId;
-
-        const lastActivityString =
-            row.dataset.lastActivity;
-
-        const visitedAtString =
-            row.dataset.visitedAt;
-
-
-        let active = false;
-
-        let today = false;
-
-
-        if (lastActivityString) {
-
-            const lastActivity =
-                new Date(
-                    lastActivityString
-                );
-
-            active =
-                lastActivity >=
-                thirtyMinutesAgo;
-
-        }
-
-
-        if (visitedAtString) {
-
-            const visitedAt =
-                new Date(
-                    visitedAtString
-                );
-
-            today =
-                visitedAt >=
-                todayStart &&
-                visitedAt <
-                tomorrowStart;
-
-        }
-
-
-        let show = false;
-
-
-        /* TODAY */
-
-        if (
-            filter === "today"
-        ) {
-
-            show = today;
-
-        }
-
-
-        /* REGISTERED */
-
-        else if (
-            filter === "registered"
-        ) {
-
-            show =
-                user === "yes";
-
-        }
-
-
-        /* GUEST */
-
-        else if (
-            filter === "guest"
-        ) {
-
-            show =
-                user === "no";
-
-        }
-
-
-        /* ACTIVE */
-
-        else if (
-            filter === "active"
-        ) {
-
-            show = active;
-
-        }
-
-
-        /* ACTIVE REGISTERED */
-
-        else if (
-            filter === "active_registered"
-        ) {
-
-            show =
-                active &&
-                user === "yes";
-
-        }
-
-
-        /* ACTIVE GUEST */
-
-        else if (
-            filter === "active_guests"
-        ) {
-
-            show =
-                active &&
-                user === "no";
-
-        }
-
-
-        /* TODAY GUEST */
-
-        else if (
-            filter === "today_guest"
-        ) {
-
-            show =
-                today &&
-                user === "no";
-
-        }
-
-
-        /* TODAY REGISTERED */
-
-        else if (
-            filter === "today_registered"
-        ) {
-
-            show =
-                today &&
-                user === "yes";
-
-        }
-
-
-        /* SHOW */
-
-        if (show) {
-
-            row.classList.remove(
-                "hidden"
-            );
-
-            visibleCount++;
-
-        } else {
-
-            row.classList.add(
-                "hidden"
-            );
-
-        }
-
-    });
-
-
-    /* =================================================
-       اسم الفلتر
-    ================================================= */
-
-    let filterName = "";
-
-
-    {% if current_lang == "ar" %}
-
-        if (filter === "today") {
-
-            filterName =
-                "زيارات اليوم";
-
-        }
-
-        else if (
-            filter === "registered"
-        ) {
-
-            filterName =
-                "المستخدمون المسجلون";
-
-        }
-
-        else if (
-            filter === "guest"
-        ) {
-
-            filterName =
-                "الزوار غير المسجلين";
-
-        }
-
-        else if (
-            filter === "active"
-        ) {
-
-            filterName =
-                "الزوار الآن";
-
-        }
-
-        else if (
-            filter === "active_registered"
-        ) {
-
-            filterName =
-                "المسجلون الآن";
-
-        }
-
-        else if (
-            filter === "active_guests"
-        ) {
-
-            filterName =
-                "الزوار بدون تسجيل الآن";
-
-        }
-
-        else if (
-            filter === "today_registered"
-        ) {
-
-            filterName =
-                "المسجلون اليوم";
-
-        }
-
-        else if (
-            filter === "today_guest"
-        ) {
-
-            filterName =
-                "زوار اليوم بدون تسجيل";
-
-        }
-
-    {% else %}
-
-        if (filter === "today") {
-
-            filterName =
-                "Today's Visits";
-
-        }
-
-        else if (
-            filter === "registered"
-        ) {
-
-            filterName =
-                "Registered Visitors";
-
-        }
-
-        else if (
-            filter === "guest"
-        ) {
-
-            filterName =
-                "Guest Visitors";
-
-        }
-
-        else if (
-            filter === "active"
-        ) {
-
-            filterName =
-                "Visitors Now";
-
-        }
-
-        else if (
-            filter === "active_registered"
-        ) {
-
-            filterName =
-                "Registered Now";
-
-        }
-
-        else if (
-            filter === "active_guests"
-        ) {
-
-            filterName =
-                "Guests Now";
-
-        }
-
-        else if (
-            filter === "today_registered"
-        ) {
-
-            filterName =
-                "Registered Today";
-
-        }
-
-        else if (
-            filter === "today_guest"
-        ) {
-
-            filterName =
-                "Today's Guests";
-
-        }
-
-    {% endif %}
-
-
-    /* =================================================
-       معلومات الفلتر
-    ================================================= */
-
-    filterInfoText.innerHTML =
-        "📌 " +
-        filterName +
-        " — " +
-        visibleCount;
-
-
-    filterInfo.classList.add(
-        "show"
-    );
-
-
-    /* =================================================
-       لا توجد نتائج
-    ================================================= */
-
-    if (
-        visibleCount === 0
-    ) {
-
-        noResults.classList.add(
-            "show"
-        );
-
-    } else {
-
-        noResults.classList.remove(
-            "show"
-        );
-
+    if (!input) {
+        return false;
     }
 
+    const password =
+        input.value.trim();
 
-    /* =================================================
-       النزول للجدول
-    ================================================= */
+    if (password.length < 6) {
 
-    document
-        .querySelector(
-            ".visitor-table-box"
-        )
-        .scrollIntoView({
+        alert(
+            "{{
+                'كلمة المرور يجب أن تكون 6 أحرف على الأقل.'
+                if current_lang == 'ar'
+                else
+                'Password must be at least 6 characters.'
+            }}"
+        );
 
-            behavior: "smooth",
+        return false;
+    }
 
-            block: "start"
+    return true;
+}
 
-        });
+
+/* =====================================================
+   DELETE CONFIRMATION
+===================================================== */
+
+function confirmDelete(username) {
+
+    return confirm(
+        "{{
+            'هل أنتِ متأكدة من حذف المستخدم'
+            if current_lang == 'ar'
+            else
+            'Are you sure you want to delete user'
+        }}"
+        + " " +
+        username
+        + "?"
+    );
 
 }
 

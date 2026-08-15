@@ -4070,70 +4070,33 @@ def admin_users():
         flash("⚠️ Access denied! Admins only.", "danger")
         return redirect(url_for("home_logged"))
 
-    search = request.args.get("search", "")
-    role_filter = request.args.get("role", "")
+    search = request.args.get("search", "").strip()
 
-    users = User.query
+    users_query = User.query
 
     if search:
-        users = users.filter(
-            (User.username.contains(search)) |
-            (User.email.contains(search))
+        users_query = users_query.filter(
+            (User.username.ilike(f"%{search}%")) |
+            (User.email.ilike(f"%{search}%"))
         )
 
-    if role_filter:
-        users = users.filter_by(role=role_filter)
+    users = users_query.order_by(
+        User.id.desc()
+    ).all()
 
-    users = users.all()
-
-    # عدد المستخدمين
     users_count = User.query.count()
 
     return render_template(
         "admin/admin_users.html",
         users=users,
         users_count=users_count,
-        search=search,
-        role_filter=role_filter
+        search=search
     )
 
-@app.route('/admin/make_admin/<int:id>', methods=['POST'])
-@login_required
-def make_admin(id):
 
-    if current_user.role != "admin":
-        flash("⚠️ Access denied! Admins only.", "danger")
-        return redirect(url_for("home_logged"))
-
-    user = User.query.get_or_404(id)
-    user.role = "admin"
-
-    db.session.commit()
-
-    flash(f"✅ {user.username} is now an Admin!", "success")
-
-    return redirect(url_for("admin_users"))
-
-
-@app.route('/admin/demote_user/<int:id>', methods=['POST'])
-@login_required
-def demote_user(id):
-
-    if current_user.role != "admin":
-        flash("⚠️ Access denied! Admins only.", "danger")
-        return redirect(url_for("home_logged"))
-
-    user = User.query.get_or_404(id)
-
-    if user.email == "admin@store.com":
-        flash("❌ You cannot demote the main admin.", "danger")
-    else:
-        user.role = "user"
-        db.session.commit()
-        flash(f"⬇ {user.username} has been demoted to User.", "info")
-
-    return redirect(url_for("admin_users"))
-
+# ==========================================
+# 🗑️ DELETE USER
+# ==========================================
 
 @app.route('/admin/delete_user/<int:id>', methods=['POST'])
 @login_required
@@ -4145,16 +4108,78 @@ def delete_user(id):
 
     user = User.query.get_or_404(id)
 
+    # حماية الأدمن الرئيسي
     if user.email == "admin@store.com":
-        flash("⚠️ You cannot delete the main admin.", "warning")
-    else:
-        db.session.delete(user)
-        db.session.commit()
-        flash(f"🗑️ User {user.username} deleted successfully.", "success")
+        flash(
+            "⚠️ لا يمكنك حذف حساب الأدمن الرئيسي.",
+            "warning"
+        )
+        return redirect(url_for("admin_users"))
+
+    # منع الأدمن من حذف نفسه
+    if user.id == current_user.id:
+        flash(
+            "⚠️ لا يمكنك حذف حسابك الحالي.",
+            "warning"
+        )
+        return redirect(url_for("admin_users"))
+
+    username = user.username
+
+    db.session.delete(user)
+    db.session.commit()
+
+    flash(
+        f"🗑️ تم حذف المستخدم {username} بنجاح.",
+        "success"
+    )
 
     return redirect(url_for("admin_users"))
 
 
+# ==========================================
+# 🔑 RESET USER PASSWORD
+# ==========================================
+
+@app.route('/admin/change_user_password/<int:id>', methods=['POST'])
+@login_required
+def change_user_password(id):
+
+    if current_user.role != "admin":
+        flash("⚠️ Access denied! Admins only.", "danger")
+        return redirect(url_for("home_logged"))
+
+    user = User.query.get_or_404(id)
+
+    new_password = request.form.get(
+        "new_password",
+        ""
+    ).strip()
+
+    if not new_password:
+        flash(
+            "❌ يجب إدخال كلمة المرور الجديدة.",
+            "danger"
+        )
+        return redirect(url_for("admin_users"))
+
+    if len(new_password) < 6:
+        flash(
+            "❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل.",
+            "danger"
+        )
+        return redirect(url_for("admin_users"))
+
+    user.set_password(new_password)
+
+    db.session.commit()
+
+    flash(
+        f"🔑 تم تغيير كلمة مرور {user.username} بنجاح.",
+        "success"
+    )
+
+    return redirect(url_for("admin_users"))
 # ==========================================
 # 📩 CONTACT
 # ==========================================
