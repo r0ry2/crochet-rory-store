@@ -657,17 +657,61 @@ class Visitor(db.Model):
         primary_key=True
     )
 
-    ip_address = db.Column(
-        db.String(100)
+    # معرف الزائر/الجلسة
+    visitor_id = db.Column(
+        db.String(100),
+        nullable=False,
+        index=True
     )
 
+    # إذا كان مسجل دخول نخزن User ID
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=True,
+        index=True
+    )
+
+    # نوع الزائر:
+    # logged_in = مسجل دخول
+    # guest = غير مسجل
+    visitor_type = db.Column(
+        db.String(20),
+        nullable=False,
+        default="guest"
+    )
+
+    # وقت بداية الزيارة
+    started_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    # آخر نشاط للزائر
+    last_activity = db.Column(
+        db.DateTime,
+        default=datetime.utcnow,
+        nullable=False
+    )
+
+    # الصفحة التي بدأ منها
     page = db.Column(
-        db.String(255)
+        db.String(255),
+        nullable=True
     )
 
+    # IP للرجوع إليه عند الحاجة
+    ip_address = db.Column(
+        db.String(100),
+        nullable=True
+    )
+
+    # تاريخ الزيارة
     visited_at = db.Column(
         db.DateTime,
-        default=datetime.utcnow
+        default=datetime.utcnow,
+        nullable=False
     )
 # ==================================================
 # 🔔 NOTIFICATIONS

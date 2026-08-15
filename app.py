@@ -1,13 +1,29 @@
 import os
+import uuid
+
+from datetime import datetime, timedelta
+
 from dotenv import load_dotenv
 
-from flask import Flask, session
+from flask import (
+    Flask,
+    session,
+    request
+)
+
 from flask_mail import Mail
-from flask_login import LoginManager
+
+from flask_login import (
+    LoginManager,
+    current_user
+)
+
 from flask_migrate import Migrate
+
 from flask_babel import Babel
 
 from config import Config
+
 
 from models import (
     db,
@@ -20,39 +36,69 @@ from models import (
     Wishlist,
     ShippingMethod,
     Coupon,
-    Notification
+    Notification,
+    Visitor
 )
 
 
-# ==========================================
+# ==================================================
 # 🔎 DEBUG - CHECK LOADED PRODUCT MODEL
-# ==========================================
+# ==================================================
 
 print("🔥 MODELS FILE:", Product.__module__)
+
 print("🔥 PRODUCT COLUMNS:")
-print(Product.__table__.columns.keys())
+
+print(
+    Product.__table__.columns.keys()
+)
 
 
-# ==========================================
+# ==================================================
+# 🔎 DEBUG - CHECK VISITOR MODEL
+# ==================================================
+
+print("🔥 VISITOR COLUMNS:")
+
+print(
+    Visitor.__table__.columns.keys()
+)
+
+
+# ==================================================
 # Load Environment Variables
-# ==========================================
+# ==================================================
 
 load_dotenv()
 
 
-# ==========================================
+# ==================================================
 # Create Flask App
-# ==========================================
+# ==================================================
 
 app = Flask(__name__)
+
 app.config.from_object(Config)
 
+
+# ==================================================
+# 🌐 Babel
+# ==================================================
+
 app.config["BABEL_DEFAULT_LOCALE"] = "en"
-app.config["BABEL_SUPPORTED_LOCALES"] = ["en", "ar"]
+
+app.config["BABEL_SUPPORTED_LOCALES"] = [
+    "en",
+    "ar"
+]
 
 
 def get_locale():
-    return session.get("language", "en")
+
+    return session.get(
+        "language",
+        "en"
+    )
 
 
 babel = Babel(
@@ -61,20 +107,25 @@ babel = Babel(
 )
 
 
-# ==========================================
+# ==================================================
 # Context Processor
-# ==========================================
+# ==================================================
 
 @app.context_processor
 def inject_locale():
+
     return {
-        "current_lang": session.get("language", "en")
+        "current_lang":
+            session.get(
+                "language",
+                "en"
+            )
     }
 
 
-# ==========================================
-# 🔐 Secret Key & Database
-# ==========================================
+# ==================================================
+# 🔐 Secret Key
+# ==================================================
 
 app.config["SECRET_KEY"] = os.getenv(
     "SECRET_KEY",
@@ -82,7 +133,13 @@ app.config["SECRET_KEY"] = os.getenv(
 )
 
 
-database_url = os.getenv("DATABASE_URL")
+# ==================================================
+# 🗄️ Database Configuration
+# ==================================================
+
+database_url = os.getenv(
+    "DATABASE_URL"
+)
 
 
 if database_url:
@@ -93,28 +150,35 @@ if database_url:
         1
     )
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
+    app.config[
+        "SQLALCHEMY_DATABASE_URI"
+    ] = database_url
 
 else:
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data.sqlite"
+    app.config[
+        "SQLALCHEMY_DATABASE_URI"
+    ] = "sqlite:///data.sqlite"
 
 
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config[
+    "SQLALCHEMY_TRACK_MODIFICATIONS"
+] = False
 
 
-# ==========================================
+# ==================================================
 # 📧 Mail
-# ==========================================
+# ==================================================
 
 mail = Mail(app)
 
 
-# ==========================================
-# 🗄️ Database
-# ==========================================
+# ==================================================
+# 🗄️ Initialize Database
+# ==================================================
 
 db.init_app(app)
+
 
 migrate = Migrate(
     app,
@@ -122,51 +186,50 @@ migrate = Migrate(
 )
 
 
-# ==========================================
+# ==================================================
 # 🔧 Update Existing Product Table
-# ==========================================
-#
-# This checks the existing database and adds
-# missing Product columns.
-#
-# IMPORTANT:
-# It does NOT delete any existing data.
-# ==========================================
+# ==================================================
 
 with app.app_context():
 
-    from sqlalchemy import inspect, text
+    from sqlalchemy import (
+        inspect,
+        text
+    )
 
-    # ------------------------------------------
-    # Create tables that don't exist
-    # ------------------------------------------
-    #
-    # We keep this because the project may use
-    # a fresh database.
-    #
-    # ------------------------------------------
+    # ----------------------------------------------
+    # Create missing tables
+    # ----------------------------------------------
 
     db.create_all()
 
-    # ------------------------------------------
-    # Read current product columns
-    # ------------------------------------------
 
-    inspector = inspect(db.engine)
+    # ----------------------------------------------
+    # Inspect Product table
+    # ----------------------------------------------
+
+    inspector = inspect(
+        db.engine
+    )
+
 
     product_columns = {
         column["name"]
-        for column in inspector.get_columns("product")
+        for column in inspector.get_columns(
+            "product"
+        )
     }
+
 
     print(
         "🔎 PRODUCT DATABASE COLUMNS:",
         sorted(product_columns)
     )
 
-    # ==========================================
+
+    # ==================================================
     # Add is_customizable
-    # ==========================================
+    # ==================================================
 
     if "is_customizable" not in product_columns:
 
@@ -195,9 +258,10 @@ with app.app_context():
                 e
             )
 
-    # ==========================================
+
+    # ==================================================
     # Add purchase_count
-    # ==========================================
+    # ==================================================
 
     if "purchase_count" not in product_columns:
 
@@ -226,9 +290,10 @@ with app.app_context():
                 e
             )
 
-    # ==========================================
+
+    # ==================================================
     # Add created_at
-    # ==========================================
+    # ==================================================
 
     if "created_at" not in product_columns:
 
@@ -257,9 +322,10 @@ with app.app_context():
                 e
             )
 
-    # ==========================================
+
+    # ==================================================
     # Add cost_price
-    # ==========================================
+    # ==================================================
 
     if "cost_price" not in product_columns:
 
@@ -288,9 +354,10 @@ with app.app_context():
                 e
             )
 
-    # ==========================================
+
+    # ==================================================
     # Add sale_price
-    # ==========================================
+    # ==================================================
 
     if "sale_price" not in product_columns:
 
@@ -319,16 +386,23 @@ with app.app_context():
                 e
             )
 
-    # ==========================================
-    # 🔄 Re-check Product columns
-    # ==========================================
 
-    inspector = inspect(db.engine)
+    # ==================================================
+    # Re-check Product Columns
+    # ==================================================
+
+    inspector = inspect(
+        db.engine
+    )
+
 
     final_product_columns = {
         column["name"]
-        for column in inspector.get_columns("product")
+        for column in inspector.get_columns(
+            "product"
+        )
     }
+
 
     print(
         "✅ FINAL PRODUCT DATABASE COLUMNS:",
@@ -336,17 +410,23 @@ with app.app_context():
     )
 
 
-# ==========================================
+# ==================================================
 # 🔑 Flask Login
-# ==========================================
+# ==================================================
 
 login_manager = LoginManager()
 
-login_manager.init_app(app)
+login_manager.init_app(
+    app
+)
+
 
 login_manager.login_view = "login"
 
-login_manager.login_message = "Please log in first."
+
+login_manager.login_message = (
+    "Please log in first."
+)
 
 
 @login_manager.user_loader
@@ -357,26 +437,239 @@ def load_user(user_id):
     )
 
 
-# ==========================================
-# 📁 Print Database
-# ==========================================
+# ==================================================
+# 👀 VISITOR TRACKING SYSTEM
+# ==================================================
 
-print(
-    "📁 Using database:",
-    app.config["SQLALCHEMY_DATABASE_URI"]
+# مدة الزيارة الواحدة
+VISITOR_TIMEOUT = timedelta(
+    minutes=30
 )
 
 
-# ==========================================
+@app.before_request
+def track_visitor():
+
+    # ==================================================
+    # تجاهل ملفات static
+    # ==================================================
+
+    if request.endpoint == "static":
+
+        return
+
+
+    # ==================================================
+    # الوقت الحالي
+    # ==================================================
+
+    now = datetime.utcnow()
+
+
+    # ==================================================
+    # إنشاء Visitor ID للزائر
+    # ==================================================
+
+    if "visitor_id" not in session:
+
+        session["visitor_id"] = str(
+            uuid.uuid4()
+        )
+
+
+    visitor_id = session[
+        "visitor_id"
+    ]
+
+
+    # ==================================================
+    # تحديد نوع الزائر
+    # ==================================================
+
+    if current_user.is_authenticated:
+
+        visitor_type = "registered"
+
+        user_id = current_user.id
+
+    else:
+
+        visitor_type = "guest"
+
+        user_id = None
+
+
+    # ==================================================
+    # 🔎 البحث عن آخر زيارة لهذا المتصفح
+    # ==================================================
+
+    visitor = (
+        Visitor.query
+        .filter_by(
+            visitor_id=visitor_id
+        )
+        .order_by(
+            Visitor.last_activity.desc()
+        )
+        .first()
+    )
+
+
+    # ==================================================
+    # 👤 إذا عنده زيارة سابقة
+    # ==================================================
+
+    if visitor:
+
+        time_since_last_activity = (
+            now - visitor.last_activity
+        )
+
+
+        # ==================================================
+        # ⏰ مر 30 دقيقة أو أكثر
+        # → زيارة جديدة
+        # ==================================================
+
+        if (
+            time_since_last_activity
+            >= VISITOR_TIMEOUT
+        ):
+
+            new_visitor = Visitor(
+
+                visitor_id=visitor_id,
+
+                user_id=user_id,
+
+                visitor_type=visitor_type,
+
+                started_at=now,
+
+                last_activity=now,
+
+                visited_at=now,
+
+                ip_address=request.remote_addr,
+
+                page=request.path
+            )
+
+
+            db.session.add(
+                new_visitor
+            )
+
+
+            print(
+                "🆕 NEW VISIT:",
+                visitor_id
+            )
+
+
+        # ==================================================
+        # 🔄 أقل من 30 دقيقة
+        # → نفس الزيارة
+        # ==================================================
+
+        else:
+
+            visitor.last_activity = now
+
+            visitor.page = request.path
+
+            visitor.user_id = user_id
+
+            visitor.visitor_type = visitor_type
+
+            visitor.ip_address = (
+                request.remote_addr
+            )
+
+
+            print(
+                "🔄 SAME VISIT:",
+                visitor_id
+            )
+
+
+    # ==================================================
+    # 🆕 أول زيارة لهذا المتصفح
+    # ==================================================
+
+    else:
+
+        new_visitor = Visitor(
+
+            visitor_id=visitor_id,
+
+            user_id=user_id,
+
+            visitor_type=visitor_type,
+
+            started_at=now,
+
+            last_activity=now,
+
+            visited_at=now,
+
+            ip_address=request.remote_addr,
+
+            page=request.path
+        )
+
+
+        db.session.add(
+            new_visitor
+        )
+
+
+        print(
+            "🆕 FIRST VISIT:",
+            visitor_id
+        )
+
+
+    # ==================================================
+    # 💾 حفظ التغييرات
+    # ==================================================
+
+    try:
+
+        db.session.commit()
+
+    except Exception as e:
+
+        print(
+            "❌ Visitor tracking error:",
+            e
+        )
+
+        db.session.rollback()
+
+
+# ==================================================
+# 📁 Print Database
+# ==================================================
+
+print(
+    "📁 Using database:",
+    app.config[
+        "SQLALCHEMY_DATABASE_URI"
+    ]
+)
+
+
+# ==================================================
 # Import Routes
-# ==========================================
+# ==================================================
 
 from routes import *
 
 
-# ==========================================
+# ==================================================
 # Run App
-# ==========================================
+# ==================================================
 
 if __name__ == "__main__":
 
@@ -387,8 +680,12 @@ if __name__ == "__main__":
         )
     )
 
+
     app.run(
+
         host="0.0.0.0",
+
         port=port,
+
         debug=False
     )

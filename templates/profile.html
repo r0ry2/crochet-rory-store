@@ -449,17 +449,38 @@ body{
     }
 }
 
+/* زر الإغلاق ثابت وواضح دائمًا */
 .close-modal{
-    position:absolute;
-    top:15px;
-    right:20px;
+    position:sticky;
+    top:0;
+    float:right;
+    z-index:10001;
+
+    width:40px;
+    height:40px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    margin-top:-5px;
+    margin-right:-5px;
+
+    background:#fff;
+    border-radius:50%;
+
     font-size:32px;
+    line-height:1;
+
     cursor:pointer;
     color:#999;
+
+    box-shadow:0 3px 12px rgba(0,0,0,.10);
 }
 
 .close-modal:hover{
     color:#d88ea4;
+    background:#fff5f8;
 }
 
 .modal-content h2{
@@ -471,6 +492,7 @@ body{
 .edit-form{
     display:grid;
     gap:16px;
+    clear:both;
 }
 
 .edit-form label{
@@ -737,9 +759,16 @@ body{
     }
 
     .close-modal{
-        top:8px;
-        right:12px;
+        position:sticky;
+        top:0;
+
+        width:36px;
+        height:36px;
+
         font-size:27px;
+
+        margin-top:-10px;
+        margin-right:-5px;
     }
 
     .edit-form{
@@ -1279,7 +1308,6 @@ body{
 
         <div class="status-grid">
 
-
             <div
                 class="status-card active"
                 data-status="Pending Review">
@@ -1565,14 +1593,7 @@ body{
                 </select>
 
 
-                <label>
-                    {{ "الجنسية" if current_lang=="ar" else "Nationality" }}
-                </label>
-
-                <input
-                    type="text"
-                    name="nationality"
-                    value="{{ current_user.nationality or '' }}">
+                <!-- الجنسية محذوفة بالكامل -->
 
 
                 <button

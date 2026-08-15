@@ -9,25 +9,17 @@
 <style>
 
 :root{
-
     --primary:#d88ea4;
     --primary-dark:#c76f89;
-
     --light:#fdecef;
     --border:#f2bfd0;
-
     --text:#5d4b52;
-
     --shadow:0 10px 25px rgba(216,167,177,.18);
-
 }
 
 .checkout-page{
-
     width:min(92%,1100px);
-
     margin:40px auto;
-
 }
 
 .success-card,
@@ -37,21 +29,14 @@
 .summary-card{
 
     background:#fff;
-
     border-radius:28px;
-
     padding:35px;
-
     box-shadow:var(--shadow);
-
     margin-bottom:25px;
-
 }
 
 .success-card{
-
     text-align:center;
-
 }
 
 .success-icon{
@@ -62,39 +47,29 @@
     border-radius:50%;
 
     background:var(--primary);
-
     color:#fff;
 
     display:flex;
-
     justify-content:center;
-
     align-items:center;
 
     font-size:45px;
 
     margin:0 auto 20px;
-
 }
 
 .success-card h1{
-
     color:#444;
-
     margin-bottom:12px;
-
 }
 
 .success-card p{
 
     color:#777;
-
     line-height:1.8;
 
     max-width:650px;
-
     margin:auto;
-
 }
 
 .order-info-card h2,
@@ -103,179 +78,156 @@
 .summary-card h2{
 
     text-align:center;
-
     color:#444;
-
     margin-bottom:25px;
-
 }
 
 .order-grid{
 
     display:grid;
-
     grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-
     gap:18px;
-
 }
 
 .order-item,
 .customer-item{
 
     background:var(--light);
-
     border:1px solid var(--border);
 
     border-radius:18px;
-
     padding:20px;
-
 }
 
 .order-item{
-
     text-align:center;
-
 }
 
 .order-item small,
 .customer-item small{
 
     display:block;
-
     color:#888;
-
     margin-bottom:8px;
-
 }
 
 .order-item h3{
-
     color:var(--primary-dark);
-
 }
 
 .customer-grid{
 
     display:grid;
-
     grid-template-columns:repeat(2,1fr);
-
     gap:18px;
-
 }
 
 .customer-address{
-
     grid-column:1/-1;
-
 }
 
 .customer-item h3{
 
     color:#555;
-
     word-break:break-word;
-
 }
 
 .order-product{
 
     display:flex;
-
     align-items:center;
-
     gap:18px;
 
     background:var(--light);
-
     border:1px solid var(--border);
 
     border-radius:18px;
 
     padding:16px;
-
     margin-bottom:18px;
-
 }
 
 .order-product img{
 
     width:90px;
-
     height:90px;
 
     object-fit:cover;
-
     border-radius:15px;
-
 }
 
 .product-details{
-
     flex:1;
-
 }
 
 .product-details h3{
 
     color:#444;
-
     margin-bottom:8px;
-
 }
 
 .product-details p{
 
     color:#777;
-
     margin:4px 0;
-
 }
 
 .product-price{
 
     color:var(--primary-dark);
-
     font-size:20px;
-
     font-weight:bold;
-
 }
 
 .summary-row{
 
     display:flex;
-
     justify-content:space-between;
-
     align-items:center;
 
     padding:14px 0;
 
     color:#555;
-
 }
 
 .summary-card hr{
 
     border:none;
-
     border-top:1px solid var(--border);
 
     margin:12px 0;
-
 }
 
 .total-row{
 
     font-size:22px;
-
     font-weight:bold;
 
     color:var(--primary-dark);
+}
 
+
+/* =====================================================
+   SHIPPING METHOD
+===================================================== */
+
+.shipping-method-row{
+
+    background:#fff7f9;
+
+    border:1px solid var(--border);
+
+    border-radius:15px;
+
+    padding:12px 15px;
+
+    margin-top:8px;
+
+    color:#777;
+
+    font-size:14px;
+
+    text-align:center;
 }
 
 
@@ -298,25 +250,19 @@
     text-align:center;
 
     border:2px solid #d8f3df;
-
 }
 
 .whatsapp-card h2{
 
     color:#444;
-
     margin-bottom:10px;
-
 }
 
 .whatsapp-card p{
 
     color:#777;
-
     line-height:1.8;
-
     margin-bottom:22px;
-
 }
 
 .whatsapp-button{
@@ -324,19 +270,16 @@
     display:flex;
 
     align-items:center;
-
     justify-content:center;
 
     gap:10px;
 
     width:100%;
-
     box-sizing:border-box;
 
     padding:17px 25px;
 
     border:none;
-
     border-radius:16px;
 
     background:#25D366;
@@ -344,7 +287,6 @@
     color:white;
 
     font-size:18px;
-
     font-weight:bold;
 
     text-decoration:none;
@@ -352,7 +294,6 @@
     cursor:pointer;
 
     transition:.3s;
-
 }
 
 .whatsapp-button:hover{
@@ -362,20 +303,17 @@
     transform:translateY(-2px);
 
     box-shadow:0 8px 20px rgba(37,211,102,.25);
-
 }
 
 
-/* ===========================
-        Mobile
-=========================== */
+/* =====================================================
+   MOBILE
+===================================================== */
 
 @media(max-width:768px){
 
     .checkout-page{
-
         width:95%;
-
     }
 
     .success-card,
@@ -386,43 +324,31 @@
     .whatsapp-card{
 
         padding:22px;
-
         border-radius:22px;
-
     }
 
     .customer-grid{
-
         grid-template-columns:1fr;
-
     }
 
     .customer-address{
-
         grid-column:auto;
-
     }
 
     .order-product{
 
         flex-direction:column;
-
         text-align:center;
-
     }
 
     .order-product img{
 
         width:120px;
-
         height:120px;
-
     }
 
     .product-price{
-
         margin-top:10px;
-
     }
 
 }
@@ -445,17 +371,22 @@
 
         <h1>
 
-            {{ "تم استلام طلبك بنجاح 🎉"
-            if current_lang=="ar"
-            else "Order Confirmed 🎉" }}
+            {{
+                "تم استلام طلبك بنجاح 🎉"
+                if current_lang=="ar"
+                else "Order Confirmed 🎉"
+            }}
 
         </h1>
 
         <p>
 
-            {{ "شكراً لتسوقك من Crochet Rory Store. لإتمام تأكيد الطلب، تواصلي معنا عبر واتساب."
-            if current_lang=="ar"
-            else "Thank you for shopping with Crochet Rory Store. Please contact us on WhatsApp to confirm your order." }}
+            {{
+                "شكراً لتسوقك من Crochet Rory Store. لإتمام تأكيد الطلب، تواصلي معنا عبر واتساب."
+                if current_lang=="ar"
+                else
+                "Thank you for shopping with Crochet Rory Store. Please contact us on WhatsApp to confirm your order."
+            }}
 
         </p>
 
@@ -470,9 +401,11 @@
 
         <h2>
 
-            {{ "معلومات الطلب"
-            if current_lang=="ar"
-            else "Order Information" }}
+            {{
+                "معلومات الطلب"
+                if current_lang=="ar"
+                else "Order Information"
+            }}
 
         </h2>
 
@@ -480,30 +413,38 @@
         <div class="order-grid">
 
 
+            <!-- ORDER NUMBER -->
+
             <div class="order-item">
 
                 <small>
 
-                    {{ "رقم الطلب"
-                    if current_lang=="ar"
-                    else "Order ID" }}
+                    {{
+                        "رقم الطلب"
+                        if current_lang=="ar"
+                        else "Order ID"
+                    }}
 
                 </small>
 
                 <h3 id="order-id">
-                    #
+                    --
                 </h3>
 
             </div>
 
 
+            <!-- ORDER DATE -->
+
             <div class="order-item">
 
                 <small>
 
-                    {{ "تاريخ الطلب"
-                    if current_lang=="ar"
-                    else "Order Date" }}
+                    {{
+                        "تاريخ الطلب"
+                        if current_lang=="ar"
+                        else "Order Date"
+                    }}
 
                 </small>
 
@@ -514,21 +455,48 @@
             </div>
 
 
+            <!-- EXPECTED DELIVERY -->
+
             <div class="order-item">
 
                 <small>
 
-                    {{ "حالة الطلب"
-                    if current_lang=="ar"
-                    else "Order Status" }}
+                    {{
+                        "موعد التسليم المتوقع"
+                        if current_lang=="ar"
+                        else "Estimated Delivery"
+                    }}
+
+                </small>
+
+                <h3 id="delivery-date">
+                    --
+                </h3>
+
+            </div>
+
+
+            <!-- ORDER STATUS -->
+
+            <div class="order-item">
+
+                <small>
+
+                    {{
+                        "حالة الطلب"
+                        if current_lang=="ar"
+                        else "Order Status"
+                    }}
 
                 </small>
 
                 <h3 id="order-status">
 
-                    {{ "قيد المراجعة"
-                    if current_lang=="ar"
-                    else "Pending" }}
+                    {{
+                        "قيد المراجعة"
+                        if current_lang=="ar"
+                        else "Pending"
+                    }}
 
                 </h3>
 
@@ -548,9 +516,11 @@
 
         <h2>
 
-            {{ "بيانات العميل"
-            if current_lang=="ar"
-            else "Customer Information" }}
+            {{
+                "بيانات العميل"
+                if current_lang=="ar"
+                else "Customer Information"
+            }}
 
         </h2>
 
@@ -562,9 +532,11 @@
 
                 <small>
 
-                    {{ "الاسم"
-                    if current_lang=="ar"
-                    else "Full Name" }}
+                    {{
+                        "الاسم"
+                        if current_lang=="ar"
+                        else "Full Name"
+                    }}
 
                 </small>
 
@@ -579,9 +551,11 @@
 
                 <small>
 
-                    {{ "البريد الإلكتروني"
-                    if current_lang=="ar"
-                    else "Email Address" }}
+                    {{
+                        "البريد الإلكتروني"
+                        if current_lang=="ar"
+                        else "Email Address"
+                    }}
 
                 </small>
 
@@ -596,9 +570,11 @@
 
                 <small>
 
-                    {{ "عنوان التوصيل"
-                    if current_lang=="ar"
-                    else "Delivery Address" }}
+                    {{
+                        "عنوان التوصيل"
+                        if current_lang=="ar"
+                        else "Delivery Address"
+                    }}
 
                 </small>
 
@@ -622,9 +598,11 @@
 
         <h2>
 
-            {{ "المنتجات"
-            if current_lang=="ar"
-            else "Ordered Products" }}
+            {{
+                "المنتجات"
+                if current_lang=="ar"
+                else "Ordered Products"
+            }}
 
         </h2>
 
@@ -644,49 +622,70 @@
 
         <h2>
 
-            {{ "ملخص الطلب"
-            if current_lang=="ar"
-            else "Order Summary" }}
+            {{
+                "ملخص الطلب"
+                if current_lang=="ar"
+                else "Order Summary"
+            }}
 
         </h2>
 
+
+        <!-- SUBTOTAL -->
 
         <div class="summary-row">
 
             <span>
 
-                {{ "المجموع الفرعي"
-                if current_lang=="ar"
-                else "Subtotal" }}
+                {{
+                    "المجموع الفرعي"
+                    if current_lang=="ar"
+                    else "Subtotal"
+                }}
 
             </span>
 
             <span id="subtotal">
 
-                0 {{ "ر.س" if current_lang=="ar" else "SAR" }}
+                0
+                {{ "ر.س" if current_lang=="ar" else "SAR" }}
 
             </span>
 
         </div>
 
 
+        <!-- SHIPPING -->
+
         <div class="summary-row">
 
             <span>
 
-                {{ "الشحن"
-                if current_lang=="ar"
-                else "Shipping" }}
+                {{
+                    "الشحن"
+                    if current_lang=="ar"
+                    else "Shipping"
+                }}
 
             </span>
 
-            <span>
+            <span id="shipping-cost">
 
-                {{ "مجاني"
-                if current_lang=="ar"
-                else "Free" }}
+                0
+                {{ "ر.س" if current_lang=="ar" else "SAR" }}
 
             </span>
+
+        </div>
+
+
+        <!-- SHIPPING METHOD -->
+
+        <div
+            class="shipping-method-row"
+            id="shipping-method"
+            style="display:none;"
+        >
 
         </div>
 
@@ -694,19 +693,24 @@
         <hr>
 
 
+        <!-- TOTAL -->
+
         <div class="summary-row total-row">
 
             <span>
 
-                {{ "الإجمالي"
-                if current_lang=="ar"
-                else "Total" }}
+                {{
+                    "الإجمالي"
+                    if current_lang=="ar"
+                    else "Total"
+                }}
 
             </span>
 
             <span id="total">
 
-                0 {{ "ر.س" if current_lang=="ar" else "SAR" }}
+                0
+                {{ "ر.س" if current_lang=="ar" else "SAR" }}
 
             </span>
 
@@ -723,18 +727,23 @@
 
         <h2>
 
-            {{ "💬 تأكيد الطلب عبر واتساب"
-            if current_lang=="ar"
-            else "💬 Confirm Your Order via WhatsApp" }}
+            {{
+                "💬 تأكيد الطلب عبر واتساب"
+                if current_lang=="ar"
+                else "💬 Confirm Your Order via WhatsApp"
+            }}
 
         </h2>
 
 
         <p>
 
-            {{ "اضغطي على الزر لإرسال تفاصيل طلبك لنا مباشرة عبر واتساب، وسنتواصل معك لتأكيد الطلب وطريقة الدفع."
-            if current_lang=="ar"
-            else "Click the button below to send your order details to us on WhatsApp. We will contact you to confirm your order and payment method." }}
+            {{
+                "اضغطي على الزر لإرسال تفاصيل طلبك لنا مباشرة عبر واتساب، وسنتواصل معك لتأكيد الطلب وطريقة الدفع."
+                if current_lang=="ar"
+                else
+                "Click the button below to send your order details to us on WhatsApp. We will contact you to confirm your order and payment method."
+            }}
 
         </p>
 
@@ -749,9 +758,11 @@
 
             💬
 
-            {{ "تأكيد الطلب عبر واتساب"
-            if current_lang=="ar"
-            else "Confirm Order via WhatsApp" }}
+            {{
+                "تأكيد الطلب عبر واتساب"
+                if current_lang=="ar"
+                else "Confirm Order via WhatsApp"
+            }}
 
         </a>
 
@@ -760,17 +771,20 @@
 
 </div>
 
-<!-- ===========================
-     CONTINUE SHOPPING
-=========================== -->
 
-<div style="
-    text-align:center;
-    margin:30px 0 60px;
-">
+<!-- =====================================================
+             CONTINUE SHOPPING
+===================================================== -->
+
+<div
+    style="
+        text-align:center;
+        margin:30px 0 60px;
+    "
+>
 
     <a
-       href="{{ url_for('products_page') }}"
+        href="{{ url_for('products_page') }}"
         style="
             display:inline-block;
             padding:15px 35px;
@@ -787,16 +801,173 @@
     >
 
         🛍️
-        {{ "أكمل التسوق" if current_lang=="ar"
-        else "Continue Shopping" }}
+
+        {{
+            "أكمل التسوق"
+            if current_lang=="ar"
+            else "Continue Shopping"
+        }}
 
     </a>
 
 </div>
+
+
 <script>
 
-async function loadOrderDetails() {
 
+/* =====================================================
+        GENERATE 6 CHARACTER ORDER CODE
+===================================================== */
+
+function generateOrderCode(orderId){
+
+    const characters =
+        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    let number =
+        Number(orderId) || 0;
+
+    let code = "";
+
+    while(number > 0){
+
+        code =
+            characters[number % 36] + code;
+
+        number =
+            Math.floor(number / 36);
+
+    }
+
+    code =
+        code.padStart(5, "0");
+
+    return "R" + code.slice(-5);
+
+}
+
+
+/* =====================================================
+        FORMAT DATE ONLY
+===================================================== */
+
+function formatOrderDate(dateValue){
+
+    if(!dateValue){
+        return "--";
+    }
+
+    const date =
+        new Date(dateValue);
+
+    if(
+        isNaN(
+            date.getTime()
+        )
+    ){
+
+        return dateValue;
+
+    }
+
+    const year =
+        date.getFullYear();
+
+    const month =
+        String(
+            date.getMonth() + 1
+        ).padStart(2,"0");
+
+    const day =
+        String(
+            date.getDate()
+        ).padStart(2,"0");
+
+    return day + "/" + month + "/" + year;
+
+}
+
+
+/* =====================================================
+        CALCULATE DELIVERY DATE
+        FROM ORDER DATE
+        + 3 DAYS TO + 7 DAYS
+===================================================== */
+
+function calculateDeliveryRange(dateValue){
+
+    if(!dateValue){
+
+        return "--";
+
+    }
+
+    const orderDate =
+        new Date(dateValue);
+
+    if(
+        isNaN(
+            orderDate.getTime()
+        )
+    ){
+
+        return "--";
+
+    }
+
+    const minDate =
+        new Date(orderDate);
+
+    minDate.setDate(
+        minDate.getDate() + 3
+    );
+
+
+    const maxDate =
+        new Date(orderDate);
+
+    maxDate.setDate(
+        maxDate.getDate() + 7
+    );
+
+
+    const minFormatted =
+        formatOrderDate(minDate);
+
+    const maxFormatted =
+        formatOrderDate(maxDate);
+
+
+    if(
+        "{{ current_lang }}" === "ar"
+    ){
+
+        return (
+            "من "
+            + minFormatted
+            + " إلى "
+            + maxFormatted
+        );
+
+    }
+
+
+    return (
+        "From "
+        + minFormatted
+        + " to "
+        + maxFormatted
+    );
+
+}
+
+
+/* =====================================================
+                    LOAD ORDER
+===================================================== */
+
+async function loadOrderDetails() {
 
     const params =
         new URLSearchParams(
@@ -820,7 +991,6 @@ async function loadOrderDetails() {
 
 
     try {
-
 
         const response =
             await fetch(
@@ -848,65 +1018,149 @@ async function loadOrderDetails() {
 
 
         /* =====================================================
-                        ORDER INFORMATION
+                    ORDER INFORMATION
         ===================================================== */
+
+
+        const orderCode =
+            generateOrderCode(
+                data.id
+            );
 
 
         document.getElementById(
             "order-id"
         ).textContent =
-            "#" + data.id;
+            orderCode;
+
+
+        /*
+            تاريخ الطلب فقط
+            بدون الساعة
+        */
+
+        const orderDate =
+            formatOrderDate(
+                data.created_at
+            );
 
 
         document.getElementById(
             "order-date"
         ).textContent =
-            data.created_at || "--";
+            orderDate;
 
+
+        /*
+            موعد التسليم المتوقع
+            من 3 إلى 7 أيام
+            من تاريخ الطلب
+        */
+
+        const deliveryDate =
+            calculateDeliveryRange(
+                data.created_at
+            );
+
+
+        document.getElementById(
+            "delivery-date"
+        ).textContent =
+            deliveryDate;
+
+
+        /* =====================================================
+                    STATUS
+        ===================================================== */
 
         let status =
             data.status || "--";
 
 
         if (
-            "{{ current_lang }}"
-            === "ar"
+            "{{ current_lang }}" === "ar"
         ) {
-
 
             if (
                 status === "Pending"
-            )
+            ) {
+
                 status =
                     "قيد المراجعة";
 
+            }
+
+            else if (
+                status === "Pending Review"
+            ) {
+
+                status =
+                    "قيد المراجعة";
+
+            }
+
+            else if (
+                status === "Pending Payment"
+            ) {
+
+                status =
+                    "بانتظار الدفع";
+
+            }
 
             else if (
                 status === "Processing"
-            )
+            ) {
+
                 status =
                     "جاري التجهيز";
 
+            }
+
+            else if (
+                status === "Completed"
+            ) {
+
+                status =
+                    "تم التنفيذ";
+
+            }
+
+            else if (
+                status === "Shipping"
+            ) {
+
+                status =
+                    "جاري التوصيل";
+
+            }
 
             else if (
                 status === "Shipped"
-            )
+            ) {
+
                 status =
                     "تم الشحن";
 
+            }
 
             else if (
                 status === "Delivered"
-            )
+            ) {
+
                 status =
                     "تم التسليم";
 
+            }
 
             else if (
                 status === "Cancelled"
-            )
+            ) {
+
                 status =
                     "تم الإلغاء";
+
+            }
 
         }
 
@@ -918,9 +1172,8 @@ async function loadOrderDetails() {
 
 
         /* =====================================================
-                        CUSTOMER
+                    CUSTOMER
         ===================================================== */
-
 
         const customerName =
             data.customer_name || "--";
@@ -953,38 +1206,8 @@ async function loadOrderDetails() {
 
 
         /* =====================================================
-                        TOTAL
+                    PRODUCTS
         ===================================================== */
-
-
-        const total =
-            Number(data.total || 0);
-
-
-        const currency =
-            "{{ 'ر.س' if current_lang=='ar' else 'SAR' }}";
-
-
-        document.getElementById(
-            "subtotal"
-        ).textContent =
-            total.toFixed(2)
-            + " "
-            + currency;
-
-
-        document.getElementById(
-            "total"
-        ).textContent =
-            total.toFixed(2)
-            + " "
-            + currency;
-
-
-        /* =====================================================
-                        PRODUCTS
-        ===================================================== */
-
 
         const itemsBox =
             document.getElementById(
@@ -995,15 +1218,16 @@ async function loadOrderDetails() {
         itemsBox.innerHTML = "";
 
 
+        let calculatedSubtotal = 0;
+
+
         if (
             data.items &&
             data.items.length
         ) {
 
-
             data.items.forEach(
                 item => {
-
 
                     const itemPrice =
                         Number(
@@ -1018,8 +1242,11 @@ async function loadOrderDetails() {
 
 
                     const itemTotal =
-                        itemPrice *
-                        quantity;
+                        itemPrice * quantity;
+
+
+                    calculatedSubtotal +=
+                        itemTotal;
 
 
                     itemsBox.innerHTML += `
@@ -1040,9 +1267,11 @@ async function loadOrderDetails() {
 
                                 <p>
 
-                                    ${
-                                        "{{ 'الكمية' if current_lang=='ar' else 'Quantity' }}"
-                                    }:
+                                    {{
+                                        "الكمية"
+                                        if current_lang=="ar"
+                                        else "Quantity"
+                                    }}:
 
                                     ${quantity}
 
@@ -1050,13 +1279,19 @@ async function loadOrderDetails() {
 
                                 <p>
 
-                                    ${
-                                        "{{ 'السعر' if current_lang=='ar' else 'Price' }}"
-                                    }:
+                                    {{
+                                        "السعر"
+                                        if current_lang=="ar"
+                                        else "Price"
+                                    }}:
 
                                     ${itemPrice.toFixed(2)}
 
-                                    ${currency}
+                                    {{
+                                        "ر.س"
+                                        if current_lang=="ar"
+                                        else "SAR"
+                                    }}
 
                                 </p>
 
@@ -1065,7 +1300,12 @@ async function loadOrderDetails() {
                             <div class="product-price">
 
                                 ${itemTotal.toFixed(2)}
-                                ${currency}
+
+                                {{
+                                    "ر.س"
+                                    if current_lang=="ar"
+                                    else "SAR"
+                                }}
 
                             </div>
 
@@ -1080,47 +1320,309 @@ async function loadOrderDetails() {
 
 
         /* =====================================================
-                    WHATSAPP MESSAGE
+                    PRICES
         ===================================================== */
 
+        const currency =
+            "{{ 'ر.س' if current_lang=='ar' else 'SAR' }}";
+
+
+        let subtotal =
+            calculatedSubtotal;
+
+
+        if (
+            data.subtotal !== undefined &&
+            data.subtotal !== null &&
+            data.subtotal !== ""
+        ) {
+
+            const backendSubtotal =
+                Number(
+                    data.subtotal
+                );
+
+
+            if (
+                !Number.isNaN(
+                    backendSubtotal
+                )
+            ) {
+
+                subtotal =
+                    backendSubtotal;
+
+            }
+
+        }
+
+
+        let total =
+            Number(
+                data.total
+            );
+
+
+        if (
+            Number.isNaN(total)
+        ) {
+
+            total =
+                subtotal;
+
+        }
+
+
+        /* =====================================================
+                    SHIPPING
+        ===================================================== */
+
+        let shippingCost;
+
+
+        if (
+            data.shipping_cost !== undefined &&
+            data.shipping_cost !== null &&
+            data.shipping_cost !== ""
+        ) {
+
+            shippingCost =
+                Number(
+                    data.shipping_cost
+                );
+
+        }
+
+        else if (
+            data.shipping !== undefined &&
+            data.shipping !== null &&
+            data.shipping !== ""
+        ) {
+
+            shippingCost =
+                Number(
+                    data.shipping
+                );
+
+        }
+
+        else {
+
+            shippingCost =
+                total - subtotal;
+
+        }
+
+
+        if (
+            Number.isNaN(shippingCost) ||
+            shippingCost < 0
+        ) {
+
+            shippingCost = 0;
+
+        }
+
+
+        /* =====================================================
+                    DISPLAY SUBTOTAL
+        ===================================================== */
+
+        document.getElementById(
+            "subtotal"
+        ).textContent =
+            subtotal.toFixed(2)
+            + " "
+            + currency;
+
+
+        /* =====================================================
+                    DISPLAY SHIPPING
+        ===================================================== */
+
+        document.getElementById(
+            "shipping-cost"
+        ).textContent =
+            shippingCost.toFixed(2)
+            + " "
+            + currency;
+
+
+        /* =====================================================
+                    SHIPPING METHOD
+        ===================================================== */
+
+        const shippingMethod =
+            data.shipping_method ||
+            data.shippingMethod ||
+            data.delivery_method ||
+            data.deliveryMethod ||
+            "";
+
+
+        const shippingMethodBox =
+            document.getElementById(
+                "shipping-method"
+            );
+
+
+        if (
+            shippingMethod
+        ) {
+
+            let methodText =
+                shippingMethod;
+
+
+            if (
+                "{{ current_lang }}" === "ar"
+            ) {
+
+                const method =
+                    String(
+                        shippingMethod
+                    ).toLowerCase();
+
+
+                if (
+                    method === "standard" ||
+                    method === "normal"
+                ) {
+
+                    methodText =
+                        "التوصيل العادي";
+
+                }
+
+                else if (
+                    method === "express" ||
+                    method === "fast"
+                ) {
+
+                    methodText =
+                        "التوصيل السريع";
+
+                }
+
+            }
+
+
+            shippingMethodBox.textContent =
+                "{{ 'طريقة التوصيل: ' if current_lang=='ar' else 'Delivery Method: ' }}"
+                + methodText;
+
+
+            shippingMethodBox.style.display =
+                "block";
+
+        }
+
+
+        /* =====================================================
+                    DISPLAY TOTAL
+        ===================================================== */
+
+        document.getElementById(
+            "total"
+        ).textContent =
+            total.toFixed(2)
+            + " "
+            + currency;
+
+
+        /* =====================================================
+                    WHATSAPP MESSAGE
+        ===================================================== */
 
         let message = "";
 
 
         if (
-            "{{ current_lang }}"
-            === "ar"
+            "{{ current_lang }}" === "ar"
         ) {
 
+            message +=
+                "السلام عليكم 🌷\n";
 
             message +=
-                "السلام عليكم 🌷\\n";
-
-
-            message +=
-                "أرغب في تأكيد طلبي من Crochet Rory Store 🧶💕\\n\\n";
+                "أرغب في تأكيد طلبي من Crochet Rory Store 🧶💕\n\n";
 
 
             message +=
-                "📦 رقم الطلب: #"
-                + data.id
-                + "\\n";
+                "📦 رقم الطلب: "
+                + orderCode
+                + "\n";
+
+
+            message +=
+                "📅 تاريخ الطلب: "
+                + orderDate
+                + "\n";
+
+
+            message +=
+                "🚚 موعد التسليم المتوقع: "
+                + deliveryDate
+                + "\n";
 
 
             message +=
                 "👤 الاسم: "
                 + customerName
-                + "\\n";
+                + "\n";
 
 
             message +=
                 "📍 عنوان التوصيل: "
                 + customerAddress
-                + "\\n\\n";
+                + "\n";
+
+
+            if (
+                shippingMethod
+            ) {
+
+                let methodText =
+                    shippingMethod;
+
+
+                const method =
+                    String(
+                        shippingMethod
+                    ).toLowerCase();
+
+
+                if (
+                    method === "standard" ||
+                    method === "normal"
+                ) {
+
+                    methodText =
+                        "التوصيل العادي";
+
+                }
+
+                else if (
+                    method === "express" ||
+                    method === "fast"
+                ) {
+
+                    methodText =
+                        "التوصيل السريع";
+
+                }
+
+
+                message +=
+                    "🚚 طريقة التوصيل: "
+                    + methodText
+                    + "\n";
+
+            }
 
 
             message +=
-                "🛍️ المنتجات:\\n";
+                "\n🛍️ المنتجات:\n";
 
 
             if (
@@ -1128,10 +1630,8 @@ async function loadOrderDetails() {
                 data.items.length
             ) {
 
-
                 data.items.forEach(
                     item => {
-
 
                         const price =
                             Number(
@@ -1146,8 +1646,7 @@ async function loadOrderDetails() {
 
 
                         const itemTotal =
-                            price *
-                            quantity;
+                            price * quantity;
 
 
                         message +=
@@ -1157,7 +1656,7 @@ async function loadOrderDetails() {
                             + quantity
                             + " — "
                             + itemTotal.toFixed(2)
-                            + " ر.س\\n";
+                            + " ر.س\n";
 
                     }
                 );
@@ -1166,46 +1665,83 @@ async function loadOrderDetails() {
 
 
             message +=
-                "\\n💰 الإجمالي: "
+                "\n💵 المجموع الفرعي: "
+                + subtotal.toFixed(2)
+                + " ر.س\n";
+
+
+            message +=
+                "🚚 الشحن: "
+                + shippingCost.toFixed(2)
+                + " ر.س\n";
+
+
+            message +=
+                "💰 الإجمالي: "
                 + total.toFixed(2)
-                + " ر.س\\n\\n";
+                + " ر.س\n\n";
 
 
             message +=
                 "أرغب في تأكيد الطلب ومعرفة طريقة الدفع. شكرًا 🤍";
 
+        }
 
-        } else {
+
+        else {
+
+            message +=
+                "Hello 🌷\n";
 
 
             message +=
-                "Hello 🌷\\n";
+                "I would like to confirm my order from Crochet Rory Store 🧶💕\n\n";
 
 
             message +=
-                "I would like to confirm my order from Crochet Rory Store 🧶💕\\n\\n";
+                "📦 Order ID: "
+                + orderCode
+                + "\n";
 
 
             message +=
-                "📦 Order ID: #"
-                + data.id
-                + "\\n";
+                "📅 Order Date: "
+                + orderDate
+                + "\n";
+
+
+            message +=
+                "🚚 Estimated Delivery: "
+                + deliveryDate
+                + "\n";
 
 
             message +=
                 "👤 Name: "
                 + customerName
-                + "\\n";
+                + "\n";
 
 
             message +=
                 "📍 Delivery Address: "
                 + customerAddress
-                + "\\n\\n";
+                + "\n";
+
+
+            if (
+                shippingMethod
+            ) {
+
+                message +=
+                    "🚚 Delivery Method: "
+                    + shippingMethod
+                    + "\n";
+
+            }
 
 
             message +=
-                "🛍️ Products:\\n";
+                "\n🛍️ Products:\n";
 
 
             if (
@@ -1213,10 +1749,8 @@ async function loadOrderDetails() {
                 data.items.length
             ) {
 
-
                 data.items.forEach(
                     item => {
-
 
                         const price =
                             Number(
@@ -1231,8 +1765,7 @@ async function loadOrderDetails() {
 
 
                         const itemTotal =
-                            price *
-                            quantity;
+                            price * quantity;
 
 
                         message +=
@@ -1242,7 +1775,7 @@ async function loadOrderDetails() {
                             + quantity
                             + " — "
                             + itemTotal.toFixed(2)
-                            + " SAR\\n";
+                            + " SAR\n";
 
                     }
                 );
@@ -1251,9 +1784,21 @@ async function loadOrderDetails() {
 
 
             message +=
-                "\\n💰 Total: "
+                "\n💵 Subtotal: "
+                + subtotal.toFixed(2)
+                + " SAR\n";
+
+
+            message +=
+                "🚚 Shipping: "
+                + shippingCost.toFixed(2)
+                + " SAR\n";
+
+
+            message +=
+                "💰 Total: "
                 + total.toFixed(2)
-                + " SAR\\n\\n";
+                + " SAR\n\n";
 
 
             message +=
@@ -1265,7 +1810,6 @@ async function loadOrderDetails() {
         /* =====================================================
                     WHATSAPP LINK
         ===================================================== */
-
 
         const whatsappNumber =
             "966508148477";
@@ -1285,12 +1829,10 @@ async function loadOrderDetails() {
         ).href =
             whatsappUrl;
 
-
     }
 
 
     catch(error) {
-
 
         console.error(
             "Order loading error:",

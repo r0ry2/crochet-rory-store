@@ -31,9 +31,7 @@
 
 <div class="header-top">
 
-    <!-- =========================
-         LEFT ICONS
-    ========================== -->
+    <!-- LEFT ICONS -->
 
     <div class="left-icons">
 
@@ -123,9 +121,7 @@
     </div>
 
 
-    <!-- =========================
-         LOGO
-    ========================== -->
+    <!-- LOGO -->
 
     <div class="logo-section">
 
@@ -190,9 +186,6 @@
     </button>
 
 
-
-    <!-- HOME -->
-
     <a href="{{ url_for('home_logged') }}">
 
         🏠
@@ -205,9 +198,6 @@
 
     </a>
 
-
-
-    <!-- PROFILE -->
 
     <a href="{{ url_for('profile') }}">
 
@@ -222,12 +212,8 @@
     </a>
 
 
-
     <hr>
 
-
-
-    <!-- LANGUAGE -->
 
     <a
         href="{{ url_for('change_language', lang='en') }}">
@@ -245,12 +231,8 @@
     </a>
 
 
-
     <hr>
 
-
-
-    <!-- LOGOUT -->
 
     <a href="{{ url_for('logout') }}">
 
@@ -337,24 +319,17 @@
 
 
 
-<!-- =====================================================
-     PAGE CSS
-===================================================== -->
-
 <style>
 
-
 /* =====================================================
-   HEADER TOP
+   HEADER
 ===================================================== */
 
 .header-top {
 
     width:100%;
-
     min-height:82px;
-
-    padding:12px 30px;
+    padding-right: 10px;
 
     box-sizing:border-box;
 
@@ -367,7 +342,6 @@
     background:#fde4ef;
 
 }
-
 
 
 /* =====================================================
@@ -385,19 +359,16 @@
 }
 
 
-
 /* =====================================================
-   MENU BUTTON
+   MENU
 ===================================================== */
 
 .menu-btn {
 
     width:42px;
-
     height:42px;
 
     border:none;
-
     background:transparent;
 
     color:#c45b91;
@@ -407,13 +378,10 @@
     cursor:pointer;
 
     display:flex;
-
     align-items:center;
-
     justify-content:center;
 
 }
-
 
 
 /* =====================================================
@@ -423,11 +391,9 @@
 .search-box {
 
     width:180px;
-
     height:40px;
 
     display:flex;
-
     align-items:center;
 
     border:2px solid #f3a9c8;
@@ -446,11 +412,9 @@
 .search-box input {
 
     width:100%;
-
     height:100%;
 
     border:none;
-
     outline:none;
 
     padding:0 12px;
@@ -467,7 +431,6 @@
 .search-box button {
 
     width:40px;
-
     height:100%;
 
     border:none;
@@ -479,7 +442,6 @@
     font-size:16px;
 
 }
-
 
 
 /* =====================================================
@@ -494,13 +456,11 @@
     font-size:21px;
 
     width:34px;
-
     height:38px;
 
     display:flex;
 
     align-items:center;
-
     justify-content:center;
 
     transition:.2s;
@@ -516,9 +476,9 @@
 }
 
 
-
 /* =====================================================
    LOGO
+   نفس الحجم — فقط مثبت أقصى اليمين
 ===================================================== */
 
 .logo-section {
@@ -527,22 +487,19 @@
 
     align-items:center;
 
-    justify-content:center;
+    justify-content:flex-end;
+
+    flex-shrink:0;
 
 }
 
 
 .logo {
-
-    width:65px;
-
-    height:65px;
-
+    width:350px;
+    height:80px;
     object-fit:contain;
-
+    margin-right:10px;
 }
-
-
 
 /* =====================================================
    STORE BANNER
@@ -593,15 +550,13 @@
 }
 
 
-
 /* =====================================================
-   FLASH MESSAGES
+   FLASH
 ===================================================== */
 
 .flash-messages {
 
     width:100%;
-
     max-width:600px;
 
     margin:18px auto;
@@ -616,7 +571,6 @@
 .flash-success {
 
     width:100%;
-
     min-height:46px;
 
     padding:10px 16px;
@@ -626,7 +580,6 @@
     display:flex;
 
     align-items:center;
-
     justify-content:center;
 
     gap:7px;
@@ -663,11 +616,9 @@
 .flash-text {
 
     overflow-wrap:anywhere;
-
     word-break:break-word;
 
 }
-
 
 
 /* =====================================================
@@ -695,26 +646,90 @@
 }
 
 
+/* =====================================================
+   IPAD / TABLET
+   الحجم كما هو، فقط اللوقو يبقى يمين
+===================================================== */
+
+@media (max-width:1024px) {
+
+    .header-top {
+        padding-right:10px;
+    }
+}
+
+
+    .left-icons {
+
+        gap:12px;
+
+    }
+
+
+    .menu-btn {
+
+        width:40px;
+        height:40px;
+
+        font-size:26px;
+
+    }
+
+
+    .search-box {
+
+        width:155px;
+        height:38px;
+
+    }
+
+
+    .cart-icon,
+    .profile-icon {
+
+        width:30px;
+        height:36px;
+
+        font-size:20px;
+
+    }
+
+
+
+
+    .logo {
+
+        width:250px;
+
+        height:65px;
+
+        object-fit:contain;
+
+        object-position:right center;
+
+    }
+
+
+
 
 /* =====================================================
-   TABLET
+   MOBILE
 ===================================================== */
 
 @media (max-width:768px) {
 
-
     .header-top {
 
-        min-height:70px;
+        min-height:68px;
 
-        padding:9px 14px;
+        padding:8px 14px;
 
     }
 
 
     .left-icons {
 
-        gap:9px;
+        gap:8px;
 
     }
 
@@ -722,7 +737,6 @@
     .menu-btn {
 
         width:36px;
-
         height:36px;
 
         font-size:24px;
@@ -732,9 +746,8 @@
 
     .search-box {
 
-        width:140px;
-
-        height:36px;
+        width:135px;
+        height:35px;
 
     }
 
@@ -743,16 +756,16 @@
 
         font-size:12px;
 
-        padding:0 10px;
+        padding:0 9px;
 
     }
 
 
     .search-box button {
 
-        width:34px;
+        width:32px;
 
-        font-size:15px;
+        font-size:14px;
 
     }
 
@@ -760,27 +773,27 @@
     .cart-icon,
     .profile-icon {
 
-        width:28px;
-
-        height:34px;
+        width:27px;
+        height:33px;
 
         font-size:18px;
 
     }
 
 
+
     .logo {
 
-        width:54px;
+        width:200px;
 
-        height:54px;
+        height:58px;
+
+        object-fit:contain;
+
+        object-position:right center;
 
     }
 
-
-    /* =========================
-       STORE BANNER MOBILE
-    ========================== */
 
     .store-banner {
 
@@ -810,10 +823,6 @@
 
     }
 
-
-    /* =========================
-       FLASH MOBILE
-    ========================== */
 
     .flash-messages {
 
@@ -859,13 +868,11 @@
 }
 
 
-
 /* =====================================================
    SMALL MOBILE
 ===================================================== */
 
 @media (max-width:480px) {
-
 
     .header-top {
 
@@ -886,7 +893,6 @@
     .menu-btn {
 
         width:31px;
-
         height:31px;
 
         font-size:22px;
@@ -897,7 +903,6 @@
     .search-box {
 
         width:112px;
-
         height:33px;
 
     }
@@ -925,7 +930,6 @@
     .profile-icon {
 
         width:23px;
-
         height:30px;
 
         font-size:16px;
@@ -935,16 +939,16 @@
 
     .logo {
 
-        width:46px;
+        width:150px;
 
-        height:46px;
+        height:48px;
+
+        object-fit:contain;
+
+        object-position:right center;
 
     }
 
-
-    /* =========================
-       STORE BANNER
-    ========================== */
 
     .store-banner {
 
@@ -972,10 +976,6 @@
 
     }
 
-
-    /* =========================
-       FLASH
-    ========================== */
 
     .flash-messages {
 
@@ -1008,10 +1008,6 @@
     }
 
 
-    /* =========================
-       FOOTER
-    ========================== */
-
     .main-footer {
 
         padding:14px 10px;
@@ -1028,12 +1024,7 @@
 
 
 
-<!-- =====================================================
-     JAVASCRIPT
-===================================================== -->
-
 <script>
-
 
 function toggleMenu() {
 
@@ -1051,7 +1042,6 @@ function toggleMenu() {
 }
 
 
-
 function openMenu() {
 
     const sideMenu =
@@ -1066,7 +1056,6 @@ function openMenu() {
     sideMenu.classList.add("active");
 
 }
-
 
 
 function closeMenu() {

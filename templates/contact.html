@@ -1,71 +1,515 @@
-{% extends "base.html" %}
-{% block title %}Contact | Crochet Rory Store{% endblock %}
+{% extends "base_logged.html" %}
+
+{% block title %}
+    {{
+        "تواصل معنا"
+        if current_lang == "ar"
+        else "Contact | Crochet Rory Store"
+    }}
+{% endblock %}
+
 {% block content %}
 
-<!-- 🔙 زر الرجوع الثابت -->
-<a href="javascript:history.back()" 
-   style="
-     position: fixed;
-     top: 20px;
-     left: 20px;
-     background-color: #ff8fab;
-     color: white;
-     padding: 10px 18px;
-     border-radius: 25px;
-     font-weight: bold;
-     text-decoration: none;
-     box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-     transition: 0.3s;
-     z-index: 1000;
-   "
-   onmouseover="this.style.transform='scale(1.1)'"
-   onmouseout="this.style.transform='scale(1)'">
-   ⬅️ Back
-</a>
+<style>
 
-<section style="background-color:#fff0f6; min-height:80vh; padding:50px 20px; text-align:center;">
-  <h2 style="color:#e26fa7; font-size:2.2rem; margin-bottom:30px;">📞 Contact Us</h2>
+    /* =====================================================
+       CONTACT PAGE
+    ===================================================== */
 
-  <p style="color:#555; font-size:1.1rem; margin-bottom:40px;">
-    We'd love to hear from you! Whether you have questions, feedback, or custom order requests — feel free to reach out 💌
-  </p>
+    .contact-page {
+        background-color:#fff0f6;
+        min-height:80vh;
+        padding:50px 20px;
+        text-align:center;
+    }
 
-  <div style="background:white; width:80%; max-width:600px; margin:auto; padding:30px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-    <form action="{{ url_for('contact_page') }}" method="POST" style="display:flex; flex-direction:column; gap:15px;">
-      <input type="text" name="name" placeholder="Your Name" required
-             style="padding:12px; border:1px solid #ddd; border-radius:10px; font-size:1rem;">
-      <input type="email" name="email" placeholder="Your Email" required
-             style="padding:12px; border:1px solid #ddd; border-radius:10px; font-size:1rem;">
-      <textarea name="message" placeholder="Your Message..." rows="5" required
-                style="padding:12px; border:1px solid #ddd; border-radius:10px; font-size:1rem; resize:none;"></textarea>
 
-      <button type="submit"
-              style="
-                background-color:#e26fa7;
-                color:white;
-                border:none;
-                padding:12px;
-                border-radius:25px;
-                font-size:1.1rem;
-                cursor:pointer;
-                transition:0.3s;
-              "
-              onmouseover="this.style.backgroundColor='#ff8fab'"
-              onmouseout="this.style.backgroundColor='#e26fa7'">
-        Send Message 💌
-      </button>
-    </form>
-  </div>
+    .contact-title {
+        color:#e26fa7;
+        font-size:2.2rem;
+        margin-bottom:30px;
+    }
 
-  <div style="margin-top:50px; color:#777; line-height:1.6;">
-    <p>📍 <b>Location:</b> Bangkok, Thailand</p>
-    <p>📧 <b>Email:</b> 
-      <a href="mailto:support@crochetrory.com" style="color:#e26fa7; text-decoration:none;">
-        support@crochetrory.com
-      </a>
+
+    .contact-description {
+        color:#555;
+        font-size:1.1rem;
+        margin-bottom:40px;
+        line-height:1.8;
+    }
+
+
+    /* =====================================================
+       CONTACT FORM
+    ===================================================== */
+
+    .contact-box {
+        background:white;
+        width:80%;
+        max-width:600px;
+        margin:auto;
+        padding:30px;
+        border-radius:15px;
+        box-shadow:0 4px 10px rgba(0,0,0,0.1);
+        box-sizing:border-box;
+    }
+
+
+    .contact-form {
+        display:flex;
+        flex-direction:column;
+        gap:15px;
+    }
+
+
+    .contact-input,
+    .contact-textarea {
+        width:100%;
+        padding:12px;
+        border:1px solid #ddd;
+        border-radius:10px;
+        font-size:1rem;
+        box-sizing:border-box;
+        outline:none;
+        font-family:inherit;
+    }
+
+
+    .contact-input:focus,
+    .contact-textarea:focus {
+        border-color:#e26fa7;
+    }
+
+
+    .contact-textarea {
+        resize:none;
+    }
+
+
+    .send-button {
+        background-color:#e26fa7;
+        color:white;
+        border:none;
+        padding:12px;
+        border-radius:25px;
+        font-size:1.1rem;
+        cursor:pointer;
+        transition:.3s;
+        position:relative;
+        z-index:100;
+    }
+
+
+    .send-button:hover {
+        background-color:#ff8fab;
+    }
+
+
+    /* =====================================================
+       WHATSAPP
+    ===================================================== */
+
+    .whatsapp-box {
+        background:white;
+        width:80%;
+        max-width:600px;
+        margin:25px auto 0;
+        padding:25px 30px;
+        border-radius:15px;
+        box-shadow:0 4px 10px rgba(0,0,0,0.08);
+        box-sizing:border-box;
+
+        position:relative;
+        z-index:100;
+    }
+
+
+    .whatsapp-icon {
+        font-size:42px;
+        margin-bottom:10px;
+    }
+
+
+    .whatsapp-title {
+        color:#555;
+        margin-bottom:8px;
+        font-size:1.25rem;
+    }
+
+
+    .whatsapp-description {
+        color:#888;
+        margin-bottom:18px;
+        font-size:.95rem;
+    }
+
+
+    .whatsapp-button {
+        display:inline-flex !important;
+        align-items:center;
+        justify-content:center;
+        gap:8px;
+
+        background:#25D366 !important;
+        color:white !important;
+
+        text-decoration:none !important;
+
+        padding:13px 28px;
+
+        border-radius:30px;
+
+        font-size:1rem;
+        font-weight:600;
+
+        transition:.3s;
+
+        box-shadow:0 5px 15px rgba(37,211,102,.25);
+
+        position:relative !important;
+        z-index:99999 !important;
+
+        cursor:pointer !important;
+
+        pointer-events:auto !important;
+
+        border:none;
+    }
+
+
+    .whatsapp-button:hover {
+        background:#1ebe5d !important;
+        color:white !important;
+        transform:translateY(-2px);
+    }
+
+
+    /* =====================================================
+       CONTACT INFORMATION
+    ===================================================== */
+
+    .contact-information {
+        margin-top:50px;
+        color:#777;
+        line-height:1.8;
+    }
+
+
+    .contact-information p {
+        margin:8px 0;
+    }
+
+
+    .contact-information a {
+        color:#e26fa7;
+        text-decoration:none;
+    }
+
+
+    .contact-information a:hover {
+        text-decoration:underline;
+    }
+
+
+    /* =====================================================
+       MOBILE
+    ===================================================== */
+
+    @media(max-width:600px){
+
+        .contact-page {
+            padding:35px 12px;
+        }
+
+        .contact-title {
+            font-size:1.8rem;
+        }
+
+        .contact-description {
+            font-size:.95rem;
+            margin-bottom:30px;
+        }
+
+        .contact-box,
+        .whatsapp-box {
+            width:95%;
+            padding:22px 16px;
+        }
+
+        .whatsapp-title {
+            font-size:1.05rem;
+        }
+
+        .whatsapp-description {
+            font-size:.85rem;
+        }
+
+        .whatsapp-button {
+            width:100%;
+            box-sizing:border-box;
+        }
+
+    }
+
+</style>
+
+
+<section class="contact-page">
+
+
+    <!-- =====================================================
+         TITLE
+    ====================================================== -->
+
+    <h2 class="contact-title">
+
+        {{
+            "📞 تواصل معنا"
+            if current_lang == "ar"
+            else "📞 Contact Us"
+        }}
+
+    </h2>
+
+
+    <!-- =====================================================
+         DESCRIPTION
+    ====================================================== -->
+
+    <p class="contact-description">
+
+        {{
+            "يسعدنا أن نسمع منك! سواء كان لديك سؤال، ملاحظة، أو طلب مخصص، لا تتردد في التواصل معنا 💌"
+            if current_lang == "ar"
+            else
+            "We'd love to hear from you! Whether you have questions, feedback, or custom order requests — feel free to reach out 💌"
+        }}
+
     </p>
-    <p>📱 <b>Phone:</b> +66 123 456 789</p>
-  </div>
+
+
+    <!-- =====================================================
+         CONTACT FORM
+    ====================================================== -->
+
+    <div class="contact-box">
+
+        <form
+            action="{{ url_for('contact_page') }}"
+            method="POST"
+            class="contact-form"
+        >
+
+
+            <!-- NAME -->
+
+            <input
+                type="text"
+                name="name"
+                class="contact-input"
+                placeholder="{{
+                    'اسمك'
+                    if current_lang == 'ar'
+                    else 'Your Name'
+                }}"
+                required
+            >
+
+
+            <!-- EMAIL -->
+
+            <input
+                type="email"
+                name="email"
+                class="contact-input"
+                placeholder="{{
+                    'بريدك الإلكتروني'
+                    if current_lang == 'ar'
+                    else 'Your Email'
+                }}"
+                required
+            >
+
+
+            <!-- MESSAGE -->
+
+            <textarea
+                name="message"
+                class="contact-textarea"
+                placeholder="{{
+                    'اكتب رسالتك هنا...'
+                    if current_lang == 'ar'
+                    else 'Your Message...'
+                }}"
+                rows="5"
+                required
+            ></textarea>
+
+
+            <!-- SEND -->
+
+            <button
+                type="submit"
+                class="send-button"
+            >
+
+                {{
+                    "إرسال الرسالة 💌"
+                    if current_lang == 'ar'
+                    else "Send Message 💌"
+                }}
+
+            </button>
+
+
+        </form>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         WHATSAPP DIRECT CHAT
+    ====================================================== -->
+
+    <div class="whatsapp-box">
+
+
+        <div class="whatsapp-icon">
+            💬
+        </div>
+
+
+        <h3 class="whatsapp-title">
+
+            {{
+                "أو يمكنك التواصل معنا مباشرة عبر دردشة الواتساب"
+                if current_lang == "ar"
+                else
+                "Or you can contact us directly via WhatsApp chat"
+            }}
+
+        </h3>
+
+
+        <p class="whatsapp-description">
+
+            {{
+                "اضغط على الزر لبدء محادثة مباشرة معنا 💗"
+                if current_lang == "ar"
+                else
+                "Click the button to start a direct chat with us 💗"
+            }}
+
+        </p>
+
+
+        <!-- =================================================
+             WHATSAPP BUTTON
+        ================================================== -->
+
+        <a
+            href="https://wa.me/966508148477"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="whatsapp-button"
+        >
+
+            💬
+
+            {{
+                "دردشة واتساب"
+                if current_lang == "ar"
+                else "Chat on WhatsApp"
+            }}
+
+        </a>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         CONTACT INFORMATION
+    ====================================================== -->
+
+    <div class="contact-information">
+
+
+        <!-- LOCATION -->
+
+        <p>
+
+            📍
+
+            <b>
+                {{
+                    "الموقع"
+                    if current_lang == "ar"
+                    else "Location"
+                }}:
+            </b>
+
+            {{
+                "مكة المكرمة، المملكة العربية السعودية"
+                if current_lang == "ar"
+                else "Makkah, Saudi Arabia"
+            }}
+
+        </p>
+
+
+        <!-- EMAIL -->
+
+        <p>
+
+            📧
+
+            <b>
+                {{
+                    "البريد الإلكتروني"
+                    if current_lang == "ar"
+                    else "Email"
+                }}:
+            </b>
+
+            <a href="mailto:rema7122002@gmail.com">
+
+                rema7122002@gmail.com
+
+            </a>
+
+        </p>
+
+
+        <!-- PHONE -->
+
+        <p>
+
+            📱
+
+            <b>
+                {{
+                    "رقم الجوال"
+                    if current_lang == "ar"
+                    else "Phone"
+                }}:
+            </b>
+
+            <a href="tel:+966508148477">
+
+                0508148477
+
+            </a>
+
+        </p>
+
+
+    </div>
+
+
 </section>
+
 
 {% endblock %}

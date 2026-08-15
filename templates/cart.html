@@ -386,54 +386,52 @@
 
         <div class="cart-section">
 
-            <div class="section-title">
+<div class="section-title">
 
-                <div class="title-icon">
-                    📅
-                </div>
+    <div class="title-icon">
+        📅
+    </div>
 
-                <div>
+    <div>
 
-                    <h2>
-                        {{ "موعد التسليم المتوقع" if current_lang=="ar" else "Estimated Delivery" }}
-                    </h2>
+        <h2>
+            {{ "موعد التسليم المتوقع" if current_lang=="ar" else "Estimated Delivery" }}
+        </h2>
 
-                    <p>
-                        {{ "سيتم تحديد موعد التسليم من قبل المتجر."
-                        if current_lang=="ar"
-                        else "The store will determine the delivery date." }}
-                    </p>
+        <p>
+            {{ "يتم احتساب موعد التسليم المتوقع بعد تأكيد الطلب، خلال 3 إلى 7 أيام."
+            if current_lang=="ar"
+            else "The estimated delivery date is calculated after order confirmation, within 3 to 7 days." }}
+        </p>
 
-                </div>
+    </div>
 
-            </div>
+</div>
 
 
-            <div class="delivery-box">
+<div class="delivery-box">
 
-                <div class="delivery-icon">
-                    📦
-                </div>
+    <div class="delivery-icon">
+        📦
+    </div>
 
-                <div>
+    <div>
 
-                    <strong id="deliveryDate">
-                        {{ "سيتم تحديث تاريخ التسليم بعد تأكيد الطلب."
-                        if current_lang=="ar"
-                        else "The delivery date will be updated after order confirmation." }}
-                    </strong>
+        <strong id="deliveryDate">
+            {{ "موعد التسليم المتوقع: خلال 3 إلى 7 أيام بعد تأكيد الطلب."
+            if current_lang=="ar"
+            else "Estimated delivery: within 3 to 7 days after order confirmation." }}
+        </strong>
 
-                    <span id="deliveryDays">
-                        {{ "الموعد المتوقع يعتمد على طريقة الشحن."
-                        if current_lang=="ar"
-                        else "The estimated date depends on the shipping method." }}
-                    </span>
+        <span id="deliveryDays">
+            {{ "يبدأ احتساب مدة التسليم من تاريخ تأكيد الطلب."
+            if current_lang=="ar"
+            else "The delivery period starts from the order confirmation date." }}
+        </span>
 
-                </div>
+    </div>
 
-            </div>
-
-        </div>
+</div>
 
 
 
@@ -2681,48 +2679,54 @@ function selectShipping(
    📅 DELIVERY
 ===================================== */
 
-function updateDelivery(
-    days
-){
+function updateDelivery(days){
 
     const dateElement =
-        document.getElementById(
-            "deliveryDate"
-        );
-
+        document.getElementById("deliveryDate");
 
     const daysElement =
-        document.getElementById(
-            "deliveryDays"
-        );
+        document.getElementById("deliveryDays");
 
+    /* =================================
+       📅 DELIVERY RANGE
+       من تاريخ اليوم: 3 إلى 7 أيام
+    ================================= */
 
-    if(daysElement){
+    const today = new Date();
 
-        daysElement.innerText =
+    const minDate = new Date(today);
+    minDate.setDate(minDate.getDate() + 3);
 
-            currentLang === "ar"
+    const maxDate = new Date(today);
+    maxDate.setDate(maxDate.getDate() + 7);
 
-            ? `المدة المتوقعة: ${days} أيام`
+    const formatter = new Intl.DateTimeFormat(
+        currentLang === "ar" ? "ar-SA" : "en-US",
+        {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        }
+    );
 
-            : `Estimated time: ${days} days`;
-
-    }
-
+    const minFormatted = formatter.format(minDate);
+    const maxFormatted = formatter.format(maxDate);
 
     if(dateElement){
-
         dateElement.innerText =
-
             currentLang === "ar"
-
-            ? "سيتم تأكيد تاريخ التسليم من قبل المتجر."
-
-            : "The store will confirm the delivery date.";
-
+            ? `موعد التسليم المتوقع: من ${minFormatted} إلى ${maxFormatted}`
+            : `Estimated delivery: ${minFormatted} to ${maxFormatted}`;
     }
 
+    if(daysElement){
+        daysElement.innerText =
+            currentLang === "ar"
+            ? "يتم احتساب الموعد من تاريخ اليوم قبل إتمام الطلب (3 - 7 أيام)."
+            : "Calculated from today before placing the order (3 - 7 days).";
+    }
 }
+
 
 
 /* =====================================

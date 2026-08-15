@@ -5,7 +5,8 @@ from flask import (
     session,
     redirect,
     url_for,
-    flash
+    flash,
+    
 )
 
 
@@ -26,7 +27,8 @@ from models import (
     Notification,
     Visitor,
     ShippingMethod,
-    Coupon
+    Coupon,
+    Visitor
 
 
 )
@@ -1403,7 +1405,7 @@ def register():
             )
 
         # ==========================================
-        # إنشاء المستخدم بدون تحقق بالإيميل
+        # إنشاء المستخدم
         # ==========================================
 
         new_user = User(
@@ -1426,6 +1428,7 @@ def register():
         # ==========================================
 
         if email == "admin@store.com":
+
             new_user.role = "admin"
 
         # ==========================================
@@ -1440,24 +1443,77 @@ def register():
         )
 
         # ==========================================
+        # 🔗 ربط الزيارة الحالية بالمستخدم
+        # ==========================================
+
+        current_visitor_id = session.get(
+            "visitor_id"
+        )
+
+        if current_visitor_id:
+
+            current_visit = Visitor.query.filter_by(
+                visitor_id=current_visitor_id
+            ).first()
+
+            if current_visit:
+
+                current_visit.user_id = new_user.id
+
+                current_visit.visitor_type = "registered"
+
+                current_visit.page = request.path
+
+                db.session.commit()
+
+                print(
+                    f"👤 VISIT LINKED TO USER: "
+                    f"{current_visitor_id} → "
+                    f"User #{new_user.id}"
+                )
+
+            else:
+
+                print(
+                    f"⚠️ Visitor not found: "
+                    f"{current_visitor_id}"
+                )
+
+        else:
+
+            print(
+                "⚠️ No visitor_id found in session"
+            )
+
+        # ==========================================
         # تسجيل الدخول مباشرة
         # ==========================================
 
-        login_user(new_user, remember=True)
+        login_user(
+            new_user,
+            remember=True
+        )
 
         session["user_id"] = new_user.id
+
         session["is_admin"] = (
             new_user.role == "admin"
         )
 
-        # دمج السلة المؤقتة إن وجدت
-        merge_session_cart_into_db(new_user.id)
+        # ==========================================
+        # دمج السلة المؤقتة
+        # ==========================================
+
+        merge_session_cart_into_db(
+            new_user.id
+        )
 
         # ==========================================
         # الانتقال حسب نوع الحساب
         # ==========================================
 
         if new_user.role == "admin":
+
             return redirect(
                 url_for("admin_home")
             )
@@ -1482,11 +1538,10 @@ def register():
     return render_template(
         "index.html",
         products=products,
-        form=login_form,
         register_form=form,
+        form=login_form,
         verify_form=verify_form
     )
-
 
 # ==========================================
 # 🔑 PASSWORD RECOVERY
@@ -1945,35 +2000,92 @@ def login():
         # تسجيل الدخول مباشرة بدون تحقق بالإيميل
         # ==========================================
 
-        # المستخدمون القدامى الذين كانوا غير مفعلين
-        # يتم تفعيلهم الآن لأن التحقق بالإيميل ألغي.
         if not user.confirmed:
+
             user.confirmed = True
             user.verification_code = None
             user.verification_expiry = None
+
             db.session.commit()
 
-        login_user(user, remember=True)
+        # ==========================================
+        # 🔐 تسجيل دخول المستخدم
+        # ==========================================
+
+        login_user(
+            user,
+            remember=True
+        )
 
         session["user_id"] = user.id
+
         session["is_admin"] = (
             user.role == "admin"
         )
 
-        # دمج السلة المؤقتة
-        merge_session_cart_into_db(user.id)
+        # ==========================================
+        # 🔗 ربط الزيارة الحالية بالمستخدم
+        # ==========================================
+
+        current_visitor_id = session.get(
+            "visitor_id"
+        )
+
+        if current_visitor_id:
+
+            current_visit = Visitor.query.filter_by(
+                visitor_id=current_visitor_id
+            ).first()
+
+            if current_visit:
+
+                current_visit.user_id = user.id
+
+                current_visit.visitor_type = "registered"
+
+                current_visit.last_activity = datetime.utcnow()
+
+                db.session.commit()
+
+                print(
+                    f"👤 VISIT LINKED TO USER: "
+                    f"{current_visitor_id} → "
+                    f"User #{user.id}"
+                )
+
+            else:
+
+                print(
+                    f"⚠️ VISITOR NOT FOUND: "
+                    f"{current_visitor_id}"
+                )
+
+        else:
+
+            print(
+                "⚠️ NO VISITOR ID IN SESSION"
+            )
 
         # ==========================================
-        # Admin
+        # 🛒 دمج السلة المؤقتة
+        # ==========================================
+
+        merge_session_cart_into_db(
+            user.id
+        )
+
+        # ==========================================
+        # 👑 Admin
         # ==========================================
 
         if user.role == "admin":
+
             return redirect(
                 url_for("admin_home")
             )
 
         # ==========================================
-        # User
+        # 👤 User
         # ==========================================
 
         return redirect(
@@ -1987,15 +2099,22 @@ def login():
     if request.method == "POST":
 
         if session.get("language") == "ar":
+
             flash(
                 "❌ يرجى التحقق من البيانات.",
                 "login_error"
             )
+
         else:
+
             flash(
                 "❌ Please check your information.",
                 "login_error"
             )
+
+    # ==========================================
+    # عرض الصفحة
+    # ==========================================
 
     return render_template(
         "index.html",
@@ -2005,7 +2124,6 @@ def login():
         verify_form=verify_form,
         login_error=True
     )
-
 # ==========================================
 # 🚪 LOGOUT
 # ==========================================
@@ -2991,20 +3109,7 @@ def delete_orders():
             "success": False,
             "error": str(e)
         })
-@app.before_request
-def count_visitors():
 
-    # لا نسجل ملفات static
-    if request.path.startswith("/static"):
-        return
-
-    visitor = Visitor(
-        ip_address=request.remote_addr,
-        page=request.path
-    )
-
-    db.session.add(visitor)
-    db.session.commit()
 # ==========================================
 # 👑 ADMIN
 # ==========================================
@@ -3024,34 +3129,317 @@ def admin_dashboard():
     )
 
 
+# ==========================================
+# 👑 ADMIN HOME
+# ==========================================
+
+# =========================================================
+# 🏠 ADMIN HOME
+# =========================================================
+
 @app.route("/admin/home")
 @login_required
 def admin_home():
 
-    if current_user.role != "admin":
-        flash("⚠️ Access denied! Admins only.", "danger")
-        return redirect(url_for("home_logged"))
+    from datetime import datetime, timedelta
+
+    # -----------------------------------------------------
+    # عدد المستخدمين المسجلين
+    # -----------------------------------------------------
+
+    user_count = User.query.count()
+
+    # -----------------------------------------------------
+    # إجمالي الزيارات
+    # -----------------------------------------------------
+
+    visitor_count = Visitor.query.count()
+
+    # -----------------------------------------------------
+    # بداية اليوم
+    # -----------------------------------------------------
+
+    today_start = datetime.utcnow().replace(
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0
+    )
+
+    # -----------------------------------------------------
+    # زيارات اليوم
+    # -----------------------------------------------------
+
+    today_visitor_count = Visitor.query.filter(
+        Visitor.started_at >= today_start
+    ).count()
+
+    # -----------------------------------------------------
+    # الزوار المسجلين اليوم
+    # -----------------------------------------------------
+
+    today_registered_count = Visitor.query.filter(
+        Visitor.started_at >= today_start,
+        Visitor.visitor_type == "registered"
+    ).count()
+
+    # -----------------------------------------------------
+    # الزوار غير المسجلين اليوم
+    # -----------------------------------------------------
+
+    today_guest_count = Visitor.query.filter(
+        Visitor.started_at >= today_start,
+        Visitor.visitor_type == "guest"
+    ).count()
+
+    # -----------------------------------------------------
+    # الصفحة
+    # -----------------------------------------------------
 
     return render_template(
         "admin/admin_home.html",
 
-        product_count=Product.query.count(),
+        user_count=user_count,
 
-        order_count=Order.query.count(),
+        visitor_count=visitor_count,
 
-        user_count=User.query.count(),
+        today_visitor_count=today_visitor_count,
 
-        visitor_count=Visitor.query.count(),
+        today_registered_count=today_registered_count,
 
-        new_messages=Message.query.filter_by(
-            is_read=False
-        ).count(),
+        today_guest_count=today_guest_count
+    )
+# =========================================================
+# 👀 ADMIN VISITORS
+# =========================================================
 
-        orders=Order.query.order_by(
-            Order.id.desc()
-        ).limit(5).all()
+# =========================================================
+# 👀 ADMIN VISITORS
+# =========================================================
+@app.route("/admin/visitors")
+@login_required
+def admin_visitors():
+
+    from datetime import datetime, timedelta
+
+    # =====================================================
+    # CURRENT TIME
+    # =====================================================
+
+    now = datetime.now()
+
+    today_start = datetime(
+        now.year,
+        now.month,
+        now.day
     )
 
+    tomorrow_start = today_start + timedelta(days=1)
+
+    # =====================================================
+    # GET ALL VISITORS
+    # =====================================================
+
+    visitors = (
+        Visitor.query
+        .order_by(
+            Visitor.visited_at.desc()
+        )
+        .all()
+    )
+
+    # =====================================================
+    # TOTAL VISITS
+    # =====================================================
+
+    visitor_count = len(visitors)
+
+    total_visitors = visitor_count
+
+    # =====================================================
+    # TODAY VISITS
+    # =====================================================
+
+    today_visitors = sum(
+        1
+        for visitor in visitors
+        if visitor.visited_at
+        and today_start <= visitor.visited_at < tomorrow_start
+    )
+
+    # =====================================================
+    # REGISTERED VISITORS
+    # =====================================================
+
+    registered_visitors = sum(
+        1
+        for visitor in visitors
+        if visitor.user_id
+    )
+
+    # =====================================================
+    # GUEST VISITORS
+    # =====================================================
+
+    guest_visitors = sum(
+        1
+        for visitor in visitors
+        if not visitor.user_id
+    )
+
+    # =====================================================
+    # ACTIVE VISITORS
+    #
+    # Consider visitor active if last activity
+    # was within the last 30 minutes.
+    # =====================================================
+
+    active_visitors = [
+        visitor
+        for visitor in visitors
+        if visitor.last_activity
+        and (
+            now - visitor.last_activity
+        ).total_seconds() <= 1800
+    ]
+
+    active_count = len(active_visitors)
+
+    # =====================================================
+    # ACTIVE REGISTERED
+    # =====================================================
+
+    active_registered = sum(
+        1
+        for visitor in active_visitors
+        if visitor.user_id
+    )
+
+    # =====================================================
+    # ACTIVE GUESTS
+    # =====================================================
+
+    active_guests = sum(
+        1
+        for visitor in active_visitors
+        if not visitor.user_id
+    )
+
+    # =====================================================
+    # TODAY REGISTERED
+    # =====================================================
+
+    today_registered_count = sum(
+        1
+        for visitor in visitors
+        if visitor.user_id
+        and visitor.visited_at
+        and today_start <= visitor.visited_at < tomorrow_start
+    )
+
+    # =====================================================
+    # TODAY GUESTS
+    # =====================================================
+
+    today_guest_count = sum(
+        1
+        for visitor in visitors
+        if not visitor.user_id
+        and visitor.visited_at
+        and today_start <= visitor.visited_at < tomorrow_start
+    )
+
+    # =====================================================
+    # USER DATA FOR VISITORS
+    #
+    # The template uses:
+    #
+    # visitor_users.get(visitor.user_id)
+    #
+    # So we create a dictionary:
+    #
+    # {
+    #     user_id: User object
+    # }
+    # =====================================================
+
+    visitor_user_ids = {
+        visitor.user_id
+        for visitor in visitors
+        if visitor.user_id
+    }
+
+    visitor_users = {}
+
+    if visitor_user_ids:
+
+        users = (
+            User.query
+            .filter(
+                User.id.in_(visitor_user_ids)
+            )
+            .all()
+        )
+
+        visitor_users = {
+            user.id: user
+            for user in users
+        }
+
+    # =====================================================
+    # RENDER PAGE
+    # =====================================================
+
+    return render_template(
+        "admin/admin_visitors.html",
+
+        # -------------------------
+        # Visitors
+        # -------------------------
+
+        visitors=visitors,
+
+        # -------------------------
+        # Time
+        # -------------------------
+
+        now=now,
+        today_start=today_start,
+        tomorrow_start=tomorrow_start,
+
+        # -------------------------
+        # Main statistics
+        # -------------------------
+
+        visitor_count=visitor_count,
+        total_visitors=total_visitors,
+
+        today_visitors=today_visitors,
+
+        active_count=active_count,
+
+        registered_visitors=registered_visitors,
+
+        guest_visitors=guest_visitors,
+
+        # -------------------------
+        # Extra statistics
+        # -------------------------
+
+        active_registered=active_registered,
+
+        active_guests=active_guests,
+
+        today_registered_count=today_registered_count,
+
+        today_guest_count=today_guest_count,
+
+        # -------------------------
+        # Users
+        # -------------------------
+
+        visitor_users=visitor_users
+    )
 # ==========================================
 # 📦 ADMIN ORDERS
 # ==========================================
@@ -3698,13 +4086,16 @@ def admin_users():
 
     users = users.all()
 
+    # عدد المستخدمين
+    users_count = User.query.count()
+
     return render_template(
         "admin/admin_users.html",
         users=users,
+        users_count=users_count,
         search=search,
         role_filter=role_filter
     )
-
 
 @app.route('/admin/make_admin/<int:id>', methods=['POST'])
 @login_required

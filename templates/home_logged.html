@@ -31,11 +31,18 @@
 
 <header class="main-header">
 
-    <!-- =========================
-         TOP BAR
-    ========================== -->
-
     <div class="header-top">
+
+        <a
+            href="{{ url_for('home_logged') }}"
+            class="header-logo">
+
+            <img
+                src="{{ url_for('static', filename='images/logo.png') }}"
+                alt="Crochet Rory Store">
+
+        </a>
+
 
         <div class="left-icons">
 
@@ -65,7 +72,9 @@
                     required>
 
                 <button type="submit">
+
                     🔍
+
                 </button>
 
             </form>
@@ -99,22 +108,10 @@
 
         </div>
 
-
-        <div class="logo-section">
-
-            <img
-                src="{{ url_for('static', filename='images/logo.png') }}"
-                class="logo"
-                alt="Crochet Rory Store">
-
-        </div>
-
     </div>
 
 
-    <!-- =========================
-         STORE BRAND
-    ========================== -->
+    <!-- STORE BRAND -->
 
     <div class="store-brand">
 
@@ -131,20 +128,14 @@
 
         <p>
 
-            {{
-                "Handmade Crochet with Love 🧶💗"
-                if current_lang == "ar"
-                else "Handmade Crochet with Love 🧶💗"
-            }}
+            Handmade Crochet with Love 🧶💗
 
         </p>
 
     </div>
 
 
-    <!-- =========================
-         NAVBAR
-    ========================== -->
+    <!-- NAVBAR -->
 
     <nav class="main-navbar">
 
@@ -249,6 +240,7 @@
 <div id="sideMenu"
      class="side-menu">
 
+
     <button
         type="button"
         class="close-menu"
@@ -352,7 +344,6 @@
 
         💕
 
-
     </h1>
 
 
@@ -425,6 +416,7 @@
 
 <section id="categories">
 
+
     <h2 class="section-title">
 
         {{
@@ -439,8 +431,7 @@
     <div class="categories-grid">
 
 
-        <a href="#"
-           class="category-card">
+        <a href="#" class="category-card">
 
             <img
                 src="{{ url_for('static', filename='images/dolls.jpg') }}"
@@ -460,8 +451,7 @@
 
 
 
-        <a href="#"
-           class="category-card">
+        <a href="#" class="category-card">
 
             <img
                 src="{{ url_for('static', filename='images/keychain.jpg') }}"
@@ -481,8 +471,7 @@
 
 
 
-        <a href="#"
-           class="category-card">
+        <a href="#" class="category-card">
 
             <img
                 src="{{ url_for('static', filename='images/pattron.jpg') }}"
@@ -502,8 +491,7 @@
 
 
 
-        <a href="#"
-           class="category-card">
+        <a href="#" class="category-card">
 
             <img
                 src="{{ url_for('static', filename='images/Coaster.jpg') }}"
@@ -520,7 +508,6 @@
             </span>
 
         </a>
-
 
     </div>
 
@@ -621,6 +608,10 @@
                 </p>
 
 
+                <!-- =========================================
+                     QUANTITY
+                ========================================== -->
+
                 <div class="bottom">
 
 
@@ -630,13 +621,9 @@
                         <button
                             type="button"
                             class="quantity-btn"
-
                             onclick="
                                 event.stopPropagation();
-                                changeQuantity(
-                                    {{ product.id }},
-                                    -1
-                                );
+                                changeQuantity({{ product.id }}, -1);
                             ">
 
                             −
@@ -656,45 +643,72 @@
                         <button
                             type="button"
                             class="quantity-btn"
-
                             onclick="
                                 event.stopPropagation();
-                                changeQuantity(
-                                    {{ product.id }},
-                                    1
-                                );
+                                changeQuantity({{ product.id }}, 1);
                             ">
 
                             +
 
                         </button>
 
+                    </div>
+
+
+
+                    <!-- =========================================
+                         BUTTONS
+                    ========================================== -->
+
+                    <div class="product-buttons">
+
+
+                        <!-- ADD TO CART -->
+
+                        <button
+                            type="button"
+                            class="add-cart-btn"
+                            onclick="
+                                event.stopPropagation();
+                                addToCart({{ product.id }});
+                            ">
+
+                            🛒
+
+                            {{
+                                "إضافة للسلة"
+                                if current_lang == "ar"
+                                else "Add to Cart"
+                            }}
+
+                        </button>
+
+
+
+                        <!-- BUY NOW -->
+
+                        <button
+                            type="button"
+                            class="buy-now-btn"
+                            onclick="
+                                event.stopPropagation();
+                                buyNow({{ product.id }});
+                            ">
+
+                            ⚡
+
+                            {{
+                                "شراء الآن"
+                                if current_lang == "ar"
+                                else "Buy Now"
+                            }}
+
+                        </button>
 
                     </div>
 
 
-                    <button
-                        type="button"
-                        class="add-cart-btn"
-
-                        onclick="
-                            event.stopPropagation();
-                            addToCart({{ product.id }});
-                        ">
-
-                        🛒
-
-                        {{
-                            "إضافة للسلة"
-                            if current_lang == "ar"
-                            else "Add to Cart"
-                        }}
-
-                    </button>
-
-
                 </div>
-
 
             </div>
 
@@ -718,7 +732,6 @@
 
         {% endif %}
 
-
     </div>
 
 </section>
@@ -726,13 +739,14 @@
 
 
 <!-- =====================================================
-     PRODUCTS CSS
+     PAGE STYLE
 ===================================================== -->
 
 <style>
 
+
 /* =====================================================
-   TOP HEADER - NEW DESIGN
+   HEADER
 ===================================================== */
 
 .main-header{
@@ -753,47 +767,98 @@
 }
 
 
-/* =====================================================
-   HEADER TOP
-===================================================== */
-
 .main-header .header-top{
 
-    min-height:82px;
-
-    padding:12px 30px;
+    position:relative;
 
     display:flex;
 
+    justify-content:center;
+
     align-items:center;
-
-    justify-content:space-between;
-
-    box-sizing:border-box;
 
     background:#fde4ef;
 
+    padding:10px 20px;
+
+    min-height:90px;
+
+    width:100%;
+
+    box-sizing:border-box;
+
+    overflow:hidden;
+
 }
 
 
-/* =====================================================
-   LEFT ICONS
-===================================================== */
+.header-logo{
 
-.main-header .left-icons{
+    position:absolute;
+
+    right:-30px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:150px;
+
+    height:auto;
 
     display:flex;
 
     align-items:center;
 
-    gap:18px;
+    justify-content:center;
+
+    text-decoration:none;
+
+    z-index:2;
 
 }
 
 
-/* =====================================================
-   MENU BUTTON
-===================================================== */
+.header-logo img{
+
+    width:100%;
+
+    height:auto;
+
+    object-fit:contain;
+
+    display:block;
+
+    transition:.3s;
+
+}
+
+
+.header-logo:hover img{
+
+    transform:scale(1.05);
+
+}
+
+
+.main-header .left-icons{
+
+    position:absolute;
+
+    left:20px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    direction:ltr;
+
+    z-index:3;
+
+}
+
 
 .main-header .menu-btn{
 
@@ -831,50 +896,57 @@
 }
 
 
-/* =====================================================
-   SEARCH
-===================================================== */
-
 .main-header .search-box{
-
-    width:180px;
-
-    height:40px;
 
     display:flex;
 
     align-items:center;
 
-    border:2px solid #f3a9c8;
+    width:180px;
 
-    border-radius:25px;
+    height:38px;
 
     background:#fff;
+
+    border:2px solid #f5b6c8;
+
+    border-radius:25px;
 
     overflow:hidden;
 
     box-sizing:border-box;
+
+    transition:.3s;
+
+}
+
+
+.main-header .search-box:focus-within{
+
+    width:220px;
+
+    border-color:#e26fa7;
 
 }
 
 
 .main-header .search-box input{
 
-    width:100%;
+    flex:1;
+
+    min-width:0;
 
     height:100%;
+
+    padding:0 12px;
 
     border:none;
 
     outline:none;
 
-    padding:0 13px;
+    font-size:14px;
 
     background:transparent;
-
-    color:#555;
-
-    font-size:13px;
 
 }
 
@@ -883,7 +955,7 @@
 
     width:42px;
 
-    height:100%;
+    height:38px;
 
     border:none;
 
@@ -891,20 +963,29 @@
 
     cursor:pointer;
 
-    font-size:17px;
+    font-size:18px;
+
+    color:#b05ca0;
+
+    transition:.3s;
 
 }
 
 
-/* =====================================================
-   HEADER ICONS
-===================================================== */
+.main-header .search-box button:hover{
+
+    color:#e26fa7;
+
+}
+
 
 .main-header .header-icon{
 
-    text-decoration:none;
+    font-size:24px;
 
-    font-size:21px;
+    color:#e26fa7;
+
+    text-decoration:none;
 
     display:flex;
 
@@ -912,98 +993,56 @@
 
     justify-content:center;
 
-    width:32px;
+    width:auto;
 
-    height:38px;
+    height:auto;
 
-    transition:.25s;
+    transition:.3s;
 
 }
 
 
 .main-header .header-icon:hover{
 
-    transform:translateY(-3px) scale(1.08);
+    transform:translateY(-2px) scale(1.08);
 
 }
 
-
-/* =====================================================
-   LOGO
-===================================================== */
-
-.main-header .logo-section{
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-}
-
-
-.main-header .logo{
-
-    width:95px;
-
-    height:95px;
-
-    object-fit:contain;
-
-    border-radius:50%;
-
-}
-
-
-/* =====================================================
-   STORE BRAND
-===================================================== */
 
 .store-brand{
 
+    background:#ffeef5;
+
     text-align:center;
 
-    padding:12px 20px 10px;
-
-    background:#fde4ef;
+    padding:35px 20px;
 
 }
 
 
 .store-brand h1{
 
-    margin:0;
+    font-size:55px;
 
-    color:#d86f9d;
+    color:#383538;
 
-    font-size:clamp(2.2rem, 5vw, 4.3rem);
+    margin:0 0 10px;
 
-    font-weight:800;
-
-    line-height:1.15;
-
-    letter-spacing:.5px;
+    line-height:1.2;
 
 }
 
 
 .store-brand p{
 
-    margin:6px 0 0;
+    margin:0;
 
-    color:#8d6678;
+    font-size:20px;
 
-    font-size:14px;
-
-    font-weight:500;
+    color:#777;
 
 }
 
-
-/* =====================================================
-   NAVBAR
-===================================================== */
 
 .main-navbar{
 
@@ -1151,10 +1190,6 @@
 }
 
 
-/* =====================================================
-   SECTION TITLE
-===================================================== */
-
 .section-title{
 
     text-align:center;
@@ -1192,10 +1227,6 @@
 }
 
 
-/* =====================================================
-   PRODUCT GRID
-===================================================== */
-
 .product-grid{
 
     display:grid;
@@ -1211,10 +1242,6 @@
 
 }
 
-
-/* =====================================================
-   PRODUCT CARD
-===================================================== */
 
 .product{
 
@@ -1252,10 +1279,6 @@
 }
 
 
-/* =====================================================
-   PRODUCT IMAGE
-===================================================== */
-
 .product img{
 
     width:100%;
@@ -1280,10 +1303,6 @@
 }
 
 
-/* =====================================================
-   PRODUCT NAME
-===================================================== */
-
 .product h3{
 
     padding:16px 16px 8px;
@@ -1298,10 +1317,6 @@
 
 }
 
-
-/* =====================================================
-   DESCRIPTION
-===================================================== */
 
 .description{
 
@@ -1328,10 +1343,6 @@
 }
 
 
-/* =====================================================
-   RATING
-===================================================== */
-
 .rating{
 
     padding:10px 16px 5px;
@@ -1342,10 +1353,6 @@
 
 }
 
-
-/* =====================================================
-   PRICE
-===================================================== */
 
 .price{
 
@@ -1361,10 +1368,6 @@
 
 }
 
-
-/* =====================================================
-   BOTTOM
-===================================================== */
 
 .bottom{
 
@@ -1438,30 +1441,53 @@
 
 
 /* =====================================================
-   ADD CART
+   PRODUCT BUTTONS
 ===================================================== */
 
-.add-cart-btn{
+.product-buttons{
+
+    display:flex;
+
+    gap:10px;
 
     width:100%;
 
+}
+
+
+.add-cart-btn,
+.buy-now-btn{
+
+    flex:1;
+
+    min-width:0;
+
     border:none;
 
-    padding:13px;
-
-    background:#d86f9d;
-
-    color:#fff;
+    padding:13px 8px;
 
     border-radius:12px;
 
     cursor:pointer;
 
-    font-size:15px;
+    font-size:14px;
 
     font-weight:600;
 
     transition:.3s;
+
+    color:#fff;
+
+    box-sizing:border-box;
+
+}
+
+
+/* ADD TO CART */
+
+.add-cart-btn{
+
+    background:#d86f9d;
 
 }
 
@@ -1470,12 +1496,28 @@
 
     background:#c75a87;
 
+    transform:translateY(-2px);
+
 }
 
 
-/* =====================================================
-   NO PRODUCTS
-===================================================== */
+/* BUY NOW */
+
+.buy-now-btn{
+
+    background:#b96b91;
+
+}
+
+
+.buy-now-btn:hover{
+
+    background:#9f5579;
+
+    transform:translateY(-2px);
+
+}
+
 
 .no-products{
 
@@ -1491,51 +1533,6 @@
 
 
 /* =====================================================
-   STORE BANNER
-===================================================== */
-
-.store-banner{
-
-    text-align:center;
-
-    padding:60px 20px;
-
-    background:#fff;
-
-}
-
-
-.store-banner h1{
-
-    margin:0;
-
-    color:#d86f9d;
-
-    font-size:clamp(2.2rem, 6vw, 5rem);
-
-    font-weight:800;
-
-    letter-spacing:1px;
-
-    line-height:1.2;
-
-}
-
-
-.store-banner p{
-
-    margin-top:18px;
-
-    color:#777;
-
-    font-size:clamp(1rem, 2vw, 1.4rem);
-
-    line-height:1.8;
-
-}
-
-
-/* =====================================================
    HERO TITLE
 ===================================================== */
 
@@ -1546,104 +1543,34 @@
 }
 
 
-@media (max-width:768px){
-
-    .hero-main-title{
-
-        font-size:42px !important;
-
-        line-height:1.35 !important;
-
-        margin:0 10px 18px !important;
-
-        font-weight:800 !important;
-
-    }
-
-}
-
-
-@media (max-width:480px){
-
-    .hero-main-title{
-
-        font-size:36px !important;
-
-        line-height:1.4 !important;
-
-        margin:0 8px 18px !important;
-
-        font-weight:800 !important;
-
-    }
-
-}
-
-
 /* =====================================================
-   TABLET
-===================================================== */
-
-@media (max-width:992px){
-
-    .main-header .header-top{
-
-        padding:12px 20px;
-
-    }
-
-
-    .main-navbar{
-
-        width:calc(100% - 50px);
-
-    }
-
-
-    .main-navbar .nav-link{
-
-        padding:10px 16px;
-
-    }
-
-
-    .product-section{
-
-        padding:35px 20px;
-
-    }
-
-
-    .product-grid{
-
-        grid-template-columns:
-            repeat(2, 300px);
-
-        justify-content:center;
-
-        gap:20px;
-
-    }
-
-}
-
-
-/* =====================================================
-   MOBILE
+   TABLET / IPAD
 ===================================================== */
 
 @media (max-width:768px){
 
+
     .main-header .header-top{
 
-        min-height:72px;
+        min-height:78px;
 
-        padding:9px 12px;
+        padding:10px 15px;
+
+    }
+
+
+    .header-logo{
+
+        right:-20px;
+
+        width:105px;
 
     }
 
 
     .main-header .left-icons{
+
+        left:15px;
 
         gap:8px;
 
@@ -1659,41 +1586,48 @@
     }
 
 
-    .main-header .header-icon{
+    .main-header .search-box:focus-within{
 
-        font-size:18px;
-
-        width:27px;
+        width:155px;
 
     }
 
 
-    .main-header .logo{
+    .main-header .header-icon{
 
-        width:75px;
+        font-size:20px;
 
-        height:75px;
+    }
+
+
+    .main-header .menu-btn{
+
+        width:38px;
+
+        height:38px;
+
+        font-size:26px;
 
     }
 
 
     .store-brand{
 
-        padding:10px 15px 8px;
+        padding:25px 15px 22px;
 
     }
 
 
     .store-brand h1{
 
-        font-size:clamp(1.8rem, 9vw, 3rem);
+        font-size:38px;
 
     }
 
 
     .store-brand p{
 
-        font-size:12px;
+        font-size:15px;
 
     }
 
@@ -1842,27 +1776,19 @@
     }
 
 
-    .add-cart-btn{
+    .product-buttons{
 
-        font-size:13px;
-
-        padding:10px;
+        gap:7px;
 
     }
 
 
-    .store-banner{
+    .add-cart-btn,
+    .buy-now-btn{
 
-        padding:40px 15px;
+        font-size:12px;
 
-    }
-
-
-    .store-banner p{
-
-        max-width:90%;
-
-        margin:15px auto 0;
+        padding:10px 5px;
 
     }
 
@@ -1870,19 +1796,33 @@
 
 
 /* =====================================================
-   SMALL MOBILE
+   MOBILE
 ===================================================== */
 
 @media (max-width:480px){
 
+
     .main-header .header-top{
 
-        padding:8px 8px;
+        min-height:65px;
+
+        padding:7px 10px;
+
+    }
+
+
+    .header-logo{
+
+        right:-12px;
+
+        width:75px;
 
     }
 
 
     .main-header .left-icons{
+
+        left:10px;
 
         gap:5px;
 
@@ -1891,16 +1831,34 @@
 
     .main-header .search-box{
 
-        width:112px;
+        width:110px;
+
+        height:35px;
 
     }
 
 
-    .main-header .logo{
+    .main-header .search-box:focus-within{
 
-        width:65px;
+        width:120px;
 
-        height:65px;
+    }
+
+
+    .main-header .search-box input{
+
+        padding:0 8px;
+
+        font-size:11px;
+
+    }
+
+
+    .main-header .search-box button{
+
+        width:32px;
+
+        font-size:15px;
 
     }
 
@@ -1909,16 +1867,23 @@
 
         font-size:17px;
 
-        width:24px;
-
     }
 
 
     .main-header .menu-btn{
 
-        font-size:25px;
+        width:32px;
 
-        width:34px;
+        height:34px;
+
+        font-size:24px;
+
+    }
+
+
+    .store-brand{
+
+        padding:18px 10px 15px;
 
     }
 
@@ -1927,12 +1892,23 @@
 
         font-size:30px;
 
+        line-height:1.2;
+
     }
 
 
     .store-brand p{
 
         font-size:11px;
+
+        margin-top:4px;
+
+    }
+
+
+    .main-navbar{
+
+        width:calc(100% - 16px);
 
     }
 
@@ -1987,9 +1963,23 @@
     }
 
 
-    .add-cart-btn{
+    .product-buttons{
+
+        flex-direction:column;
+
+        gap:7px;
+
+    }
+
+
+    .add-cart-btn,
+    .buy-now-btn{
+
+        width:100%;
 
         font-size:12px;
+
+        padding:10px;
 
     }
 
@@ -2031,7 +2021,6 @@
     </p>
 
 
-
     {% with messages =
         get_flashed_messages(
             with_categories=true
@@ -2044,13 +2033,11 @@
 
             {% for category, message in messages %}
 
-
                 <div class="review-success">
 
                     {{ message }}
 
                 </div>
-
 
             {% endfor %}
 
@@ -2078,7 +2065,6 @@
             }}"></textarea>
 
 
-
         <label>
 
             {{
@@ -2090,10 +2076,10 @@
         </label>
 
 
-
         <select
             name="stars"
             required>
+
 
             <option value="5">
 
@@ -2162,7 +2148,6 @@
         </select>
 
 
-
         <button type="submit">
 
             {{
@@ -2173,7 +2158,6 @@
 
         </button>
 
-
     </form>
 
 </section>
@@ -2181,10 +2165,11 @@
 
 
 <!-- =====================================================
-     REVIEWS CSS
+     REVIEWS STYLE
 ===================================================== -->
 
 <style>
+
 
 .reviews-section{
 
@@ -2372,15 +2357,10 @@ function closeMenu(){
    QUANTITY
 ===================================================== */
 
-function changeQuantity(
-    id,
-    change
-){
+function changeQuantity(id, change){
 
     const qty =
-        document.getElementById(
-            "qty-" + id
-        );
+        document.getElementById("qty-" + id);
 
 
     if(!qty){
@@ -2391,13 +2371,10 @@ function changeQuantity(
 
 
     let value =
-        parseInt(
-            qty.innerText
-        ) || 1;
+        parseInt(qty.innerText) || 1;
 
 
-    value +=
-        Number(change);
+    value += Number(change);
 
 
     if(value < 1){
@@ -2407,8 +2384,7 @@ function changeQuantity(
     }
 
 
-    qty.innerText =
-        value;
+    qty.innerText = value;
 
 }
 
@@ -2420,27 +2396,24 @@ function changeQuantity(
 
 async function addToCart(id){
 
+
     const qtyElement =
-        document.getElementById(
-            "qty-" + id
-        );
+        document.getElementById("qty-" + id);
 
 
     const quantity =
         qtyElement
-        ? parseInt(
-            qtyElement.innerText
-        ) || 1
+        ? parseInt(qtyElement.innerText) || 1
         : 1;
 
 
     try{
 
+
         const res =
             await fetch(
                 "/api/cart/add",
                 {
-
                     method:"POST",
 
                     headers:{
@@ -2448,17 +2421,10 @@ async function addToCart(id){
                             "application/json"
                     },
 
-                    body:
-                        JSON.stringify({
-
-                            product_id:
-                                id,
-
-                            quantity:
-                                quantity
-
-                        })
-
+                    body:JSON.stringify({
+                        product_id:id,
+                        quantity:quantity
+                    })
                 }
             );
 
@@ -2469,32 +2435,35 @@ async function addToCart(id){
 
         if(data.success){
 
+
             alert(
-
                 "{{ '✅ تمت إضافة المنتج إلى السلة' if current_lang == 'ar' else '✅ Added to cart!' }}"
-
             );
+
 
         }
 
+
         else{
 
-            alert(
 
+            alert(
                 "❌ " +
                 (
                     data.error ||
                     "{{ 'تعذر إضافة المنتج.' if current_lang == 'ar' else 'Could not add product.' }}"
                 )
-
             );
+
 
         }
 
 
     }
 
+
     catch(error){
+
 
         console.error(
             "Add to cart error:",
@@ -2503,17 +2472,115 @@ async function addToCart(id){
 
 
         alert(
-
-            "{{ '❌ حدث خطأ أثناء إضافة المنتج إلى السلة.' if current_lang == 'ar' else '❌ An error occurred while adding the product to cart.' }}"
-
+            "{{ '❌ حدث خطأ أثناء إضافة المنتج إلى السلة.' if current_lang == 'ar' else '❌ An error occurred while adding the product to the cart.' }}"
         );
+
 
     }
 
 }
 
-</script>
 
+
+/* =====================================================
+   BUY NOW
+===================================================== */
+
+async function buyNow(id){
+
+
+    const qtyElement =
+        document.getElementById("qty-" + id);
+
+
+    const quantity =
+        qtyElement
+        ? parseInt(qtyElement.innerText) || 1
+        : 1;
+
+
+    try{
+
+
+        const res =
+            await fetch(
+                "/api/cart/add",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:JSON.stringify({
+
+                        product_id:id,
+
+                        quantity:quantity
+
+                    })
+                }
+            );
+
+
+        const data =
+            await res.json();
+
+
+        if(data.success){
+
+
+            /*
+             * بعد إضافة المنتج بنجاح
+             * ننتقل مباشرة إلى السلة.
+             */
+
+            window.location.href =
+                "{{ url_for('cart_page') }}";
+
+
+        }
+
+
+        else{
+
+
+            alert(
+                "❌ " +
+                (
+                    data.error ||
+                    "{{ 'تعذر شراء المنتج.' if current_lang == 'ar' else 'Could not buy the product.' }}"
+                )
+            );
+
+
+        }
+
+
+    }
+
+
+    catch(error){
+
+
+        console.error(
+            "Buy now error:",
+            error
+        );
+
+
+        alert(
+            "{{ '❌ حدث خطأ أثناء شراء المنتج.' if current_lang == 'ar' else '❌ An error occurred while buying the product.' }}"
+        );
+
+
+    }
+
+}
+
+
+</script>
 
 
 </body>

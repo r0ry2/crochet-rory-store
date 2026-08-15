@@ -6,28 +6,76 @@
 
 {% block content %}
 
+<!-- =====================================================
+     ORDERS PAGE
+===================================================== -->
+
+<div
+    class="orders-page"
+    dir="{{ 'rtl' if current_lang == 'ar' else 'ltr' }}"
+>
+
+
 <style>
+
+/* =====================================================
+   ORDERS PAGE DIRECTION
+===================================================== */
+
+.orders-page{
+
+    width:100%;
+
+    direction:{{ 'rtl' if current_lang == 'ar' else 'ltr' }};
+
+    text-align:{{ 'right' if current_lang == 'ar' else 'left' }};
+
+    box-sizing:border-box;
+
+}
+
+
+/* =====================================================
+   STATUS TABS
+===================================================== */
 
 .status-tabs{
 
     display:flex;
+
     gap:12px;
+
     flex-wrap:wrap;
+
     margin-bottom:25px;
 
+    justify-content:flex-start;
+
+    direction:{{ 'rtl' if current_lang == 'ar' else 'ltr' }};
+
 }
+
 
 .status-tabs a{
 
     text-decoration:none;
+
     background:white;
+
     color:#555;
+
     padding:10px 18px;
+
     border-radius:30px;
+
     border:1px solid #eee;
+
     transition:.3s;
 
+    white-space:nowrap;
+
 }
+
 
 .status-tabs a:hover{
 
@@ -35,46 +83,85 @@
 
 }
 
+
 .status-tabs a.active{
 
     background:#e26fa7;
+
     color:white;
 
 }
 
+
+/* =====================================================
+   ORDERS BOX
+===================================================== */
+
 .orders-box{
 
     background:white;
+
     border-radius:18px;
+
     box-shadow:0 8px 20px rgba(0,0,0,.08);
-    overflow:hidden;
+
+    overflow-x:auto;
+
+    overflow-y:hidden;
+
+    width:100%;
 
 }
+
+
+/* =====================================================
+   TABLE
+===================================================== */
 
 .orders-table{
 
     width:100%;
+
     border-collapse:collapse;
 
+    direction:{{ 'rtl' if current_lang == 'ar' else 'ltr' }};
+
+    min-width:850px;
+
 }
+
 
 .orders-table th{
 
     background:#fff4f8;
+
     color:#444;
+
     padding:16px;
+
     text-align:center;
+
     border-bottom:1px solid #eee;
 
+    white-space:nowrap;
+
+    font-weight:600;
+
 }
+
 
 .orders-table td{
 
     padding:18px;
+
     text-align:center;
+
     border-bottom:1px solid #f2f2f2;
 
+    vertical-align:middle;
+
 }
+
 
 .orders-table tr:hover{
 
@@ -82,14 +169,42 @@
 
 }
 
-.status{
 
-    padding:6px 15px;
-    border-radius:20px;
-    color:white;
-    font-size:14px;
+/* =====================================================
+   ORDER CODE
+===================================================== */
+
+.order-code{
+
+    font-weight:600;
+
+    color:#555;
+
+    white-space:nowrap;
 
 }
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.status{
+
+    display:inline-block;
+
+    padding:6px 15px;
+
+    border-radius:20px;
+
+    color:white;
+
+    font-size:14px;
+
+    white-space:nowrap;
+
+}
+
 
 .pending{
 
@@ -97,11 +212,13 @@
 
 }
 
+
 .review{
 
     background:#3498db;
 
 }
+
 
 .processing{
 
@@ -109,11 +226,13 @@
 
 }
 
+
 .completed{
 
     background:#2ecc71;
 
 }
+
 
 .shipping{
 
@@ -121,11 +240,13 @@
 
 }
 
+
 .delivered{
 
     background:#27ae60;
 
 }
+
 
 .cancelled{
 
@@ -133,31 +254,59 @@
 
 }
 
+
+/* =====================================================
+   VIEW BUTTON
+===================================================== */
+
 .view-btn{
 
+    display:inline-block;
+
     background:#e26fa7;
+
     color:white;
+
     padding:8px 18px;
+
     border-radius:8px;
+
     text-decoration:none;
 
+    white-space:nowrap;
+
+    transition:.3s;
+
 }
+
 
 .view-btn:hover{
 
     opacity:.9;
 
+    transform:translateY(-1px);
+
 }
+
+
+/* =====================================================
+   TOOLBAR
+===================================================== */
 
 .toolbar{
 
     display:flex;
 
-    justify-content:flex-end;
+    justify-content:{{ 'flex-start' if current_lang == 'ar' else 'flex-start' }};
+
+    align-items:center;
 
     margin-bottom:15px;
 
+    direction:{{ 'rtl' if current_lang == 'ar' else 'ltr' }};
+
 }
+
 
 .edit-btn{
 
@@ -175,7 +324,10 @@
 
     font-size:15px;
 
+    transition:.3s;
+
 }
+
 
 .edit-btn:hover{
 
@@ -183,11 +335,17 @@
 
 }
 
+
+/* =====================================================
+   EDIT MENU
+===================================================== */
+
 .edit-menu{
 
     position:relative;
 
 }
+
 
 .dropdown{
 
@@ -211,7 +369,10 @@
 
     z-index:999;
 
+    direction:{{ 'rtl' if current_lang == 'ar' else 'ltr' }};
+
 }
+
 
 .dropdown button{
 
@@ -223,19 +384,25 @@
 
     padding:12px 18px;
 
-    text-align:right;
+    text-align:{{ 'right' if current_lang == 'ar' else 'left' }};
 
     cursor:pointer;
 
     font-size:15px;
 
+    color:#555;
+
+    transition:.2s;
+
 }
+
 
 .dropdown button:hover{
 
     background:#fff3f8;
 
 }
+
 
 .menu-title{
 
@@ -247,7 +414,10 @@
 
     color:#666;
 
+    text-align:{{ 'right' if current_lang == 'ar' else 'left' }};
+
 }
+
 
 .dropdown hr{
 
@@ -255,196 +425,600 @@
 
     border-top:1px solid #eee;
 
+    margin:0;
+
 }
+
 
 .delete{
 
-    color:#d63031;
+    color:#d63031 !important;
+
+}
+
+
+/* =====================================================
+   CHECKBOX
+===================================================== */
+
+.orders-table input[type="checkbox"]{
+
+    width:18px;
+
+    height:18px;
+
+    cursor:pointer;
+
+    accent-color:#e26fa7;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:768px){
+
+    .orders-page{
+
+        width:100%;
+
+    }
+
+
+    .status-tabs{
+
+        gap:8px;
+
+        margin-bottom:18px;
+
+    }
+
+
+    .status-tabs a{
+
+        padding:8px 13px;
+
+        font-size:13px;
+
+    }
+
+
+    .orders-box{
+
+        border-radius:14px;
+
+    }
+
+
+    .orders-table th{
+
+        padding:13px 10px;
+
+        font-size:13px;
+
+    }
+
+
+    .orders-table td{
+
+        padding:13px 10px;
+
+        font-size:13px;
+
+    }
+
+
+    .status{
+
+        padding:5px 10px;
+
+        font-size:12px;
+
+    }
+
+
+    .view-btn{
+
+        padding:7px 13px;
+
+        font-size:13px;
+
+    }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media(max-width:480px){
+
+    .status-tabs{
+
+        justify-content:flex-start;
+
+    }
+
+
+    .status-tabs a{
+
+        font-size:12px;
+
+        padding:7px 11px;
+
+    }
+
+
+    .edit-btn{
+
+        padding:9px 14px;
+
+        font-size:13px;
+
+    }
 
 }
 
 </style>
 
 
+<!-- =====================================================
+     STATUS TABS
+===================================================== -->
+
 <div class="status-tabs">
 
-    <a href="{{ url_for('admin_orders', status='all') }}"
-       class="{% if current_status=='all' %}active{% endif %}">
-        الكل ({{ counts['all'] }})
-    </a>
-        <a href="{{ url_for('admin_orders', status='Pending Review') }}"
-       class="{% if current_status=='Pending Review' %}active{% endif %}">
-        بانتظار المراجعة ({{ counts['Pending Review'] }})
-    </a>
+    <a
+        href="{{ url_for('admin_orders', status='all') }}"
+        class="{% if current_status=='all' %}active{% endif %}"
+    >
 
-    <a href="{{ url_for('admin_orders', status='Pending Payment') }}"
-       class="{% if current_status=='Pending Payment' %}active{% endif %}">
-        بانتظار الدفع ({{ counts['Pending Payment'] }})
-    </a>
+        {{
+            "الكل"
+            if current_lang=="ar"
+            else "All"
+        }}
 
+        ({{ counts['all'] }})
 
-
-    <a href="{{ url_for('admin_orders', status='Processing') }}"
-       class="{% if current_status=='Processing' %}active{% endif %}">
-        قيد التنفيذ ({{ counts['Processing'] }})
     </a>
 
-    <a href="{{ url_for('admin_orders', status='Completed') }}"
-       class="{% if current_status=='Completed' %}active{% endif %}">
-        تم التنفيذ ({{ counts['Completed'] }})
+
+    <a
+        href="{{ url_for('admin_orders', status='Pending Review') }}"
+        class="{% if current_status=='Pending Review' %}active{% endif %}"
+    >
+
+        {{
+            "بانتظار المراجعة"
+            if current_lang=="ar"
+            else "Pending Review"
+        }}
+
+        ({{ counts['Pending Review'] }})
+
     </a>
 
-    <a href="{{ url_for('admin_orders', status='Shipping') }}"
-       class="{% if current_status=='Shipping' %}active{% endif %}">
-        جاري التوصيل ({{ counts['Shipping'] }})
+
+    <a
+        href="{{ url_for('admin_orders', status='Pending Payment') }}"
+        class="{% if current_status=='Pending Payment' %}active{% endif %}"
+    >
+
+        {{
+            "بانتظار الدفع"
+            if current_lang=="ar"
+            else "Pending Payment"
+        }}
+
+        ({{ counts['Pending Payment'] }})
+
     </a>
 
-    <a href="{{ url_for('admin_orders', status='Delivered') }}"
-       class="{% if current_status=='Delivered' %}active{% endif %}">
-        تم التسليم ({{ counts['Delivered'] }})
+
+    <a
+        href="{{ url_for('admin_orders', status='Processing') }}"
+        class="{% if current_status=='Processing' %}active{% endif %}"
+    >
+
+        {{
+            "قيد التنفيذ"
+            if current_lang=="ar"
+            else "Processing"
+        }}
+
+        ({{ counts['Processing'] }})
+
     </a>
 
-    <a href="{{ url_for('admin_orders', status='Cancelled') }}"
-       class="{% if current_status=='Cancelled' %}active{% endif %}">
-        ملغاة ({{ counts['Cancelled'] }})
+
+    <a
+        href="{{ url_for('admin_orders', status='Completed') }}"
+        class="{% if current_status=='Completed' %}active{% endif %}"
+    >
+
+        {{
+            "تم التنفيذ"
+            if current_lang=="ar"
+            else "Completed"
+        }}
+
+        ({{ counts['Completed'] }})
+
+    </a>
+
+
+    <a
+        href="{{ url_for('admin_orders', status='Shipping') }}"
+        class="{% if current_status=='Shipping' %}active{% endif %}"
+    >
+
+        {{
+            "جاري التوصيل"
+            if current_lang=="ar"
+            else "Shipping"
+        }}
+
+        ({{ counts['Shipping'] }})
+
+    </a>
+
+
+    <a
+        href="{{ url_for('admin_orders', status='Delivered') }}"
+        class="{% if current_status=='Delivered' %}active{% endif %}"
+    >
+
+        {{
+            "تم التسليم"
+            if current_lang=="ar"
+            else "Delivered"
+        }}
+
+        ({{ counts['Delivered'] }})
+
+    </a>
+
+
+    <a
+        href="{{ url_for('admin_orders', status='Cancelled') }}"
+        class="{% if current_status=='Cancelled' %}active{% endif %}"
+    >
+
+        {{
+            "ملغاة"
+            if current_lang=="ar"
+            else "Cancelled"
+        }}
+
+        ({{ counts['Cancelled'] }})
+
     </a>
 
 </div>
 
+
+<!-- =====================================================
+     TOOLBAR
+===================================================== -->
+
 <div class="toolbar">
 
-<div class="edit-menu" id="editMenu" style="display:none;">
 
-    <button class="edit-btn" onclick="toggleMenu()">
+    <div
+        class="edit-menu"
+        id="editMenu"
+        style="display:none;"
+    >
 
-        ✏️ تحرير ▼
 
-    </button>
+        <button
+            type="button"
+            class="edit-btn"
+            onclick="toggleMenu()"
+        >
 
-    <div class="dropdown" id="dropdownMenu">
+            ✏️
 
-        <div class="menu-title">
+            {{
+                "تحرير"
+                if current_lang=="ar"
+                else "Edit"
+            }}
 
-            تعديل حالة الطلب
+            ▼
+
+        </button>
+
+
+        <div
+            class="dropdown"
+            id="dropdownMenu"
+        >
+
+
+            <div class="menu-title">
+
+                {{
+                    "تعديل حالة الطلب"
+                    if current_lang=="ar"
+                    else "Change Order Status"
+                }}
+
+            </div>
+
+
+            <button onclick="changeStatus('Pending Payment')">
+
+                {{
+                    "بانتظار الدفع"
+                    if current_lang=="ar"
+                    else "Pending Payment"
+                }}
+
+            </button>
+
+
+            <button onclick="changeStatus('Pending Review')">
+
+                {{
+                    "بانتظار المراجعة"
+                    if current_lang=="ar"
+                    else "Pending Review"
+                }}
+
+            </button>
+
+
+            <button onclick="changeStatus('Processing')">
+
+                {{
+                    "قيد التنفيذ"
+                    if current_lang=="ar"
+                    else "Processing"
+                }}
+
+            </button>
+
+
+            <button onclick="changeStatus('Completed')">
+
+                {{
+                    "تم التنفيذ"
+                    if current_lang=="ar"
+                    else "Completed"
+                }}
+
+            </button>
+
+
+            <button onclick="changeStatus('Shipping')">
+
+                {{
+                    "جاري التوصيل"
+                    if current_lang=="ar"
+                    else "Shipping"
+                }}
+
+            </button>
+
+
+            <button onclick="changeStatus('Delivered')">
+
+                {{
+                    "تم التسليم"
+                    if current_lang=="ar"
+                    else "Delivered"
+                }}
+
+            </button>
+
+
+            <button onclick="changeStatus('Cancelled')">
+
+                {{
+                    "ملغاة"
+                    if current_lang=="ar"
+                    else "Cancelled"
+                }}
+
+            </button>
+
+
+            <hr>
+
+
+            <button onclick="printInvoice()">
+
+                🖨
+
+                {{
+                    "طباعة الفاتورة"
+                    if current_lang=="ar"
+                    else "Print Invoice"
+                }}
+
+            </button>
+
+
+            <button type="button">
+
+                📦
+
+                {{
+                    "طباعة البوليصة"
+                    if current_lang=="ar"
+                    else "Print Shipping Label"
+                }}
+
+            </button>
+
+
+            <button
+                type="button"
+                class="delete"
+                onclick="deleteOrders()"
+            >
+
+                🗑
+
+                {{
+                    "حذف الطلب"
+                    if current_lang=="ar"
+                    else "Delete Order"
+                }}
+
+            </button>
+
 
         </div>
-
-        <button onclick="changeStatus('Pending Payment')">
-
-            بانتظار الدفع
-
-        </button>
-
-        <button onclick="changeStatus('Pending Review')">
-
-            بانتظار المراجعة
-
-        </button>
-
-        <button onclick="changeStatus('Processing')">
-
-            قيد التنفيذ
-
-        </button>
-
-        <button onclick="changeStatus('Completed')">
-
-            تم التنفيذ
-
-        </button>
-
-        <button onclick="changeStatus('Shipping')">
-
-            جاري التوصيل
-
-        </button>
-
-        <button onclick="changeStatus('Delivered')">
-
-            تم التسليم
-
-        </button>
-
-        <button onclick="changeStatus('Cancelled')">
-
-            ملغاة
-
-        </button>
-
-        <hr>
-<button onclick="printInvoice()">
-    🖨 طباعة الفاتورة
-</button>
-
-        <button>
-
-            📦 طباعة البوليصة
-
-        </button>
-         <button class="delete" onclick="deleteOrders()">
-
-                🗑 حذف الطلب
-
-        </button>
 
     </div>
 
 </div>
 
-</div>
+
+<!-- =====================================================
+     ORDERS TABLE
+===================================================== -->
 
 <div class="orders-box">
 
+
 <table class="orders-table">
+
 
     <thead>
 
         <tr>
 
+
             <th>
+
                 <input
                     type="checkbox"
-                    id="selectAll">
+                    id="selectAll"
+                >
+
             </th>
 
-            <th>#</th>
 
-            <th>العميل</th>
+            <th>
 
-            <th>البريد</th>
+                #
 
-            <th>الإجمالي</th>
+            </th>
 
-            <th>الحالة</th>
 
-            <th>التاريخ</th>
+            <th>
 
-            <th>الإجراءات</th>
+                {{
+                    "العميل"
+                    if current_lang=="ar"
+                    else "Customer"
+                }}
+
+            </th>
+
+
+            <th>
+
+                {{
+                    "البريد"
+                    if current_lang=="ar"
+                    else "Email"
+                }}
+
+            </th>
+
+
+            <th>
+
+                {{
+                    "الإجمالي"
+                    if current_lang=="ar"
+                    else "Total"
+                }}
+
+            </th>
+
+
+            <th>
+
+                {{
+                    "الحالة"
+                    if current_lang=="ar"
+                    else "Status"
+                }}
+
+            </th>
+
+
+            <th>
+
+                {{
+                    "التاريخ"
+                    if current_lang=="ar"
+                    else "Date"
+                }}
+
+            </th>
+
+
+            <th>
+
+                {{
+                    "الإجراءات"
+                    if current_lang=="ar"
+                    else "Actions"
+                }}
+
+            </th>
+
 
         </tr>
 
     </thead>
 
+
     <tbody>
+
 
     {% for order in orders %}
 
+
         <tr>
+
 
             <td>
 
                 <input
                     type="checkbox"
                     class="order-check"
-                    value="{{ order.id }}">
+                    value="{{ order.id }}"
+                >
 
             </td>
+
+
+            <!-- =====================================================
+                 ORDER NUMBER
+            ===================================================== -->
 
             <td>
 
-                #{{ order.id }}
+                <span
+                    class="order-code"
+                    data-order-id="{{ order.id }}"
+                >
+                    --
+                </span>
 
             </td>
+
 
             <td>
 
@@ -452,121 +1026,396 @@
 
             </td>
 
+
             <td>
 
                 {{ order.customer_email or "-" }}
 
             </td>
 
+
             <td>
 
-                {{ "%.2f"|format(order.total) }} ر.س
+                {{ "%.2f"|format(order.total) }}
+
+                {{
+
+                    "ر.س"
+                    if current_lang=="ar"
+                    else "SAR"
+
+                }}
 
             </td>
 
+
             <td>
+
 
                 {% if order.status=="Pending Payment" %}
-                    <span class="status pending">بانتظار الدفع</span>
+
+                    <span class="status pending">
+
+                        {{
+
+                            "بانتظار الدفع"
+                            if current_lang=="ar"
+                            else "Pending Payment"
+
+                        }}
+
+                    </span>
+
 
                 {% elif order.status=="Pending Review" %}
-                    <span class="status review">بانتظار المراجعة</span>
+
+                    <span class="status review">
+
+                        {{
+
+                            "بانتظار المراجعة"
+                            if current_lang=="ar"
+                            else "Pending Review"
+
+                        }}
+
+                    </span>
+
 
                 {% elif order.status=="Processing" %}
-                    <span class="status processing">قيد التنفيذ</span>
+
+                    <span class="status processing">
+
+                        {{
+
+                            "قيد التنفيذ"
+                            if current_lang=="ar"
+                            else "Processing"
+
+                        }}
+
+                    </span>
+
 
                 {% elif order.status=="Completed" %}
-                    <span class="status completed">تم التنفيذ</span>
+
+                    <span class="status completed">
+
+                        {{
+
+                            "تم التنفيذ"
+                            if current_lang=="ar"
+                            else "Completed"
+
+                        }}
+
+                    </span>
+
 
                 {% elif order.status=="Shipping" %}
-                    <span class="status shipping">جاري التوصيل</span>
+
+                    <span class="status shipping">
+
+                        {{
+
+                            "جاري التوصيل"
+                            if current_lang=="ar"
+                            else "Shipping"
+
+                        }}
+
+                    </span>
+
 
                 {% elif order.status=="Delivered" %}
-                    <span class="status delivered">تم التسليم</span>
+
+                    <span class="status delivered">
+
+                        {{
+
+                            "تم التسليم"
+                            if current_lang=="ar"
+                            else "Delivered"
+
+                        }}
+
+                    </span>
+
 
                 {% elif order.status=="Cancelled" %}
-                    <span class="status cancelled">ملغاة</span>
+
+                    <span class="status cancelled">
+
+                        {{
+
+                            "ملغاة"
+                            if current_lang=="ar"
+                            else "Cancelled"
+
+                        }}
+
+                    </span>
+
 
                 {% else %}
+
                     {{ order.status }}
+
                 {% endif %}
 
-            </td>
-
-            <td>
-
-                {{ order.created_at.strftime("%Y-%m-%d") if order.created_at else "-" }}
 
             </td>
 
+
             <td>
 
-               <a href="{{ url_for('admin_order_detail', order_id=order.id) }}" class="view-btn">
-                 عرض
+                {{
+
+                    order.created_at.strftime("%Y-%m-%d")
+                    if order.created_at
+                    else "-"
+
+                }}
+
+            </td>
+
+
+            <td>
+
+
+                <a
+                    href="{{ url_for('admin_order_detail', order_id=order.id) }}"
+                    class="view-btn"
+                >
+
+                    {{
+
+                        "عرض"
+                        if current_lang=="ar"
+                        else "View"
+
+                    }}
+
                 </a>
 
+
             </td>
 
+
         </tr>
+
 
     {% else %}
 
+
         <tr>
 
-            <td colspan="8" style="text-align:center;padding:30px;">
+            <td
+                colspan="8"
+                style="text-align:center;padding:30px;"
+            >
 
-                لا توجد طلبات
+                {{
+
+                    "لا توجد طلبات"
+                    if current_lang=="ar"
+                    else "No orders found."
+
+                }}
 
             </td>
 
         </tr>
 
+
     {% endfor %}
+
 
     </tbody>
 
+
 </table>
 
+
 </div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
 <script>
 
-function updateToolbar(){
 
-    const checked = document.querySelectorAll(".order-check:checked");
+/* =====================================================
+   GENERATE 6 CHARACTER ORDER CODE
+===================================================== */
 
-    document.getElementById("editMenu").style.display =
-        checked.length ? "inline-block" : "none";
+function generateOrderCode(orderId){
+
+    const characters =
+        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    let number =
+        Number(orderId) || 0;
+
+    let code = "";
+
+
+    while(number > 0){
+
+        code =
+            characters[number % 36] + code;
+
+        number =
+            Math.floor(number / 36);
+
+    }
+
+
+    /*
+        نضمن أن الكود 6 خانات:
+        R + خمس خانات
+    */
+
+    code =
+        code.padStart(5, "0");
+
+
+    return "R" + code.slice(-5);
 
 }
 
 
-document.addEventListener("change", function(e){
+/* =====================================================
+   DISPLAY ORDER CODES
+===================================================== */
 
-    if(e.target.classList.contains("order-check")){
+document
+    .querySelectorAll(".order-code")
+    .forEach(function(element){
 
-        updateToolbar();
-
-    }
-
-});
+        const orderId =
+            element.dataset.orderId;
 
 
-document.getElementById("selectAll").addEventListener("change", function(){
-
-    document.querySelectorAll(".order-check").forEach(box=>{
-
-        box.checked = this.checked;
+        element.textContent =
+            generateOrderCode(orderId);
 
     });
 
-    updateToolbar();
 
-});
+/* =====================================================
+   UPDATE TOOLBAR
+===================================================== */
 
+function updateToolbar(){
+
+    const checked =
+        document.querySelectorAll(
+            ".order-check:checked"
+        );
+
+
+    const editMenu =
+        document.getElementById(
+            "editMenu"
+        );
+
+
+    if(!editMenu){
+
+        return;
+
+    }
+
+
+    editMenu.style.display =
+        checked.length
+        ? "inline-block"
+        : "none";
+
+}
+
+
+/* =====================================================
+   CHECKBOX CHANGE
+===================================================== */
+
+document.addEventListener(
+    "change",
+    function(e){
+
+        if(
+            e.target.classList.contains(
+                "order-check"
+            )
+        ){
+
+            updateToolbar();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   SELECT ALL
+===================================================== */
+
+const selectAll =
+    document.getElementById(
+        "selectAll"
+    );
+
+
+if(selectAll){
+
+    selectAll.addEventListener(
+        "change",
+        function(){
+
+            document
+                .querySelectorAll(
+                    ".order-check"
+                )
+                .forEach(
+                    box => {
+
+                        box.checked =
+                            this.checked;
+
+                    }
+                );
+
+
+            updateToolbar();
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   TOGGLE MENU
+===================================================== */
 
 function toggleMenu(){
 
-    const menu = document.getElementById("dropdownMenu");
+    const menu =
+        document.getElementById(
+            "dropdownMenu"
+        );
+
+
+    if(!menu){
+
+        return;
+
+    }
+
 
     menu.style.display =
         menu.style.display === "block"
@@ -576,160 +1425,312 @@ function toggleMenu(){
 }
 
 
-window.addEventListener("click", function(e){
+/* =====================================================
+   CLOSE MENU
+===================================================== */
 
-    if(!e.target.closest(".edit-menu")){
+window.addEventListener(
+    "click",
+    function(e){
 
-        document.getElementById("dropdownMenu").style.display = "none";
+        if(
+            !e.target.closest(
+                ".edit-menu"
+            )
+        ){
+
+            const menu =
+                document.getElementById(
+                    "dropdownMenu"
+                );
+
+
+            if(menu){
+
+                menu.style.display =
+                    "none";
+
+            }
+
+        }
 
     }
+);
 
-});
 
+/* =====================================================
+   CHANGE STATUS
+===================================================== */
 
 async function changeStatus(status){
 
     const selected = [];
 
-    document.querySelectorAll(".order-check:checked").forEach(box=>{
 
-        selected.push(parseInt(box.value));
+    document
+        .querySelectorAll(
+            ".order-check:checked"
+        )
+        .forEach(
+            box => {
 
-    });
+                selected.push(
+                    parseInt(
+                        box.value
+                    )
+                );
+
+            }
+        );
+
 
     if(selected.length === 0){
 
-        alert("يرجى تحديد طلب واحد على الأقل.");
+        alert(
+            "{{ 'يرجى تحديد طلب واحد على الأقل.' if current_lang=='ar' else 'Please select at least one order.' }}"
+        );
 
         return;
 
     }
 
+
     try{
 
-        const response = await fetch("/admin/orders/update-status",{
 
-            method:"POST",
+        const response =
+            await fetch(
+                "/admin/orders/update-status",
+                {
+                    method:"POST",
 
-            headers:{
-                "Content-Type":"application/json"
-            },
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
 
-            body:JSON.stringify({
+                    body:
+                        JSON.stringify({
 
-                order_ids:selected,
+                            order_ids:
+                                selected,
 
-                status:status
+                            status:
+                                status
 
-            })
+                        })
 
-        });
+                }
+            );
 
-        const data = await response.json();
+
+        const data =
+            await response.json();
+
 
         if(data.success){
 
             location.reload();
 
-        }else{
+        }
 
-            alert("حدث خطأ أثناء تحديث الحالة.");
+        else{
+
+            alert(
+                "{{ 'حدث خطأ أثناء تحديث الحالة.' if current_lang=='ar' else 'An error occurred while updating the status.' }}"
+            );
 
         }
 
-    }catch(error){
-
-        console.error(error);
-
-        alert("تعذر الاتصال بالسيرفر.");
 
     }
 
-    document.getElementById("dropdownMenu").style.display = "none";
+    catch(error){
+
+        console.error(error);
+
+
+        alert(
+            "{{ 'تعذر الاتصال بالسيرفر.' if current_lang=='ar' else 'Could not connect to the server.' }}"
+        );
+
+    }
+
+
+    const menu =
+        document.getElementById(
+            "dropdownMenu"
+        );
+
+
+    if(menu){
+
+        menu.style.display =
+            "none";
+
+    }
 
 }
 
+
+/* =====================================================
+   DELETE ORDERS
+===================================================== */
 
 async function deleteOrders(){
 
     const selected = [];
 
-    document.querySelectorAll(".order-check:checked").forEach(box=>{
 
-        selected.push(parseInt(box.value));
+    document
+        .querySelectorAll(
+            ".order-check:checked"
+        )
+        .forEach(
+            box => {
 
-    });
+                selected.push(
+                    parseInt(
+                        box.value
+                    )
+                );
+
+            }
+        );
+
 
     if(selected.length === 0){
 
-        alert("يرجى تحديد طلب واحد على الأقل.");
+        alert(
+            "{{ 'يرجى تحديد طلب واحد على الأقل.' if current_lang=='ar' else 'Please select at least one order.' }}"
+        );
 
         return;
 
     }
 
-    if(!confirm("هل أنت متأكد من حذف الطلبات المحددة؟")){
+
+    if(
+        !confirm(
+            "{{ 'هل أنت متأكد من حذف الطلبات المحددة؟' if current_lang=='ar' else 'Are you sure you want to delete the selected orders?' }}"
+        )
+    ){
 
         return;
 
     }
+
 
     try{
 
-        const response = await fetch("/admin/orders/delete",{
 
-            method:"POST",
+        const response =
+            await fetch(
+                "/admin/orders/delete",
+                {
+                    method:"POST",
 
-            headers:{
-                "Content-Type":"application/json"
-            },
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
 
-            body:JSON.stringify({
+                    body:
+                        JSON.stringify({
 
-                order_ids:selected
+                            order_ids:
+                                selected
 
-            })
+                        })
 
-        });
+                }
+            );
 
-        const data = await response.json();
+
+        const data =
+            await response.json();
+
 
         if(data.success){
 
             location.reload();
 
-        }else{
+        }
 
-            alert(data.error || "فشل حذف الطلبات.");
+        else{
+
+            alert(
+                data.error ||
+                "{{ 'فشل حذف الطلبات.' if current_lang=='ar' else 'Failed to delete orders.' }}"
+            );
 
         }
 
-    }catch(error){
-
-        console.error(error);
-
-        alert("تعذر الاتصال بالسيرفر.");
 
     }
 
-    document.getElementById("dropdownMenu").style.display = "none";
+    catch(error){
+
+        console.error(error);
+
+
+        alert(
+            "{{ 'تعذر الاتصال بالسيرفر.' if current_lang=='ar' else 'Could not connect to the server.' }}"
+        );
+
+    }
+
+
+    const menu =
+        document.getElementById(
+            "dropdownMenu"
+        );
+
+
+    if(menu){
+
+        menu.style.display =
+            "none";
+
+    }
 
 }
+
+
+/* =====================================================
+   PRINT INVOICE
+===================================================== */
+
 function printInvoice(){
 
-    const selected = document.querySelector(".order-check:checked");
+    const selected =
+        document.querySelector(
+            ".order-check:checked"
+        );
+
 
     if(!selected){
 
-        alert("يرجى تحديد طلب.");
+        alert(
+            "{{ 'يرجى تحديد طلب.' if current_lang=='ar' else 'Please select an order.' }}"
+        );
 
         return;
 
     }
 
-    window.open("/admin/invoice/" + selected.value, "_blank");
+
+    window.open(
+        "/admin/invoice/" +
+        selected.value,
+        "_blank"
+    );
 
 }
 
 </script>
+
+
+</div>
+
 {% endblock %}

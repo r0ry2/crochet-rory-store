@@ -10,7 +10,7 @@
 <style>
 
 /* =====================================================
-   DASHBOARD GRID
+   DASHBOARD
 ===================================================== */
 
 .dashboard-grid {
@@ -21,6 +21,85 @@
         repeat(auto-fit, minmax(260px, 1fr));
 
     gap: 25px;
+
+}
+
+
+/* =====================================================
+   TODAY VISITOR SUMMARY
+===================================================== */
+
+.visitor-summary {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 18px;
+
+    margin-bottom: 30px;
+
+}
+
+
+.visitor-summary-card {
+
+    background: #ffffff;
+
+    border: 1px solid #f3c4d4;
+
+    border-radius: 18px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 8px 20px rgba(216, 111, 157, .10);
+
+    transition: .3s;
+
+}
+
+
+.visitor-summary-card:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 12px 28px rgba(216, 111, 157, .18);
+
+}
+
+
+.visitor-summary-icon {
+
+    font-size: 24px;
+
+    margin-bottom: 8px;
+
+}
+
+
+.visitor-summary-title {
+
+    color: #777;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    margin-bottom: 8px;
+
+}
+
+
+.visitor-summary-number {
+
+    color: #d85f91;
+
+    font-size: 32px;
+
+    font-weight: 800;
 
 }
 
@@ -57,8 +136,6 @@
 }
 
 
-/* وردي خفيف أعلى الكرت */
-
 .dashboard-card::before {
 
     content: "";
@@ -77,8 +154,6 @@
 
 }
 
-
-/* Hover */
 
 .dashboard-card:hover {
 
@@ -129,7 +204,7 @@
 
 
 /* =====================================================
-   VISITOR COUNTER
+   NUMBER
 ===================================================== */
 
 .visitor-number {
@@ -146,17 +221,17 @@
 
 
 /* =====================================================
-   VISITOR CARD SPECIAL
+   VISITOR CARD
 ===================================================== */
 
-.dashboard-card:has(.visitor-number) {
+.visitor-card {
 
     background: #f9d5e3;
 
 }
 
 
-.dashboard-card:has(.visitor-number)::before {
+.visitor-card::before {
 
     background: #d86f9d;
 
@@ -164,8 +239,79 @@
 
 
 /* =====================================================
+   VISITOR CARD TITLE
+===================================================== */
+
+.visitor-card h3 {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+}
+
+
+/* =====================================================
+   ARROW
+===================================================== */
+
+.details-arrow {
+
+    margin-right: auto;
+
+    font-size: 22px;
+
+    transition: .3s;
+
+}
+
+
+.visitor-card:hover .details-arrow {
+
+    transform: translateX(-6px);
+
+}
+
+
+/* =====================================================
+   ONLINE DOT
+===================================================== */
+
+.online-dot {
+
+    display: inline-block;
+
+    width: 12px;
+
+    height: 12px;
+
+    background: #52c878;
+
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 0 4px rgba(82, 200, 120, .12);
+
+}
+
+
+/* =====================================================
    RESPONSIVE
 ===================================================== */
+
+@media (max-width: 1100px) {
+
+    .visitor-summary {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+}
+
 
 @media (max-width: 992px) {
 
@@ -188,11 +334,33 @@
 }
 
 
-/* =====================================================
-   MOBILE
-===================================================== */
-
 @media (max-width: 768px) {
+
+    .visitor-summary {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 14px;
+
+        margin-bottom: 22px;
+
+    }
+
+
+    .visitor-summary-card {
+
+        padding: 17px;
+
+    }
+
+
+    .visitor-summary-number {
+
+        font-size: 28px;
+
+    }
+
 
     .dashboard-grid {
 
@@ -241,6 +409,20 @@
 
 @media (max-width: 400px) {
 
+    .visitor-summary {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .visitor-summary-number {
+
+        font-size: 26px;
+
+    }
+
+
     .dashboard-grid {
 
         gap: 15px;
@@ -282,8 +464,15 @@
 </style>
 
 
+
 <!-- =====================================================
-     DASHBOARD
+     TODAY VISITOR SUMMARY
+===================================================== -->
+
+
+
+<!-- =====================================================
+     DASHBOARD GRID
 ===================================================== -->
 
 <div class="dashboard-grid">
@@ -308,7 +497,6 @@
             }}
 
         </h3>
-
 
         <p>
 
@@ -345,7 +533,6 @@
 
         </h3>
 
-
         <p>
 
             {{
@@ -381,14 +568,19 @@
 
         </h3>
 
+        <div class="visitor-number">
+
+            {{ user_count }}
+
+        </div>
 
         <p>
 
             {{
-                "إدارة حسابات العملاء والمشرفين."
+                "إجمالي عدد المستخدمين المسجلين في المتجر."
                 if current_lang == "ar"
                 else
-                "Manage customer and administrator accounts."
+                "Total number of registered users in the store."
             }}
 
         </p>
@@ -416,7 +608,6 @@
             }}
 
         </h3>
-
 
         <p>
 
@@ -453,7 +644,6 @@
 
         </h3>
 
-
         <p>
 
             {{
@@ -470,22 +660,29 @@
 
 
     <!-- =================================================
-         VISITOR COUNTER
+         👀 VISITORS
+         كرت واحد فقط للزوار
     ================================================== -->
 
     <a
-        href="#"
-        class="dashboard-card">
+        href="{{ url_for('admin_visitors') }}"
+        class="dashboard-card visitor-card">
 
         <h3>
+
+            <span class="online-dot"></span>
 
             👀
 
             {{
-                "عدد الزيارات"
+                "الزوار"
                 if current_lang == "ar"
                 else "Visitors"
             }}
+
+            <span class="details-arrow">
+                ←
+            </span>
 
         </h3>
 
@@ -500,10 +697,10 @@
         <p>
 
             {{
-                "إجمالي عدد زوار المتجر."
+                "اضغط لعرض تفاصيل الزوار والزيارات، وزيارات اليوم والزوار النشطين."
                 if current_lang == "ar"
                 else
-                "Total number of store visitors."
+                "Click to view visitor details, today's visits, and active visitors."
             }}
 
         </p>
@@ -531,7 +728,6 @@
             }}
 
         </h3>
-
 
         <p>
 
