@@ -1340,11 +1340,6 @@ def register():
 
         # ==========================================
         # 📧 التحقق من صيغة البريد الإلكتروني
-        # مثال:
-        # example@gmail.com
-        # name@hotmail.com
-        # user@outlook.com
-        # user@yahoo.com
         # ==========================================
 
         email_pattern = (
@@ -1413,8 +1408,8 @@ def register():
         # ==========================================
         # 👤 إنشاء المستخدم
         #
-        # ملاحظة:
-        # اسم المستخدم مسموح يتكرر
+        # الاسم مسموح يتكرر
+        # البريد فقط يجب أن يكون فريدًا
         # ==========================================
 
         new_user = User(
@@ -1436,9 +1431,7 @@ def register():
         # ==========================================
 
         new_user.confirmed = True
-
         new_user.verification_code = None
-
         new_user.verification_expiry = None
 
         # ==========================================
@@ -1446,16 +1439,56 @@ def register():
         # ==========================================
 
         if email == "admin@store.com":
-
             new_user.role = "admin"
+        else:
+            new_user.role = "user"
 
         # ==========================================
         # 💾 حفظ المستخدم
         # ==========================================
 
-        db.session.add(new_user)
+        try:
 
-        db.session.commit()
+            db.session.add(new_user)
+            db.session.commit()
+
+        except Exception as e:
+
+            db.session.rollback()
+
+            print(
+                f"❌ Registration error: {e}"
+            )
+
+            if "user_email_key" in str(e):
+
+                form.email.errors.append(
+                    "هذا البريد الإلكتروني مسجل بالفعل."
+                )
+
+            else:
+
+                form.email.errors.append(
+                    "حدث خطأ أثناء إنشاء الحساب، حاول مرة أخرى."
+                )
+
+            login_form = LoginForm()
+            verify_form = VerifyCodeForm()
+
+            products = Product.query.filter(
+                Product.publish_location.in_(
+                    ["both", "home_only"]
+                )
+            ).all()
+
+            return render_template(
+                "index.html",
+                products=products,
+                form=login_form,
+                register_form=form,
+                verify_form=verify_form,
+                show_register_popup=True
+            )
 
         print(
             f"✅ New user saved: {new_user.email}"
@@ -1465,9 +1498,7 @@ def register():
         # 🔗 ربط الزيارة الحالية بالمستخدم
         # ==========================================
 
-        current_visitor_id = session.get(
-            "visitor_id"
-        )
+        current_visitor_id = session.get("visitor_id")
 
         if current_visitor_id:
 
@@ -1478,9 +1509,7 @@ def register():
             if current_visit:
 
                 current_visit.user_id = new_user.id
-
                 current_visit.visitor_type = "registered"
-
                 current_visit.page = request.path
 
                 db.session.commit()
@@ -1546,7 +1575,6 @@ def register():
     # ==========================================
 
     login_form = LoginForm()
-
     verify_form = VerifyCodeForm()
 
     products = Product.query.filter(
@@ -1562,7 +1590,6 @@ def register():
         form=login_form,
         verify_form=verify_form
     )
-
 # ==========================================
 # 🔑 PASSWORD RECOVERY
 # بدون بريد إلكتروني: لا يوجد استرجاع كلمة مرور بالكود

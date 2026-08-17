@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileAllowed
 from werkzeug.security import check_password_hash, generate_password_hash
+
 from wtforms import (
     FileField,
     FloatField,
@@ -13,6 +14,7 @@ from wtforms import (
     SubmitField,
     TextAreaField
 )
+
 from wtforms.validators import DataRequired
 
 
@@ -53,9 +55,18 @@ class AddProductForm(FlaskForm):
     publish_location = SelectField(
         "Publish Product",
         choices=[
-            ("both", "Show in Home + Products pages"),
-            ("products_only", "Show only in Products page"),
-            ("home_only", "Show only in Home page")
+            (
+                "both",
+                "Show in Home + Products pages"
+            ),
+            (
+                "products_only",
+                "Show only in Products page"
+            ),
+            (
+                "home_only",
+                "Show only in Home page"
+            )
         ],
         default="products_only"
     )
@@ -182,7 +193,10 @@ class Product(db.Model):
             return 0
 
         return round(
-            ((self.price - self.sale_price) / self.price) * 100,
+            (
+                (self.price - self.sale_price)
+                / self.price
+            ) * 100,
             2
         )
 
@@ -202,11 +216,22 @@ class User(UserMixin, db.Model):
         primary_key=True
     )
 
+    # ==========================================
+    # 👤 Username
+    #
+    # الاسم مسموح يتكرر
+    # ==========================================
+
     username = db.Column(
         db.String(150),
-        unique=True,
         nullable=False
     )
+
+    # ==========================================
+    # 📧 Email
+    #
+    # البريد لا يسمح بتكراره
+    # ==========================================
 
     email = db.Column(
         db.String(150),
@@ -327,7 +352,11 @@ class Cart(db.Model):
 
     def __repr__(self):
 
-        return f"<Cart {self.user_id} - {self.product_id}>"
+        return (
+            f"<Cart "
+            f"{self.user_id} - "
+            f"{self.product_id}>"
+        )
 
 
 # ==================================================
@@ -366,7 +395,11 @@ class Wishlist(db.Model):
 
     def __repr__(self):
 
-        return f"<Wishlist {self.user_id} - {self.product_id}>"
+        return (
+            f"<Wishlist "
+            f"{self.user_id} - "
+            f"{self.product_id}>"
+        )
 
 
 # ==================================================
@@ -799,7 +832,9 @@ class Coupon(db.Model):
         if not self.is_active:
             return False
 
-        if order_amount < (self.minimum_order or 0):
+        if order_amount < (
+            self.minimum_order or 0
+        ):
             return False
 
         if self.start_date and now < self.start_date:
