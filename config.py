@@ -1,5 +1,7 @@
 import os
+
 from dotenv import load_dotenv
+
 
 # ==========================================
 # 📁 BASE DIRECTORY
@@ -9,7 +11,11 @@ BASE_DIR = os.path.abspath(
     os.path.dirname(__file__)
 )
 
+
+# ==========================================
 # تحميل متغيرات .env
+# ==========================================
+
 load_dotenv()
 
 
@@ -23,6 +29,7 @@ class Config:
         "SECRET_KEY",
         "dev-secret-key"
     )
+
 
     # ==========================================
     # 🗄️ DATABASE
@@ -50,19 +57,48 @@ class Config:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-# ==========================================
-# 📧 GMAIL SMTP
-# ==========================================
 
-MAIL_PORT = int(os.environ.get("MAIL_PORT", 465))
-MAIL_USE_TLS = os.environ.get("MAIL_USE_TLS", "False").lower() == "true"
-MAIL_USE_SSL = os.environ.get("MAIL_USE_SSL", "True").lower() == "true"
-MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
-MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
+    # ==========================================
+    # 📧 GMAIL SMTP
+    # ==========================================
 
-MAIL_DEFAULT_SENDER = os.environ.get(
-    "MAIL_DEFAULT_SENDER",
-    MAIL_USERNAME
-)
+    MAIL_SERVER = os.environ.get(
+        "MAIL_SERVER",
+        "smtp.gmail.com"
+    )
 
-MAIL_TIMEOUT = 30
+    MAIL_PORT = int(
+        os.environ.get(
+            "MAIL_PORT",
+            465
+        )
+    )
+
+    MAIL_USE_TLS = (
+        os.environ.get(
+            "MAIL_USE_TLS",
+            "False"
+        ).lower() == "true"
+    )
+
+    MAIL_USE_SSL = (
+        os.environ.get(
+            "MAIL_USE_SSL",
+            "True"
+        ).lower() == "true"
+    )
+
+    MAIL_USERNAME = os.environ.get(
+        "MAIL_USERNAME"
+    )
+
+    MAIL_PASSWORD = os.environ.get(
+        "MAIL_PASSWORD"
+    )
+
+    MAIL_DEFAULT_SENDER = os.environ.get(
+        "MAIL_DEFAULT_SENDER",
+        MAIL_USERNAME
+    )
+
+    MAIL_TIMEOUT = 30
