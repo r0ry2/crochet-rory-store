@@ -11,7 +11,7 @@ from flask import (
 import re
 
 
-from app import app, db
+from app import app, db, mail
 
 from models import (
     Product,
@@ -57,8 +57,42 @@ from datetime import datetime
 from flask import jsonify
 from sqlalchemy import func
 from flask_login import login_user, logout_user, login_required, current_user
+from flask_mail import Message
 
+# ==================================================
+# 📧 TEST EMAIL
+# ==================================================
 
+@app.route("/test-email")
+def test_email():
+
+    try:
+
+        msg = Message(
+            subject="Crochet Rory Store - Test Email",
+            sender=app.config["MAIL_DEFAULT_SENDER"],
+            recipients=["noni200217noni@gmail.com"]
+        )
+
+        msg.body = """
+Hello!
+
+This is a test email from Crochet Rory Store.
+
+If you received this email, Gmail SMTP is working correctly.
+
+Crochet Rory Store 💕
+"""
+
+        mail.send(msg)
+
+        return "EMAIL SENT SUCCESSFULLY ✅"
+
+    except Exception as e:
+
+        print("❌ EMAIL ERROR:", e)
+
+        return f"EMAIL ERROR: {e}", 500
 
 @app.route("/language/<lang>")
 def change_language(lang):
