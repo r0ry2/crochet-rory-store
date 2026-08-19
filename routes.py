@@ -13,6 +13,8 @@ import re
 
 from app import app, db, mail
 
+import resend
+import os
 from models import (
     Product,
     Order,
@@ -47,6 +49,11 @@ from flask_login import (
     current_user
 )
 
+# ==================================================
+# 📧 RESEND
+# ==================================================
+
+resend.api_key = os.environ.get("RESEND_API_KEY")
 
 from werkzeug.utils import secure_filename
 
@@ -59,6 +66,48 @@ from sqlalchemy import func
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_mail import Message
 
+# ==================================================
+# 📧 TEST RESEND EMAIL
+# ==================================================
+
+@app.route("/test-resend")
+def test_resend():
+
+    try:
+
+        params = {
+            "from": "onboarding@resend.dev",
+            "to": ["noni200217noni@gmail.com"],
+            "subject": "Crochet Rory Store - Test Email",
+            "html": """
+                <h2>💕 Crochet Rory Store</h2>
+
+                <p>
+                    هذا إيميل تجريبي من متجر روري للكروشيه.
+                </p>
+
+                <p>
+                    إذا وصلتك هذه الرسالة، فهذا يعني أن
+                    Resend API يعمل بشكل صحيح مع Railway.
+                </p>
+
+                <p>
+                    ✅ Resend is working!
+                </p>
+            """
+        }
+
+        email = resend.Emails.send(params)
+
+        print("✅ RESEND EMAIL SENT:", email)
+
+        return "RESEND EMAIL SENT SUCCESSFULLY ✅"
+
+    except Exception as e:
+
+        print("❌ RESEND ERROR:", e)
+
+        return f"RESEND ERROR: {e}", 500
 # ==================================================
 # 📧 TEST EMAIL
 # ==================================================
