@@ -3289,11 +3289,20 @@ def admin_dashboard():
 # 🏠 ADMIN HOME
 # =========================================================
 
+
 @app.route("/admin/home")
 @login_required
 def admin_home():
 
     from datetime import datetime, timedelta
+
+    # -----------------------------------------------------
+    # التأكد أن المستخدم Admin
+    # -----------------------------------------------------
+
+    if current_user.role != "admin":
+        flash("⚠️ Access denied! Admins only.", "danger")
+        return redirect(url_for("home_logged"))
 
     # -----------------------------------------------------
     # عدد المستخدمين المسجلين
@@ -3302,16 +3311,24 @@ def admin_home():
     user_count = User.query.count()
 
     # -----------------------------------------------------
-    # إجمالي الزيارات
+    # الوقت الحالي بتوقيت UTC
+    # Railway / السيرفر يستخدم UTC
     # -----------------------------------------------------
 
-    visitor_count = Visitor.query.count()
+    utc_now = datetime.utcnow()
 
     # -----------------------------------------------------
-    # بداية اليوم
+    # تحويل الوقت إلى توقيت السعودية
+    # السعودية = UTC + 3
     # -----------------------------------------------------
 
-    today_start = datetime.utcnow().replace(
+    saudi_now = utc_now + timedelta(hours=3)
+
+    # -----------------------------------------------------
+    # بداية اليوم في السعودية
+    # -----------------------------------------------------
+
+    saudi_today_start = saudi_now.replace(
         hour=0,
         minute=0,
         second=0,
@@ -3319,7 +3336,14 @@ def admin_home():
     )
 
     # -----------------------------------------------------
-    # زيارات اليوم
+    # تحويل بداية اليوم السعودي إلى UTC
+    # حتى نقارنها مع started_at في قاعدة البيانات
+    # -----------------------------------------------------
+
+    today_start = saudi_today_start - timedelta(hours=3)
+
+    # -----------------------------------------------------
+    # زيارات اليوم فقط
     # -----------------------------------------------------
 
     today_visitor_count = Visitor.query.filter(
@@ -3353,21 +3377,20 @@ def admin_home():
 
         user_count=user_count,
 
-        visitor_count=visitor_count,
+        # كرت الزوار في الصفحة الرئيسية
+        # يعرض زيارات اليوم فقط
+        visitor_count=today_visitor_count,
 
+        # هذه متاحة للصفحة إذا احتجناها لاحقًا
         today_visitor_count=today_visitor_count,
-
         today_registered_count=today_registered_count,
-
         today_guest_count=today_guest_count
     )
-# =========================================================
-# 👀 ADMIN VISITORS
-# =========================================================
 
 # =========================================================
 # 👀 ADMIN VISITORS
 # =========================================================
+
 @app.route("/admin/visitors")
 @login_required
 def admin_visitors():
@@ -3375,10 +3398,27 @@ def admin_visitors():
     from datetime import datetime, timedelta
 
     # =====================================================
-    # CURRENT TIME
+    # 🔐 ADMIN CHECK
+    # =====================================================
+
+    if current_user.role != "admin":
+        flash(
+            "⚠️ Access denied! Admins only.",
+            "danger"
+        )
+        return redirect(
+            url_for("home_logged")
+        )
+
+    # =====================================================
+    # 🕐 CURRENT TIME
     # =====================================================
 
     now = datetime.now()
+
+    # =====================================================
+    # 📅 TODAY
+    # =====================================================
 
     today_start = datetime(
         now.year,
@@ -3389,7 +3429,50 @@ def admin_visitors():
     tomorrow_start = today_start + timedelta(days=1)
 
     # =====================================================
-    # GET ALL VISITORS
+    # 📅 THIS WEEK
+    # =====================================================
+
+    week_start = (
+        today_start
+        - timedelta(
+            days=today_start.weekday()
+        )
+    )
+
+    next_week_start = (
+        week_start
+        + timedelta(days=7)
+    )
+
+    # =====================================================
+    # 📅 THIS MONTH
+    # =====================================================
+
+    month_start = datetime(
+        now.year,
+        now.month,
+        1
+    )
+
+    # بداية الشهر القادم
+    if now.month == 12:
+
+        next_month_start = datetime(
+            now.year + 1,
+            1,
+            1
+        )
+
+    else:
+
+        next_month_start = datetime(
+            now.year,
+            now.month + 1,
+            1
+        )
+
+    # =====================================================
+    # 👀 GET ALL VISITORS
     # =====================================================
 
     visitors = (
@@ -3401,7 +3484,7 @@ def admin_visitors():
     )
 
     # =====================================================
-    # TOTAL VISITS
+    # 📊 TOTAL VISITS
     # =====================================================
 
     visitor_count = len(visitors)
@@ -3409,18 +3492,23 @@ def admin_visitors():
     total_visitors = visitor_count
 
     # =====================================================
-    # TODAY VISITS
+    # 📅 TODAY VISITS
     # =====================================================
 
     today_visitors = sum(
         1
         for visitor in visitors
-        if visitor.visited_at
-        and today_start <= visitor.visited_at < tomorrow_start
+        if (
+            visitor.visited_at
+            and
+            today_start
+            <= visitor.visited_at
+            < tomorrow_start
+        )
     )
 
     # =====================================================
-    # REGISTERED VISITORS
+    # 👤 REGISTERED VISITORS
     # =====================================================
 
     registered_visitors = sum(
@@ -3430,7 +3518,7 @@ def admin_visitors():
     )
 
     # =====================================================
-    # GUEST VISITORS
+    # 👀 GUEST VISITORS
     # =====================================================
 
     guest_visitors = sum(
@@ -3440,25 +3528,35 @@ def admin_visitors():
     )
 
     # =====================================================
-    # ACTIVE VISITORS
+    # 🟢 ACTIVE VISITORS
     #
-    # Consider visitor active if last activity
-    # was within the last 30 minutes.
+    # الزائر يعتبر "الآن" إذا كان آخر نشاط له
+    # خلال آخر 30 دقيقة.
     # =====================================================
 
     active_visitors = [
         visitor
         for visitor in visitors
-        if visitor.last_activity
-        and (
-            now - visitor.last_activity
-        ).total_seconds() <= 1800
+        if (
+            visitor.last_activity
+            and
+            (
+                now - visitor.last_activity
+            ).total_seconds()
+            <= 1800
+        )
     ]
 
-    active_count = len(active_visitors)
+    # =====================================================
+    # 🟢 ACTIVE COUNT
+    # =====================================================
+
+    active_count = len(
+        active_visitors
+    )
 
     # =====================================================
-    # ACTIVE REGISTERED
+    # 👤 REGISTERED NOW
     # =====================================================
 
     active_registered = sum(
@@ -3468,7 +3566,7 @@ def admin_visitors():
     )
 
     # =====================================================
-    # ACTIVE GUESTS
+    # 👀 GUESTS NOW
     # =====================================================
 
     active_guests = sum(
@@ -3478,41 +3576,75 @@ def admin_visitors():
     )
 
     # =====================================================
-    # TODAY REGISTERED
+    # 📅 REGISTERED TODAY
     # =====================================================
 
     today_registered_count = sum(
         1
         for visitor in visitors
-        if visitor.user_id
-        and visitor.visited_at
-        and today_start <= visitor.visited_at < tomorrow_start
+        if (
+            visitor.user_id
+            and
+            visitor.visited_at
+            and
+            today_start
+            <= visitor.visited_at
+            < tomorrow_start
+        )
     )
 
     # =====================================================
-    # TODAY GUESTS
+    # 📅 GUESTS TODAY
     # =====================================================
 
     today_guest_count = sum(
         1
         for visitor in visitors
-        if not visitor.user_id
-        and visitor.visited_at
-        and today_start <= visitor.visited_at < tomorrow_start
+        if (
+            not visitor.user_id
+            and
+            visitor.visited_at
+            and
+            today_start
+            <= visitor.visited_at
+            < tomorrow_start
+        )
     )
 
     # =====================================================
-    # USER DATA FOR VISITORS
-    #
-    # The template uses:
-    #
-    # visitor_users.get(visitor.user_id)
-    #
-    # So we create a dictionary:
-    #
-    # {
-    #     user_id: User object
-    # }
+    # 📅 WEEK VISITS
+    # =====================================================
+
+    week_visitors = sum(
+        1
+        for visitor in visitors
+        if (
+            visitor.visited_at
+            and
+            week_start
+            <= visitor.visited_at
+            < next_week_start
+        )
+    )
+
+    # =====================================================
+    # 📅 MONTH VISITS
+    # =====================================================
+
+    month_visitors = sum(
+        1
+        for visitor in visitors
+        if (
+            visitor.visited_at
+            and
+            month_start
+            <= visitor.visited_at
+            < next_month_start
+        )
+    )
+
+    # =====================================================
+    # 👤 GET USER DATA
     # =====================================================
 
     visitor_user_ids = {
@@ -3528,7 +3660,9 @@ def admin_visitors():
         users = (
             User.query
             .filter(
-                User.id.in_(visitor_user_ids)
+                User.id.in_(
+                    visitor_user_ids
+                )
             )
             .all()
         )
@@ -3539,58 +3673,155 @@ def admin_visitors():
         }
 
     # =====================================================
-    # RENDER PAGE
+    # 🖥️ RENDER PAGE
     # =====================================================
 
     return render_template(
         "admin/admin_visitors.html",
 
-        # -------------------------
+        # -------------------------------------------------
         # Visitors
-        # -------------------------
+        # -------------------------------------------------
 
         visitors=visitors,
 
-        # -------------------------
-        # Time
-        # -------------------------
+        # -------------------------------------------------
+        # Users
+        # -------------------------------------------------
+
+        visitor_users=visitor_users,
+
+        # -------------------------------------------------
+        # Current time
+        # -------------------------------------------------
 
         now=now,
+
+        # -------------------------------------------------
+        # Today
+        # -------------------------------------------------
+
         today_start=today_start,
         tomorrow_start=tomorrow_start,
 
-        # -------------------------
+        # -------------------------------------------------
+        # Week
+        # -------------------------------------------------
+
+        week_start=week_start,
+        next_week_start=next_week_start,
+
+        # -------------------------------------------------
+        # Month
+        # -------------------------------------------------
+
+        month_start=month_start,
+        next_month_start=next_month_start,
+
+        # -------------------------------------------------
         # Main statistics
-        # -------------------------
+        # -------------------------------------------------
 
         visitor_count=visitor_count,
         total_visitors=total_visitors,
 
         today_visitors=today_visitors,
 
-        active_count=active_count,
-
         registered_visitors=registered_visitors,
 
         guest_visitors=guest_visitors,
 
-        # -------------------------
-        # Extra statistics
-        # -------------------------
+        # -------------------------------------------------
+        # Active statistics
+        # -------------------------------------------------
+
+        active_count=active_count,
 
         active_registered=active_registered,
 
         active_guests=active_guests,
 
-        today_registered_count=today_registered_count,
+        # -------------------------------------------------
+        # Today statistics
+        # -------------------------------------------------
 
-        today_guest_count=today_guest_count,
+        today_registered_count=(
+            today_registered_count
+        ),
 
-        # -------------------------
-        # Users
-        # -------------------------
+        today_guest_count=(
+            today_guest_count
+        ),
 
-        visitor_users=visitor_users
+        # -------------------------------------------------
+        # Period statistics
+        # -------------------------------------------------
+
+        week_visitors=week_visitors,
+
+        month_visitors=month_visitors
+    )
+
+# =========================================================
+# 🧹 CLEAR VISITOR LOG
+# =========================================================
+
+@app.route("/admin/visitors/clear", methods=["POST"])
+@login_required
+def clear_visitor_log():
+
+    # =====================================================
+    # 🔐 ADMIN CHECK
+    # =====================================================
+
+    if current_user.role != "admin":
+        flash(
+            "⚠️ Access denied! Admins only.",
+            "danger"
+        )
+        return redirect(
+            url_for("home_logged")
+        )
+
+    try:
+        # =================================================
+        # 🗑️ DELETE ALL VISITOR RECORDS
+        # =================================================
+
+        Visitor.query.delete(
+            synchronize_session=False
+        )
+
+        db.session.commit()
+
+        # =================================================
+        # ✅ SUCCESS
+        # =================================================
+
+        flash(
+            "تم تنظيف سجل الزوار بنجاح.",
+            "success"
+        )
+
+    except Exception as e:
+
+        # =================================================
+        # ❌ ERROR
+        # =================================================
+
+        db.session.rollback()
+
+        print(
+            f"❌ ERROR CLEARING VISITOR LOG: {e}"
+        )
+
+        flash(
+            "حدث خطأ أثناء تنظيف سجل الزوار.",
+            "danger"
+        )
+
+    return redirect(
+        url_for("admin_visitors")
     )
 # ==========================================
 # 📦 ADMIN ORDERS

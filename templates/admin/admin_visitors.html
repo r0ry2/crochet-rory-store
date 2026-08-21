@@ -1,12 +1,9 @@
+
 {% extends "admin/admin_base.html" %}
 
-
 {% block title %}
-
 {{ "الزوار" if current_lang == "ar" else "Visitors" }}
-
 {% endblock %}
-
 
 {% block content %}
 
@@ -20,25 +17,20 @@
     width: 100%;
 }
 
-
-/* =====================================================
-   HEADER
-===================================================== */
-
 .visitors-header {
     margin-bottom: 25px;
 }
 
 .visitors-header h2 {
     margin: 0;
-    color: #d86f9d;
+    color: #d85f91;
     font-size: 28px;
     font-weight: 800;
 }
 
 .visitors-header p {
     margin: 7px 0 0;
-    color: #777;
+    color: #888;
     font-size: 14px;
 }
 
@@ -51,24 +43,23 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 18px;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
 .visitor-stat {
-    background: #fff0f5;
+    background: #fff;
     border: 1px solid #f3c4d4;
     border-radius: 18px;
     padding: 22px;
 
     box-shadow:
-        0 8px 22px rgba(216, 142, 164, .12);
-
-    transition: .3s;
-    position: relative;
-    overflow: hidden;
+        0 8px 22px rgba(216, 142, 164, .10);
 
     cursor: pointer;
-    user-select: none;
+    transition: .25s;
+
+    position: relative;
+    overflow: hidden;
 }
 
 .visitor-stat::before {
@@ -85,88 +76,32 @@
 }
 
 .visitor-stat:hover {
-    transform: translateY(-5px);
+    transform: translateY(-4px);
 
     box-shadow:
-        0 12px 28px rgba(216, 142, 164, .20);
+        0 12px 28px rgba(216, 142, 164, .18);
 }
 
 .visitor-stat.active-filter {
-    transform: translateY(-5px);
+    transform: translateY(-4px);
 
     box-shadow:
         0 0 0 3px rgba(216, 95, 145, .18),
-        0 12px 28px rgba(216, 142, 164, .25);
+        0 12px 28px rgba(216, 142, 164, .20);
 }
 
 
 /* =====================================================
-   ICON
-===================================================== */
-
-.visitor-stat-icon {
-    font-size: 26px;
-    margin-bottom: 10px;
-}
-
-
-/* =====================================================
-   TITLE
-===================================================== */
-
-.visitor-stat-title {
-    color: #806773;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 8px;
-}
-
-
-/* =====================================================
-   NUMBER
-===================================================== */
-
-.visitor-stat-number {
-    color: #d85f91;
-    font-size: 34px;
-    font-weight: 800;
-    line-height: 1;
-}
-
-
-/* =====================================================
-   TODAY
+   CARD COLORS
 ===================================================== */
 
 .today-stat {
-    background: #fde7ef;
+    background: #fff4f8;
 }
 
 .today-stat::before {
     background: #e26fa7;
 }
-
-
-/* =====================================================
-   ACTIVE
-===================================================== */
-
-.active-stat {
-    background: #fce8ef;
-}
-
-.active-stat::before {
-    background: #52c878;
-}
-
-.active-stat .visitor-stat-number {
-    color: #4caf70;
-}
-
-
-/* =====================================================
-   REGISTERED
-===================================================== */
 
 .registered-stat {
     background: #fff0f5;
@@ -176,17 +111,113 @@
     background: #d88ea4;
 }
 
-
-/* =====================================================
-   GUEST
-===================================================== */
-
 .guest-stat {
-    background: #faf5f7;
+    background: #faf7f8;
 }
 
 .guest-stat::before {
     background: #aaa;
+}
+
+.active-stat {
+    background: #f2fbf5;
+}
+
+.active-stat::before {
+    background: #52c878;
+}
+
+
+/* =====================================================
+   CARD CONTENT
+===================================================== */
+
+.visitor-stat-icon {
+    font-size: 26px;
+    margin-bottom: 10px;
+}
+
+.visitor-stat-title {
+    color: #806773;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.visitor-stat-number {
+    color: #d85f91;
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.active-stat .visitor-stat-number {
+    color: #43a765;
+}
+
+
+/* =====================================================
+   FILTER BAR
+===================================================== */
+
+.visitor-filters {
+    background: #fff;
+    border: 1px solid #f3c4d4;
+    border-radius: 16px;
+
+    padding: 17px 20px;
+
+    margin-bottom: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    flex-wrap: wrap;
+}
+
+.filter-title {
+    color: #d85f91;
+    font-weight: 800;
+    font-size: 15px;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    border: 1px solid #f1cad8;
+
+    background: #fff8fa;
+
+    color: #b35b7d;
+
+    padding: 9px 15px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+.filter-btn:hover {
+    background: #fde7ef;
+}
+
+.filter-btn.active {
+    background: #d85f91;
+    color: #fff;
+
+    border-color: #d85f91;
 }
 
 
@@ -200,9 +231,10 @@
     align-items: center;
     justify-content: space-between;
 
-    gap: 15px;
+    gap: 10px;
 
-    padding: 13px 18px;
+    padding: 12px 17px;
+
     margin-bottom: 15px;
 
     background: #fff0f5;
@@ -210,45 +242,42 @@
     border: 1px solid #f3c4d4;
 
     border-radius: 12px;
+
+    color: #c34f82;
+
+    font-size: 13px;
+    font-weight: 700;
 }
 
 .filter-info.show {
     display: flex;
 }
 
-.filter-info-text {
-    color: #c34f82;
-    font-size: 14px;
-    font-weight: 700;
-}
-
 .clear-filter {
     border: none;
 
     background: #d85f91;
-    color: white;
 
-    padding: 7px 14px;
+    color: #fff;
 
-    border-radius: 9px;
+    padding: 7px 13px;
+
+    border-radius: 8px;
 
     cursor: pointer;
 
     font-size: 12px;
-    font-weight: 700;
-}
 
-.clear-filter:hover {
-    background: #c34f82;
+    font-weight: 700;
 }
 
 
 /* =====================================================
-   TABLE CONTAINER
+   VISITOR TABLE BOX
 ===================================================== */
 
 .visitor-table-box {
-    background: #ffffff;
+    background: #fff;
 
     border: 1px solid #f3c4d4;
 
@@ -299,12 +328,33 @@
 
 
 /* =====================================================
-   TABLE WRAPPER
+   CLEAN BUTTON
 ===================================================== */
 
-.visitor-table-wrapper {
-    width: 100%;
-    overflow-x: auto;
+.clean-log-btn {
+    border: none;
+
+    background: #fff;
+
+    color: #c34f82;
+
+    border: 1px solid #e8a9bf;
+
+    padding: 9px 15px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    transition: .2s;
+}
+
+.clean-log-btn:hover {
+    background: #fde7ef;
 }
 
 
@@ -312,12 +362,17 @@
    TABLE
 ===================================================== */
 
+.visitor-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
 .visitor-table {
     width: 100%;
 
     border-collapse: collapse;
 
-    min-width: 1150px;
+    min-width: 1050px;
 }
 
 .visitor-table th {
@@ -325,7 +380,7 @@
 
     color: #8b5269;
 
-    padding: 15px 12px;
+    padding: 14px 12px;
 
     text-align: center;
 
@@ -337,7 +392,7 @@
 }
 
 .visitor-table td {
-    padding: 15px 12px;
+    padding: 14px 12px;
 
     text-align: center;
 
@@ -358,31 +413,13 @@
     background: #fff8fa;
 }
 
-
-/* =====================================================
-   HIDDEN ROW
-===================================================== */
-
 .visitor-row.hidden {
     display: none;
 }
 
 
 /* =====================================================
-   VISITOR ID
-===================================================== */
-
-.visitor-id {
-    font-family: monospace;
-
-    color: #9b647b;
-
-    font-size: 12px;
-}
-
-
-/* =====================================================
-   USER BOX
+   USER INFO
 ===================================================== */
 
 .user-info {
@@ -392,14 +429,14 @@
 
     justify-content: center;
 
-    gap: 10px;
+    gap: 9px;
 
-    min-width: 210px;
+    min-width: 190px;
 }
 
 .user-avatar {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
 
     border-radius: 50%;
 
@@ -410,9 +447,8 @@
     display: flex;
 
     align-items: center;
-    justify-content: center;
 
-    font-size: 18px;
+    justify-content: center;
 
     flex-shrink: 0;
 }
@@ -432,45 +468,13 @@ html[dir="ltr"] .user-details {
 
     font-weight: 800;
 
-    margin-bottom: 3px;
+    margin-bottom: 2px;
 }
 
 .user-email {
     color: #888;
 
     font-size: 11px;
-}
-
-
-/* =====================================================
-   USER ID
-===================================================== */
-
-.user-id {
-    display: inline-flex;
-
-    align-items: center;
-    justify-content: center;
-
-    padding: 5px 10px;
-
-    border-radius: 10px;
-
-    background: #f9e1ea;
-
-    color: #c34f82;
-
-    font-weight: 700;
-}
-
-
-/* =====================================================
-   PAGE
-===================================================== */
-
-.page-value {
-    color: #d85f91;
-    font-weight: 600;
 }
 
 
@@ -485,7 +489,7 @@ html[dir="ltr"] .user-details {
 
     gap: 5px;
 
-    padding: 6px 12px;
+    padding: 6px 11px;
 
     border-radius: 20px;
 
@@ -500,14 +504,9 @@ html[dir="ltr"] .user-details {
 }
 
 .visitor-badge.guest {
-    background: #f2eeee;
+    background: #f1eeee;
     color: #777;
 }
-
-
-/* =====================================================
-   ACTIVE BADGE
-===================================================== */
 
 .active-badge {
     display: inline-flex;
@@ -536,22 +535,14 @@ html[dir="ltr"] .user-details {
     border-radius: 50%;
 
     background: #52c878;
-
-    box-shadow:
-        0 0 0 3px rgba(82, 200, 120, .12);
 }
-
-
-/* =====================================================
-   INACTIVE BADGE
-===================================================== */
 
 .inactive-badge {
     display: inline-flex;
 
     align-items: center;
 
-    gap: 6px;
+    gap: 5px;
 
     padding: 6px 11px;
 
@@ -566,17 +557,75 @@ html[dir="ltr"] .user-details {
     font-weight: 700;
 }
 
+.visitor-id {
+    font-family: monospace;
 
-/* =====================================================
-   IP
-===================================================== */
+    color: #9b647b;
+
+    font-size: 11px;
+}
+
+.user-id {
+    display: inline-flex;
+
+    padding: 5px 9px;
+
+    border-radius: 9px;
+
+    background: #f9e1ea;
+
+    color: #c34f82;
+
+    font-weight: 700;
+}
+
+.page-value {
+    color: #d85f91;
+
+    font-weight: 600;
+}
 
 .ip-address {
     font-family: monospace;
 
     color: #777;
 
-    font-size: 12px;
+    font-size: 11px;
+}
+
+
+/* =====================================================
+   NO RESULTS
+===================================================== */
+
+.no-filter-results {
+    display: none;
+
+    text-align: center;
+
+    padding: 60px 20px;
+
+    color: #888;
+}
+
+.no-filter-results.show {
+    display: block;
+}
+
+.no-filter-results-icon {
+    font-size: 40px;
+
+    margin-bottom: 10px;
+}
+
+.no-filter-results-title {
+    color: #d85f91;
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    margin-bottom: 7px;
 }
 
 
@@ -603,42 +652,7 @@ html[dir="ltr"] .user-details {
 
     font-size: 18px;
 
-    font-weight: 700;
-
-    margin-bottom: 8px;
-}
-
-
-/* =====================================================
-   NO FILTER RESULTS
-===================================================== */
-
-.no-filter-results {
-    display: none;
-
-    text-align: center;
-
-    padding: 60px 20px;
-
-    color: #888;
-}
-
-.no-filter-results.show {
-    display: block;
-}
-
-.no-filter-results-icon {
-    font-size: 42px;
-
-    margin-bottom: 12px;
-}
-
-.no-filter-results-title {
-    color: #d85f91;
-
-    font-size: 18px;
-
-    font-weight: 700;
+    font-weight: 800;
 
     margin-bottom: 8px;
 }
@@ -653,64 +667,42 @@ html[dir="ltr"] .user-details {
     .visitor-stats {
         grid-template-columns: repeat(2, 1fr);
     }
-
 }
-
 
 @media(max-width: 700px) {
 
     .visitor-stats {
         grid-template-columns: 1fr 1fr;
+
         gap: 12px;
     }
 
     .visitor-stat {
         padding: 17px;
-        border-radius: 15px;
-    }
-
-    .visitor-stat-icon {
-        font-size: 22px;
-    }
-
-    .visitor-stat-title {
-        font-size: 12px;
     }
 
     .visitor-stat-number {
         font-size: 28px;
     }
 
-    .visitors-header h2 {
-        font-size: 23px;
-    }
-
-    .table-header {
-        padding: 17px;
-    }
-
-    .table-header h3 {
-        font-size: 17px;
-    }
-
-    .filter-info {
+    .visitor-filters {
         align-items: flex-start;
+
         flex-direction: column;
     }
 
-}
+    .table-header {
+        align-items: flex-start;
 
+        flex-direction: column;
+    }
+}
 
 @media(max-width: 450px) {
 
     .visitor-stats {
         grid-template-columns: 1fr;
     }
-
-    .visitor-stat-number {
-        font-size: 30px;
-    }
-
 }
 
 </style>
@@ -726,34 +718,29 @@ html[dir="ltr"] .user-details {
     <div class="visitors-header">
 
         <h2>
-
             👀
-
             {{
-                "تفاصيل الزوار"
+                "الزوار"
                 if current_lang == "ar"
                 else
-                "Visitor Details"
+                "Visitors"
             }}
-
         </h2>
 
         <p>
-
             {{
-                "إحصائيات ومعلومات تفصيلية عن زوار المتجر."
+                "إحصائيات بسيطة وواضحة عن زوار المتجر."
                 if current_lang == "ar"
                 else
-                "Statistics and detailed information about store visitors."
+                "Simple and clear visitor statistics."
             }}
-
         </p>
 
     </div>
 
 
     <!-- =================================================
-         STATISTICS - FIRST ROW
+         MAIN STATISTICS
     ================================================= -->
 
     <div class="visitor-stats">
@@ -783,9 +770,7 @@ html[dir="ltr"] .user-details {
             </div>
 
             <div class="visitor-stat-number">
-
-                {{ visitor_count }}
-
+                {{ total_visitors }}
             </div>
 
         </div>
@@ -815,41 +800,7 @@ html[dir="ltr"] .user-details {
             </div>
 
             <div class="visitor-stat-number">
-
-                {{ today_visits }}
-
-            </div>
-
-        </div>
-
-
-        <!-- ACTIVE -->
-
-        <div
-            class="visitor-stat active-stat"
-            data-filter="active"
-            onclick="filterVisitors('active')"
-        >
-
-            <div class="visitor-stat-icon">
-                🟢
-            </div>
-
-            <div class="visitor-stat-title">
-
-                {{
-                    "الزوار الآن"
-                    if current_lang == "ar"
-                    else
-                    "Visitors Now"
-                }}
-
-            </div>
-
-            <div class="visitor-stat-number">
-
-                {{ active_count }}
-
+                {{ today_visitors }}
             </div>
 
         </div>
@@ -873,27 +824,16 @@ html[dir="ltr"] .user-details {
                     "المستخدمون المسجلون"
                     if current_lang == "ar"
                     else
-                    "Registered Visitors"
+                    "Registered Users"
                 }}
 
             </div>
 
             <div class="visitor-stat-number">
-
-                {{ today_registered_count }}
-
+                {{ registered_visitors }}
             </div>
 
         </div>
-
-    </div>
-
-
-    <!-- =================================================
-         SECOND ROW
-    ================================================= -->
-
-    <div class="visitor-stats">
 
 
         <!-- GUESTS -->
@@ -920,15 +860,52 @@ html[dir="ltr"] .user-details {
             </div>
 
             <div class="visitor-stat-number">
+                {{ guest_visitors }}
+            </div>
 
-                {{ visitor_count - today_registered_count }}
+        </div>
 
+    </div>
+
+
+    <!-- =================================================
+         CURRENT VISITORS
+    ================================================= -->
+
+    <div class="visitor-stats">
+
+
+        <!-- ACTIVE -->
+
+        <div
+            class="visitor-stat active-stat"
+            data-filter="active"
+            onclick="filterVisitors('active')"
+        >
+
+            <div class="visitor-stat-icon">
+                🟢
+            </div>
+
+            <div class="visitor-stat-title">
+
+                {{
+                    "الزوار الآن"
+                    if current_lang == "ar"
+                    else
+                    "Visitors Now"
+                }}
+
+            </div>
+
+            <div class="visitor-stat-number">
+                {{ active_count }}
             </div>
 
         </div>
 
 
-        <!-- ACTIVE REGISTERED -->
+        <!-- REGISTERED NOW -->
 
         <div
             class="visitor-stat registered-stat"
@@ -952,15 +929,13 @@ html[dir="ltr"] .user-details {
             </div>
 
             <div class="visitor-stat-number">
-
                 {{ active_registered }}
-
             </div>
 
         </div>
 
 
-        <!-- ACTIVE GUESTS -->
+        <!-- GUESTS NOW -->
 
         <div
             class="visitor-stat guest-stat"
@@ -969,13 +944,13 @@ html[dir="ltr"] .user-details {
         >
 
             <div class="visitor-stat-icon">
-                🕵️
+                👀
             </div>
 
             <div class="visitor-stat-title">
 
                 {{
-                    "الزوار بدون تسجيل الآن"
+                    "غير المسجلين الآن"
                     if current_lang == "ar"
                     else
                     "Guests Now"
@@ -984,9 +959,7 @@ html[dir="ltr"] .user-details {
             </div>
 
             <div class="visitor-stat-number">
-
                 {{ active_guests }}
-
             </div>
 
         </div>
@@ -1016,10 +989,92 @@ html[dir="ltr"] .user-details {
             </div>
 
             <div class="visitor-stat-number">
-
                 {{ today_guest_count }}
-
             </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         PERIOD FILTERS
+    ================================================= -->
+
+    <div class="visitor-filters">
+
+        <div class="filter-title">
+
+            {{
+                "عرض السجل حسب الفترة"
+                if current_lang == "ar"
+                else
+                "View Log By Period"
+            }}
+
+        </div>
+
+
+        <div class="filter-buttons">
+
+            <button
+                type="button"
+                class="filter-btn active"
+                data-period="all"
+                onclick="filterVisitors('all')"
+            >
+                {{
+                    "الكل"
+                    if current_lang == "ar"
+                    else
+                    "All"
+                }}
+            </button>
+
+
+            <button
+                type="button"
+                class="filter-btn"
+                data-period="today"
+                onclick="filterVisitors('today')"
+            >
+                {{
+                    "اليوم"
+                    if current_lang == "ar"
+                    else
+                    "Today"
+                }}
+            </button>
+
+
+            <button
+                type="button"
+                class="filter-btn"
+                data-period="week"
+                onclick="filterVisitors('week')"
+            >
+                {{
+                    "هذا الأسبوع"
+                    if current_lang == "ar"
+                    else
+                    "This Week"
+                }}
+            </button>
+
+
+            <button
+                type="button"
+                class="filter-btn"
+                data-period="month"
+                onclick="filterVisitors('month')"
+            >
+                {{
+                    "هذا الشهر"
+                    if current_lang == "ar"
+                    else
+                    "This Month"
+                }}
+            </button>
 
         </div>
 
@@ -1035,31 +1090,26 @@ html[dir="ltr"] .user-details {
         class="filter-info"
     >
 
-        <div
-            id="filterInfoText"
-            class="filter-info-text"
-        ></div>
+        <span id="filterInfoText"></span>
 
         <button
             type="button"
             class="clear-filter"
             onclick="filterVisitors('all')"
         >
-
             {{
                 "عرض الكل"
                 if current_lang == "ar"
                 else
                 "Show All"
             }}
-
         </button>
 
     </div>
 
 
     <!-- =================================================
-         VISITOR TABLE
+         VISITOR LOG
     ================================================= -->
 
     <div class="visitor-table-box">
@@ -1070,41 +1120,60 @@ html[dir="ltr"] .user-details {
             <div>
 
                 <h3>
-
                     👀
-
                     {{
-                        "سجل الزيارات"
+                        "سجل الزوار"
                         if current_lang == "ar"
                         else
                         "Visitor Log"
                     }}
-
                 </h3>
 
                 <p>
-
                     {{
-                        "تفاصيل الزوار والصفحات التي تمت زيارتها."
+                        "يمكنك تصفية السجل حسب نوع الزائر أو الفترة."
                         if current_lang == "ar"
                         else
-                        "Details about visitors and the pages they visited."
+                        "Filter the visitor log by visitor type or period."
                     }}
-
                 </p>
 
             </div>
+
+
+            <form
+                method="POST"
+                action="{{ url_for('clear_visitor_log') }}"
+                onsubmit="return confirm(
+                    '{{ "هل أنت متأكد من حذف سجل الزوار بالكامل؟ لا يمكن التراجع عن هذا الإجراء." if current_lang == "ar" else "Are you sure you want to clear the entire visitor log? This action cannot be undone." }}'
+                );"
+                style="margin:0;"
+            >
+                <button
+                    type="submit"
+                    class="clean-log-btn"
+                >
+
+                🗑️
+
+                {{
+                    "تنظيف السجل"
+                    if current_lang == "ar"
+                    else
+                    "Clean Log"
+                }}
+
+                </button>
+            </form>
 
         </div>
 
 
         {% if visitors %}
 
-
         <div class="visitor-table-wrapper">
 
             <table class="visitor-table">
-
 
                 <thead>
 
@@ -1113,94 +1182,71 @@ html[dir="ltr"] .user-details {
                         <th>#</th>
 
                         <th>
-
                             {{
-                                "نوع الزائر"
+                                "النوع"
                                 if current_lang == "ar"
                                 else
-                                "Visitor Type"
+                                "Type"
                             }}
-
                         </th>
 
                         <th>
-
                             {{
                                 "معرف الزائر"
                                 if current_lang == "ar"
                                 else
                                 "Visitor ID"
                             }}
-
                         </th>
 
                         <th>
-
                             {{
-                                "معلومات المستخدم"
+                                "المستخدم"
                                 if current_lang == "ar"
                                 else
-                                "User Information"
+                                "User"
                             }}
-
                         </th>
 
                         <th>
-
-                            {{
-                                "معرف المستخدم"
-                                if current_lang == "ar"
-                                else
-                                "User ID"
-                            }}
-
-                        </th>
-
-                        <th>
-
                             {{
                                 "الصفحة"
                                 if current_lang == "ar"
                                 else
                                 "Page"
                             }}
-
                         </th>
 
                         <th>
-
                             {{
                                 "وقت الدخول"
                                 if current_lang == "ar"
                                 else
                                 "Started"
                             }}
-
                         </th>
 
                         <th>
-
                             {{
                                 "آخر نشاط"
                                 if current_lang == "ar"
                                 else
                                 "Last Activity"
                             }}
-
                         </th>
 
                         <th>
-
                             {{
                                 "الحالة"
                                 if current_lang == "ar"
                                 else
                                 "Status"
                             }}
-
                         </th>
 
-                        <th>IP</th>
+                        <th>
+                            IP
+                        </th>
 
                     </tr>
 
@@ -1212,20 +1258,21 @@ html[dir="ltr"] .user-details {
 
                     {% for visitor in visitors %}
 
-
-                    {% set visitor_user = visitor_users.get(visitor.user_id) if visitor.user_id else none %}
+                    {% set visitor_user =
+                        visitor_users.get(visitor.user_id)
+                        if visitor.user_id
+                        else none
+                    %}
 
 
                     <tr
                         class="visitor-row"
 
-                        data-visitor-type="{{ visitor.visitor_type }}"
-
-                        data-user-id="{{
-                            'yes'
+                        data-user="{{
+                            'registered'
                             if visitor.user_id
                             else
-                            'no'
+                            'guest'
                         }}"
 
                         data-active="{{
@@ -1241,9 +1288,31 @@ html[dir="ltr"] .user-details {
                             'yes'
                             if visitor.visited_at
                             and
-                            visitor.visited_at >= today_start
+                            today_start
+                            <= visitor.visited_at
+                            < tomorrow_start
+                            else
+                            'no'
+                        }}"
+
+                        data-week="{{
+                            'yes'
+                            if visitor.visited_at
                             and
-                            visitor.visited_at < tomorrow_start
+                            week_start
+                            <= visitor.visited_at
+                            < next_week_start
+                            else
+                            'no'
+                        }}"
+
+                        data-month="{{
+                            'yes'
+                            if visitor.visited_at
+                            and
+                            month_start
+                            <= visitor.visited_at
+                            < next_month_start
                             else
                             'no'
                         }}"
@@ -1253,9 +1322,7 @@ html[dir="ltr"] .user-details {
                         <!-- NUMBER -->
 
                         <td>
-
                             {{ loop.index }}
-
                         </td>
 
 
@@ -1265,33 +1332,33 @@ html[dir="ltr"] .user-details {
 
                             {% if visitor.user_id %}
 
-                                <span class="visitor-badge registered">
+                            <span class="visitor-badge registered">
 
-                                    👤
+                                👤
 
-                                    {{
-                                        "مسجل"
-                                        if current_lang == "ar"
-                                        else
-                                        "Registered"
-                                    }}
+                                {{
+                                    "مسجل"
+                                    if current_lang == "ar"
+                                    else
+                                    "Registered"
+                                }}
 
-                                </span>
+                            </span>
 
                             {% else %}
 
-                                <span class="visitor-badge guest">
+                            <span class="visitor-badge guest">
 
-                                    👀
+                                👀
 
-                                    {{
-                                        "زائر"
-                                        if current_lang == "ar"
-                                        else
-                                        "Guest"
-                                    }}
+                                {{
+                                    "زائر"
+                                    if current_lang == "ar"
+                                    else
+                                    "Guest"
+                                }}
 
-                                </span>
+                            </span>
 
                             {% endif %}
 
@@ -1311,71 +1378,48 @@ html[dir="ltr"] .user-details {
                         </td>
 
 
-                        <!-- USER INFORMATION -->
+                        <!-- USER -->
 
                         <td>
 
                             {% if visitor_user %}
 
-                                <div class="user-info">
+                            <div class="user-info">
 
-                                    <div class="user-avatar">
+                                <div class="user-avatar">
+                                    👤
+                                </div>
 
-                                        👤
+                                <div class="user-details">
+
+                                    <div class="user-name">
+
+                                        {{ visitor_user.username }}
 
                                     </div>
 
-                                    <div class="user-details">
+                                    <div class="user-email">
 
-                                        <div class="user-name">
-
-                                            {{ visitor_user.username }}
-
-                                        </div>
-
-                                        <div class="user-email">
-
-                                            {{ visitor_user.email }}
-
-                                        </div>
+                                        {{ visitor_user.email }}
 
                                     </div>
 
                                 </div>
 
-                            {% else %}
-
-                                <span style="color:#aaa;">
-
-                                    {{
-                                        "زائر غير مسجل"
-                                        if current_lang == "ar"
-                                        else
-                                        "Guest Visitor"
-                                    }}
-
-                                </span>
-
-                            {% endif %}
-
-                        </td>
-
-
-                        <!-- USER ID -->
-
-                        <td>
-
-                            {% if visitor.user_id %}
-
-                                <span class="user-id">
-
-                                    #{{ visitor.user_id }}
-
-                                </span>
+                            </div>
 
                             {% else %}
 
-                                —
+                            <span style="color:#aaa;">
+
+                                {{
+                                    "زائر غير مسجل"
+                                    if current_lang == "ar"
+                                    else
+                                    "Guest Visitor"
+                                }}
+
+                            </span>
 
                             {% endif %}
 
@@ -1431,35 +1475,38 @@ html[dir="ltr"] .user-details {
 
                         <td>
 
-                            {% if visitor.last_activity %}
+                            {% if visitor.last_activity
+                                and
+                                (now - visitor.last_activity).total_seconds() <= 1800
+                            %}
 
-                                <span class="active-badge">
+                            <span class="active-badge">
 
-                                    <span class="active-dot"></span>
+                                <span class="active-dot"></span>
 
-                                    {{
-                                        "نشط"
-                                        if current_lang == "ar"
-                                        else
-                                        "Active"
-                                    }}
+                                {{
+                                    "نشط الآن"
+                                    if current_lang == "ar"
+                                    else
+                                    "Active Now"
+                                }}
 
-                                </span>
+                            </span>
 
                             {% else %}
 
-                                <span class="inactive-badge">
+                            <span class="inactive-badge">
 
-                                    ⚪
+                                ⚪
 
-                                    {{
-                                        "غير نشط"
-                                        if current_lang == "ar"
-                                        else
-                                        "Inactive"
-                                    }}
+                                {{
+                                    "غير نشط"
+                                    if current_lang == "ar"
+                                    else
+                                    "Inactive"
+                                }}
 
-                                </span>
+                            </span>
 
                             {% endif %}
 
@@ -1481,17 +1528,17 @@ html[dir="ltr"] .user-details {
 
                     </tr>
 
-
                     {% endfor %}
 
 
                 </tbody>
 
-
             </table>
 
         </div>
 
+
+        <!-- NO RESULTS -->
 
         <div
             id="noFilterResults"
@@ -1508,7 +1555,7 @@ html[dir="ltr"] .user-details {
                     "لا يوجد زوار في هذا التصنيف"
                     if current_lang == "ar"
                     else
-                    "No visitors in this category"
+                    "No Visitors Found"
                 }}
 
             </div>
@@ -1516,10 +1563,10 @@ html[dir="ltr"] .user-details {
             <div>
 
                 {{
-                    "لم يتم العثور على أي نتائج."
+                    "لا توجد نتائج مطابقة للفترة أو التصنيف المحدد."
                     if current_lang == "ar"
                     else
-                    "No matching visitors were found."
+                    "No visitors match the selected filter."
                 }}
 
             </div>
@@ -1529,6 +1576,8 @@ html[dir="ltr"] .user-details {
 
         {% else %}
 
+
+        <!-- EMPTY -->
 
         <div class="empty-visitors">
 
@@ -1542,7 +1591,7 @@ html[dir="ltr"] .user-details {
                     "لا توجد زيارات حتى الآن"
                     if current_lang == "ar"
                     else
-                    "No visits yet"
+                    "No Visits Yet"
                 }}
 
             </div>
@@ -1550,10 +1599,10 @@ html[dir="ltr"] .user-details {
             <div>
 
                 {{
-                    "ستظهر هنا تفاصيل الزوار بمجرد زيارة المتجر."
+                    "ستظهر زيارات العملاء هنا."
                     if current_lang == "ar"
                     else
-                    "Visitor details will appear here when someone visits the store."
+                    "Visitor activity will appear here."
                 }}
 
             </div>
@@ -1566,14 +1615,13 @@ html[dir="ltr"] .user-details {
 
     </div>
 
-
 </div>
 
 
 <script>
 
 /* =====================================================
-   VISITOR FILTER
+   FILTER VISITORS
 ===================================================== */
 
 function filterVisitors(filter) {
@@ -1586,6 +1634,11 @@ function filterVisitors(filter) {
     const cards =
         document.querySelectorAll(
             ".visitor-stat"
+        );
+
+    const buttons =
+        document.querySelectorAll(
+            ".filter-btn"
         );
 
     const filterInfo =
@@ -1604,6 +1657,10 @@ function filterVisitors(filter) {
         );
 
 
+    /* -------------------------------------------------
+       Remove active card
+    ------------------------------------------------- */
+
     cards.forEach(function(card) {
 
         card.classList.remove(
@@ -1613,28 +1670,22 @@ function filterVisitors(filter) {
     });
 
 
-    if (filter === "all") {
+    /* -------------------------------------------------
+       Remove active period button
+    ------------------------------------------------- */
 
-        rows.forEach(function(row) {
+    buttons.forEach(function(button) {
 
-            row.classList.remove(
-                "hidden"
-            );
-
-        });
-
-        filterInfo.classList.remove(
-            "show"
+        button.classList.remove(
+            "active"
         );
 
-        noResults.classList.remove(
-            "show"
-        );
+    });
 
-        return;
 
-    }
-
+    /* -------------------------------------------------
+       Activate selected card
+    ------------------------------------------------- */
 
     cards.forEach(function(card) {
 
@@ -1651,13 +1702,36 @@ function filterVisitors(filter) {
     });
 
 
+    /* -------------------------------------------------
+       Activate selected period button
+    ------------------------------------------------- */
+
+    buttons.forEach(function(button) {
+
+        if (
+            button.dataset.period === filter
+        ) {
+
+            button.classList.add(
+                "active"
+            );
+
+        }
+
+    });
+
+
     let visibleCount = 0;
 
+
+    /* =================================================
+       FILTER ROWS
+    ================================================= */
 
     rows.forEach(function(row) {
 
         const user =
-            row.dataset.userId;
+            row.dataset.user;
 
         const active =
             row.dataset.active;
@@ -1665,11 +1739,32 @@ function filterVisitors(filter) {
         const today =
             row.dataset.today;
 
+        const week =
+            row.dataset.week;
+
+        const month =
+            row.dataset.month;
+
 
         let show = false;
 
 
-        if (filter === "today") {
+        /* -------------------------------------------------
+           ALL
+        ------------------------------------------------- */
+
+        if (filter === "all") {
+
+            show = true;
+
+        }
+
+
+        /* -------------------------------------------------
+           TODAY
+        ------------------------------------------------- */
+
+        else if (filter === "today") {
 
             show =
                 today === "yes";
@@ -1677,35 +1772,69 @@ function filterVisitors(filter) {
         }
 
 
-        else if (
-            filter === "registered"
-        ) {
+        /* -------------------------------------------------
+           WEEK
+        ------------------------------------------------- */
+
+        else if (filter === "week") {
 
             show =
-                user === "yes";
+                week === "yes";
 
         }
 
 
-        else if (
-            filter === "guest"
-        ) {
+        /* -------------------------------------------------
+           MONTH
+        ------------------------------------------------- */
+
+        else if (filter === "month") {
 
             show =
-                user === "no";
+                month === "yes";
 
         }
 
 
-        else if (
-            filter === "active"
-        ) {
+        /* -------------------------------------------------
+           REGISTERED
+        ------------------------------------------------- */
+
+        else if (filter === "registered") {
+
+            show =
+                user === "registered";
+
+        }
+
+
+        /* -------------------------------------------------
+           GUEST
+        ------------------------------------------------- */
+
+        else if (filter === "guest") {
+
+            show =
+                user === "guest";
+
+        }
+
+
+        /* -------------------------------------------------
+           ACTIVE
+        ------------------------------------------------- */
+
+        else if (filter === "active") {
 
             show =
                 active === "yes";
 
         }
 
+
+        /* -------------------------------------------------
+           ACTIVE REGISTERED
+        ------------------------------------------------- */
 
         else if (
             filter === "active_registered"
@@ -1714,10 +1843,14 @@ function filterVisitors(filter) {
             show =
                 active === "yes"
                 &&
-                user === "yes";
+                user === "registered";
 
         }
 
+
+        /* -------------------------------------------------
+           ACTIVE GUESTS
+        ------------------------------------------------- */
 
         else if (
             filter === "active_guests"
@@ -1726,10 +1859,14 @@ function filterVisitors(filter) {
             show =
                 active === "yes"
                 &&
-                user === "no";
+                user === "guest";
 
         }
 
+
+        /* -------------------------------------------------
+           TODAY GUESTS
+        ------------------------------------------------- */
 
         else if (
             filter === "today_guest"
@@ -1738,10 +1875,14 @@ function filterVisitors(filter) {
             show =
                 today === "yes"
                 &&
-                user === "no";
+                user === "guest";
 
         }
 
+
+        /* -------------------------------------------------
+           SHOW / HIDE
+        ------------------------------------------------- */
 
         if (show) {
 
@@ -1762,111 +1903,144 @@ function filterVisitors(filter) {
     });
 
 
+    /* =================================================
+       FILTER NAME
+    ================================================= */
+
     let filterName = "";
 
 
     {% if current_lang == "ar" %}
 
-        if (filter === "today") {
+        if (filter === "all") {
+            filterName = "كل الزيارات";
+        }
 
+        else if (filter === "today") {
             filterName = "زيارات اليوم";
+        }
 
+        else if (filter === "week") {
+            filterName = "زيارات هذا الأسبوع";
+        }
+
+        else if (filter === "month") {
+            filterName = "زيارات هذا الشهر";
         }
 
         else if (filter === "registered") {
-
             filterName = "المستخدمون المسجلون";
-
         }
 
         else if (filter === "guest") {
-
             filterName = "الزوار غير المسجلين";
-
         }
 
         else if (filter === "active") {
-
             filterName = "الزوار الآن";
-
         }
 
-        else if (filter === "active_registered") {
-
+        else if (
+            filter === "active_registered"
+        ) {
             filterName = "المسجلون الآن";
-
         }
 
-        else if (filter === "active_guests") {
-
-            filterName = "الزوار بدون تسجيل الآن";
-
+        else if (
+            filter === "active_guests"
+        ) {
+            filterName = "غير المسجلين الآن";
         }
 
-        else if (filter === "today_guest") {
-
+        else if (
+            filter === "today_guest"
+        ) {
             filterName = "زوار اليوم بدون تسجيل";
-
         }
 
     {% else %}
 
-        if (filter === "today") {
+        if (filter === "all") {
+            filterName = "All Visits";
+        }
 
+        else if (filter === "today") {
             filterName = "Today's Visits";
+        }
 
+        else if (filter === "week") {
+            filterName = "This Week";
+        }
+
+        else if (filter === "month") {
+            filterName = "This Month";
         }
 
         else if (filter === "registered") {
-
             filterName = "Registered Visitors";
-
         }
 
         else if (filter === "guest") {
-
             filterName = "Guest Visitors";
-
         }
 
         else if (filter === "active") {
-
             filterName = "Visitors Now";
-
         }
 
-        else if (filter === "active_registered") {
-
+        else if (
+            filter === "active_registered"
+        ) {
             filterName = "Registered Now";
-
         }
 
-        else if (filter === "active_guests") {
-
+        else if (
+            filter === "active_guests"
+        ) {
             filterName = "Guests Now";
-
         }
 
-        else if (filter === "today_guest") {
-
+        else if (
+            filter === "today_guest"
+        ) {
             filterName = "Today's Guests";
-
         }
 
     {% endif %}
 
 
+    /* =================================================
+       FILTER INFO
+    ================================================= */
+
     filterInfoText.innerHTML =
-        "📌 " +
-        filterName +
-        " — " +
+        "📌 "
+        +
+        filterName
+        +
+        " — "
+        +
         visibleCount;
 
 
-    filterInfo.classList.add(
-        "show"
-    );
+    if (filter === "all") {
 
+        filterInfo.classList.remove(
+            "show"
+        );
+
+    } else {
+
+        filterInfo.classList.add(
+            "show"
+        );
+
+    }
+
+
+    /* =================================================
+       NO RESULTS
+    ================================================= */
 
     if (visibleCount === 0) {
 
@@ -1882,22 +2056,28 @@ function filterVisitors(filter) {
 
     }
 
-
-    document
-        .querySelector(
-            ".visitor-table-box"
-        )
-        .scrollIntoView({
-
-            behavior: "smooth",
-
-            block: "start"
-
-        });
-
 }
 
-</script>
 
+/* =====================================================
+   CLEAN LOG
+===================================================== */
+
+
+
+/* =====================================================
+   DEFAULT FILTER
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        filterVisitors("all");
+
+    }
+);
+
+</script>
 
 {% endblock %}
