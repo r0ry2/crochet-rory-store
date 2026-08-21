@@ -1896,42 +1896,84 @@ def profile():
         cancelled_list=cancelled_list
     )
 
-@app.route("/delete-account", methods=["POST", "GET"])
+@app.route("/delete-account", methods=["POST"])
 @login_required
 def delete_account():
 
     try:
         user = current_user
+        user_id = user.id
 
         # ==========================
         # Delete Cart
         # ==========================
 
         Cart.query.filter_by(
-            user_id=user.id
+            user_id=user_id
         ).delete(
             synchronize_session=False
         )
+
 
         # ==========================
         # Delete Wishlist
         # ==========================
 
         Wishlist.query.filter_by(
-            user_id=user.id
+            user_id=user_id
         ).delete(
             synchronize_session=False
         )
+
+
+        # ==========================
+        # Get User Orders
+        # ==========================
+
+        orders = Order.query.filter_by(
+            user_id=user_id
+        ).all()
+
+        order_ids = [
+            order.id
+            for order in orders
+        ]
+
+
+        # ==========================
+        # Delete Order Items First
+        # ==========================
+
+        if order_ids:
+
+            OrderItem.query.filter(
+                OrderItem.order_id.in_(order_ids)
+            ).delete(
+                synchronize_session=False
+            )
+
 
         # ==========================
         # Delete Orders
         # ==========================
 
         Order.query.filter_by(
-            user_id=user.id
+            user_id=user_id
         ).delete(
             synchronize_session=False
         )
+
+
+        # ==========================
+        # Delete Visitor Records
+        # ==========================
+
+        Visitor.query.filter_by(
+            user_id=user_id
+        ).delete(
+            synchronize_session=False
+        )
+
 
         # ==========================
         # Delete User
@@ -1941,20 +1983,24 @@ def delete_account():
 
         db.session.commit()
 
+
         # ==========================
         # Logout
         # ==========================
 
         logout_user()
 
+
         flash(
             "account_deleted_successfully",
             "success"
         )
 
+
         return redirect(
-            url_for("home")
+            url_for("home_logged")
         )
+
 
     except Exception as e:
 
@@ -1962,13 +2008,15 @@ def delete_account():
 
         print(
             "DELETE ACCOUNT ERROR:",
-            e
+            repr(e)
         )
+
 
         flash(
             "account_delete_failed",
             "error"
         )
+
 
         return redirect(
             url_for("profile")
