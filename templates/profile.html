@@ -36,9 +36,10 @@ body{
     padding-bottom:70px;
 }
 
-/*==========================
+
+/* ==========================
         COVER
-==========================*/
+========================== */
 
 .profile-cover{
     width:100%;
@@ -56,12 +57,16 @@ body{
 .cover-overlay{
     position:absolute;
     inset:0;
-    background:linear-gradient(rgba(0,0,0,.15),rgba(0,0,0,.45));
+    background:linear-gradient(
+        rgba(0,0,0,.15),
+        rgba(0,0,0,.45)
+    );
 }
 
-/*==========================
+
+/* ==========================
       PROFILE CARD
-==========================*/
+========================== */
 
 .profile-card{
     width:min(1150px,92%);
@@ -103,9 +108,10 @@ body{
     color:#888;
 }
 
-/*==========================
+
+/* ==========================
       INFO
-==========================*/
+========================== */
 
 .profile-info{
     margin-top:35px;
@@ -161,9 +167,10 @@ body{
     text-overflow:ellipsis;
 }
 
-/*==========================
+
+/* ==========================
       BUTTONS
-==========================*/
+========================== */
 
 .profile-actions{
     margin-top:35px;
@@ -205,6 +212,10 @@ body{
 
 .logout-btn{
     background:#ba627b;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
 }
 
 .logout-btn:hover{
@@ -225,9 +236,10 @@ body{
     background:#c0392b;
 }
 
-/*==========================
+
+/* ==========================
       QUICK ACTIONS
-==========================*/
+========================== */
 
 .quick-actions,
 .orders-status,
@@ -298,9 +310,10 @@ body{
     line-height:1.6;
 }
 
-/*==========================
+
+/* ==========================
       ORDER STATUS
-==========================*/
+========================== */
 
 .status-grid{
     display:grid;
@@ -324,7 +337,11 @@ body{
 }
 
 .status-card.active{
-    background:linear-gradient(135deg,#d88ea4,#c76f89);
+    background:linear-gradient(
+        135deg,
+        #d88ea4,
+        #c76f89
+    );
     color:#fff;
 }
 
@@ -346,9 +363,10 @@ body{
     color:#fff;
 }
 
-/*==========================
+
+/* ==========================
       ORDERS
-==========================*/
+========================== */
 
 .empty-orders{
     background:#fff;
@@ -411,9 +429,10 @@ body{
     background:#8570eb !important;
 }
 
-/*==========================
+
+/* ==========================
       MODALS
-==========================*/
+========================== */
 
 .modal{
     display:none;
@@ -439,17 +458,19 @@ body{
 }
 
 @keyframes fadeIn{
+
     from{
         transform:translateY(-20px);
         opacity:0;
     }
+
     to{
         transform:translateY(0);
         opacity:1;
     }
+
 }
 
-/* زر الإغلاق ثابت وواضح دائمًا */
 .close-modal{
     position:sticky;
     top:0;
@@ -532,9 +553,10 @@ body{
     background:#c76f89;
 }
 
-/*==========================
+
+/* ==========================
       RESPONSIVE
-==========================*/
+========================== */
 
 @media(max-width:992px){
 
@@ -548,9 +570,6 @@ body{
 
 }
 
-/*==========================
-      MOBILE
-==========================*/
 
 @media(max-width:768px){
 
@@ -759,14 +778,9 @@ body{
     }
 
     .close-modal{
-        position:sticky;
-        top:0;
-
         width:36px;
         height:36px;
-
         font-size:27px;
-
         margin-top:-10px;
         margin-right:-5px;
     }
@@ -794,9 +808,6 @@ body{
 
 }
 
-/*==========================
-      SMALL MOBILE
-==========================*/
 
 @media(max-width:480px){
 
@@ -882,6 +893,7 @@ body{
 
 <div class="profile-page">
 
+
     <!-- ==========================
             COVER
     ========================== -->
@@ -914,9 +926,11 @@ body{
 
         </div>
 
+
         <h1>
             {{ current_user.username }}
         </h1>
+
 
         <p class="email">
             {{ current_user.email }}
@@ -1030,6 +1044,7 @@ body{
 
             <button
                 class="edit-btn"
+                type="button"
                 onclick="openEditModal()">
 
                 ✏️
@@ -1049,32 +1064,42 @@ body{
             </button>
 
 
-            <a href="{{ url_for('logout') }}">
+            <a
+                href="{{ url_for('logout') }}"
+                class="logout-btn">
 
-                <button
-                    class="logout-btn"
-                    type="button">
-
-                    🚪
-                    {{ "تسجيل الخروج" if current_lang=="ar" else "Logout" }}
-
-                </button>
+                🚪
+                {{ "تسجيل الخروج" if current_lang=="ar" else "Logout" }}
 
             </a>
 
         </div>
 
 
+        <!-- ==========================
+                DELETE ACCOUNT
+        ========================== -->
+
         <div class="danger-zone">
 
             <button
                 class="delete-btn"
+                type="button"
                 onclick="confirmDeleteAccount()">
 
                 🗑️
                 {{ "حذف الحساب" if current_lang=="ar" else "Delete Account" }}
 
             </button>
+
+
+            <form
+                id="deleteAccountForm"
+                action="{{ url_for('delete_account') }}"
+                method="POST"
+                style="display:none;">
+
+            </form>
 
         </div>
 
@@ -1212,7 +1237,6 @@ body{
                 action="{{ url_for('add_review') }}"
                 method="POST"
                 class="edit-form">
-
 
                 <label>
                     {{ "التقييم" if current_lang=="ar" else "Rating" }}
@@ -1361,23 +1385,6 @@ body{
 
             <div
                 class="status-card"
-                data-status="Completed">
-
-                <div class="status-icon">✅</div>
-
-                <span class="status-count">
-                    {{ completed_orders }}
-                </span>
-
-                <p>
-                    {{ "تم التنفيذ" if current_lang=="ar" else "Completed" }}
-                </p>
-
-            </div>
-
-
-            <div
-                class="status-card"
                 data-status="Shipping">
 
                 <div class="status-icon">🚚</div>
@@ -1511,7 +1518,6 @@ body{
                 enctype="multipart/form-data"
                 class="edit-form">
 
-
                 <label>
                     {{ "الصورة الشخصية" if current_lang=="ar" else "Profile Picture" }}
                 </label>
@@ -1593,9 +1599,6 @@ body{
                 </select>
 
 
-                <!-- الجنسية محذوفة بالكامل -->
-
-
                 <button
                     type="submit"
                     class="save-btn">
@@ -1639,7 +1642,6 @@ body{
                 action="{{ url_for('change_password') }}"
                 method="POST"
                 class="edit-form">
-
 
                 <label>
                     {{ "كلمة المرور الحالية" if current_lang=="ar" else "Current Password" }}
@@ -1690,6 +1692,7 @@ body{
 
 
 <script>
+
 
 /* ===========================
    MODALS
@@ -1751,27 +1754,30 @@ function closeReviewModal(){
    CLOSE MODALS
 =========================== */
 
-window.addEventListener("click",function(e){
+window.addEventListener(
+    "click",
+    function(e){
 
-    if(e.target === editModal){
+        if(e.target === editModal){
 
-        closeEditModal();
+            closeEditModal();
+
+        }
+
+        if(e.target === passwordModal){
+
+            closePasswordModal();
+
+        }
+
+        if(e.target === reviewModal){
+
+            closeReviewModal();
+
+        }
 
     }
-
-    if(e.target === passwordModal){
-
-        closePasswordModal();
-
-    }
-
-    if(e.target === reviewModal){
-
-        closeReviewModal();
-
-    }
-
-});
+);
 
 
 /* ===========================
@@ -1781,11 +1787,17 @@ window.addEventListener("click",function(e){
 function confirmDeleteAccount(){
 
     const message =
-        "{{ 'هل أنت متأكد من حذف الحساب؟ لا يمكن التراجع عن هذه العملية.' if current_lang=='ar' else 'Are you sure you want to delete your account? This action cannot be undone.' }}";
+        "{{ 'هل أنت متأكدة من حذف الحساب؟\\n\\nسيتم حذف حسابك وبياناته المرتبطة به، ولا يمكن التراجع عن هذه العملية.' if current_lang=='ar' else 'Are you sure you want to delete your account?\\n\\nYour account and related data will be permanently deleted. This action cannot be undone.' }}";
 
-    if(confirm(message)){
 
-        window.location.href="/delete-account";
+    const confirmed = confirm(message);
+
+
+    if(confirmed){
+
+        document
+            .getElementById("deleteAccountForm")
+            .submit();
 
     }
 
@@ -1805,189 +1817,260 @@ const container =
 
 cards.forEach(card => {
 
-    card.addEventListener("click", () => {
+    card.addEventListener(
+        "click",
+        () => {
 
-        cards.forEach(c => {
+            cards.forEach(c => {
 
-            c.classList.remove("active");
+                c.classList.remove("active");
 
-        });
-
-        card.classList.add("active");
-
-
-        fetch(
-            `/get-orders/${encodeURIComponent(card.dataset.status)}`
-        )
-
-        .then(res => res.json())
-
-        .then(data => {
-
-            container.innerHTML = "";
+            });
 
 
-            if(data.length === 0){
+            card.classList.add("active");
+
+
+            fetch(
+                `/get-orders/${encodeURIComponent(card.dataset.status)}`
+            )
+
+            .then(res => {
+
+                if(!res.ok){
+
+                    throw new Error(
+                        "Failed to load orders"
+                    );
+
+                }
+
+                return res.json();
+
+            })
+
+            .then(data => {
+
+                container.innerHTML = "";
+
+
+                if(data.length === 0){
+
+                    container.innerHTML = `
+
+                        <div class="empty-orders">
+
+                            <div style="font-size:50px;">
+                                📦
+                            </div>
+
+                            <h3>
+                                ${
+                                    "{{ 'لا توجد طلبات' if current_lang=='ar' else 'No Orders Found' }}"
+                                }
+                            </h3>
+
+                        </div>
+
+                    `;
+
+                    return;
+
+                }
+
+
+                data.forEach(order => {
+
+                    let products = "";
+
+
+                    if(order.items){
+
+                        order.items.forEach(item => {
+
+                            products += `
+
+                                <p>
+                                    🧸
+                                    ${item.product_name}
+                                    ×
+                                    ${item.quantity}
+                                </p>
+
+                            `;
+
+                        });
+
+                    }
+
+
+                    const totalText =
+                        "{{ 'الإجمالي' if current_lang=='ar' else 'Total' }}";
+
+                    const dateText =
+                        "{{ 'التاريخ' if current_lang=='ar' else 'Date' }}";
+
+                    const statusText =
+                        "{{ 'الحالة' if current_lang=='ar' else 'Status' }}";
+
+                    const productsText =
+                        "{{ 'المنتجات' if current_lang=='ar' else 'Products' }}";
+
+                    const shippingText =
+                        "{{ 'شركة الشحن' if current_lang=='ar' else 'Shipping Company' }}";
+
+                    const trackingText =
+                        "{{ 'رقم التتبع' if current_lang=='ar' else 'Tracking Number' }}";
+
+                    const detailsText =
+                        "{{ 'عرض التفاصيل' if current_lang=='ar' else 'View Details' }}";
+
+                    const reviewText =
+                        "{{ '⭐ تقييم المنتج' if current_lang=='ar' else '⭐ Review Product' }}";
+
+
+                    container.innerHTML += `
+
+                        <div class="order-card">
+
+                            <h3>
+                                📦
+                                ${
+                                    "{{ 'طلب' if current_lang=='ar' else 'Order' }}"
+                                }
+                                #${order.id}
+                            </h3>
+
+
+                            <p>
+
+                                <strong>
+                                    💰 ${totalText}:
+                                </strong>
+
+                                ${order.total}
+                                SAR
+
+                            </p>
+
+
+                            <p>
+
+                                <strong>
+                                    📅 ${dateText}:
+                                </strong>
+
+                                ${order.date}
+
+                            </p>
+
+
+                            <p>
+
+                                <strong>
+                                    🔄 ${statusText}:
+                                </strong>
+
+                                ${order.status}
+
+                            </p>
+
+
+                            <h4>
+                                🛒 ${productsText}
+                            </h4>
+
+
+                            ${products}
+
+
+                            ${
+                                order.shipping_company
+                                ? `
+                                    <p>
+
+                                        <strong>
+                                            🚚 ${shippingText}:
+                                        </strong>
+
+                                        ${order.shipping_company}
+
+                                    </p>
+                                  `
+                                : ""
+                            }
+
+
+                            ${
+                                order.tracking_number
+                                ? `
+                                    <p>
+
+                                        <strong>
+                                            🔎 ${trackingText}:
+                                        </strong>
+
+                                        ${order.tracking_number}
+
+                                    </p>
+                                  `
+                                : ""
+                            }
+
+
+                            ${
+                                order.status === "Delivered"
+                                ? `
+
+                                    <a
+                                        href="/add-review/${order.id}"
+                                        class="review-btn">
+
+                                        ${reviewText}
+
+                                    </a>
+
+                                  `
+                                : ""
+                            }
+
+
+                            <a
+                                href="/my-order/${order.id}">
+
+                                ${detailsText}
+
+                            </a>
+
+                        </div>
+
+                    `;
+
+                });
+
+            })
+
+            .catch(error => {
+
+                console.error(
+                    "Orders error:",
+                    error
+                );
+
 
                 container.innerHTML = `
 
                     <div class="empty-orders">
 
-                        <div style="font-size:50px;">
-                            📦
+                        <div style="font-size:45px;">
+                            ⚠️
                         </div>
 
                         <h3>
                             ${
-                                "{{ 'لا توجد طلبات' if current_lang=='ar' else 'No Orders Found' }}"
+                                "{{ 'حدث خطأ أثناء تحميل الطلبات' if current_lang=='ar' else 'An error occurred while loading orders' }}"
                             }
                         </h3>
-
-                    </div>
-
-                `;
-
-                return;
-
-            }
-
-
-            data.forEach(order => {
-
-                let products = "";
-
-
-                if(order.items){
-
-                    order.items.forEach(item => {
-
-                        products += `
-
-                            <p>
-                                🧸
-                                ${item.product_name}
-                                ×
-                                ${item.quantity}
-                            </p>
-
-                        `;
-
-                    });
-
-                }
-
-
-                const totalText =
-                    "{{ 'الإجمالي' if current_lang=='ar' else 'Total' }}";
-
-                const dateText =
-                    "{{ 'التاريخ' if current_lang=='ar' else 'Date' }}";
-
-                const statusText =
-                    "{{ 'الحالة' if current_lang=='ar' else 'Status' }}";
-
-                const productsText =
-                    "{{ 'المنتجات' if current_lang=='ar' else 'Products' }}";
-
-                const shippingText =
-                    "{{ 'شركة الشحن' if current_lang=='ar' else 'Shipping Company' }}";
-
-                const trackingText =
-                    "{{ 'رقم التتبع' if current_lang=='ar' else 'Tracking Number' }}";
-
-                const detailsText =
-                    "{{ 'عرض التفاصيل' if current_lang=='ar' else 'View Details' }}";
-
-                const reviewText =
-                    "{{ '⭐ تقييم المنتج' if current_lang=='ar' else '⭐ Review Product' }}";
-
-
-                container.innerHTML += `
-
-                    <div class="order-card">
-
-                        <h3>
-                            📦
-                            ${
-                                "{{ 'طلب' if current_lang=='ar' else 'Order' }}"
-                            }
-                            #${order.id}
-                        </h3>
-
-
-                        <p>
-                            <strong>💰 ${totalText}:</strong>
-                            ${order.total}
-                            SAR
-                        </p>
-
-
-                        <p>
-                            <strong>📅 ${dateText}:</strong>
-                            ${order.date}
-                        </p>
-
-
-                        <p>
-                            <strong>🔄 ${statusText}:</strong>
-                            ${order.status}
-                        </p>
-
-
-                        <h4>
-                            🛒 ${productsText}
-                        </h4>
-
-
-                        ${products}
-
-
-                        ${
-                            order.shipping_company
-                            ? `
-                                <p>
-                                    <strong>🚚 ${shippingText}:</strong>
-                                    ${order.shipping_company}
-                                </p>
-                              `
-                            : ""
-                        }
-
-
-                        ${
-                            order.tracking_number
-                            ? `
-                                <p>
-                                    <strong>🔎 ${trackingText}:</strong>
-                                    ${order.tracking_number}
-                                </p>
-                              `
-                            : ""
-                        }
-
-
-                        ${
-                            order.status === "Delivered"
-                            ? `
-
-                                <a
-                                    href="/add-review/${order.id}"
-                                    class="review-btn">
-
-                                    ${reviewText}
-
-                                </a>
-
-                              `
-                            : ""
-                        }
-
-
-                        <a href="/my-order/${order.id}">
-
-                            ${detailsText}
-
-                        </a>
 
                     </div>
 
@@ -1995,38 +2078,11 @@ cards.forEach(card => {
 
             });
 
-        })
-
-        .catch(error => {
-
-            console.error(
-                "Orders error:",
-                error
-            );
-
-            container.innerHTML = `
-
-                <div class="empty-orders">
-
-                    <div style="font-size:45px;">
-                        ⚠️
-                    </div>
-
-                    <h3>
-                        ${
-                            "{{ 'حدث خطأ أثناء تحميل الطلبات' if current_lang=='ar' else 'An error occurred while loading orders' }}"
-                        }
-                    </h3>
-
-                </div>
-
-            `;
-
-        });
-
-    });
+        }
+    );
 
 });
+
 
 </script>
 

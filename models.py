@@ -324,7 +324,7 @@ class Cart(db.Model):
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey("user.id"),
+        db.ForeignKey("user.id", ondelete="CASCADE"),
         nullable=False
     )
 
@@ -341,7 +341,10 @@ class Cart(db.Model):
 
     user = db.relationship(
         "User",
-        backref="cart_items",
+        backref=db.backref(
+            "cart_items",
+            passive_deletes=True
+        ),
         lazy=True
     )
 
@@ -372,7 +375,7 @@ class Wishlist(db.Model):
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey("user.id"),
+        db.ForeignKey("user.id", ondelete="CASCADE"),
         nullable=False
     )
 
@@ -384,7 +387,10 @@ class Wishlist(db.Model):
 
     user = db.relationship(
         "User",
-        backref="wishlist_items",
+        backref=db.backref(
+            "wishlist_items",
+            passive_deletes=True
+        ),
         lazy=True
     )
 

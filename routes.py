@@ -1700,6 +1700,7 @@ def add_review():
     flash("تم إرسال تقييمك بنجاح 💕")
 
     return redirect(url_for("home_logged"))
+
 @app.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():
@@ -1749,7 +1750,6 @@ def profile():
     wishlist_count = Wishlist.query.filter_by(
         user_id=current_user.id
     ).count()
-
 
     # ==========================
     # Orders Lists
@@ -1803,7 +1803,6 @@ def profile():
         Order.created_at.desc()
     ).all()
 
-
     # ==========================
     # Update Profile
     # ==========================
@@ -1811,17 +1810,11 @@ def profile():
     if request.method == "POST":
 
         current_user.username = request.form.get("username")
-
         current_user.email = request.form.get("email")
-
         current_user.phone = request.form.get("phone")
-
         current_user.birthday = request.form.get("birthday")
-
         current_user.gender = request.form.get("gender")
-
         current_user.nationality = request.form.get("nationality")
-
 
         # ==========================
         # Upload Profile Image
@@ -1831,9 +1824,7 @@ def profile():
 
         if image and image.filename != "":
 
-            filename = secure_filename(
-                image.filename
-            )
+            filename = secure_filename(image.filename)
 
             upload_folder = os.path.join(
                 app.root_path,
@@ -1847,22 +1838,20 @@ def profile():
                 exist_ok=True
             )
 
-            image.save(
-                os.path.join(
-                    upload_folder,
-                    filename
-                )
+            image_path = os.path.join(
+                upload_folder,
+                filename
             )
 
-            current_user.profile_image = filename
+            image.save(image_path)
 
+            current_user.profile_image = filename
 
         # ==========================
         # Save Changes
         # ==========================
 
         db.session.commit()
-
 
         # ==========================
         # Success Message
@@ -1873,55 +1862,117 @@ def profile():
             "success"
         )
 
-
         return redirect(
             url_for("profile")
         )
-
 
     # ==========================
     # Render Profile
     # ==========================
 
     return render_template(
-
         "profile.html",
 
         user=current_user,
 
         total_orders=total_orders,
-
         pending_payment_orders=pending_payment_orders,
-
         pending_review_orders=pending_review_orders,
-
         processing_orders=processing_orders,
-
         shipping_orders=shipping_orders,
-
         delivered_orders=delivered_orders,
-
         cancelled_orders=cancelled_orders,
 
         cart_count=cart_count,
-
         wishlist_count=wishlist_count,
 
         orders=all_orders,
 
         pending_payment_list=pending_payment_list,
-
         pending_review_list=pending_review_list,
-
         processing_list=processing_list,
-
         shipping_list=shipping_list,
-
         delivered_list=delivered_list,
-
         cancelled_list=cancelled_list
-
     )
+
+@app.route("/delete-account", methods=["POST", "GET"])
+@login_required
+def delete_account():
+
+    try:
+        user = current_user
+
+        # ==========================
+        # Delete Cart
+        # ==========================
+
+        Cart.query.filter_by(
+            user_id=user.id
+        ).delete(
+            synchronize_session=False
+        )
+
+        # ==========================
+        # Delete Wishlist
+        # ==========================
+
+        Wishlist.query.filter_by(
+            user_id=user.id
+        ).delete(
+            synchronize_session=False
+        )
+
+        # ==========================
+        # Delete Orders
+        # ==========================
+
+        Order.query.filter_by(
+            user_id=user.id
+        ).delete(
+            synchronize_session=False
+        )
+
+        # ==========================
+        # Delete User
+        # ==========================
+
+        db.session.delete(user)
+
+        db.session.commit()
+
+        # ==========================
+        # Logout
+        # ==========================
+
+        logout_user()
+
+        flash(
+            "account_deleted_successfully",
+            "success"
+        )
+
+        return redirect(
+            url_for("home")
+        )
+
+    except Exception as e:
+
+        db.session.rollback()
+
+        print(
+            "DELETE ACCOUNT ERROR:",
+            e
+        )
+
+        flash(
+            "account_delete_failed",
+            "error"
+        )
+
+        return redirect(
+            url_for("profile")
+        )
 # ==========================================
 # 📦 GET USER ORDERS BY STATUS
 # ==========================================
