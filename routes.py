@@ -56,46 +56,6 @@ from flask_login import (
 
 resend.api_key = os.environ.get("RESEND_API_KEY")
 
-
-def send_verification_email(email, verification_code):
-    """Send the registration/verification email through Resend."""
-    try:
-        if not resend.api_key:
-            print("❌ RESEND_API_KEY is missing")
-            return False
-
-        from_email = os.environ.get(
-            "RESEND_FROM_EMAIL",
-            "onboarding@resend.dev"
-        )
-
-        params = {
-            "from": from_email,
-            "to": [email],
-            "subject": "💕 Welcome to Crochet Rory Store - Email Verification",
-            "html": f"""
-                <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:30px;background:#fff7fb;border-radius:18px;">
-                    <h2 style="color:#d77aa8;">💕 Welcome to Crochet Rory Store</h2>
-                    <p>Thank you for creating your account with Crochet Rory Store.</p>
-                    <p>Please use the verification code below to confirm your email address:</p>
-                    <div style="font-size:32px;font-weight:bold;letter-spacing:8px;text-align:center;padding:20px;background:#ffffff;border-radius:14px;color:#b95f91;">
-                        {verification_code}
-                    </div>
-                    <p style="margin-top:20px;">This code is valid for <strong>10 minutes</strong>.</p>
-                    <p>If you did not create this account, you can safely ignore this email.</p>
-                    <p style="color:#999;">Crochet Rory Store 🧶💕</p>
-                </div>
-            """
-        }
-
-        result = resend.Emails.send(params)
-        print("✅ VERIFICATION EMAIL SENT:", result)
-        return True
-
-    except Exception as e:
-        print("❌ VERIFICATION EMAIL ERROR:", e)
-        return False
-
 from werkzeug.utils import secure_filename
 
 from datetime import datetime
@@ -1454,18 +1414,15 @@ def index():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-
     form = RegisterForm()
 
     if form.validate_on_submit():
-
         username = form.username.data.strip()
         email = form.email.data.strip().lower()
 
         # ==========================================
         # 📧 التحقق من صيغة البريد الإلكتروني
         # ==========================================
-
         email_pattern = (
             r"^[A-Za-z0-9._%+-]+@"
             r"[A-Za-z0-9.-]+\."
@@ -1473,19 +1430,14 @@ def register():
         )
 
         if not re.match(email_pattern, email):
-
             form.email.errors.append(
-                "صيغة البريد الإلكتروني غير صحيحة. "
-                "مثال: example@gmail.com"
+                "صيغة البريد الإلكتروني غير صحيحة. مثال: example@gmail.com"
             )
 
             login_form = LoginForm()
             verify_form = VerifyCodeForm()
-
             products = Product.query.filter(
-                Product.publish_location.in_(
-                    ["both", "home_only"]
-                )
+                Product.publish_location.in_(["both", "home_only"])
             ).all()
 
             return render_template(
@@ -1498,26 +1450,21 @@ def register():
             )
 
         # ==========================================
-        # 📧 التحقق من أن الإيميل غير مستخدم
+        # 📧 البريد الإلكتروني يجب أن يكون فريدًا
         # ==========================================
-
         existing_email = User.query.filter(
             func.lower(User.email) == email
         ).first()
 
         if existing_email:
-
             form.email.errors.append(
                 "هذا البريد الإلكتروني مسجل بالفعل."
             )
 
             login_form = LoginForm()
             verify_form = VerifyCodeForm()
-
             products = Product.query.filter(
-                Product.publish_location.in_(
-                    ["both", "home_only"]
-                )
+                Product.publish_location.in_(["both", "home_only"])
             ).all()
 
             return render_template(
@@ -1531,129 +1478,59 @@ def register():
 
         # ==========================================
         # 👤 إنشاء المستخدم
-        #
-        # الاسم مسموح يتكرر
-        # البريد فقط يجب أن يكون فريدًا
+        # اسم المستخدم مسموح يتكرر
+        # البريد الإلكتروني فقط يجب أن يكون فريدًا
         # ==========================================
-
         new_user = User(
             username=username,
             email=email,
-            phone=form.phone.data
+            phone=form.phone.data,
+            confirmed=True
         )
 
         # ==========================================
         # 🔐 تشفير كلمة المرور
         # ==========================================
-
-        new_user.set_password(
-            form.password.data
-        )
-
-        # ==========================================
-        # 🔢 إنشاء كود تحقق
-        # ==========================================
-
-        verification_code = (
-            str(
-                secrets.randbelow(
-                    1000000
-                )
-            ).zfill(6)
-        )
-
-        new_user.verification_code = (
-            verification_code
-        )
-
-        # ==========================================
-        # ⏰ صلاحية الكود = 10 دقائق
-        # ==========================================
-
-        new_user.verification_expiry = (
-            datetime.utcnow()
-            + timedelta(minutes=10)
-        )
-
-        # ==========================================
-        # 🚫 الحساب غير مفعل حتى يتم التحقق
-        # ==========================================
-
-        new_user.confirmed = False
+        new_user.set_password(form.password.data)
 
         # ==========================================
         # 👑 تحديد الأدمن
         # ==========================================
-
         if email == "admin@store.com":
-
             new_user.role = "admin"
-
         else:
-
             new_user.role = "user"
 
         # ==========================================
         # 💾 حفظ المستخدم
         # ==========================================
-
         try:
-
             db.session.add(new_user)
-
             db.session.commit()
 
         except Exception as e:
-
             db.session.rollback()
 
-            print(
-                f"❌ Registration error: {e}"
-            )
+            print(f"❌ Registration error: {e}")
 
-            # ==========================================
-            # 📧 البريد مستخدم بالفعل
-            # ==========================================
-
+            # البريد الإلكتروني ما زال فريدًا في قاعدة البيانات
             if (
                 "user_email_key" in str(e)
                 or "UNIQUE constraint failed: user.email" in str(e)
             ):
-
                 form.email.errors.append(
                     "هذا البريد الإلكتروني مسجل بالفعل."
                 )
 
-            # ==========================================
-            # 👤 اسم المستخدم مستخدم بالفعل
-            # ==========================================
-
-            elif (
-                "user_username_key" in str(e)
-                or "UNIQUE constraint failed: user.username" in str(e)
-            ):
-
-                form.username.errors.append(
-                    "اسم المستخدم مستخدم بالفعل."
-                )
-
-            # ==========================================
-            # ❌ خطأ عام
-            # ==========================================
-
             else:
-
                 form.email.errors.append(
                     "حدث خطأ أثناء إنشاء الحساب، حاول مرة أخرى."
                 )
 
             login_form = LoginForm()
             verify_form = VerifyCodeForm()
-
             products = Product.query.filter(
-                Product.publish_location.in_(
-                    ["both", "home_only"]
-                )
+                Product.publish_location.in_(["both", "home_only"])
             ).all()
 
             return render_template(
@@ -1665,190 +1542,80 @@ def register():
                 show_register_popup=True
             )
 
-        print(
-            f"✅ New user saved: {new_user.email}"
-        )
-
-        # ==========================================
-        # 🔗 حفظ البريد في Session
-        # ==========================================
-
-        session["verification_email"] = (
-            new_user.email
-        )
+        print(f"✅ New user saved: {new_user.email}")
 
         # ==========================================
         # 🔗 ربط الزيارة الحالية بالمستخدم
         # ==========================================
-
-        current_visitor_id = session.get(
-            "visitor_id"
-        )
+        current_visitor_id = session.get("visitor_id")
 
         if current_visitor_id:
-
             current_visit = (
                 Visitor.query
-                .filter_by(
-                    visitor_id=current_visitor_id
-                )
+                .filter_by(visitor_id=current_visitor_id)
                 .first()
             )
 
             if current_visit:
-
-                current_visit.user_id = (
-                    new_user.id
-                )
-
-                current_visit.visitor_type = (
-                    "registered"
-                )
-
-                current_visit.page = (
-                    request.path
-                )
-
-                current_visit.last_activity = (
-                    datetime.utcnow()
-                )
+                current_visit.user_id = new_user.id
+                current_visit.visitor_type = "registered"
+                current_visit.page = request.path
+                current_visit.last_activity = datetime.utcnow()
 
                 db.session.commit()
 
                 print(
                     f"👤 VISIT LINKED TO USER: "
-                    f"{current_visitor_id} → "
-                    f"User #{new_user.id}"
+                    f"{current_visitor_id} → User #{new_user.id}"
                 )
-
             else:
-
                 print(
-                    f"⚠️ Visitor not found: "
-                    f"{current_visitor_id}"
+                    f"⚠️ Visitor not found: {current_visitor_id}"
                 )
-
         else:
-
-            print(
-                "⚠️ No visitor_id found in session"
-            )
+            print("⚠️ No visitor_id found in session")
 
         # ==========================================
-        # 📧 إرسال كود التحقق باستخدام Resend
+        # 🔐 تسجيل الدخول مباشرة بعد إنشاء الحساب
+        # لا يوجد تحقق بالإيميل
         # ==========================================
+        login_user(new_user)
+        session["is_admin"] = (new_user.role == "admin")
 
-        email_sent = (
-            send_verification_email(
-                new_user.email,
-                verification_code
-            )
-        )
-
-        # ==========================================
-        # ❌ فشل إرسال الإيميل
-        # ==========================================
-
-        if not email_sent:
-
-            # حذف المستخدم الذي تم إنشاؤه
-            # لأن التسجيل لم يكتمل
-
-            try:
-
-                db.session.delete(
-                    new_user
-                )
-
-                db.session.commit()
-
-            except Exception:
-
-                db.session.rollback()
-
-            session.pop(
-                "verification_email",
-                None
-            )
-
-            form.email.errors.append(
-                "تعذر إرسال رمز التحقق. "
-                "تأكد من إعداد Resend وحاول مرة أخرى."
-            )
-
-            login_form = LoginForm()
-            verify_form = VerifyCodeForm()
-
-            products = Product.query.filter(
-                Product.publish_location.in_(
-                    ["both", "home_only"]
-                )
-            ).all()
-
-            return render_template(
-                "index.html",
-                products=products,
-                form=login_form,
-                register_form=form,
-                verify_form=verify_form,
-                show_register_popup=True
-            )
+        # نقل سلة الزائر إلى حسابه
+        merge_session_cart_into_db(new_user.id)
 
         # ==========================================
-        # ✅ تم إرسال الإيميل
+        # ✅ رسالة نجاح
         # ==========================================
-
-        print(
-            f"📧 Verification code sent to: "
-            f"{new_user.email}"
-        )
-
-        # ==========================================
-        # 🚫 لا نسجل الدخول هنا
-        #
-        # المستخدم لازم يدخل الكود أولًا
-        # ==========================================
-
         if session.get("language") == "ar":
-
             flash(
-                "📧 تم إنشاء حسابك وإرسال رمز التحقق "
-                "إلى بريدك الإلكتروني.",
+                "💕 تم إنشاء حسابك وتسجيل دخولك بنجاح!",
                 "success"
             )
-
         else:
-
             flash(
-                "📧 Your account was created. "
-                "A verification code has been sent "
-                "to your email.",
+                "💕 Your account was created and you are now logged in!",
                 "success"
             )
 
         # ==========================================
-        # 🔢 الانتقال إلى نافذة التحقق
+        # 👑 الأدمن → لوحة التحكم
+        # 👤 العميل → الصفحة الرئيسية بعد تسجيل الدخول
         # ==========================================
+        if new_user.role == "admin":
+            return redirect(url_for("admin_home"))
 
-        return redirect(
-            url_for(
-                "index",
-                verify="1"
-            )
-        )
+        return redirect(url_for("home_logged"))
 
     # ==========================================
     # GET / Validation Failed
     # ==========================================
-
     login_form = LoginForm()
-
     verify_form = VerifyCodeForm()
 
     products = Product.query.filter(
-        Product.publish_location.in_(
-            ["both", "home_only"]
-        )
+        Product.publish_location.in_(["both", "home_only"])
     ).all()
 
     return render_template(
@@ -1858,10 +1625,6 @@ def register():
         form=login_form,
         verify_form=verify_form
     )
-# ==========================================
-# 🔑 PASSWORD RECOVERY
-# بدون بريد إلكتروني: لا يوجد استرجاع كلمة مرور بالكود
-# ==========================================
 
 @app.route("/forgot_password", methods=["POST"])
 def forgot_password():
@@ -1883,82 +1646,11 @@ def verify_reset_code():
 
 @app.route("/verify_email", methods=["GET", "POST"])
 def verify_email():
-    verify_form = VerifyCodeForm()
-    email = session.get("verification_email")
-
-    if not email:
-        flash("لا يوجد حساب بانتظار التحقق.", "danger")
-        return redirect(url_for("index"))
-
-    user = User.query.filter(
-        func.lower(User.email) == email.lower()
-    ).first()
-
-    if not user:
-        session.pop("verification_email", None)
-        flash("الحساب غير موجود.", "danger")
-        return redirect(url_for("index"))
-
-    if user.confirmed:
-        session.pop("verification_email", None)
-        login_user(user, remember=True)
-        session["user_id"] = user.id
-        session["is_admin"] = (user.role == "admin")
-        merge_session_cart_into_db(user.id)
-        return redirect(
-            url_for("admin_home" if user.role == "admin" else "home_logged")
-        )
-
-    if verify_form.validate_on_submit():
-        entered_code = str(verify_form.code.data).strip()
-
-        if not user.verification_code:
-            flash("لا يوجد رمز تحقق. اطلب رمزًا جديدًا.", "danger")
-            return redirect(url_for("index", verify="1"))
-
-        if not user.verification_expiry:
-            flash("انتهت صلاحية رمز التحقق. اطلب رمزًا جديدًا.", "danger")
-            return redirect(url_for("index", verify="1"))
-
-        if datetime.utcnow() >= user.verification_expiry:
-            flash("انتهت صلاحية رمز التحقق. اطلب رمزًا جديدًا.", "danger")
-            return redirect(url_for("index", verify="1"))
-
-        if entered_code != str(user.verification_code):
-            flash("رمز التحقق غير صحيح.", "danger")
-            return redirect(url_for("index", verify="1"))
-
-        user.confirmed = True
-        user.verification_code = None
-        user.verification_expiry = None
-        db.session.commit()
-
-        session.pop("verification_email", None)
-
-        login_user(user, remember=True)
-        session["user_id"] = user.id
-        session["is_admin"] = (user.role == "admin")
-
-        current_visitor_id = session.get("visitor_id")
-        if current_visitor_id:
-            current_visit = Visitor.query.filter_by(
-                visitor_id=current_visitor_id
-            ).first()
-            if current_visit:
-                current_visit.user_id = user.id
-                current_visit.visitor_type = "registered"
-                current_visit.last_activity = datetime.utcnow()
-                db.session.commit()
-
-        merge_session_cart_into_db(user.id)
-
-        flash("✅ تم تأكيد بريدك الإلكتروني بنجاح!", "success")
-
-        return redirect(
-            url_for("admin_home" if user.role == "admin" else "home_logged")
-        )
-
-    return redirect(url_for("index", verify="1"))
+    flash(
+        "Email verification is no longer required.",
+        "info"
+    )
+    return redirect(url_for("index"))
 
 
 @app.route("/reset_password", methods=["POST"])
@@ -4562,10 +4254,12 @@ def admin_users():
 @login_required
 def delete_user(id):
 
+    # التأكد أن المستخدم أدمن
     if current_user.role != "admin":
         flash("⚠️ Access denied! Admins only.", "danger")
         return redirect(url_for("home_logged"))
 
+    # جلب المستخدم
     user = User.query.get_or_404(id)
 
     # حماية الأدمن الرئيسي
@@ -4584,19 +4278,44 @@ def delete_user(id):
         )
         return redirect(url_for("admin_users"))
 
-    username = user.username
+    try:
+        username = user.username
 
-    db.session.delete(user)
-    db.session.commit()
+        # ==========================================
+        # 🗑️ حذف سجلات الزيارات المرتبطة بالمستخدم أولاً
+        # ==========================================
+        Visitor.query.filter_by(
+            user_id=user.id
+        ).delete(
+            synchronize_session=False
+        )
 
-    flash(
-        f"🗑️ تم حذف المستخدم {username} بنجاح.",
-        "success"
-    )
+        # ==========================================
+        # 🗑️ حذف المستخدم
+        # ==========================================
+        db.session.delete(user)
+
+        # حفظ التغييرات
+        db.session.commit()
+
+        flash(
+            f"🗑️ تم حذف المستخدم {username} بنجاح.",
+            "success"
+        )
+
+    except Exception as e:
+
+        # إذا صار خطأ نلغي العملية
+        db.session.rollback()
+
+        print("❌ DELETE USER ERROR:", str(e))
+
+        flash(
+            "❌ حدث خطأ أثناء حذف المستخدم.",
+            "danger"
+        )
 
     return redirect(url_for("admin_users"))
-
-
 # ==========================================
 # 🔑 RESET USER PASSWORD
 # ==========================================
