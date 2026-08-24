@@ -1,0 +1,371 @@
+{% extends "admin/admin_base.html" %}
+
+{% block title %}
+{{ "إضافة إعلان" if current_lang == "ar" else "Add Advertisement" }}
+{% endblock %}
+
+
+{% block content %}
+
+<style>
+
+.ad-form-container{
+
+    max-width:700px;
+
+    margin:0 auto;
+
+    background:#fff;
+
+    border:1px solid #f3c4d4;
+
+    border-radius:20px;
+
+    padding:30px;
+
+    box-shadow:
+        0 8px 25px rgba(216,111,157,.10);
+
+}
+
+
+.ad-form-container h2{
+
+    text-align:center;
+
+    color:#d85f91;
+
+    margin-bottom:30px;
+
+}
+
+
+.form-group{
+
+    margin-bottom:20px;
+
+}
+
+
+.form-group label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-weight:600;
+
+    color:#555;
+
+}
+
+
+.form-group input{
+
+    width:100%;
+
+    padding:12px 14px;
+
+    border:1px solid #e3c4cf;
+
+    border-radius:10px;
+
+    box-sizing:border-box;
+
+    font-size:15px;
+
+}
+
+
+.form-group input:focus{
+
+    outline:none;
+
+    border-color:#d86f9d;
+
+}
+
+
+.form-help{
+
+    color:#888;
+
+    font-size:13px;
+
+    margin-top:6px;
+
+}
+
+
+.preview{
+
+    margin-top:15px;
+
+    border-radius:14px;
+
+    overflow:hidden;
+
+    display:none;
+
+}
+
+
+.preview img{
+
+    width:100%;
+
+    display:block;
+
+}
+
+
+.submit-btn{
+
+    width:100%;
+
+    border:none;
+
+    background:#d86f9d;
+
+    color:#fff;
+
+    padding:14px;
+
+    border-radius:12px;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+}
+
+
+.submit-btn:hover{
+
+    background:#c6538b;
+
+}
+
+</style>
+
+
+<div class="ad-form-container">
+
+
+    <h2>
+
+        📢
+
+        {{
+
+            "إضافة إعلان جديد"
+
+            if current_lang == "ar"
+
+            else
+
+            "Add New Advertisement"
+
+        }}
+
+    </h2>
+
+
+    <form
+        method="POST"
+        enctype="multipart/form-data">
+
+
+        <div class="form-group">
+
+            <label>
+
+                {{
+
+                    "عنوان الإعلان"
+
+                    if current_lang == "ar"
+
+                    else
+
+                    "Advertisement Title"
+
+                }}
+
+            </label>
+
+
+            <input
+                type="text"
+                name="title"
+                placeholder="{{
+                    'مثال: عرض خاص هذا الأسبوع'
+                    if current_lang == 'ar'
+                    else
+                    'Example: Special Offer'
+                }}">
+
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+
+                {{
+
+                    "صورة الإعلان"
+
+                    if current_lang == "ar"
+
+                    else
+
+                    "Advertisement Image"
+
+                }}
+
+            </label>
+
+
+            <input
+                type="file"
+                name="image"
+                accept=".jpg,.jpeg,.png"
+                required>
+
+
+            <div class="form-help">
+
+                {{
+
+                    "يفضل أن تكون الصورة بنسبة 16:6."
+
+                    if current_lang == "ar"
+
+                    else
+
+                    "Recommended image ratio: 16:6."
+
+                }}
+
+            </div>
+
+
+            <div class="preview" id="imagePreview">
+
+                <img id="previewImage" src="" alt="Preview">
+
+            </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+
+                {{
+
+                    "ترتيب الإعلان"
+
+                    if current_lang == "ar"
+
+                    else
+
+                    "Display Order"
+
+                }}
+
+            </label>
+
+
+            <input
+                type="number"
+                name="display_order"
+                value="0"
+                min="0">
+
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="submit-btn">
+
+            💾
+
+            {{
+
+                "حفظ الإعلان"
+
+                if current_lang == "ar"
+
+                else
+
+                "Save Advertisement"
+
+            }}
+
+        </button>
+
+
+    </form>
+
+</div>
+
+
+<script>
+
+const imageInput =
+    document.querySelector(
+        'input[name="image"]'
+    );
+
+const preview =
+    document.getElementById(
+        "imagePreview"
+    );
+
+const previewImage =
+    document.getElementById(
+        "previewImage"
+    );
+
+
+if(imageInput){
+
+    imageInput.addEventListener(
+        "change",
+        function(){
+
+            const file =
+                this.files[0];
+
+            if(!file){
+
+                preview.style.display =
+                    "none";
+
+                return;
+
+            }
+
+
+            previewImage.src =
+                URL.createObjectURL(file);
+
+            preview.style.display =
+                "block";
+
+        }
+    );
+
+}
+
+</script>
+
+{% endblock %}

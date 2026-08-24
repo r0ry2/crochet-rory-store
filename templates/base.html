@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="{{ current_lang }}" dir="{{ 'rtl' if current_lang == 'ar' else 'ltr' }}">
 
@@ -26,6 +27,25 @@
 
 
 <body>
+
+
+<!-- =====================================================
+     INTRO / SPLASH SCREEN
+===================================================== -->
+
+<div id="siteIntro" class="site-intro">
+
+    <div class="intro-content">
+
+        <img
+            src="{{ url_for('static', filename='images/intro.png') }}"
+            alt="Crochet Rory Store"
+            class="intro-image">
+
+    </div>
+
+</div>
+
 
 
 <!-- =====================================================
@@ -151,6 +171,7 @@
 
 
 
+
 <!-- =====================================================
      STORE BANNER
 ===================================================== -->
@@ -182,6 +203,7 @@
 
 
 
+
 <!-- =====================================================
      SIDE MENU
 ===================================================== -->
@@ -204,7 +226,10 @@
          HOME
     ========================== -->
 
-    <a href="#home">
+    <a
+        href="#home"
+        id="homeMenuLink"
+        onclick="showHomeIntro(event)">
 
         🏠
 
@@ -360,6 +385,7 @@
 
 
 
+
 <!-- =====================================================
      FLASH SUCCESS MESSAGES
 ===================================================== -->
@@ -376,13 +402,12 @@
 
                     <div class="flash-success">
 
-
                         <span class="flash-icon">
                             💖
                         </span>
 
-
                         <span class="flash-text">
+
 
                             {% if message == "Profile updated successfully" %}
 
@@ -392,6 +417,7 @@
                                     else "Profile updated successfully"
                                 }}
 
+
                             {% elif message == "Registration successful" %}
 
                                 {{
@@ -399,6 +425,7 @@
                                     if current_lang == "ar"
                                     else "Registration successful"
                                 }}
+
 
                             {% elif message == "Login successful" %}
 
@@ -408,6 +435,7 @@
                                     else "Login successful"
                                 }}
 
+
                             {% elif message == "Password changed successfully" %}
 
                                 {{
@@ -415,6 +443,7 @@
                                     if current_lang == "ar"
                                     else "Password changed successfully"
                                 }}
+
 
                             {% elif message == "Product added successfully" %}
 
@@ -424,6 +453,7 @@
                                     else "Product added successfully"
                                 }}
 
+
                             {% elif message == "Product updated successfully" %}
 
                                 {{
@@ -431,6 +461,7 @@
                                     if current_lang == "ar"
                                     else "Product updated successfully"
                                 }}
+
 
                             {% elif message == "Product deleted successfully" %}
 
@@ -440,14 +471,15 @@
                                     else "Product deleted successfully"
                                 }}
 
+
                             {% else %}
 
                                 {{ message }}
 
                             {% endif %}
 
-                        </span>
 
+                        </span>
 
                     </div>
 
@@ -460,6 +492,7 @@
     {% endif %}
 
 {% endwith %}
+
 
 
 
@@ -477,11 +510,155 @@
 
 
 
+
 <!-- =====================================================
-     FLASH MESSAGE CSS
+     CUSTOM CSS
 ===================================================== -->
 
 <style>
+
+
+/* =====================================================
+   INTRO / SPLASH SCREEN
+===================================================== */
+
+.site-intro {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100vh;
+
+    /*
+        خلفية الشاشة
+        ناعمة ومتناسقة مع المتجر
+    */
+
+    background:
+        radial-gradient(
+            circle at center,
+            #fff7f8 0%,
+            #ffe9ed 45%,
+            #f8c8d0 100%
+        );
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 999999;
+
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+
+    transition:
+        opacity 0.6s ease,
+        visibility 0.6s ease;
+
+}
+
+
+/* =====================================================
+   INTRO HIDDEN
+===================================================== */
+
+.site-intro.hide {
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+}
+
+
+/* =====================================================
+   INTRO CONTENT
+===================================================== */
+
+.intro-content {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+}
+
+
+/* =====================================================
+   INTRO IMAGE
+===================================================== */
+
+.intro-image {
+
+    width: min(75vw, 600px);
+
+    height: auto;
+
+    max-height: 75vh;
+
+    object-fit: contain;
+
+    display: block;
+
+    /*
+        حركة بسيطة للصورة
+    */
+
+    animation:
+        introImageAnimation 1.2s ease-out;
+
+}
+
+
+/* =====================================================
+   INTRO IMAGE ANIMATION
+===================================================== */
+
+@keyframes introImageAnimation {
+
+    0% {
+
+        opacity: 0;
+
+        transform: scale(0.82);
+
+    }
+
+    60% {
+
+        opacity: 1;
+
+        transform: scale(1.04);
+
+    }
+
+    100% {
+
+        opacity: 1;
+
+        transform: scale(1);
+
+    }
+
+}
 
 
 /* =====================================================
@@ -501,7 +678,6 @@
     box-sizing: border-box;
 
 }
-
 
 
 /* =====================================================
@@ -546,7 +722,6 @@
 }
 
 
-
 /* =====================================================
    ICON
 ===================================================== */
@@ -562,7 +737,6 @@
 }
 
 
-
 /* =====================================================
    TEXT
 ===================================================== */
@@ -576,12 +750,27 @@
 }
 
 
-
 /* =====================================================
    TABLET
 ===================================================== */
 
 @media (max-width: 768px) {
+
+
+    /* INTRO */
+
+    .intro-image {
+
+        width: 78vw;
+
+        max-width: 500px;
+
+        max-height: 65vh;
+
+    }
+
+
+    /* FLASH */
 
     .flash-messages {
 
@@ -620,12 +809,47 @@
 }
 
 
-
 /* =====================================================
    MOBILE
 ===================================================== */
 
 @media (max-width: 480px) {
+
+
+    /* INTRO */
+
+    .site-intro {
+
+        background:
+            radial-gradient(
+                circle at center,
+                #fff9fa 0%,
+                #ffecef 50%,
+                #f8c8d0 100%
+            );
+
+    }
+
+
+    .intro-content {
+
+        padding: 12px;
+
+    }
+
+
+    .intro-image {
+
+        width: 88vw;
+
+        max-width: 420px;
+
+        max-height: 55vh;
+
+    }
+
+
+    /* FLASH */
 
     .flash-messages {
 
@@ -662,12 +886,21 @@
 }
 
 
-
 /* =====================================================
    VERY SMALL MOBILE
 ===================================================== */
 
 @media (max-width: 360px) {
+
+
+    .intro-image {
+
+        width: 92vw;
+
+        max-height: 50vh;
+
+    }
+
 
     .flash-messages {
 
@@ -695,7 +928,26 @@
 
 }
 
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+footer {
+
+    text-align: center;
+
+    padding: 20px;
+
+    background: #f59a9c;
+
+    color: #555;
+
+}
+
+
 </style>
+
 
 
 
@@ -703,13 +955,7 @@
      FOOTER
 ===================================================== -->
 
-<footer
-    style="
-        text-align:center;
-        padding:20px;
-        background:#f59a9c;
-        color:#555;
-    ">
+<footer>
 
     © 2026
 
@@ -723,12 +969,179 @@
 
 
 
+
 <!-- =====================================================
      JAVASCRIPT
 ===================================================== -->
 
 <script>
 
+
+/* =====================================================
+   INTRO SCREEN
+===================================================== */
+
+const siteIntro =
+    document.getElementById("siteIntro");
+
+
+/* =====================================================
+   HIDE INTRO
+===================================================== */
+
+function hideIntro() {
+
+    if (!siteIntro) {
+        return;
+    }
+
+    siteIntro.classList.add("hide");
+
+}
+
+
+/* =====================================================
+   SHOW INTRO
+===================================================== */
+
+function showIntro() {
+
+    if (!siteIntro) {
+        return;
+    }
+
+    /*
+        إعادة تشغيل أنيميشن الصورة
+    */
+
+    const image =
+        siteIntro.querySelector(".intro-image");
+
+    if (image) {
+
+        image.style.animation = "none";
+
+        void image.offsetWidth;
+
+        image.style.animation =
+            "introImageAnimation 1.2s ease-out";
+
+    }
+
+    siteIntro.classList.remove("hide");
+
+}
+
+
+/* =====================================================
+   FIRST PAGE LOAD
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        showIntro();
+
+        /*
+            مدة ظهور شاشة الدخول
+            2.5 ثانية
+        */
+
+        setTimeout(
+            function() {
+
+                hideIntro();
+
+            },
+            2500
+        );
+
+    }
+);
+
+
+/* =====================================================
+   HOME BUTTON
+===================================================== */
+
+function showHomeIntro(event) {
+
+    /*
+        منع الانتقال المباشر
+    */
+
+    if (event) {
+
+        event.preventDefault();
+
+    }
+
+
+    /*
+        إغلاق القائمة
+    */
+
+    closeMenu();
+
+
+    /*
+        إظهار شاشة الدخول
+    */
+
+    showIntro();
+
+
+    /*
+        بعد 2.5 ثانية
+        نخفي شاشة الدخول
+        ونرجع للرئيسية
+    */
+
+    setTimeout(
+        function() {
+
+            hideIntro();
+
+
+            /*
+                البحث عن قسم Home
+            */
+
+            const home =
+                document.getElementById("home");
+
+
+            if (home) {
+
+                home.scrollIntoView({
+                    behavior: "smooth"
+                });
+
+            } else {
+
+                /*
+                    إذا ما فيه id="home"
+                    نرجع أعلى الصفحة
+                */
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+
+            }
+
+        },
+        2500
+    );
+
+}
+
+
+/* =====================================================
+   SIDE MENU
+===================================================== */
 
 function toggleMenu() {
 
@@ -744,6 +1157,9 @@ function toggleMenu() {
 }
 
 
+/* =====================================================
+   OPEN MENU
+===================================================== */
 
 function openMenu() {
 
@@ -759,6 +1175,9 @@ function openMenu() {
 }
 
 
+/* =====================================================
+   CLOSE MENU
+===================================================== */
 
 function closeMenu() {
 
@@ -772,6 +1191,7 @@ function closeMenu() {
     }
 
 }
+
 
 </script>
 

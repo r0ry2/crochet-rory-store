@@ -831,6 +831,25 @@ body{
         }}
 
     </a>
+    <!-- ADVERTISEMENTS -->
+
+<a
+    href="{{ url_for('admin_advertisements') }}"
+    class="{% if request.endpoint in [
+        'admin_advertisements',
+        'admin_add_advertisement',
+        'admin_edit_advertisement'
+    ] %}active{% endif %}">
+
+    📢
+
+    {{
+        "الإعلانات"
+        if current_lang=="ar"
+        else "Advertisements"
+    }}
+
+</a>
 
 
     <!-- LOGOUT -->
@@ -847,6 +866,7 @@ body{
         }}
 
     </a>
+
 
 </div>
 
@@ -897,6 +917,7 @@ body{
                 🇸🇦 العربية
 
             </a>
+
 
         {% endif %}
 

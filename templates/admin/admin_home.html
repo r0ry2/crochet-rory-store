@@ -742,6 +742,49 @@
 
     </a>
 
+    <!-- =================================================
+     ADVERTISEMENTS
+================================================== -->
+
+<a
+    href="{{ url_for('admin_advertisements') }}"
+    class="dashboard-card">
+
+    <h3>
+
+        📢
+
+        {{
+
+            "الإعلانات"
+
+            if current_lang == "ar"
+
+            else
+
+            "Advertisements"
+
+        }}
+
+    </h3>
+
+    <p>
+
+        {{
+
+            "إضافة وتعديل وحذف إعلانات الصفحة الرئيسية والتحكم في ظهورها."
+
+            if current_lang == "ar"
+
+            else
+
+            "Add, edit, delete, and control homepage advertisements."
+
+        }}
+
+    </p>
+
+</a>
 
 </div>
 

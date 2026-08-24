@@ -582,9 +582,12 @@ body{
 .hero button:hover{
     background:#ea09a241;
 }
-/* إزالة الفاصل الأبيض بعد الـ Hero */
-.hero + section {
-    margin-top: 0 !important;
+/* ======================================================
+   SPACE BETWEEN HERO AND ADVERTISEMENT
+====================================================== */
+
+.hero + .advertisement-section {
+    margin-top: 70px !important;
     padding-top: 0 !important;
 }
 

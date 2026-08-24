@@ -31,11 +31,12 @@ from models import (
     Visitor,
     ShippingMethod,
     Coupon,
+    Advertisement,
     Visitor
 
 
 )
-
+import uuid
 from forms import (
     LoginForm,
     RegisterForm,
@@ -2021,6 +2022,526 @@ def delete_account():
         return redirect(
             url_for("profile")
         )
+# ==================================================
+# 📢 ADVERTISEMENTS
+# ==================================================
+
+@app.route("/admin/advertisements")
+@login_required
+def admin_advertisements():
+
+    if current_user.role != "admin":
+        return redirect(url_for("home_logged"))
+
+    advertisements = Advertisement.query.order_by(
+        Advertisement.display_order.asc(),
+        Advertisement.id.asc()
+    ).all()
+
+    return render_template(
+        "admin/advertisements.html",
+        advertisements=advertisements
+    )
+
+
+# ==================================================
+# ➕ ADD ADVERTISEMENT
+# ==================================================
+
+@app.route(
+    "/admin/advertisements/add",
+    methods=["GET", "POST"]
+)
+@login_required
+def admin_add_advertisement():
+
+    if current_user.role != "admin":
+        return redirect(
+            url_for("home_logged")
+        )
+
+    current_lang = session.get(
+        "language",
+        "ar"
+    )
+
+    # ==================================================
+    # POST
+    # ==================================================
+
+    if request.method == "POST":
+
+        image = request.files.get("image")
+
+        # ------------------------------------------
+        # CHECK IMAGE
+        # ------------------------------------------
+
+        if not image or not image.filename:
+
+            flash(
+                "Please select an image."
+                if current_lang != "ar"
+                else "الرجاء اختيار صورة للإعلان.",
+                "error"
+            )
+
+            return redirect(
+                url_for("admin_add_advertisement")
+            )
+
+        # ------------------------------------------
+        # CHECK EXTENSION
+        # ------------------------------------------
+
+        extension = os.path.splitext(
+            image.filename
+        )[1].lower()
+
+        allowed_extensions = {
+            ".jpg",
+            ".jpeg",
+            ".png"
+        }
+
+        if extension not in allowed_extensions:
+
+            flash(
+                "Only JPG and PNG images are allowed."
+                if current_lang != "ar"
+                else "يسمح فقط بصور JPG و PNG.",
+                "error"
+            )
+
+            return redirect(
+                url_for("admin_add_advertisement")
+            )
+
+        # ------------------------------------------
+        # GENERATE FILE NAME
+        # ------------------------------------------
+
+        filename = (
+            uuid.uuid4().hex
+            + extension
+        )
+
+        # ------------------------------------------
+        # UPLOAD FOLDER
+        # ------------------------------------------
+
+        upload_folder = os.path.join(
+            app.root_path,
+            "static",
+            "images",
+            "advertisements"
+        )
+
+        os.makedirs(
+            upload_folder,
+            exist_ok=True
+        )
+
+        # ------------------------------------------
+        # SAVE IMAGE
+        # ------------------------------------------
+
+        image.save(
+            os.path.join(
+                upload_folder,
+                filename
+            )
+        )
+
+        # ------------------------------------------
+        # TITLE
+        # ------------------------------------------
+
+        title = request.form.get(
+            "title",
+            ""
+        ).strip()
+
+        # ------------------------------------------
+        # DISPLAY ORDER
+        # ------------------------------------------
+
+        try:
+
+            display_order = int(
+                request.form.get(
+                    "display_order",
+                    0
+                ) or 0
+            )
+
+        except (ValueError, TypeError):
+
+            display_order = 0
+
+        # ------------------------------------------
+        # CREATE ADVERTISEMENT
+        # ------------------------------------------
+
+        advertisement = Advertisement(
+            image=filename,
+            title=title,
+            display_order=display_order,
+            is_active=True
+        )
+
+        db.session.add(
+            advertisement
+        )
+
+        db.session.commit()
+
+        # ------------------------------------------
+        # SUCCESS
+        # ------------------------------------------
+
+        flash(
+            "Advertisement added successfully."
+            if current_lang != "ar"
+            else "تمت إضافة الإعلان بنجاح.",
+            "success"
+        )
+
+        return redirect(
+            url_for("admin_advertisements")
+        )
+
+    # ==================================================
+    # GET
+    # ==================================================
+
+    return render_template(
+        "admin/add_advertisement.html"
+    )
+
+
+# ==================================================
+# ✏️ EDIT ADVERTISEMENT
+# ==================================================
+
+@app.route(
+    "/admin/advertisements/edit/<int:ad_id>",
+    methods=["GET", "POST"]
+)
+@login_required
+def admin_edit_advertisement(ad_id):
+
+    if current_user.role != "admin":
+        return redirect(
+            url_for("home_logged")
+        )
+
+    current_lang = session.get(
+        "language",
+        "ar"
+    )
+
+    advertisement = Advertisement.query.get_or_404(
+        ad_id
+    )
+
+    # ==================================================
+    # POST
+    # ==================================================
+
+    if request.method == "POST":
+
+        # ------------------------------------------
+        # TITLE
+        # ------------------------------------------
+
+        advertisement.title = request.form.get(
+            "title",
+            ""
+        ).strip()
+
+        # ------------------------------------------
+        # DISPLAY ORDER
+        # ------------------------------------------
+
+        try:
+
+            advertisement.display_order = int(
+                request.form.get(
+                    "display_order",
+                    0
+                ) or 0
+            )
+
+        except (ValueError, TypeError):
+
+            advertisement.display_order = 0
+
+        # ------------------------------------------
+        # ACTIVE STATUS
+        # ------------------------------------------
+
+        advertisement.is_active = (
+            request.form.get("is_active") == "1"
+        )
+
+        # ------------------------------------------
+        # NEW IMAGE
+        # ------------------------------------------
+
+        image = request.files.get("image")
+
+        if image and image.filename:
+
+            extension = os.path.splitext(
+                image.filename
+            )[1].lower()
+
+            allowed_extensions = {
+                ".jpg",
+                ".jpeg",
+                ".png"
+            }
+
+            # ------------------------------------------
+            # CHECK EXTENSION
+            # ------------------------------------------
+
+            if extension not in allowed_extensions:
+
+                flash(
+                    "Only JPG and PNG images are allowed."
+                    if current_lang != "ar"
+                    else "يسمح فقط بصور JPG و PNG.",
+                    "error"
+                )
+
+                return redirect(
+                    url_for(
+                        "admin_edit_advertisement",
+                        ad_id=ad_id
+                    )
+                )
+
+            # ------------------------------------------
+            # UPLOAD FOLDER
+            # ------------------------------------------
+
+            upload_folder = os.path.join(
+                app.root_path,
+                "static",
+                "images",
+                "advertisements"
+            )
+
+            os.makedirs(
+                upload_folder,
+                exist_ok=True
+            )
+
+            # ------------------------------------------
+            # DELETE OLD IMAGE
+            # ------------------------------------------
+
+            if advertisement.image:
+
+                old_path = os.path.join(
+                    upload_folder,
+                    advertisement.image
+                )
+
+                if os.path.exists(old_path):
+
+                    try:
+                        os.remove(old_path)
+
+                    except OSError:
+                        pass
+
+            # ------------------------------------------
+            # NEW FILE NAME
+            # ------------------------------------------
+
+            filename = (
+                uuid.uuid4().hex
+                + extension
+            )
+
+            # ------------------------------------------
+            # SAVE NEW IMAGE
+            # ------------------------------------------
+
+            image.save(
+                os.path.join(
+                    upload_folder,
+                    filename
+                )
+            )
+
+            advertisement.image = filename
+
+        # ------------------------------------------
+        # SAVE
+        # ------------------------------------------
+
+        db.session.commit()
+
+        flash(
+            "Advertisement updated successfully."
+            if current_lang != "ar"
+            else "تم تعديل الإعلان بنجاح.",
+            "success"
+        )
+
+        return redirect(
+            url_for("admin_advertisements")
+        )
+
+    # ==================================================
+    # GET
+    # ==================================================
+
+    return render_template(
+        "admin/edit_advertisement.html",
+        advertisement=advertisement
+    )
+
+
+# ==================================================
+# 🔄 TOGGLE ADVERTISEMENT
+# ==================================================
+
+@app.route(
+    "/admin/advertisements/toggle/<int:ad_id>",
+    methods=["POST"]
+)
+@login_required
+def admin_toggle_advertisement(ad_id):
+
+    if current_user.role != "admin":
+        return redirect(
+            url_for("home_logged")
+        )
+
+    current_lang = session.get(
+        "language",
+        "ar"
+    )
+
+    advertisement = Advertisement.query.get_or_404(
+        ad_id
+    )
+
+    # ------------------------------------------
+    # TOGGLE STATUS
+    # ------------------------------------------
+
+    advertisement.is_active = not advertisement.is_active
+
+    db.session.commit()
+
+    # ------------------------------------------
+    # MESSAGE
+    # ------------------------------------------
+
+    if advertisement.is_active:
+
+        flash(
+            "Advertisement enabled successfully."
+            if current_lang != "ar"
+            else "تم تفعيل الإعلان بنجاح.",
+            "success"
+        )
+
+    else:
+
+        flash(
+            "Advertisement disabled successfully."
+            if current_lang != "ar"
+            else "تم تعطيل الإعلان بنجاح.",
+            "success"
+        )
+
+    return redirect(
+        url_for("admin_advertisements")
+    )
+
+
+# ==================================================
+# 🗑️ DELETE ADVERTISEMENT
+# ==================================================
+
+@app.route(
+    "/admin/advertisements/delete/<int:ad_id>",
+    methods=["POST"]
+)
+@login_required
+def admin_delete_advertisement(ad_id):
+
+    if current_user.role != "admin":
+        return redirect(
+            url_for("home_logged")
+        )
+
+    current_lang = session.get(
+        "language",
+        "ar"
+    )
+
+    advertisement = Advertisement.query.get_or_404(
+        ad_id
+    )
+
+    # ------------------------------------------
+    # DELETE IMAGE
+    # ------------------------------------------
+
+    if advertisement.image:
+
+        upload_folder = os.path.join(
+            app.root_path,
+            "static",
+            "images",
+            "advertisements"
+        )
+
+        image_path = os.path.join(
+            upload_folder,
+            advertisement.image
+        )
+
+        if os.path.exists(image_path):
+
+            try:
+                os.remove(image_path)
+
+            except OSError:
+                pass
+
+    # ------------------------------------------
+    # DELETE DATABASE RECORD
+    # ------------------------------------------
+
+    db.session.delete(
+        advertisement
+    )
+
+    db.session.commit()
+
+    # ------------------------------------------
+    # SUCCESS MESSAGE
+    # ------------------------------------------
+
+    flash(
+        "Advertisement deleted successfully."
+        if current_lang != "ar"
+        else "تم حذف الإعلان بنجاح.",
+        "success"
+    )
+
+    return redirect(
+        url_for("admin_advertisements")
+    )
 # ==========================================
 # 📦 GET USER ORDERS BY STATUS
 # ==========================================
@@ -4742,36 +5263,33 @@ def admin_messages():
 # 🏠 USER HOME
 # ==========================================
 
-@app.route("/home_logged", methods=["GET", "POST"])
+# ==========================================
+# 🏠 USER HOME
+# ==========================================
+
+@app.route("/home_logged")
 @login_required
 def home_logged():
 
-    if request.method == "POST":
+    if current_user.role == "admin":
+        return redirect(url_for("admin_home"))
 
-        review = Review(
-            name=request.form["name"],
-            message=request.form["message"],
-            stars=int(request.form.get("stars", 5))
-        )
-
-        db.session.add(review)
-        db.session.commit()
-
-        flash("Thank you for your review! 💕")
-
-    products = Product.query.filter(
-        Product.publish_location.in_(["both", "home_only"])
+    products = Product.query.order_by(
+        Product.created_at.desc()
     ).all()
 
-    reviews = Review.query.all()
+    advertisements = Advertisement.query.filter_by(
+        is_active=True
+    ).order_by(
+        Advertisement.display_order.asc(),
+        Advertisement.id.asc()
+    ).all()
 
     return render_template(
         "home_logged.html",
         products=products,
-        reviews=reviews,
-        user=current_user.username
+        advertisements=advertisements
     )
-
 
 # ==========================================
 # ⭐ ADMIN REVIEWS

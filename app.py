@@ -37,7 +37,8 @@ from models import (
     ShippingMethod,
     Coupon,
     Notification,
-    Visitor
+    Visitor,
+    Advertisement
 )
 
 

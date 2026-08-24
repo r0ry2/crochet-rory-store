@@ -21,9 +21,7 @@
 
 </head>
 
-
 <body>
-
 
 <!-- =====================================================
      HEADER
@@ -33,77 +31,54 @@
 
     <div class="header-top">
 
-        <a
-            href="{{ url_for('home_logged') }}"
-            class="header-logo">
+        <a href="{{ url_for('home_logged') }}"
+           class="header-logo">
 
-            <img
-                src="{{ url_for('static', filename='images/logo.png') }}"
-                alt="Crochet Rory Store">
+            <img src="{{ url_for('static', filename='images/logo.png') }}"
+                 alt="Crochet Rory Store">
 
         </a>
 
-
         <div class="left-icons">
 
-            <button
-                type="button"
-                class="menu-btn"
-                onclick="toggleMenu()">
-
+            <button type="button"
+                    class="menu-btn"
+                    onclick="toggleMenu()">
                 ☰
-
             </button>
 
+            <form action="{{ url_for('search') }}"
+                  method="GET"
+                  class="search-box">
 
-            <form
-                action="{{ url_for('search') }}"
-                method="GET"
-                class="search-box">
-
-                <input
-                    type="text"
-                    name="q"
-                    placeholder="{{
-                        'ابحث...'
-                        if current_lang == 'ar'
-                        else 'Search...'
-                    }}"
-                    required>
+                <input type="text"
+                       name="q"
+                       placeholder="{{
+                           'ابحث...'
+                           if current_lang == 'ar'
+                           else 'Search...'
+                       }}"
+                       required>
 
                 <button type="submit">
-
                     🔍
-
                 </button>
 
             </form>
 
-
-            <a
-                href="{{ url_for('cart_page') }}"
-                class="header-icon cart-icon">
-
+            <a href="{{ url_for('cart_page') }}"
+               class="header-icon cart-icon">
                 🛒
-
             </a>
 
-
-            <a
-                href="{{ url_for('wishlist_page') }}"
-                class="header-icon wishlist-icon">
-
+            <a href="{{ url_for('wishlist_page') }}"
+               class="header-icon wishlist-icon">
                 ❤️
-
             </a>
 
-
-            <a
-                href="{{ url_for('profile') }}"
-                class="header-icon profile-icon">
-
+            <a href="{{ url_for('profile') }}"
+               class="header-icon profile-icon">
                 👤
-
             </a>
 
         </div>
@@ -111,118 +86,80 @@
     </div>
 
 
-    <!-- STORE BRAND -->
-
     <div class="store-brand">
 
         <h1>
-
             {{
                 "متجر روري للكروشيه"
                 if current_lang == "ar"
                 else "Crochet Rory Store"
             }}
-
         </h1>
 
-
         <p>
-
             Handmade Crochet with Love 🧶💗
-
         </p>
 
     </div>
 
-
-    <!-- NAVBAR -->
 
     <nav class="main-navbar">
 
         <ul class="nav-links">
 
             <li>
-
-                <a
-                    href="{{ url_for('home_logged') }}"
-                    class="nav-link">
-
+                <a href="{{ url_for('home_logged') }}"
+                   class="nav-link">
                     {{
                         "الرئيسية"
                         if current_lang == "ar"
                         else "Home"
                     }}
-
                 </a>
-
             </li>
 
-
             <li>
-
-                <a
-                    href="{{ url_for('products_page') }}"
-                    class="nav-link">
-
+                <a href="{{ url_for('products_page') }}"
+                   class="nav-link">
                     {{
                         "المنتجات"
                         if current_lang == "ar"
                         else "Products"
                     }}
-
                 </a>
-
             </li>
 
-
             <li>
-
-                <a
-                    href="{{ url_for('home_logged') }}#reviews"
-                    class="nav-link">
-
+                <a href="{{ url_for('home_logged') }}#reviews"
+                   class="nav-link">
                     {{
                         "التقييمات"
                         if current_lang == "ar"
                         else "Reviews"
                     }}
-
                 </a>
-
             </li>
 
-
             <li>
-
-                <a
-                    href="{{ url_for('contact_page') }}"
-                    class="nav-link">
-
+                <a href="{{ url_for('contact_page') }}"
+                   class="nav-link">
                     {{
                         "تواصل معنا"
                         if current_lang == "ar"
                         else "Contact"
                     }}
-
                 </a>
-
             </li>
 
-
             <li>
-
-                <a
-                    href="{{ url_for('logout') }}"
-                    class="nav-link">
-
+                <a href="{{ url_for('logout') }}"
+                   class="nav-link">
                     {{
                         "تسجيل الخروج"
                         if current_lang == "ar"
                         else "Logout"
                     }}
-
                 </a>
-
             </li>
 
         </ul>
@@ -232,7 +169,6 @@
 </header>
 
 
-
 <!-- =====================================================
      SIDE MENU
 ===================================================== -->
@@ -240,90 +176,61 @@
 <div id="sideMenu"
      class="side-menu">
 
-
-    <button
-        type="button"
-        class="close-menu"
-        onclick="closeMenu()">
-
+    <button type="button"
+            class="close-menu"
+            onclick="closeMenu()">
         &times;
-
     </button>
 
-
     <a href="{{ url_for('home_logged') }}">
-
         🏠
-
         {{
             "الرئيسية"
             if current_lang == "ar"
             else "Home"
         }}
-
     </a>
 
-
     <a href="{{ url_for('products_page') }}">
-
         🧶
-
         {{
             "المنتجات"
             if current_lang == "ar"
             else "Products"
         }}
-
     </a>
 
-
     <a href="{{ url_for('contact_page') }}">
-
         📞
-
         {{
             "تواصل معنا"
             if current_lang == "ar"
             else "Contact"
         }}
-
     </a>
 
-
     <hr>
-
 
     <a href="{{ url_for('change_language', lang='en') }}">
-
         🇺🇸 English
-
     </a>
-
 
     <a href="{{ url_for('change_language', lang='ar') }}">
-
         🇸🇦 العربية
-
     </a>
-
 
     <hr>
 
-
     <a href="{{ url_for('logout') }}">
-
         🚪
-
         {{
             "تسجيل الخروج"
             if current_lang == "ar"
             else "Logout"
         }}
-
     </a>
 
 </div>
-
 
 
 <!-- =====================================================
@@ -342,10 +249,9 @@
 
         {{ user }}
 
-        💕
+        💕❤️
 
     </h1>
-
 
     <p>
 
@@ -361,21 +267,16 @@
 </section>
 
 
-
 <!-- =====================================================
      HERO
 ===================================================== -->
 
-<section
-    id="home"
-    class="hero">
+<section id="home"
+         class="hero">
 
-
-    <img
-        src="{{ url_for('static', filename='images/hero.png') }}"
-        class="hero_image"
-        alt="Hero">
-
+    <img src="{{ url_for('static', filename='images/hero.png') }}"
+         class="hero_image"
+         alt="Hero">
 
     <div class="hero-content">
 
@@ -389,12 +290,10 @@
 
         </h1>
 
-
-        <button
-            type="button"
-            onclick="
-                window.location.href='{{ url_for('products_page') }}'
-            ">
+        <button type="button"
+                onclick="
+                    window.location.href='{{ url_for('products_page') }}'
+                ">
 
             {{
                 "ابحث عن منتجك المفضل"
@@ -409,13 +308,751 @@
 </section>
 
 
+<!-- =====================================================
+     DYNAMIC ADVERTISEMENT
+===================================================== -->
+
+{% if advertisements %}
+
+<section class="advertisement-section">
+
+    <div class="advertisement-box">
+
+        <div class="advertisement-slider">
+
+            {% for advertisement in advertisements %}
+
+            <div class="advertisement-slide {% if loop.first %}active{% endif %}">
+
+                <img src="{{ url_for(
+                    'static',
+                    filename='images/advertisements/' ~ advertisement.image
+                ) }}"
+                     alt="{{
+                         advertisement.title
+                         if advertisement.title
+                         else (
+                             'إعلان'
+                             if current_lang == 'ar'
+                             else 'Advertisement'
+                         )
+                     }}">
+
+                {% if advertisement.title %}
+
+                <div class="advertisement-title">
+
+                    {{ advertisement.title }}
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            {% endfor %}
+
+
+            {% if advertisements|length > 1 %}
+
+            <button type="button"
+                    class="advertisement-arrow advertisement-prev"
+                    onclick="changeAdvertisement(-1)"
+                    aria-label="Previous Advertisement">
+                ‹
+            </button>
+
+            <button type="button"
+                    class="advertisement-arrow advertisement-next"
+                    onclick="changeAdvertisement(1)"
+                    aria-label="Next Advertisement">
+                ›
+            </button>
+
+            {% endif %}
+
+        </div>
+
+
+        {% if advertisements|length > 1 %}
+
+        <div class="advertisement-dots">
+
+            {% for advertisement in advertisements %}
+
+            <button type="button"
+                    class="advertisement-dot {% if loop.first %}active{% endif %}"
+                    onclick="showAdvertisement({{ loop.index0 }})"
+                    aria-label="Advertisement {{ loop.index }}">
+            </button>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+<!-- =====================================================
+     ADVERTISEMENT STYLE
+===================================================== -->
+
+<style>
+
+/* =====================================================
+   HERO
+===================================================== */
+
+.hero{
+
+    display:block !important;
+
+    width:100%;
+
+    position:relative;
+
+    margin-bottom:0 !important;
+
+}
+
+
+/* =====================================================
+   ADVERTISEMENT SECTION
+===================================================== */
+
+.advertisement-section{
+
+    width:100%;
+
+    max-width:1400px;
+
+    /*
+       المسافة بين الـ HERO والإعلان
+    */
+
+    margin-top:80px !important;
+
+    margin-right:auto !important;
+
+    margin-bottom:0 !important;
+
+    margin-left:auto !important;
+
+    padding-top:0 !important;
+
+    padding-right:25px !important;
+
+    padding-bottom:25px !important;
+
+    padding-left:25px !important;
+
+    box-sizing:border-box;
+
+    position:relative;
+
+    display:block;
+
+    clear:both;
+
+}
+
+
+.advertisement-box{
+
+    width:100%;
+
+    max-width:1200px;
+
+    margin:0 auto;
+
+    box-sizing:border-box;
+
+}
+
+
+.advertisement-slider{
+
+    position:relative;
+
+    width:100%;
+
+    aspect-ratio:16 / 6;
+
+    min-height:260px;
+
+    max-height:520px;
+
+    overflow:hidden;
+
+    border-radius:28px;
+
+    background:#fff8fb;
+
+    border:2px solid #f3cbdc;
+
+    box-shadow:
+        0 8px 25px rgba(216,111,157,.12);
+
+}
+
+
+.advertisement-slide{
+
+    position:absolute;
+
+    inset:0;
+
+    width:100%;
+
+    height:100%;
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transition:
+        opacity .45s ease,
+        visibility .45s ease;
+
+}
+
+
+.advertisement-slide.active{
+
+    opacity:1;
+
+    visibility:visible;
+
+}
+
+
+.advertisement-slide img{
+
+    width:100%;
+
+    height:100%;
+
+    display:block;
+
+    object-fit:cover;
+
+    object-position:center;
+
+}
+
+
+/* =====================================================
+   ADVERTISEMENT TITLE
+===================================================== */
+
+.advertisement-title{
+
+    position:absolute;
+
+    left:20px;
+
+    right:20px;
+
+    bottom:20px;
+
+    padding:12px 18px;
+
+    background:rgba(255,255,255,.90);
+
+    color:#c6538b;
+
+    border-radius:14px;
+
+    text-align:center;
+
+    font-size:18px;
+
+    font-weight:700;
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,.10);
+
+    z-index:4;
+
+}
+
+
+/* =====================================================
+   ADVERTISEMENT ARROWS
+===================================================== */
+
+.advertisement-arrow{
+
+    position:absolute;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:52px;
+
+    height:52px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.96);
+
+    color:#d86f9d;
+
+    font-size:36px;
+
+    line-height:1;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    cursor:pointer;
+
+    z-index:5;
+
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.12);
+
+    transition:
+        transform .25s ease,
+        background .25s ease,
+        color .25s ease;
+
+}
+
+
+.advertisement-arrow:hover{
+
+    background:#fde4ef;
+
+    color:#c6538b;
+
+    transform:
+        translateY(-50%)
+        scale(1.08);
+
+}
+
+
+.advertisement-prev{
+    left:18px;
+}
+
+
+.advertisement-next{
+    right:18px;
+}
+
+
+/* =====================================================
+   ADVERTISEMENT DOTS
+===================================================== */
+
+.advertisement-dots{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:10px;
+
+    margin-top:18px;
+
+}
+
+
+.advertisement-dot{
+
+    width:11px;
+
+    height:11px;
+
+    padding:0;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#e8dfbd;
+
+    cursor:pointer;
+
+    transition:
+        width .3s ease,
+        background .3s ease,
+        transform .3s ease;
+
+}
+
+
+.advertisement-dot:hover{
+
+    transform:scale(1.15);
+
+}
+
+
+.advertisement-dot.active{
+
+    width:34px;
+
+    border-radius:20px;
+
+    background:#d86f9d;
+
+}
+
+
+/* =====================================================
+   TABLET
+===================================================== */
+
+@media (min-width:769px) and (max-width:1024px){
+
+    .advertisement-section{
+
+        margin-top:60px !important;
+
+        padding-right:20px !important;
+
+        padding-bottom:25px !important;
+
+        padding-left:20px !important;
+
+    }
+
+
+    .advertisement-slider{
+
+        aspect-ratio:16 / 7;
+
+        min-height:220px;
+
+        border-radius:24px;
+
+    }
+
+
+    .advertisement-arrow{
+
+        width:46px;
+
+        height:46px;
+
+        font-size:32px;
+
+    }
+
+
+    .advertisement-prev{
+        left:15px;
+    }
+
+
+    .advertisement-next{
+        right:15px;
+    }
+
+}
+
+
+/* =====================================================
+   MOBILE / IPAD
+===================================================== */
+
+@media (max-width:768px){
+
+    .advertisement-section{
+
+        margin-top:45px !important;
+
+        padding-right:15px !important;
+
+        padding-bottom:20px !important;
+
+        padding-left:15px !important;
+
+    }
+
+
+    .advertisement-box{
+        width:100%;
+    }
+
+
+    .advertisement-slider{
+
+        aspect-ratio:4 / 3;
+
+        min-height:0;
+
+        border-radius:20px;
+
+        border-width:1.5px;
+
+    }
+
+
+    .advertisement-slide img{
+
+        object-fit:cover;
+
+    }
+
+
+    .advertisement-arrow{
+
+        width:40px;
+
+        height:40px;
+
+        font-size:29px;
+
+        box-shadow:
+            0 4px 12px rgba(0,0,0,.10);
+
+    }
+
+
+    .advertisement-prev{
+        left:10px;
+    }
+
+
+    .advertisement-next{
+        right:10px;
+    }
+
+
+    .advertisement-dots{
+
+        margin-top:13px;
+
+        gap:8px;
+
+    }
+
+
+    .advertisement-dot{
+
+        width:9px;
+
+        height:9px;
+
+    }
+
+
+    .advertisement-dot.active{
+        width:28px;
+    }
+
+
+    .advertisement-title{
+
+        left:12px;
+
+        right:12px;
+
+        bottom:12px;
+
+        padding:9px 12px;
+
+        font-size:14px;
+
+    }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width:480px){
+
+    .advertisement-section{
+
+        margin-top:35px !important;
+
+        padding-right:10px !important;
+
+        padding-bottom:18px !important;
+
+        padding-left:10px !important;
+
+    }
+
+
+    .advertisement-slider{
+
+        aspect-ratio:1 / 1;
+
+        border-radius:17px;
+
+    }
+
+
+    .advertisement-arrow{
+
+        width:36px;
+
+        height:36px;
+
+        font-size:26px;
+
+    }
+
+
+    .advertisement-prev{
+        left:8px;
+    }
+
+
+    .advertisement-next{
+        right:8px;
+    }
+
+
+    .advertisement-dots{
+        margin-top:11px;
+    }
+
+}
+
+</style>
+
+
+<!-- =====================================================
+     ADVERTISEMENT JAVASCRIPT
+===================================================== -->
+
+<script>
+
+let currentAdvertisement = 0;
+
+const advertisementSlides =
+    document.querySelectorAll(".advertisement-slide");
+
+const advertisementDots =
+    document.querySelectorAll(".advertisement-dot");
+
+
+function showAdvertisement(index){
+
+    /*
+       إذا ما فيه إعلانات
+    */
+
+    if(!advertisementSlides.length){
+
+        return;
+
+    }
+
+
+    /*
+       التأكد من حدود الرقم
+    */
+
+    if(index < 0){
+
+        index =
+            advertisementSlides.length - 1;
+
+    }
+
+
+    if(index >= advertisementSlides.length){
+
+        index = 0;
+
+    }
+
+
+    currentAdvertisement = index;
+
+
+    /*
+       تغيير الإعلان
+    */
+
+    advertisementSlides.forEach(
+        (slide, i) => {
+
+            slide.classList.toggle(
+                "active",
+                i === currentAdvertisement
+            );
+
+        }
+    );
+
+
+    /*
+       تغيير النقطة
+    */
+
+    advertisementDots.forEach(
+        (dot, i) => {
+
+            dot.classList.toggle(
+                "active",
+                i === currentAdvertisement
+            );
+
+        }
+    );
+
+}
+
+
+function changeAdvertisement(direction){
+
+    showAdvertisement(
+        currentAdvertisement + direction
+    );
+
+}
+
+
+/*
+   التشغيل التلقائي
+*/
+
+if(advertisementSlides.length > 1){
+
+    setInterval(
+        function(){
+
+            changeAdvertisement(1);
+
+        },
+        5000
+    );
+
+}
+
+</script>
+
 
 <!-- =====================================================
      CATEGORIES
 ===================================================== -->
 
 <section id="categories">
-
 
     <h2 class="section-title">
 
@@ -430,81 +1067,65 @@
 
     <div class="categories-grid">
 
-
         <a href="#" class="category-card">
 
-            <img
-                src="{{ url_for('static', filename='images/dolls.jpg') }}"
-                alt="Dolls">
+            <img src="{{ url_for('static', filename='images/dolls.jpg') }}"
+                 alt="Dolls">
 
             <span>
-
                 {{
                     "الدمى"
                     if current_lang == "ar"
                     else "Dolls"
                 }}
-
             </span>
 
         </a>
 
 
-
         <a href="#" class="category-card">
 
-            <img
-                src="{{ url_for('static', filename='images/keychain.jpg') }}"
-                alt="Keychains">
+            <img src="{{ url_for('static', filename='images/keychain.jpg') }}"
+                 alt="Keychains">
 
             <span>
-
                 {{
                     "الميداليات"
                     if current_lang == "ar"
                     else "Keychains"
                 }}
-
             </span>
 
         </a>
 
 
-
         <a href="#" class="category-card">
 
-            <img
-                src="{{ url_for('static', filename='images/pattron.jpg') }}"
-                alt="Pattern">
+            <img src="{{ url_for('static', filename='images/pattron.jpg') }}"
+                 alt="Pattern">
 
             <span>
-
                 {{
                     "الباترون"
                     if current_lang == "ar"
                     else "Pattern"
                 }}
-
             </span>
 
         </a>
 
 
-
         <a href="#" class="category-card">
 
-            <img
-                src="{{ url_for('static', filename='images/Coaster.jpg') }}"
-                alt="Coaster">
+            <img src="{{ url_for('static', filename='images/Coaster.jpg') }}"
+                 alt="Coaster">
 
             <span>
-
                 {{
                     "حاملات الأكواب"
                     if current_lang == "ar"
                     else "Coaster"
                 }}
-
             </span>
 
         </a>
@@ -514,13 +1135,11 @@
 </section>
 
 
-
 <!-- =====================================================
      PRODUCTS
 ===================================================== -->
 
 <section class="product-section">
-
 
     <div class="section-title">
 
@@ -533,7 +1152,6 @@
             }}
 
         </h2>
-
 
         <p>
 
@@ -549,49 +1167,36 @@
     </div>
 
 
-
     <div class="product-grid">
-
 
         {% if products %}
 
-
             {% for product in products %}
 
-
-            <div
-                class="product"
-                onclick="
+            <div class="product"
+                 onclick="
                     window.location.href='{{ url_for('product_details', product_id=product.id) }}'
-                ">
+                 ">
 
-
-                <img
-                    src="{{ url_for(
-                        'static',
-                        filename='images/' ~ product.image
-                    ) }}"
-                    alt="{{ product.name }}">
+                <img src="{{ url_for(
+                    'static',
+                    filename='images/' ~ product.image
+                ) }}"
+                     alt="{{ product.name }}">
 
 
                 <h3>
-
                     {{ product.name }}
-
                 </h3>
 
 
                 <p class="description">
-
                     {{ product.description }}
-
                 </p>
 
 
                 <div class="rating">
-
                     ★★★★★
-
                 </div>
 
 
@@ -608,70 +1213,46 @@
                 </p>
 
 
-                <!-- =========================================
-                     QUANTITY
-                ========================================== -->
-
                 <div class="bottom">
-
 
                     <div class="quantity-box">
 
-
-                        <button
-                            type="button"
-                            class="quantity-btn"
-                            onclick="
-                                event.stopPropagation();
-                                changeQuantity({{ product.id }}, -1);
-                            ">
-
+                        <button type="button"
+                                class="quantity-btn"
+                                onclick="
+                                    event.stopPropagation();
+                                    changeQuantity({{ product.id }}, -1);
+                                ">
                             −
-
                         </button>
 
 
-                        <span
-                            id="qty-{{ product.id }}"
-                            class="quantity-display">
-
+                        <span id="qty-{{ product.id }}"
+                              class="quantity-display">
                             1
-
                         </span>
 
 
-                        <button
-                            type="button"
-                            class="quantity-btn"
-                            onclick="
-                                event.stopPropagation();
-                                changeQuantity({{ product.id }}, 1);
-                            ">
-
+                        <button type="button"
+                                class="quantity-btn"
+                                onclick="
+                                    event.stopPropagation();
+                                    changeQuantity({{ product.id }}, 1);
+                                ">
                             +
-
                         </button>
 
                     </div>
 
 
-
-                    <!-- =========================================
-                         BUTTONS
-                    ========================================== -->
-
                     <div class="product-buttons">
 
-
-                        <!-- ADD TO CART -->
-
-                        <button
-                            type="button"
-                            class="add-cart-btn"
-                            onclick="
-                                event.stopPropagation();
-                                addToCart({{ product.id }});
-                            ">
+                        <button type="button"
+                                class="add-cart-btn"
+                                onclick="
+                                    event.stopPropagation();
+                                    addToCart({{ product.id }});
+                                ">
 
                             🛒
 
@@ -684,16 +1265,12 @@
                         </button>
 
 
-
-                        <!-- BUY NOW -->
-
-                        <button
-                            type="button"
-                            class="buy-now-btn"
-                            onclick="
-                                event.stopPropagation();
-                                buyNow({{ product.id }});
-                            ">
+                        <button type="button"
+                                class="buy-now-btn"
+                                onclick="
+                                    event.stopPropagation();
+                                    buyNow({{ product.id }});
+                                ">
 
                             ⚡
 
@@ -707,17 +1284,13 @@
 
                     </div>
 
-
                 </div>
 
             </div>
 
-
             {% endfor %}
 
-
         {% else %}
-
 
             <p class="no-products">
 
@@ -729,7 +1302,6 @@
 
             </p>
 
-
         {% endif %}
 
     </div>
@@ -737,17 +1309,11 @@
 </section>
 
 
-
 <!-- =====================================================
      PAGE STYLE
 ===================================================== -->
 
 <style>
-
-
-/* =====================================================
-   HEADER
-===================================================== */
 
 .main-header{
 
@@ -835,9 +1401,7 @@
 
 
 .header-logo:hover img{
-
     transform:scale(1.05);
-
 }
 
 
@@ -973,9 +1537,7 @@
 
 
 .main-header .search-box button:hover{
-
     color:#e26fa7;
-
 }
 
 
@@ -1297,9 +1859,7 @@
 
 
 .product:hover img{
-
     transform:scale(1.02);
-
 }
 
 
@@ -1378,10 +1938,6 @@
 }
 
 
-/* =====================================================
-   QUANTITY
-===================================================== */
-
 .quantity-box{
 
     display:flex;
@@ -1421,9 +1977,7 @@
 
 
 .quantity-btn:hover{
-
     background:#c75a87;
-
 }
 
 
@@ -1439,10 +1993,6 @@
 
 }
 
-
-/* =====================================================
-   PRODUCT BUTTONS
-===================================================== */
 
 .product-buttons{
 
@@ -1483,12 +2033,8 @@
 }
 
 
-/* ADD TO CART */
-
 .add-cart-btn{
-
     background:#d86f9d;
-
 }
 
 
@@ -1501,12 +2047,8 @@
 }
 
 
-/* BUY NOW */
-
 .buy-now-btn{
-
     background:#b96b91;
-
 }
 
 
@@ -1532,14 +2074,8 @@
 }
 
 
-/* =====================================================
-   HERO TITLE
-===================================================== */
-
 .hero-main-title{
-
     font-size:inherit;
-
 }
 
 
@@ -1548,7 +2084,6 @@
 ===================================================== */
 
 @media (max-width:768px){
-
 
     .main-header .header-top{
 
@@ -1587,16 +2122,12 @@
 
 
     .main-header .search-box:focus-within{
-
         width:155px;
-
     }
 
 
     .main-header .header-icon{
-
         font-size:20px;
-
     }
 
 
@@ -1619,16 +2150,12 @@
 
 
     .store-brand h1{
-
         font-size:38px;
-
     }
 
 
     .store-brand p{
-
         font-size:15px;
-
     }
 
 
@@ -1662,23 +2189,17 @@
 
 
     .welcome-section{
-
         padding:22px 12px 18px;
-
     }
 
 
     .welcome-section h1{
-
         font-size:25px;
-
     }
 
 
     .welcome-section p{
-
         font-size:14px;
-
     }
 
 
@@ -1692,23 +2213,17 @@
 
 
     .section-title h2{
-
         font-size:34px;
-
     }
 
 
     .section-title p{
-
         font-size:15px;
-
     }
 
 
     .product-section{
-
         padding:25px 15px;
-
     }
 
 
@@ -1723,9 +2238,7 @@
 
 
     .product{
-
         width:100%;
-
     }
 
 
@@ -1743,9 +2256,7 @@
 
 
     .product h3{
-
         font-size:15px;
-
     }
 
 
@@ -1759,9 +2270,7 @@
 
 
     .price{
-
         font-size:20px;
-
     }
 
 
@@ -1777,9 +2286,7 @@
 
 
     .product-buttons{
-
         gap:7px;
-
     }
 
 
@@ -1800,7 +2307,6 @@
 ===================================================== */
 
 @media (max-width:480px){
-
 
     .main-header .header-top{
 
@@ -1839,9 +2345,7 @@
 
 
     .main-header .search-box:focus-within{
-
         width:120px;
-
     }
 
 
@@ -1864,9 +2368,7 @@
 
 
     .main-header .header-icon{
-
         font-size:17px;
-
     }
 
 
@@ -1907,9 +2409,7 @@
 
 
     .main-navbar{
-
         width:calc(100% - 16px);
-
     }
 
 
@@ -1923,16 +2423,12 @@
 
 
     .product-grid{
-
         gap:12px;
-
     }
 
 
     .section-title h2{
-
         font-size:22px;
-
     }
 
 
@@ -1946,9 +2442,7 @@
 
 
     .price{
-
         font-size:18px;
-
     }
 
 
@@ -1988,15 +2482,12 @@
 </style>
 
 
-
 <!-- =====================================================
      REVIEWS
 ===================================================== -->
 
-<section
-    id="reviews"
-    class="reviews-section">
-
+<section id="reviews"
+         class="reviews-section">
 
     <h2 class="section-title">
 
@@ -2027,42 +2518,32 @@
         )
     %}
 
-
         {% if messages %}
-
 
             {% for category, message in messages %}
 
                 <div class="review-success">
-
                     {{ message }}
-
                 </div>
 
             {% endfor %}
 
-
         {% endif %}
-
 
     {% endwith %}
 
 
+    <form method="POST"
+          action="{{ url_for('add_review') }}"
+          class="review-form">
 
-    <form
-        method="POST"
-        action="{{ url_for('add_review') }}"
-        class="review-form">
-
-
-        <textarea
-            name="message"
-            required
-            placeholder="{{
-                'اكتب رأيك هنا...'
-                if current_lang == 'ar'
-                else 'Write your review here...'
-            }}"></textarea>
+        <textarea name="message"
+                  required
+                  placeholder="{{
+                      'اكتب رأيك هنا...'
+                      if current_lang == 'ar'
+                      else 'Write your review here...'
+                  }}"></textarea>
 
 
         <label>
@@ -2076,10 +2557,8 @@
         </label>
 
 
-        <select
-            name="stars"
-            required>
-
+        <select name="stars"
+                required>
 
             <option value="5">
 
@@ -2163,13 +2642,11 @@
 </section>
 
 
-
 <!-- =====================================================
      REVIEWS STYLE
 ===================================================== -->
 
 <style>
-
 
 .reviews-section{
 
@@ -2280,9 +2757,7 @@
 
 
 .review-form button:hover{
-
     background:#d05590;
-
 }
 
 
@@ -2303,7 +2778,6 @@
 </style>
 
 
-
 <!-- =====================================================
      JAVASCRIPT
 ===================================================== -->
@@ -2322,16 +2796,13 @@ function toggleMenu(){
 
 
     if(!sideMenu){
-
         return;
-
     }
 
 
     sideMenu.classList.toggle("active");
 
 }
-
 
 
 function closeMenu(){
@@ -2341,16 +2812,13 @@ function closeMenu(){
 
 
     if(!sideMenu){
-
         return;
-
     }
 
 
     sideMenu.classList.remove("active");
 
 }
-
 
 
 /* =====================================================
@@ -2364,9 +2832,7 @@ function changeQuantity(id, change){
 
 
     if(!qty){
-
         return;
-
     }
 
 
@@ -2378,9 +2844,7 @@ function changeQuantity(id, change){
 
 
     if(value < 1){
-
         value = 1;
-
     }
 
 
@@ -2389,13 +2853,11 @@ function changeQuantity(id, change){
 }
 
 
-
 /* =====================================================
    ADD TO CART
 ===================================================== */
 
 async function addToCart(id){
-
 
     const qtyElement =
         document.getElementById("qty-" + id);
@@ -2408,7 +2870,6 @@ async function addToCart(id){
 
 
     try{
-
 
         const res =
             await fetch(
@@ -2435,17 +2896,13 @@ async function addToCart(id){
 
         if(data.success){
 
-
             alert(
                 "{{ '✅ تمت إضافة المنتج إلى السلة' if current_lang == 'ar' else '✅ Added to cart!' }}"
             );
 
-
         }
 
-
         else{
-
 
             alert(
                 "❌ " +
@@ -2455,15 +2912,11 @@ async function addToCart(id){
                 )
             );
 
-
         }
-
 
     }
 
-
     catch(error){
-
 
         console.error(
             "Add to cart error:",
@@ -2475,11 +2928,9 @@ async function addToCart(id){
             "{{ '❌ حدث خطأ أثناء إضافة المنتج إلى السلة.' if current_lang == 'ar' else '❌ An error occurred while adding the product to the cart.' }}"
         );
 
-
     }
 
 }
-
 
 
 /* =====================================================
@@ -2487,7 +2938,6 @@ async function addToCart(id){
 ===================================================== */
 
 async function buyNow(id){
-
 
     const qtyElement =
         document.getElementById("qty-" + id);
@@ -2500,7 +2950,6 @@ async function buyNow(id){
 
 
     try{
-
 
         const res =
             await fetch(
@@ -2530,21 +2979,12 @@ async function buyNow(id){
 
         if(data.success){
 
-
-            /*
-             * بعد إضافة المنتج بنجاح
-             * ننتقل مباشرة إلى السلة.
-             */
-
             window.location.href =
                 "{{ url_for('cart_page') }}";
 
-
         }
 
-
         else{
-
 
             alert(
                 "❌ " +
@@ -2554,15 +2994,11 @@ async function buyNow(id){
                 )
             );
 
-
         }
-
 
     }
 
-
     catch(error){
-
 
         console.error(
             "Buy now error:",
@@ -2574,11 +3010,9 @@ async function buyNow(id){
             "{{ '❌ حدث خطأ أثناء شراء المنتج.' if current_lang == 'ar' else '❌ An error occurred while buying the product.' }}"
         );
 
-
     }
 
 }
-
 
 </script>
 

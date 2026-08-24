@@ -962,3 +962,45 @@ class Review(db.Model):
     admin_reply = db.Column(
         db.Text
     )
+
+# ==================================================
+# 📢 ADVERTISEMENT
+# ==================================================
+
+class Advertisement(db.Model):
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    image = db.Column(
+        db.String(255),
+        nullable=False
+    )
+
+    title = db.Column(
+        db.String(200),
+        nullable=True
+    )
+
+    is_active = db.Column(
+        db.Boolean,
+        default=True,
+        nullable=False
+    )
+
+    display_order = db.Column(
+        db.Integer,
+        default=0,
+        nullable=False
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
+
+    def __repr__(self):
+
+        return f"<Advertisement {self.id}>"
