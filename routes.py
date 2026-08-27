@@ -5288,7 +5288,8 @@ def home_logged():
     return render_template(
         "home_logged.html",
         products=products,
-        advertisements=advertisements
+        advertisements=advertisements,
+        user=current_user.username
     )
 
 # ==========================================
