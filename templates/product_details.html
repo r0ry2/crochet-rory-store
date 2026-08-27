@@ -1,7 +1,7 @@
 {% extends "base_logged.html" %}
 
 {% block title %}
-    {{ product.name }}
+{{ product.name }}
 {% endblock %}
 
 {% block content %}
@@ -986,475 +986,205 @@ body{
 
 </style>
 
-
 <div class="product-page">
 
+```
+<!-- =================================================
+     PRODUCT DETAILS
+================================================= -->
 
-    <!-- =================================================
-         PRODUCT DETAILS
-    ================================================= -->
-
-    <div class="product-details">
+<div class="product-details">
 
 
-        <!-- ================= IMAGE ================= -->
+    <!-- ================= IMAGE ================= -->
 
-        <div class="product-image">
+    <div class="product-image">
 
-            {% if product.image %}
+        {% if product.image %}
 
-                <img
-                    src="{{ url_for('static', filename='images/' ~ product.image) }}"
-                    alt="{{ product.name }}"
-                >
+            <img
+                src="{{ url_for('static', filename='images/' ~ product.image) }}"
+                alt="{{ product.name }}"
+            >
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ================= INFO ================= -->
+
+    <div class="product-info">
+
+
+        <h1>
+            {{ product.name }}
+        </h1>
+
+
+        <!-- Rating -->
+
+        <div class="rating">
+            ★★★★★
+        </div>
+
+
+        <!-- Purchase Count -->
+
+        <div class="purchase-count">
+
+            🛍️
+
+            {% if current_lang == "ar" %}
+
+                تم شراء هذا المنتج
+                {{ product.purchase_count|default(0) }}
+                مرة
+
+            {% else %}
+
+                {{ product.purchase_count|default(0) }}
+                people purchased this product
 
             {% endif %}
 
         </div>
 
 
-        <!-- ================= INFO ================= -->
+        <!-- Price -->
 
-        <div class="product-info">
+        <div class="price">
 
+            {{ product.price }}
 
-            <h1>
-                {{ product.name }}
-            </h1>
+            {{ "ر.س" if current_lang == "ar" else "SAR" }}
 
-
-            <!-- Rating -->
-
-            <div class="rating">
-                ★★★★★
-            </div>
+        </div>
 
 
-            <!-- Purchase Count -->
+        <!-- Description -->
 
-            <div class="purchase-count">
-
-                🛍️
-
-                {% if current_lang == "ar" %}
-
-                    تم شراء هذا المنتج
-                    {{ product.purchase_count|default(0) }}
-                    مرة
-
-                {% else %}
-
-                    {{ product.purchase_count|default(0) }}
-                    people purchased this product
-
-                {% endif %}
-
-            </div>
+        <p class="description">
+            {{ product.description }}
+        </p>
 
 
-            <!-- Price -->
+        <!-- =================================================
+             QUICK ACTIONS
+        ================================================= -->
 
-            <div class="price">
-
-                {{ product.price }}
-
-                {{ "ر.س" if current_lang == "ar" else "SAR" }}
-
-            </div>
+        <div class="quick-actions">
 
 
-            <!-- Description -->
+            <!-- Wishlist -->
 
-            <p class="description">
-                {{ product.description }}
-            </p>
-
-
-            <!-- =================================================
-                 QUICK ACTIONS
-            ================================================= -->
-
-            <div class="quick-actions">
-
-
-                <!-- Wishlist -->
-
-                <form
-                    action="{{ url_for('toggle_wishlist', product_id=product.id) }}"
-                    method="POST"
-                    style="margin:0;"
-                >
-
-                    <button
-                        type="submit"
-                        class="quick-action"
-                    >
-
-                        {% if product.id in wishlist_ids %}
-
-                            ❤️
-
-                            {{ "إزالة من المفضلة"
-                            if current_lang=="ar"
-                            else "Remove from Wishlist" }}
-
-                        {% else %}
-
-                            🤍
-
-                            {{ "أضف للمفضلة"
-                            if current_lang=="ar"
-                            else "Add to Wishlist" }}
-
-                        {% endif %}
-
-                    </button>
-
-                </form>
-
-
-                <!-- Share -->
+            <form
+                action="{{ url_for('toggle_wishlist', product_id=product.id) }}"
+                method="POST"
+                style="margin:0;"
+            >
 
                 <button
-                    type="button"
+                    type="submit"
                     class="quick-action"
-                    onclick="shareProduct()"
                 >
 
-                    📤
+                    {% if product.id in wishlist_ids %}
 
-                    {{ "مشاركة"
-                    if current_lang=="ar"
-                    else "Share" }}
+                        ❤️
 
-                </button>
-
-
-            </div>
-
-
-            <!-- =================================================
-                 CUSTOMIZATION
-            ================================================= -->
-
-            {% if product.is_customizable %}
-
-
-                <button
-                    type="button"
-                    class="custom-toggle"
-                    id="customToggle"
-                    onclick="toggleCustomization()"
-                >
-
-                    <span>
-
-                        ✨
-
-                        {{ "أرغب بتخصيص المنتج"
+                        {{ "إزالة من المفضلة"
                         if current_lang=="ar"
-                        else "I want to customize this product" }}
+                        else "Remove from Wishlist" }}
 
-                    </span>
+                    {% else %}
 
-                    <span
-                        class="custom-toggle-arrow"
-                        id="customArrow"
-                    >
+                        🤍
 
-                        ▼
-
-                    </span>
-
-                </button>
-
-
-                <div
-                    class="custom-area"
-                    id="customArea"
-                >
-
-                    <div class="custom-note">
-
-                        {{ "التخصيص اختياري. إذا كنت لا تريد تخصيص المنتج، يمكنك ترك هذا القسم مغلقًا."
+                        {{ "أضف للمفضلة"
                         if current_lang=="ar"
-                        else "Customization is optional. If you don't want a customized product, simply leave this section closed." }}
-
-                    </div>
-
-
-                    <!-- ================= DOLLS ================= -->
-
-                    {% if product.category == "Dolls" %}
-
-
-                        <div class="custom-box">
-
-
-                            <label>
-
-                                {{ "لون البشرة"
-                                if current_lang=="ar"
-                                else "Skin Color" }}
-
-                            </label>
-
-
-                            <select id="skinColor">
-
-                                <option value="White">
-
-                                    {{ "أبيض"
-                                    if current_lang=="ar"
-                                    else "White" }}
-
-                                </option>
-
-                                <option value="Tan">
-
-                                    {{ "قمحي"
-                                    if current_lang=="ar"
-                                    else "Tan" }}
-
-                                </option>
-
-                                <option value="Brown">
-
-                                    {{ "بني"
-                                    if current_lang=="ar"
-                                    else "Brown" }}
-
-                                </option>
-
-                            </select>
-
-
-                            <label>
-
-                                {{ "نوع الشعر"
-                                if current_lang=="ar"
-                                else "Hair Type" }}
-
-                            </label>
-
-
-                            <select id="hairType">
-
-                                <option value="Straight">
-
-                                    {{ "مستقيم"
-                                    if current_lang=="ar"
-                                    else "Straight" }}
-
-                                </option>
-
-                                <option value="Wavy">
-
-                                    {{ "مموج"
-                                    if current_lang=="ar"
-                                    else "Wavy" }}
-
-                                </option>
-
-                                <option value="Curly">
-
-                                    {{ "مجعد"
-                                    if current_lang=="ar"
-                                    else "Curly" }}
-
-                                </option>
-
-                            </select>
-
-
-                            <label>
-
-                                {{ "لون الشعر"
-                                if current_lang=="ar"
-                                else "Hair Color" }}
-
-                            </label>
-
-
-                            <select id="hairColor">
-
-                                <option value="Black">
-
-                                    {{ "أسود"
-                                    if current_lang=="ar"
-                                    else "Black" }}
-
-                                </option>
-
-                                <option value="Brown">
-
-                                    {{ "بني"
-                                    if current_lang=="ar"
-                                    else "Brown" }}
-
-                                </option>
-
-                                <option value="Blonde">
-
-                                    {{ "أشقر"
-                                    if current_lang=="ar"
-                                    else "Blonde" }}
-
-                                </option>
-
-                            </select>
-
-
-                            <label>
-
-                                {{ "الحجم"
-                                if current_lang=="ar"
-                                else "Size" }}
-
-                            </label>
-
-
-                            <select id="productSize">
-
-                                <option value="Small">
-
-                                    {{ "صغير"
-                                    if current_lang=="ar"
-                                    else "Small" }}
-
-                                </option>
-
-                                <option value="Medium">
-
-                                    {{ "متوسط"
-                                    if current_lang=="ar"
-                                    else "Medium" }}
-
-                                </option>
-
-                                <option value="Large">
-
-                                    {{ "كبير"
-                                    if current_lang=="ar"
-                                    else "Large" }}
-
-                                </option>
-
-                            </select>
-
-
-                        </div>
-
-
-                    <!-- ================= KEYCHAINS ================= -->
-
-                    {% elif product.category == "Keychains" %}
-
-
-                        <div class="custom-box">
-
-
-                            <label>
-
-                                {{ "اللون"
-                                if current_lang=="ar"
-                                else "Color" }}
-
-                            </label>
-
-
-                            <select id="keychainColor">
-
-                                <option value="Pink">
-
-                                    {{ "وردي"
-                                    if current_lang=="ar"
-                                    else "Pink" }}
-
-                                </option>
-
-                                <option value="White">
-
-                                    {{ "أبيض"
-                                    if current_lang=="ar"
-                                    else "White" }}
-
-                                </option>
-
-                                <option value="Blue">
-
-                                    {{ "أزرق"
-                                    if current_lang=="ar"
-                                    else "Blue" }}
-
-                                </option>
-
-                            </select>
-
-
-                            <label>
-
-                                {{ "الحجم"
-                                if current_lang=="ar"
-                                else "Size" }}
-
-                            </label>
-
-
-                            <select id="productSize">
-
-                                <option value="Small">
-
-                                    {{ "صغير"
-                                    if current_lang=="ar"
-                                    else "Small" }}
-
-                                </option>
-
-                                <option value="Medium">
-
-                                    {{ "متوسط"
-                                    if current_lang=="ar"
-                                    else "Medium" }}
-
-                                </option>
-
-                            </select>
-
-
-                            <label>
-
-                                {{ "نوع الخيط"
-                                if current_lang=="ar"
-                                else "Yarn Type" }}
-
-                            </label>
-
-
-                            <select id="yarnType">
-
-                                <option value="Cotton">
-                                    Cotton
-                                </option>
-
-                                <option value="Milk Cotton">
-                                    Milk Cotton
-                                </option>
-
-                                <option value="Velvet">
-                                    Velvet
-                                </option>
-
-                            </select>
-
-
-                        </div>
-
+                        else "Add to Wishlist" }}
 
                     {% endif %}
 
+                </button>
 
-                    <!-- ================= COMMON ================= -->
+            </form>
+
+
+            <!-- Share -->
+
+            <button
+                type="button"
+                class="quick-action"
+                onclick="shareProduct()"
+            >
+
+                📤
+
+                {{ "مشاركة"
+                if current_lang=="ar"
+                else "Share" }}
+
+            </button>
+
+
+        </div>
+
+
+        <!-- =================================================
+             CUSTOMIZATION
+        ================================================= -->
+
+        {% if product.is_customizable %}
+
+
+            <button
+                type="button"
+                class="custom-toggle"
+                id="customToggle"
+                onclick="toggleCustomization()"
+            >
+
+                <span>
+
+                    ✨
+
+                    {{ "أرغب بتخصيص المنتج"
+                    if current_lang=="ar"
+                    else "I want to customize this product" }}
+
+                </span>
+
+                <span
+                    class="custom-toggle-arrow"
+                    id="customArrow"
+                >
+
+                    ▼
+
+                </span>
+
+            </button>
+
+
+            <div
+                class="custom-area"
+                id="customArea"
+            >
+
+                <div class="custom-note">
+
+                    {{ "التخصيص اختياري. إذا كنت لا تريد تخصيص المنتج، يمكنك ترك هذا القسم مغلقًا."
+                    if current_lang=="ar"
+                    else "Customization is optional. If you don't want a customized product, simply leave this section closed." }}
+
+                </div>
+
+
+                <!-- ================= DOLLS ================= -->
+
+                {% if product.category == "Dolls" %}
 
 
                     <div class="custom-box">
@@ -1462,270 +1192,541 @@ body{
 
                         <label>
 
-                            {{ "صورة مرجعية"
+                            {{ "لون البشرة"
                             if current_lang=="ar"
-                            else "Reference Image" }}
+                            else "Skin Color" }}
 
                         </label>
 
 
-                        <input
-                            type="file"
-                            id="referenceImage"
-                            accept="image/*"
-                        >
+                        <select id="skinColor">
+
+                            <option value="White">
+
+                                {{ "أبيض"
+                                if current_lang=="ar"
+                                else "White" }}
+
+                            </option>
+
+                            <option value="Tan">
+
+                                {{ "قمحي"
+                                if current_lang=="ar"
+                                else "Tan" }}
+
+                            </option>
+
+                            <option value="Brown">
+
+                                {{ "بني"
+                                if current_lang=="ar"
+                                else "Brown" }}
+
+                            </option>
+
+                        </select>
 
 
                         <label>
 
-                            {{ "ملاحظات إضافية"
+                            {{ "نوع الشعر"
                             if current_lang=="ar"
-                            else "Additional Notes" }}
+                            else "Hair Type" }}
 
                         </label>
 
 
-                        <textarea
-                            id="customNotes"
-                            rows="4"
-                            placeholder="{{ 'اكتبي أي تفاصيل أو طلبات خاصة هنا...' if current_lang=='ar' else 'Write any special requests here...' }}"
-                        ></textarea>
+                        <select id="hairType">
+
+                            <option value="Straight">
+
+                                {{ "مستقيم"
+                                if current_lang=="ar"
+                                else "Straight" }}
+
+                            </option>
+
+                            <option value="Wavy">
+
+                                {{ "مموج"
+                                if current_lang=="ar"
+                                else "Wavy" }}
+
+                            </option>
+
+                            <option value="Curly">
+
+                                {{ "مجعد"
+                                if current_lang=="ar"
+                                else "Curly" }}
+
+                            </option>
+
+                        </select>
+
+
+                        <label>
+
+                            {{ "لون الشعر"
+                            if current_lang=="ar"
+                            else "Hair Color" }}
+
+                        </label>
+
+
+                        <select id="hairColor">
+
+                            <option value="Black">
+
+                                {{ "أسود"
+                                if current_lang=="ar"
+                                else "Black" }}
+
+                            </option>
+
+                            <option value="Brown">
+
+                                {{ "بني"
+                                if current_lang=="ar"
+                                else "Brown" }}
+
+                            </option>
+
+                            <option value="Blonde">
+
+                                {{ "أشقر"
+                                if current_lang=="ar"
+                                else "Blonde" }}
+
+                            </option>
+
+                        </select>
+
+
+                        <label>
+
+                            {{ "الحجم"
+                            if current_lang=="ar"
+                            else "Size" }}
+
+                        </label>
+
+
+                        <select id="productSize">
+
+                            <option value="Small">
+
+                                {{ "12 - 13 سم"
+                                if current_lang=="ar"
+                                else "12 - 13 cm" }}
+
+                            </option>
+
+
+                            <option value="Medium">
+
+                                {{ "14 - 15 سم"
+                                if current_lang=="ar"
+                                else "14 - 15 cm" }}
+
+                            </option>
+
+
+                            <option value="Large">
+
+                                {{ "25 سم فأكثر"
+                                if current_lang=="ar"
+                                else "25 cm and above" }}
+
+                            </option>
+
+                        </select>
 
 
                     </div>
 
 
-                </div>
+                <!-- ================= KEYCHAINS ================= -->
 
+                {% elif product.category == "Keychains" %}
 
-            {% endif %}
 
+                    <div class="custom-box">
 
-            <!-- =================================================
-                 QUANTITY
-            ================================================= -->
 
-            <div class="quantity-title">
+                        <label>
 
-                {{ "الكمية"
-                if current_lang=="ar"
-                else "Quantity" }}
+                            {{ "اللون"
+                            if current_lang=="ar"
+                            else "Color" }}
 
-            </div>
+                        </label>
 
 
-            <div class="quantity">
+                        <select id="keychainColor">
 
-                <button
-                    type="button"
-                    onclick="changeQuantity(-1)"
-                >
+                            <option value="Pink">
 
-                    −
+                                {{ "وردي"
+                                if current_lang=="ar"
+                                else "Pink" }}
 
-                </button>
+                            </option>
 
+                            <option value="White">
 
-                <span id="quantity">
-                    1
-                </span>
+                                {{ "أبيض"
+                                if current_lang=="ar"
+                                else "White" }}
 
+                            </option>
 
-                <button
-                    type="button"
-                    onclick="changeQuantity(1)"
-                >
+                            <option value="Blue">
 
-                    +
+                                {{ "أزرق"
+                                if current_lang=="ar"
+                                else "Blue" }}
 
-                </button>
+                            </option>
 
-            </div>
+                        </select>
 
 
-            <!-- =================================================
-                 ACTIONS
-            ================================================= -->
+                        <label>
 
-            <div class="actions">
+                            {{ "الحجم"
+                            if current_lang=="ar"
+                            else "Size" }}
 
+                        </label>
 
-                <!-- ADD TO CART -->
 
-                <button
-                    type="button"
-                    class="cart-btn"
-                    id="addCartBtn"
-                    onclick="addToCart(false)"
-                >
+                        <select id="productSize">
 
-                    🛒
+                            <option value="Small">
 
-                    {{ "أضف إلى السلة"
-                    if current_lang=="ar"
-                    else "Add to Cart" }}
+                                {{ "12 - 13 سم"
+                                if current_lang=="ar"
+                                else "12 - 13 cm" }}
 
-                </button>
+                            </option>
 
 
-                <!-- BUY NOW -->
+                            <option value="Medium">
 
-                <button
-                    type="button"
-                    class="buy-btn"
-                    id="buyNowBtn"
-                    onclick="addToCart(true)"
-                >
+                                {{ "14 - 15 سم"
+                                if current_lang=="ar"
+                                else "14 - 15 cm" }}
 
-                    ⚡
+                            </option>
 
-                    {{ "اشتر الآن"
-                    if current_lang=="ar"
-                    else "Buy Now" }}
+                        </select>
 
-                </button>
 
+                        <label>
 
-            </div>
+                            {{ "نوع الخيط"
+                            if current_lang=="ar"
+                            else "Yarn Type" }}
 
+                        </label>
 
-            <div
-                id="actionMessage"
-                class="action-message"
-            ></div>
 
+                        <select id="yarnType">
 
-        </div>
+                            <option value="Cotton">
+                                Cotton
+                            </option>
 
-    </div>
+                            <option value="Milk Cotton">
+                                Milk Cotton
+                            </option>
 
+                            <option value="Velvet">
+                                Velvet
+                            </option>
 
-    <!-- =====================================================
-         REVIEWS
-    ===================================================== -->
+                        </select>
 
-    <h2 class="section-title">
 
-        💬
+                    </div>
 
-        {{ "آراء العملاء"
-        if current_lang=="ar"
-        else "Customer Reviews" }}
-
-    </h2>
-
-
-    <div class="review">
-
-        <div
-            class="rating"
-            style="margin-bottom:10px;"
-        >
-
-            ★★★★★
-
-        </div>
-
-
-        <p
-            style="
-                font-size:17px;
-                color:#555;
-                margin:0;
-            "
-        >
-
-            {{ "لا توجد مراجعات بعد. كن أول من يشارك تجربته 💕"
-            if current_lang=="ar"
-            else "No reviews yet. Be the first to share your experience 💕" }}
-
-        </p>
-
-    </div>
-
-
-    <!-- =====================================================
-         RELATED PRODUCTS
-    ===================================================== -->
-
-    <h2 class="section-title">
-
-        🧸
-
-        {{ "قد يعجبك أيضًا"
-        if current_lang=="ar"
-        else "You May Also Like" }}
-
-    </h2>
-
-
-    <div class="related-grid">
-
-
-        {% for item in related_products %}
-
-
-            <div class="related-card">
-
-
-                {% if item.image %}
-
-                    <img
-                        src="{{ url_for('static', filename='images/' ~ item.image) }}"
-                        alt="{{ item.name }}"
-                    >
 
                 {% endif %}
 
 
-                <div class="related-card-content">
+                <!-- ================= COMMON ================= -->
 
 
-                    <h3>
-                        {{ item.name }}
-                    </h3>
+                <div class="custom-box">
 
 
-                    <div class="related-rating">
-                        ★★★★★
-                    </div>
+                    <label>
 
-
-                    <div class="related-price">
-
-                        {{ item.price }}
-
-                        {{ "ر.س"
+                        {{ "صورة مرجعية"
                         if current_lang=="ar"
-                        else "SAR" }}
+                        else "Reference Image" }}
 
-                    </div>
+                    </label>
 
 
-                    <a
-                        href="{{ url_for('product_details', product_id=item.id) }}"
+                    <input
+                        type="file"
+                        id="referenceImage"
+                        accept="image/*"
                     >
 
-                        {{ "عرض المنتج"
-                        if current_lang=="ar"
-                        else "View Product" }}
 
-                    </a>
+                    <label>
+
+                        {{ "ملاحظات إضافية"
+                        if current_lang=="ar"
+                        else "Additional Notes" }}
+
+                    </label>
+
+
+                    <textarea
+                        id="customNotes"
+                        rows="4"
+                        placeholder="{{ 'اكتبي أي تفاصيل أو طلبات خاصة هنا...' if current_lang=='ar' else 'Write any special requests here...' }}"
+                    ></textarea>
 
 
                 </div>
 
+
             </div>
 
 
-        {% endfor %}
+        {% endif %}
+
+
+        <!-- =================================================
+             QUANTITY
+        ================================================= -->
+
+        <div class="quantity-title">
+
+            {{ "الكمية"
+            if current_lang=="ar"
+            else "Quantity" }}
+
+        </div>
+
+
+        <div class="quantity">
+
+            <button
+                type="button"
+                onclick="changeQuantity(-1)"
+            >
+
+                −
+
+            </button>
+
+
+            <span id="quantity">
+                1
+            </span>
+
+
+            <button
+                type="button"
+                onclick="changeQuantity(1)"
+            >
+
+                +
+
+            </button>
+
+        </div>
+
+
+        <!-- =================================================
+             ACTIONS
+        ================================================= -->
+
+        <div class="actions">
+
+
+            <!-- ADD TO CART -->
+
+            <button
+                type="button"
+                class="cart-btn"
+                id="addCartBtn"
+                onclick="addToCart(false)"
+            >
+
+                🛒
+
+                {{ "أضف إلى السلة"
+                if current_lang=="ar"
+                else "Add to Cart" }}
+
+            </button>
+
+
+            <!-- BUY NOW -->
+
+            <button
+                type="button"
+                class="buy-btn"
+                id="buyNowBtn"
+                onclick="addToCart(true)"
+            >
+
+                ⚡
+
+                {{ "اشتر الآن"
+                if current_lang=="ar"
+                else "Buy Now" }}
+
+            </button>
+
+
+        </div>
+
+
+        <div
+            id="actionMessage"
+            class="action-message"
+        ></div>
 
 
     </div>
 
+</div>
+
+
+<!-- =====================================================
+     REVIEWS
+===================================================== -->
+
+<h2 class="section-title">
+
+    💬
+
+    {{ "آراء العملاء"
+    if current_lang=="ar"
+    else "Customer Reviews" }}
+
+</h2>
+
+
+<div class="review">
+
+    <div
+        class="rating"
+        style="margin-bottom:10px;"
+    >
+
+        ★★★★★
+
+    </div>
+
+
+    <p
+        style="
+            font-size:17px;
+            color:#555;
+            margin:0;
+        "
+    >
+
+        {{ "لا توجد مراجعات بعد. كن أول من يشارك تجربته 💕"
+        if current_lang=="ar"
+        else "No reviews yet. Be the first to share your experience 💕" }}
+
+    </p>
 
 </div>
 
+
+<!-- =====================================================
+     RELATED PRODUCTS
+===================================================== -->
+
+<h2 class="section-title">
+
+    🧸
+
+    {{ "قد يعجبك أيضًا"
+    if current_lang=="ar"
+    else "You May Also Like" }}
+
+</h2>
+
+
+<div class="related-grid">
+
+
+    {% for item in related_products %}
+
+
+        <div class="related-card">
+
+
+            {% if item.image %}
+
+                <img
+                    src="{{ url_for('static', filename='images/' ~ item.image) }}"
+                    alt="{{ item.name }}"
+                >
+
+            {% endif %}
+
+
+            <div class="related-card-content">
+
+
+                <h3>
+                    {{ item.name }}
+                </h3>
+
+
+                <div class="related-rating">
+                    ★★★★★
+                </div>
+
+
+                <div class="related-price">
+
+                    {{ item.price }}
+
+                    {{ "ر.س"
+                    if current_lang=="ar"
+                    else "SAR" }}
+
+                </div>
+
+
+                <a
+                    href="{{ url_for('product_details', product_id=item.id) }}"
+                >
+
+                    {{ "عرض المنتج"
+                    if current_lang=="ar"
+                    else "View Product" }}
+
+                </a>
+
+
+            </div>
+
+        </div>
+
+
+    {% endfor %}
+
+
+</div>
+```
+
+</div>
 
 <script>
 
