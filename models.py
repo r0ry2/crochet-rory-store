@@ -95,6 +95,16 @@ class Product(db.Model):
         nullable=False
     )
 
+    # ==================================================
+    # 📏 SIZE PRICES
+    # ==================================================
+
+    size_prices = db.Column(
+        db.JSON,
+        nullable=True,
+        default=dict
+    )
+
     cost_price = db.Column(
         db.Float,
         nullable=True,
@@ -216,22 +226,10 @@ class User(UserMixin, db.Model):
         primary_key=True
     )
 
-    # ==========================================
-    # 👤 Username
-    #
-    # الاسم مسموح يتكرر
-    # ==========================================
-
     username = db.Column(
         db.String(150),
         nullable=False
     )
-
-    # ==========================================
-    # 📧 Email
-    #
-    # البريد لا يسمح بتكراره
-    # ==========================================
 
     email = db.Column(
         db.String(150),
@@ -264,10 +262,6 @@ class User(UserMixin, db.Model):
         nullable=True
     )
 
-    # ==========================
-    # Personal Information
-    # ==========================
-
     phone = db.Column(
         db.String(20),
         nullable=True
@@ -292,10 +286,6 @@ class User(UserMixin, db.Model):
         db.String(255),
         default="default.png"
     )
-
-    # ==========================
-    # 🔐 PASSWORD
-    # ==========================
 
     def set_password(self, password):
 
@@ -324,7 +314,10 @@ class Cart(db.Model):
 
     user_id = db.Column(
         db.Integer,
-        db.ForeignKey("user.id", ondelete="CASCADE"),
+        db.ForeignKey(
+            "user.id",
+            ondelete="CASCADE"
+        ),
         nullable=False
     )
 
@@ -339,6 +332,28 @@ class Cart(db.Model):
         default=1
     )
 
+    # ==================================================
+    # 📏 SELECTED SIZE
+    # ==================================================
+
+    selected_size = db.Column(
+        db.String(50),
+        nullable=True
+    )
+
+    # ==================================================
+    # 💰 SELECTED PRICE
+    # ==================================================
+
+    selected_price = db.Column(
+        db.Float,
+        nullable=True
+    )
+
+    # ==================================================
+    # 👤 USER
+    # ==================================================
+
     user = db.relationship(
         "User",
         backref=db.backref(
@@ -348,20 +363,27 @@ class Cart(db.Model):
         lazy=True
     )
 
+    # ==================================================
+    # 🧸 PRODUCT
+    # ==================================================
+
     product = db.relationship(
         "Product",
         lazy=True
     )
+
+    # ==================================================
+    # 🔧 REPRESENTATION
+    # ==================================================
 
     def __repr__(self):
 
         return (
             f"<Cart "
             f"{self.user_id} - "
-            f"{self.product_id}>"
+            f"{self.product_id} - "
+            f"{self.selected_size}>"
         )
-
-
 # ==================================================
 # ❤️ WISHLIST
 # ==================================================
@@ -688,6 +710,15 @@ class OrderItem(db.Model):
         db.Float
     )
 
+    # ==================================================
+    # 📏 SELECTED SIZE
+    # ==================================================
+
+    selected_size = db.Column(
+        db.String(50),
+        nullable=True
+    )
+
     order = db.relationship(
         "Order",
         backref="items",
@@ -704,10 +735,9 @@ class OrderItem(db.Model):
         return (
             f"<OrderItem "
             f"order={self.order_id}, "
-            f"product={self.product_id}>"
+            f"product={self.product_id}, "
+            f"size={self.selected_size}>"
         )
-
-
 # ==================================================
 # 🚚 SHIPPING METHOD
 # ==================================================
@@ -962,6 +992,7 @@ class Review(db.Model):
     admin_reply = db.Column(
         db.Text
     )
+
 
 # ==================================================
 # 📢 ADVERTISEMENT
