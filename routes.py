@@ -660,7 +660,6 @@ def add_product():
     # ==================================================
 
     if current_user.role != "admin":
-
         flash(
             "⚠️ Access denied! Admins only.",
             "danger"
@@ -669,6 +668,15 @@ def add_product():
         return redirect(
             url_for("home_logged")
         )
+
+    # ==================================================
+    # 🌐 LANGUAGE
+    # ==================================================
+
+    current_lang = session.get(
+        "language",
+        "ar"
+    )
 
     # ==================================================
     # 📝 PRODUCT FORM
@@ -713,7 +721,9 @@ def add_product():
                     filename
                 )
 
-                image_file.save(image_path)
+                image_file.save(
+                    image_path
+                )
 
         # ==================================================
         # 📦 PRODUCT QUANTITY
@@ -725,21 +735,18 @@ def add_product():
         )
 
         try:
-
             quantity = int(quantity)
 
         except (TypeError, ValueError):
-
             quantity = 1
 
         # منع الكمية من أن تكون سالبة
-
         if quantity < 0:
-
             quantity = 0
 
         # ==================================================
         # 💰 COST PRICE
+        # ==================================================
         # سعر التكلفة
         # ==================================================
 
@@ -749,21 +756,20 @@ def add_product():
         )
 
         try:
-
-            cost_price = float(cost_price)
+            cost_price = float(
+                cost_price
+            )
 
         except (TypeError, ValueError):
-
             cost_price = 0
 
         # منع سعر التكلفة من أن يكون سالبًا
-
         if cost_price < 0:
-
             cost_price = 0
 
         # ==================================================
         # 🏷️ SALE PRICE
+        # ==================================================
         # سعر التخفيض
         # ==================================================
 
@@ -773,11 +779,11 @@ def add_product():
         )
 
         try:
-
-            sale_price = float(sale_price)
+            sale_price = float(
+                sale_price
+            )
 
         except (TypeError, ValueError):
-
             sale_price = None
 
         # ==================================================
@@ -787,14 +793,12 @@ def add_product():
         if sale_price is not None:
 
             # منع السعر المخفض من أن يكون سالبًا
-
             if sale_price < 0:
 
                 sale_price = None
 
             # إذا كان السعر المخفض أكبر أو يساوي السعر الأصلي
             # نعتبر أنه لا يوجد خصم
-
             elif sale_price >= form.price.data:
 
                 sale_price = None
@@ -862,7 +866,6 @@ def add_product():
             # ----------------------------------------------
 
             purchase_count=0
-
         )
 
         # ==================================================
@@ -908,9 +911,7 @@ def add_product():
 
     return render_template(
         "admin/add_product.html",
-
         form=form,
-
         products=products
     )
 # ==========================================
