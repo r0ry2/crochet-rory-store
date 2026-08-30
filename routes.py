@@ -1251,6 +1251,8 @@ def product_details(product_id):
     )
 
 
+
+
 # ==========================================
 # 🎨 UPLOAD CUSTOMIZATION REFERENCE IMAGE
 # ==========================================
@@ -1258,7 +1260,6 @@ def product_details(product_id):
 @app.route("/api/customization/upload-image", methods=["POST"])
 @login_required
 def upload_customization_reference_image():
-
     image = request.files.get("reference_image")
 
     if not image or not image.filename:
@@ -1267,16 +1268,9 @@ def upload_customization_reference_image():
             "error": "No image selected."
         }), 400
 
-    extension = os.path.splitext(
-        image.filename
-    )[1].lower()
+    extension = os.path.splitext(image.filename)[1].lower()
 
-    if extension not in {
-        ".jpg",
-        ".jpeg",
-        ".png",
-        ".gif"
-    }:
+    if extension not in {".jpg", ".jpeg", ".png", ".gif", ".webp"}:
         return jsonify({
             "success": False,
             "error": "Only image files are allowed."
@@ -1291,17 +1285,9 @@ def upload_customization_reference_image():
         "customization"
     )
 
-    os.makedirs(
-        upload_folder,
-        exist_ok=True
-    )
+    os.makedirs(upload_folder, exist_ok=True)
 
-    image.save(
-        os.path.join(
-            upload_folder,
-            filename
-        )
-    )
+    image.save(os.path.join(upload_folder, filename))
 
     return jsonify({
         "success": True,
@@ -1348,25 +1334,7 @@ def get_order_details(order_id):
 
             "quantity": order_item.quantity,
 
-            "image": product.image if product.image else "",
-
-            # ==========================================
-            # 📏 SELECTED SIZE
-            # ==========================================
-
-            "selected_size":
-                order_item.selected_size
-                if order_item.selected_size
-                else None,
-
-            # ==========================================
-            # 🎨 CUSTOMIZATION
-            # ==========================================
-
-            "customization":
-                order_item.customization
-                if order_item.customization
-                else None
+            "image": product.image if product.image else ""
 
         })
 
