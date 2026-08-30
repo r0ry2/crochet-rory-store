@@ -1327,30 +1327,34 @@ def get_order_details(order_id):
     for order_item, product in items:
 
         item_list.append({
-
             "name": product.name,
-
             "price": order_item.price,
-
             "quantity": order_item.quantity,
 
-            "image": product.image if product.image else ""
+            # 📏 الحجم المختار
+            "selected_size": (
+                order_item.selected_size
+                if hasattr(order_item, "selected_size")
+                else None
+            ),
 
+            # 🎨 تفاصيل التخصيص
+            "customization": (
+                order_item.customization
+                if hasattr(order_item, "customization")
+                else None
+            ),
+
+            "image": product.image if product.image else ""
         })
 
 
     return jsonify({
-
         "id": order.id,
-
         "customer_name": order.customer_name,
-
         "customer_email": order.customer_email,
-
         "address": order.address,
-
         "payment_method": order.payment_method,
-
         "status": order.status,
 
         "created_at": (
@@ -1360,12 +1364,8 @@ def get_order_details(order_id):
         ),
 
         "total": order.total,
-
         "items": item_list
-
     })
-
-
 
 # ==========================================
 # 📦 GET USER ORDERS BY STATUS

@@ -1068,182 +1068,117 @@ function escapeCheckoutHTML(value){
 }
 
 
-function renderCustomization(customization){
+function renderCustomization(customization, selectedSize = ''){
 
-    if(!customization){
+    if((customization === null || customization === undefined || customization === "") && !selectedSize){
         return "";
     }
 
-    let data =
-        customization;
+    const isArabic = "{{ current_lang }}" === "ar";
+    let data = customization;
+    let rawCustomization = "";
 
     if(typeof data === "string"){
-
+        rawCustomization = data.trim();
         try{
-            data =
-                JSON.parse(data);
-        }
-        catch(error){
-            return "";
+            data = JSON.parse(rawCustomization);
+        }catch(error){
+            data = null;
         }
     }
 
-    if(
-        !data ||
-        typeof data !== "object"
-    ){
-        return "";
+    if(data && typeof data === "object" && data.customization){
+        data = data.customization;
     }
-
-    const isArabic =
-        "{{ current_lang }}" === "ar";
-
-    const labels = {
-
-        skin_color:
-            isArabic
-            ? "لون البشرة"
-            : "Skin Color",
-
-        hair_type:
-            isArabic
-            ? "نوع الشعر"
-            : "Hair Type",
-
-        hair_color:
-            isArabic
-            ? "لون الشعر"
-            : "Hair Color",
-
-        color:
-            isArabic
-            ? "اللون"
-            : "Color",
-
-        size:
-            isArabic
-            ? "الحجم"
-            : "Size",
-
-        yarn_type:
-            isArabic
-            ? "نوع الخيط"
-            : "Yarn Type",
-
-        notes:
-            isArabic
-            ? "ملاحظات"
-            : "Notes"
-    };
 
     let rows = "";
 
-    Object.keys(labels).forEach(
-        key => {
+    if(data && typeof data === "object"){
+        const fields = [
+            ["skin_color", isArabic ? "لون البشرة" : "Skin Color"],
+            ["skinColor", isArabic ? "لون البشرة" : "Skin Color"],
+            ["hair_type", isArabic ? "نوع الشعر" : "Hair Type"],
+            ["hairType", isArabic ? "نوع الشعر" : "Hair Type"],
+            ["hair_color", isArabic ? "لون الشعر" : "Hair Color"],
+            ["hairColor", isArabic ? "لون الشعر" : "Hair Color"],
+            ["color", isArabic ? "اللون" : "Color"],
+            ["keychainColor", isArabic ? "اللون" : "Color"],
+            ["size", isArabic ? "الحجم" : "Size"],
+            ["productSize", isArabic ? "الحجم" : "Size"],
+            ["yarn_type", isArabic ? "نوع الخيط" : "Yarn Type"],
+            ["yarnType", isArabic ? "نوع الخيط" : "Yarn Type"],
+            ["notes", isArabic ? "ملاحظات" : "Notes"],
+            ["customNotes", isArabic ? "ملاحظات" : "Notes"]
+        ];
 
-            const value =
-                data[key];
-
-            if(
-                value !== undefined &&
-                value !== null &&
-                String(value).trim() !== ""
-            ){
-
-                rows += `
-                    <div class="checkout-custom-row">
-
-                        <span class="checkout-custom-label">
-                            ${labels[key]}
-                        </span>
-
-                        <span class="checkout-custom-value">
-                            ${escapeCheckoutHTML(value)}
-                        </span>
-
-                    </div>
-                `;
+        const seen = new Set();
+        fields.forEach(([key,label]) => {
+            const value = data[key];
+            if(value !== undefined && value !== null && String(value).trim() !== ""){
+                const signature = label + "|" + String(value).trim();
+                if(!seen.has(signature)){
+                    rows += `
+                        <div class="checkout-custom-row">
+                            <span class="checkout-custom-label">${label}</span>
+                            <span class="checkout-custom-value">${escapeCheckoutHTML(value)}</span>
+                        </div>
+                    `;
+                    seen.add(signature);
+                }
             }
+        });
 
-        }
-    );
-
-    let referenceImageHTML = "";
-
-    if(
-        data.reference_image &&
-        String(data.reference_image).trim() !== ""
-    ){
-
-        const imageUrl =
-            escapeCheckoutHTML(
-                String(
-                    data.reference_image
-                )
-            );
-
-        referenceImageHTML = `
-            <div class="checkout-reference-image">
-
-                <div class="checkout-reference-title">
-                    ${
-                        isArabic
-                        ? "الصورة المرجعية"
-                        : "Reference Image"
-                    }
+        if(data.reference_image){
+            rows += `
+                <div class="checkout-custom-row">
+                    <span class="checkout-custom-label">${isArabic ? "الصورة المرجعية" : "Reference Image"}</span>
+                    <span class="checkout-custom-value">
+                        <a href="${escapeCheckoutHTML(data.reference_image)}" target="_blank" rel="noopener noreferrer">
+                            ${isArabic ? "عرض الصورة" : "View Image"}
+                        </a>
+                    </span>
                 </div>
-
-                <img
-                    src="${imageUrl}"
-                    alt="${
-                        isArabic
-                        ? "الصورة المرجعية"
-                        : "Reference Image"
-                    }"
-                    onerror="this.style.display='none'"
-                >
-
+            `;
+        }
+    }else if(rawCustomization){
+        rows += `
+            <div class="checkout-custom-row">
+                <span class="checkout-custom-label">${isArabic ? "التخصيص" : "Customization"}</span>
+                <span class="checkout-custom-value">${escapeCheckoutHTML(rawCustomization)}</span>
             </div>
         `;
     }
 
-    if(
-        !rows &&
-        !referenceImageHTML
-    ){
+    if(selectedSize && String(selectedSize).trim() !== ""){
+        const sizeAlreadyShown = data && typeof data === "object" && (
+            String(data.size || "").trim() !== "" ||
+            String(data.productSize || "").trim() !== "" ||
+            String(data.selected_size || "").trim() !== ""
+        );
+
+        if(!sizeAlreadyShown){
+            rows += `
+                <div class="checkout-custom-row">
+                    <span class="checkout-custom-label">${isArabic ? "الحجم" : "Size"}</span>
+                    <span class="checkout-custom-value">${escapeCheckoutHTML(selectedSize)}</span>
+                </div>
+            `;
+        }
+    }
+
+    if(!rows){
         return "";
     }
 
     return `
-
         <div class="checkout-customization">
-
-            <div class="checkout-custom-title">
-                ✨
-                ${
-                    isArabic
-                    ? "تفاصيل التخصيص"
-                    : "Customization Details"
-                }
+            <div class="checkout-custom-title">✨ ${isArabic ? "تفاصيل التخصيص" : "Customization Details"}</div>
+            <div class="checkout-custom-details">
+                ${rows}
             </div>
-
-            ${
-                rows
-                ? `
-                    <div class="checkout-custom-details">
-                        ${rows}
-                    </div>
-                `
-                : ""
-            }
-
-            ${referenceImageHTML}
-
         </div>
-
     `;
 }
-
 
 /* =====================================================
                     LOAD ORDER
@@ -1569,11 +1504,6 @@ async function loadOrderDetails() {
 
                                     ${itemPrice.toFixed(2)}
 
-
-                                ${renderCustomization(
-                                    item.customization
-                                )}
-
                                     {{
                                         "ر.س"
                                         if current_lang=="ar"
@@ -1581,6 +1511,11 @@ async function loadOrderDetails() {
                                     }}
 
                                 </p>
+
+                                ${renderCustomization(
+                                    item.customization,
+                                    item.selected_size
+                                )}
 
                             </div>
 
