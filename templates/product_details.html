@@ -988,7 +988,6 @@ body{
 
 <div class="product-page">
 
-```
 <!-- =================================================
      PRODUCT DETAILS
 ================================================= -->
@@ -1302,51 +1301,34 @@ body{
                             </option>
 
                         </select>
+                        {% set size_prices = product.size_prices or {} %}
 
+                        {% if size_prices %}
 
-                        <label>
+                            <label>
 
-                            {{ "الحجم"
-                            if current_lang=="ar"
-                            else "Size" }}
+                                {{ "الحجم"
+                                if current_lang=="ar"
+                                else "Size" }}
 
-                        </label>
+                            </label>
 
-
-                        <select id="productSize">
-
-                            {% set size_prices = product.size_prices or {} %}
-
-                            {% if size_prices %}
+                            <select id="productSize">
 
                                 {% for size, size_price in size_prices.items() %}
 
-                                    {% if size in ["12-13 cm", "14-15 cm"] %}
-
-                                        <option
-                                            value="{{ size }}"
-                                            data-price="{{ size_price }}"
-                                        >
-                                            {{ size }}
-                                        </option>
-
-                                    {% endif %}
+                                    <option
+                                        value="{{ size }}"
+                                        data-price="{{ size_price }}"
+                                    >
+                                        {{ size }}
+                                    </option>
 
                                 {% endfor %}
 
-                            {% else %}
+                            </select>
 
-                                <option value="12-13 cm">
-                                    12 - 13 cm
-                                </option>
-
-                                <option value="14-15 cm">
-                                    14 - 15 cm
-                                </option>
-
-                            {% endif %}
-
-                        </select>
+                        {% endif %}
 
 
                     </div>
@@ -1396,51 +1378,34 @@ body{
                             </option>
 
                         </select>
+                        {% set size_prices = product.size_prices or {} %}
 
+                        {% if size_prices %}
 
-                        <label>
+                            <label>
 
-                            {{ "الحجم"
-                            if current_lang=="ar"
-                            else "Size" }}
+                                {{ "الحجم"
+                                if current_lang=="ar"
+                                else "Size" }}
 
-                        </label>
+                            </label>
 
-
-                        <select id="productSize">
-
-                            {% set size_prices = product.size_prices or {} %}
-
-                            {% if size_prices %}
+                            <select id="productSize">
 
                                 {% for size, size_price in size_prices.items() %}
 
-                                    {% if size in ["12-13 cm", "14-15 cm"] %}
-
-                                        <option
-                                            value="{{ size }}"
-                                            data-price="{{ size_price }}"
-                                        >
-                                            {{ size }}
-                                        </option>
-
-                                    {% endif %}
+                                    <option
+                                        value="{{ size }}"
+                                        data-price="{{ size_price }}"
+                                    >
+                                        {{ size }}
+                                    </option>
 
                                 {% endfor %}
 
-                            {% else %}
+                            </select>
 
-                                <option value="12-13 cm">
-                                    12 - 13 cm
-                                </option>
-
-                                <option value="14-15 cm">
-                                    14 - 15 cm
-                                </option>
-
-                            {% endif %}
-
-                        </select>
+                        {% endif %}
 
 
                         <label>
@@ -1743,7 +1708,6 @@ body{
 
 
 </div>
-```
 
 </div>
 
@@ -1944,7 +1908,7 @@ function getCustomizationData(referenceImageUrl = ''){
             document.getElementById("keychainColor")?.value || "",
 
         size:
-            document.getElementById("productSize")?.value || "",
+            document.getElementById("productSize")?.value || null,
 
         yarn_type:
             document.getElementById("yarnType")?.value || "",
@@ -2063,7 +2027,7 @@ async function addToCart(goToCart = false){
                             customization,
 
                         size:
-                            document.getElementById("productSize")?.value || ""
+                            document.getElementById("productSize")?.value || null
 
                     })
                 }

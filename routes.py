@@ -1252,6 +1252,67 @@ def product_details(product_id):
 
 
 # ==========================================
+# 🎨 UPLOAD CUSTOMIZATION REFERENCE IMAGE
+# ==========================================
+
+@app.route("/api/customization/upload-image", methods=["POST"])
+@login_required
+def upload_customization_reference_image():
+
+    image = request.files.get("reference_image")
+
+    if not image or not image.filename:
+        return jsonify({
+            "success": False,
+            "error": "No image selected."
+        }), 400
+
+    extension = os.path.splitext(
+        image.filename
+    )[1].lower()
+
+    if extension not in {
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".gif"
+    }:
+        return jsonify({
+            "success": False,
+            "error": "Only image files are allowed."
+        }), 400
+
+    filename = uuid.uuid4().hex + extension
+
+    upload_folder = os.path.join(
+        app.root_path,
+        "static",
+        "uploads",
+        "customization"
+    )
+
+    os.makedirs(
+        upload_folder,
+        exist_ok=True
+    )
+
+    image.save(
+        os.path.join(
+            upload_folder,
+            filename
+        )
+    )
+
+    return jsonify({
+        "success": True,
+        "url": url_for(
+            "static",
+            filename=f"uploads/customization/{filename}"
+        )
+    }), 200
+
+
+# ==========================================
 # 📦 ORDER DETAILS API
 # ==========================================
 
