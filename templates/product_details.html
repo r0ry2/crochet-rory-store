@@ -1055,7 +1055,7 @@ body{
 
         <div class="price">
 
-            {{ product.price }}
+            <span id="productPrice">{{ product.price }}</span>
 
             {{ "ر.س" if current_lang == "ar" else "SAR" }}
 
@@ -1315,31 +1315,36 @@ body{
 
                         <select id="productSize">
 
-                            <option value="Small">
+                            {% set size_prices = product.size_prices or {} %}
 
-                                {{ "12 - 13 سم"
-                                if current_lang=="ar"
-                                else "12 - 13 cm" }}
+                            {% if size_prices %}
 
-                            </option>
+                                {% for size, size_price in size_prices.items() %}
 
+                                    {% if size in ["12-13 cm", "14-15 cm"] %}
 
-                            <option value="Medium">
+                                        <option
+                                            value="{{ size }}"
+                                            data-price="{{ size_price }}"
+                                        >
+                                            {{ size }}
+                                        </option>
 
-                                {{ "14 - 15 سم"
-                                if current_lang=="ar"
-                                else "14 - 15 cm" }}
+                                    {% endif %}
 
-                            </option>
+                                {% endfor %}
 
+                            {% else %}
 
-                            <option value="Large">
+                                <option value="12-13 cm">
+                                    12 - 13 cm
+                                </option>
 
-                                {{ "25 سم فأكثر"
-                                if current_lang=="ar"
-                                else "25 cm and above" }}
+                                <option value="14-15 cm">
+                                    14 - 15 cm
+                                </option>
 
-                            </option>
+                            {% endif %}
 
                         </select>
 
@@ -1404,22 +1409,36 @@ body{
 
                         <select id="productSize">
 
-                            <option value="Small">
+                            {% set size_prices = product.size_prices or {} %}
 
-                                {{ "12 - 13 سم"
-                                if current_lang=="ar"
-                                else "12 - 13 cm" }}
+                            {% if size_prices %}
 
-                            </option>
+                                {% for size, size_price in size_prices.items() %}
 
+                                    {% if size in ["12-13 cm", "14-15 cm"] %}
 
-                            <option value="Medium">
+                                        <option
+                                            value="{{ size }}"
+                                            data-price="{{ size_price }}"
+                                        >
+                                            {{ size }}
+                                        </option>
 
-                                {{ "14 - 15 سم"
-                                if current_lang=="ar"
-                                else "14 - 15 cm" }}
+                                    {% endif %}
 
-                            </option>
+                                {% endfor %}
+
+                            {% else %}
+
+                                <option value="12-13 cm">
+                                    12 - 13 cm
+                                </option>
+
+                                <option value="14-15 cm">
+                                    14 - 15 cm
+                                </option>
+
+                            {% endif %}
 
                         </select>
 
@@ -1749,6 +1768,64 @@ const customizationEnabled =
 
 
 /* =====================================================
+   SIZE PRICE
+===================================================== */
+
+const baseProductPrice =
+    Number({{ product.price|tojson }});
+
+function updateProductPrice(){
+
+    const sizeSelect =
+        document.getElementById("productSize");
+
+    const priceElement =
+        document.getElementById("productPrice");
+
+    if(!sizeSelect || !priceElement){
+        return;
+    }
+
+    const selectedOption =
+        sizeSelect.options[sizeSelect.selectedIndex];
+
+    if(!selectedOption){
+        priceElement.innerText = baseProductPrice;
+        return;
+    }
+
+    const price =
+        Number(selectedOption.dataset.price);
+
+    if(
+        selectedOption.dataset.price !== undefined &&
+        selectedOption.dataset.price !== "" &&
+        !Number.isNaN(price)
+    ){
+        priceElement.innerText = price;
+    }
+    else{
+        priceElement.innerText = baseProductPrice;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    const sizeSelect =
+        document.getElementById("productSize");
+
+    if(sizeSelect){
+        sizeSelect.addEventListener(
+            "change",
+            updateProductPrice
+        );
+
+        updateProductPrice();
+    }
+});
+
+
+/* =====================================================
    QUANTITY
 ===================================================== */
 
@@ -1834,7 +1911,7 @@ function toggleCustomization(){
    GET CUSTOMIZATION DATA
 ===================================================== */
 
-function getCustomizationData(){
+function getCustomizationData(referenceImageUrl = ''){
 
     if(!customizationEnabled){
         return null;
@@ -1873,8 +1950,10 @@ function getCustomizationData(){
             document.getElementById("yarnType")?.value || "",
 
         notes:
-            document.getElementById("customNotes")?.value.trim() || ""
+            document.getElementById("customNotes")?.value.trim() || "",
 
+        reference_image:
+            referenceImageUrl || ""
     };
 
     return data;
@@ -1905,10 +1984,61 @@ async function addToCart(goToCart = false){
         buyButton.disabled = true;
     }
 
-    const customization =
-        getCustomizationData();
+    let referenceImageUrl = "";
 
     try{
+
+        /* =================================
+           🖼️ UPLOAD REFERENCE IMAGE
+        ================================= */
+
+        const referenceImage =
+            document.getElementById(
+                "referenceImage"
+            )?.files?.[0];
+
+        if(referenceImage){
+
+            const imageFormData =
+                new FormData();
+
+            imageFormData.append(
+                "reference_image",
+                referenceImage
+            );
+
+            const imageResponse =
+                await fetch(
+                    "/api/customization/upload-image",
+                    {
+                        method:"POST",
+                        body:imageFormData
+                    }
+                );
+
+            const imageData =
+                await imageResponse.json();
+
+            if(
+                !imageResponse.ok ||
+                !imageData.success
+            ){
+                throw new Error(
+                    imageData.error ||
+                    (
+                        "{{ 'تعذر رفع الصورة المرجعية.' if current_lang=='ar' else 'Could not upload the reference image.' }}"
+                    )
+                );
+            }
+
+            referenceImageUrl =
+                imageData.url || "";
+        }
+
+        const customization =
+            getCustomizationData(
+                referenceImageUrl
+            );
 
         const response =
             await fetch(
@@ -1930,7 +2060,10 @@ async function addToCart(goToCart = false){
                             quantity,
 
                         customization:
-                            customization
+                            customization,
+
+                        size:
+                            document.getElementById("productSize")?.value || ""
 
                     })
                 }

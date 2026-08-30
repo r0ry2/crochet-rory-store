@@ -1326,72 +1326,93 @@ textarea.form-control {
 
         <!-- SIZE PRICES -->
 
-        <div class="size-prices-box">
+ <div class="size-prices-box">
 
-            <div class="size-prices-title">
-                📏
+    <div class="size-prices-title">
+        📏
+        {{
+            "أسعار الأحجام"
+            if current_lang == "ar"
+            else
+            "Size Prices"
+        }}
+    </div>
+
+    <p class="size-price-note">
+        {{
+            "حددي سعر كل مقاس. سيستخدم المتجر السعر المناسب حسب المقاس الذي يختاره العميل."
+            if current_lang == "ar"
+            else
+            "Set a price for each size. The store will use the price based on the size selected by the customer."
+        }}
+    </p>
+
+    <div class="form-row">
+
+        <!-- 12 - 13 cm -->
+        <div class="form-group">
+
+            <label class="form-label">
                 {{
-                    "أسعار الأحجام"
+                    "12 - 13 سم"
                     if current_lang == "ar"
                     else
-                    "Size Prices"
+                    "12 - 13 cm"
                 }}
-            </div>
+            </label>
 
-            <p class="size-price-note">
-                {{
-                    "حددي سعر كل حجم. سيستخدم المتجر السعر المناسب حسب الحجم الذي يختاره العميل."
-                    if current_lang == "ar"
-                    else
-                    "Set a price for each size. The store will use the price based on the size selected by the customer."
-                }}
-            </p>
+            <input
+                type="hidden"
+                name="size_name[]"
+                value="12-13 cm"
+            >
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">
-                        {{ "Small — 12 - 13 سم" if current_lang == "ar" else "Small — 12 - 13 cm" }}
-                    </label>
-                    <input
-                        type="number"
-                        name="small_price"
-                        class="form-control"
-                        min="0"
-                        step="0.01"
-                        value="{{ request.form.get('small_price', '') }}"
-                        placeholder="مثال: 80.00">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">
-                        {{ "Medium — 14 - 15 سم" if current_lang == "ar" else "Medium — 14 - 15 cm" }}
-                    </label>
-                    <input
-                        type="number"
-                        name="medium_price"
-                        class="form-control"
-                        min="0"
-                        step="0.01"
-                        value="{{ request.form.get('medium_price', '') }}"
-                        placeholder="مثال: 100.00">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">
-                    {{ "Large — 25 سم فأكثر" if current_lang == "ar" else "Large — 25 cm and above" }}
-                </label>
-                <input
-                    type="number"
-                    name="large_price"
-                    class="form-control"
-                    min="0"
-                    step="0.01"
-                    value="{{ request.form.get('large_price', '') }}"
-                    placeholder="مثال: 150.00">
-            </div>
+            <input
+                type="number"
+                name="size_price[]"
+                class="form-control"
+                min="0"
+                step="0.01"
+                value="{{ request.form.get('size_12_13_price', '') }}"
+                placeholder="مثال: 80.00"
+            >
 
         </div>
+
+
+        <!-- 14 - 15 cm -->
+        <div class="form-group">
+
+            <label class="form-label">
+                {{
+                    "14 - 15 سم"
+                    if current_lang == "ar"
+                    else
+                    "14 - 15 cm"
+                }}
+            </label>
+
+            <input
+                type="hidden"
+                name="size_name[]"
+                value="14-15 cm"
+            >
+
+            <input
+                type="number"
+                name="size_price[]"
+                class="form-control"
+                min="0"
+                step="0.01"
+                value="{{ request.form.get('size_14_15_price', '') }}"
+                placeholder="مثال: 100.00"
+            >
+
+        </div>
+
+    </div>
+
+</div>
 
 
         <!-- COST -->
@@ -2008,6 +2029,81 @@ textarea.form-control {
 
                     </span>
 
+                </div>
+
+            </div>
+
+
+            <!-- =====================================================
+                 SIZE PRICES
+            ====================================================== -->
+
+            <div class="size-prices-box">
+
+                <div class="size-prices-title">
+                    📏
+                    {{
+                        "أسعار الأحجام"
+                        if current_lang == "ar"
+                        else
+                        "Size Prices"
+                    }}
+                </div>
+
+                <p class="size-price-note">
+                    {{
+                        "عدّلي سعر كل حجم. سيستخدم المتجر السعر المناسب حسب الحجم الذي يختاره العميل."
+                        if current_lang == "ar"
+                        else
+                        "Edit the price for each size. The store will use the price based on the size selected by the customer."
+                    }}
+                </p>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">
+                            {{ "Small — 12 - 13 سم" if current_lang == "ar" else "Small — 12 - 13 cm" }}
+                        </label>
+                        <input type="hidden" name="size_name[]" value="small">
+                        <input
+                            type="number"
+                            name="size_price[]"
+                            class="form-control"
+                            min="0"
+                            step="0.01"
+                            value="{{ (product.size_prices or {}).get('small', '') }}"
+                            placeholder="80.00">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            {{ "Medium — 14 - 15 سم" if current_lang == "ar" else "Medium — 14 - 15 cm" }}
+                        </label>
+                        <input type="hidden" name="size_name[]" value="medium">
+                        <input
+                            type="number"
+                            name="size_price[]"
+                            class="form-control"
+                            min="0"
+                            step="0.01"
+                            value="{{ (product.size_prices or {}).get('medium', '') }}"
+                            placeholder="100.00">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        {{ "Large — 25 سم فأكثر" if current_lang == "ar" else "Large — 25 cm and above" }}
+                    </label>
+                    <input type="hidden" name="size_name[]" value="large">
+                    <input
+                        type="number"
+                        name="size_price[]"
+                        class="form-control"
+                        min="0"
+                        step="0.01"
+                        value="{{ (product.size_prices or {}).get('large', '') }}"
+                        placeholder="150.00">
                 </div>
 
             </div>

@@ -353,6 +353,95 @@
 
 }
 
+
+/* =====================================================
+   🎨 CHECKOUT CUSTOMIZATION
+===================================================== */
+
+.checkout-customization{
+
+    margin-top:12px;
+
+    padding:12px 14px;
+
+    background:#fff;
+
+    border:1px solid var(--border);
+
+    border-radius:14px;
+
+    text-align:right;
+
+}
+
+.checkout-custom-title{
+
+    color:var(--primary-dark);
+
+    font-size:14px;
+
+    font-weight:bold;
+
+    margin-bottom:9px;
+
+}
+
+.checkout-custom-details{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:5px;
+
+}
+
+.checkout-custom-row{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-start;
+
+    gap:15px;
+
+    padding:4px 0;
+
+    border-bottom:1px solid #f5dce4;
+
+    font-size:13px;
+
+}
+
+.checkout-custom-row:last-child{
+
+    border-bottom:none;
+
+}
+
+.checkout-custom-label{
+
+    color:#888;
+
+    font-weight:600;
+
+    white-space:nowrap;
+
+}
+
+.checkout-custom-value{
+
+    color:#555;
+
+    font-weight:600;
+
+    word-break:break-word;
+
+    text-align:left;
+
+}
+
 </style>
 
 
@@ -963,6 +1052,199 @@ function calculateDeliveryRange(dateValue){
 }
 
 
+
+/* =====================================================
+        🎨 CUSTOMIZATION DETAILS
+===================================================== */
+
+function escapeCheckoutHTML(value){
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+function renderCustomization(customization){
+
+    if(!customization){
+        return "";
+    }
+
+    let data =
+        customization;
+
+    if(typeof data === "string"){
+
+        try{
+            data =
+                JSON.parse(data);
+        }
+        catch(error){
+            return "";
+        }
+    }
+
+    if(
+        !data ||
+        typeof data !== "object"
+    ){
+        return "";
+    }
+
+    const isArabic =
+        "{{ current_lang }}" === "ar";
+
+    const labels = {
+
+        skin_color:
+            isArabic
+            ? "لون البشرة"
+            : "Skin Color",
+
+        hair_type:
+            isArabic
+            ? "نوع الشعر"
+            : "Hair Type",
+
+        hair_color:
+            isArabic
+            ? "لون الشعر"
+            : "Hair Color",
+
+        color:
+            isArabic
+            ? "اللون"
+            : "Color",
+
+        size:
+            isArabic
+            ? "الحجم"
+            : "Size",
+
+        yarn_type:
+            isArabic
+            ? "نوع الخيط"
+            : "Yarn Type",
+
+        notes:
+            isArabic
+            ? "ملاحظات"
+            : "Notes"
+    };
+
+    let rows = "";
+
+    Object.keys(labels).forEach(
+        key => {
+
+            const value =
+                data[key];
+
+            if(
+                value !== undefined &&
+                value !== null &&
+                String(value).trim() !== ""
+            ){
+
+                rows += `
+                    <div class="checkout-custom-row">
+
+                        <span class="checkout-custom-label">
+                            ${labels[key]}
+                        </span>
+
+                        <span class="checkout-custom-value">
+                            ${escapeCheckoutHTML(value)}
+                        </span>
+
+                    </div>
+                `;
+            }
+
+        }
+    );
+
+    let referenceImageHTML = "";
+
+    if(
+        data.reference_image &&
+        String(data.reference_image).trim() !== ""
+    ){
+
+        const imageUrl =
+            escapeCheckoutHTML(
+                String(
+                    data.reference_image
+                )
+            );
+
+        referenceImageHTML = `
+            <div class="checkout-reference-image">
+
+                <div class="checkout-reference-title">
+                    ${
+                        isArabic
+                        ? "الصورة المرجعية"
+                        : "Reference Image"
+                    }
+                </div>
+
+                <img
+                    src="${imageUrl}"
+                    alt="${
+                        isArabic
+                        ? "الصورة المرجعية"
+                        : "Reference Image"
+                    }"
+                    onerror="this.style.display='none'"
+                >
+
+            </div>
+        `;
+    }
+
+    if(
+        !rows &&
+        !referenceImageHTML
+    ){
+        return "";
+    }
+
+    return `
+
+        <div class="checkout-customization">
+
+            <div class="checkout-custom-title">
+                ✨
+                ${
+                    isArabic
+                    ? "تفاصيل التخصيص"
+                    : "Customization Details"
+                }
+            </div>
+
+            ${
+                rows
+                ? `
+                    <div class="checkout-custom-details">
+                        ${rows}
+                    </div>
+                `
+                : ""
+            }
+
+            ${referenceImageHTML}
+
+        </div>
+
+    `;
+}
+
+
 /* =====================================================
                     LOAD ORDER
 ===================================================== */
@@ -1286,6 +1568,11 @@ async function loadOrderDetails() {
                                     }}:
 
                                     ${itemPrice.toFixed(2)}
+
+
+                                ${renderCustomization(
+                                    item.customization
+                                )}
 
                                     {{
                                         "ر.س"

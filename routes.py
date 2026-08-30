@@ -8,6 +8,7 @@ from flask import (
     flash,
     
 )
+import json
 import re
 import secrets
 from datetime import datetime, timedelta
@@ -290,14 +291,16 @@ def edit_product(id):
     # 🌐 CURRENT LANGUAGE
     # ==================================================
 
-    current_lang = session.get("lang", session.get("language", "ar"))
+    current_lang = session.get(
+        "lang",
+        session.get("language", "ar")
+    )
 
     # ==================================================
     # 🔐 ADMIN CHECK
     # ==================================================
 
     if current_user.role != "admin":
-
         flash(
             "⚠️ Access denied! Admins only.",
             "danger"
@@ -307,13 +310,11 @@ def edit_product(id):
             url_for("home_logged")
         )
 
-
     # ==================================================
     # 📦 GET PRODUCT
     # ==================================================
 
     product = Product.query.get_or_404(id)
-
 
     # ==================================================
     # 📝 GET FORM
@@ -321,25 +322,21 @@ def edit_product(id):
 
     form = ProductForm()
 
-
     # ==================================================
     # 🖼️ IMAGE
     # ==================================================
 
     filename = product.image
 
-
     if form.image.data:
 
         image_file = form.image.data
-
 
         if image_file.filename:
 
             filename = secure_filename(
                 image_file.filename
             )
-
 
             image_path = os.path.join(
                 app.root_path,
@@ -348,9 +345,9 @@ def edit_product(id):
                 filename
             )
 
-
-            image_file.save(image_path)
-
+            image_file.save(
+                image_path
+            )
 
     # ==================================================
     # 📦 QUANTITY
@@ -361,26 +358,17 @@ def edit_product(id):
         product.stock
     )
 
-
     try:
-
         quantity = int(quantity)
-
     except (TypeError, ValueError):
-
         quantity = product.stock
 
-
     # منع الكمية السالبة
-
     if quantity < 0:
-
         quantity = 0
-
 
     # ==================================================
     # 💰 COST PRICE
-    # سعر التكلفة
     # ==================================================
 
     cost_price = request.form.get(
@@ -388,26 +376,17 @@ def edit_product(id):
         product.cost_price
     )
 
-
     try:
-
         cost_price = float(cost_price)
-
     except (TypeError, ValueError):
-
         cost_price = product.cost_price or 0
 
-
     # منع القيمة السالبة
-
     if cost_price < 0:
-
         cost_price = 0
-
 
     # ==================================================
     # 🏷️ SALE PRICE
-    # السعر المخفض
     # ==================================================
 
     sale_price = request.form.get(
@@ -415,41 +394,84 @@ def edit_product(id):
         None
     )
 
-
     # إذا ترك المستخدم السعر المخفض فارغًا
     if sale_price in [None, ""]:
-
         sale_price = None
 
     else:
 
         try:
-
-            sale_price = float(sale_price)
+            sale_price = float(
+                sale_price
+            )
 
         except (TypeError, ValueError):
-
             sale_price = None
 
-
     # منع السعر المخفض من أن يكون سالبًا
-
-    if sale_price is not None and sale_price < 0:
-
+    if (
+        sale_price is not None
+        and sale_price < 0
+    ):
         sale_price = None
-
 
     # ==================================================
     # ⚠️ CHECK SALE PRICE
-    # السعر المخفض لا يكون أعلى من السعر الأصلي
     # ==================================================
+
+    # السعر المخفض لا يكون أعلى من السعر الأصلي
 
     if sale_price is not None:
 
         if sale_price >= form.price.data:
-
             sale_price = None
 
+    # ==================================================
+    # 📏 SIZE PRICES
+    # ==================================================
+    # قراءة أسعار الأحجام من نموذج التعديل
+    #
+    # مثال:
+    # Small  = 50
+    # Medium = 70
+    # Large  = 90
+    # ==================================================
+
+    size_prices = {}
+
+    size_names = request.form.getlist(
+        "size_name[]"
+    )
+
+    size_values = request.form.getlist(
+        "size_price[]"
+    )
+
+    for index, size_name in enumerate(size_names):
+
+        size_name = size_name.strip()
+
+        if not size_name:
+            continue
+
+        price_value = ""
+
+        if index < len(size_values):
+            price_value = size_values[index]
+
+        try:
+            price_value = float(
+                price_value
+            )
+
+        except (TypeError, ValueError):
+            continue
+
+        # منع السعر السالب
+        if price_value < 0:
+            continue
+
+        size_prices[size_name] = price_value
 
     # ==================================================
     # ✏️ UPDATE PRODUCT
@@ -457,57 +479,45 @@ def edit_product(id):
 
     product.name = form.name.data
 
-
     # السعر الأصلي
-
     product.price = form.price.data
 
-
     # سعر التكلفة
-
     product.cost_price = cost_price
 
-
     # السعر المخفض
-
     product.sale_price = sale_price
 
-
     # الوصف
-
     product.description = form.description.data
 
-
     # الصورة
-
     product.image = filename
 
-
     # مكان العرض
-
     product.publish_location = (
         form.publish_location.data
     )
 
-
     # التخصيص
-
     product.is_customizable = (
         form.is_customizable.data
     )
 
-
     # الكمية
-
     product.stock = quantity
 
+    # ==================================================
+    # 📏 UPDATE SIZE PRICES
+    # ==================================================
+
+    product.size_prices = size_prices
 
     # ==================================================
     # 💾 SAVE CHANGES
     # ==================================================
 
     db.session.commit()
-
 
     # ==================================================
     # ✅ SUCCESS MESSAGE
@@ -521,7 +531,6 @@ def edit_product(id):
         ),
         "success"
     )
-
 
     # ==================================================
     # ↩️ BACK TO PRODUCTS
@@ -664,7 +673,6 @@ def add_product():
             "⚠️ Access denied! Admins only.",
             "danger"
         )
-
         return redirect(
             url_for("home_logged")
         )
@@ -736,7 +744,6 @@ def add_product():
 
         try:
             quantity = int(quantity)
-
         except (TypeError, ValueError):
             quantity = 1
 
@@ -746,8 +753,6 @@ def add_product():
 
         # ==================================================
         # 💰 COST PRICE
-        # ==================================================
-        # سعر التكلفة
         # ==================================================
 
         cost_price = request.form.get(
@@ -759,7 +764,6 @@ def add_product():
             cost_price = float(
                 cost_price
             )
-
         except (TypeError, ValueError):
             cost_price = 0
 
@@ -769,8 +773,6 @@ def add_product():
 
         # ==================================================
         # 🏷️ SALE PRICE
-        # ==================================================
-        # سعر التخفيض
         # ==================================================
 
         sale_price = request.form.get(
@@ -782,7 +784,6 @@ def add_product():
             sale_price = float(
                 sale_price
             )
-
         except (TypeError, ValueError):
             sale_price = None
 
@@ -794,14 +795,57 @@ def add_product():
 
             # منع السعر المخفض من أن يكون سالبًا
             if sale_price < 0:
-
                 sale_price = None
 
             # إذا كان السعر المخفض أكبر أو يساوي السعر الأصلي
-            # نعتبر أنه لا يوجد خصم
             elif sale_price >= form.price.data:
-
                 sale_price = None
+
+        # ==================================================
+        # 📏 SIZE PRICES
+        # ==================================================
+        # يتم استقبال أسعار الأحجام من صفحة الأدمن
+        #
+        # مثال:
+        # {
+        #     "small": 50,
+        #     "medium": 70,
+        #     "large": 90
+        # }
+        # ==================================================
+
+        size_prices = {}
+
+        size_names = request.form.getlist(
+            "size_name[]"
+        )
+
+        size_values = request.form.getlist(
+            "size_price[]"
+        )
+
+        for index, size_name in enumerate(size_names):
+
+            size_name = size_name.strip()
+
+            if not size_name:
+                continue
+
+            price_value = ""
+
+            if index < len(size_values):
+                price_value = size_values[index]
+
+            try:
+                price_value = float(price_value)
+            except (TypeError, ValueError):
+                continue
+
+            # منع السعر من أن يكون سالبًا
+            if price_value < 0:
+                continue
+
+            size_prices[size_name] = price_value
 
         # ==================================================
         # 🧸 CREATE PRODUCT
@@ -818,6 +862,12 @@ def add_product():
             price=form.price.data,
 
             description=form.description.data,
+
+            # ----------------------------------------------
+            # 📏 Size Prices
+            # ----------------------------------------------
+
+            size_prices=size_prices,
 
             # ----------------------------------------------
             # 💰 Cost Price
@@ -1237,7 +1287,25 @@ def get_order_details(order_id):
 
             "quantity": order_item.quantity,
 
-            "image": product.image if product.image else ""
+            "image": product.image if product.image else "",
+
+            # ==========================================
+            # 📏 SELECTED SIZE
+            # ==========================================
+
+            "selected_size":
+                order_item.selected_size
+                if order_item.selected_size
+                else None,
+
+            # ==========================================
+            # 🎨 CUSTOMIZATION
+            # ==========================================
+
+            "customization":
+                order_item.customization
+                if order_item.customization
+                else None
 
         })
 
@@ -2967,11 +3035,74 @@ def api_cart_add():
 
     product_id = data.get("product_id")
 
-    try:
-        quantity = int(data.get("quantity", 1))
-    except (TypeError, ValueError):
-        quantity = 1
+    selected_size = data.get(
+        "size",
+        data.get("selected_size")
+    )
 
+    customization = data.get(
+        "customization"
+    )
+
+    # ==========================================
+    # 🎨 تنظيف بيانات التخصيص
+    # ==========================================
+
+    if customization in [None, "", {}, []]:
+        customization = None
+
+    # تحويل التخصيص إلى JSON
+    # حتى يتم حفظه داخل قاعدة البيانات
+    elif isinstance(customization, (dict, list)):
+
+        try:
+            customization = json.dumps(
+                customization,
+                ensure_ascii=False
+            )
+
+        except (TypeError, ValueError):
+
+            customization = None
+
+    else:
+
+        customization = str(
+            customization
+        ).strip()
+
+        if not customization:
+            customization = None
+
+    # ==========================================
+    # تنظيف الحجم
+    # ==========================================
+
+    if selected_size is not None:
+
+        selected_size = str(
+            selected_size
+        ).strip()
+
+        if not selected_size:
+            selected_size = None
+
+    # ==========================================
+    # الكمية
+    # ==========================================
+
+    try:
+
+        quantity = int(
+            data.get(
+                "quantity",
+                1
+            )
+        )
+
+    except (TypeError, ValueError):
+
+        quantity = 1
 
     # ==========================================
     # التحقق من product_id
@@ -2980,38 +3111,51 @@ def api_cart_add():
     if not product_id:
 
         return jsonify({
-            "success": False,
-            "error": "No product_id provided"
-        }), 400
 
+            "success": False,
+
+            "error":
+                "No product_id provided"
+
+        }), 400
 
     # ==========================================
     # البحث عن المنتج
     # ==========================================
 
-    product = Product.query.get(product_id)
+    product = Product.query.get(
+        product_id
+    )
 
     if not product:
 
         return jsonify({
-            "success": False,
-            "error": "Product not found"
-        }), 404
 
+            "success": False,
+
+            "error":
+                "Product not found"
+
+        }), 404
 
     # ==========================================
     # التحقق من المستخدم
     # ==========================================
 
-    user_id = session.get("user_id")
+    user_id = session.get(
+        "user_id"
+    )
 
     if not user_id:
 
         return jsonify({
-            "success": False,
-            "error": "Please login first"
-        }), 401
 
+            "success": False,
+
+            "error":
+                "Please login first"
+
+        }), 401
 
     # ==========================================
     # التحقق من الكمية
@@ -3020,20 +3164,150 @@ def api_cart_add():
     if quantity == 0:
 
         return jsonify({
+
             "success": False,
-            "error": "Quantity must be greater than zero"
+
+            "error":
+                "Quantity must be greater than zero"
+
         }), 400
 
+    # ==========================================
+    # 💰 تحديد السعر
+    # ==========================================
+
+    try:
+
+        selected_price = float(
+            product.price
+        )
+
+    except (
+        TypeError,
+        ValueError
+    ):
+
+        selected_price = 0
+
+    size_prices = (
+        product.size_prices
+        or {}
+    )
 
     # ==========================================
-    # البحث عن المنتج داخل السلة
+    # 📏 إذا تم اختيار حجم
     # ==========================================
 
-    existing = Cart.query.filter_by(
+    if selected_size:
+
+        if selected_size in size_prices:
+
+            try:
+
+                selected_price = float(
+                    size_prices[
+                        selected_size
+                    ]
+                )
+
+            except (
+                TypeError,
+                ValueError
+            ):
+
+                selected_price = float(
+                    product.price
+                )
+
+        else:
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "Selected size is not available"
+
+            }), 400
+
+    # ==========================================
+    # إذا المنتج لا يحتوي أحجام
+    # ==========================================
+
+    else:
+
+        selected_size = None
+
+        try:
+
+            selected_price = float(
+                product.price
+            )
+
+        except (
+            TypeError,
+            ValueError
+        ):
+
+            selected_price = 0
+
+    # ==========================================
+    # 🔍 البحث عن المنتج داخل السلة
+    #
+    # مع مراعاة الحجم + التخصيص
+    # ==========================================
+
+    existing_query = Cart.query.filter_by(
+
         user_id=user_id,
-        product_id=product_id
-    ).first()
 
+        product_id=product_id
+
+    )
+
+    # ==========================================
+    # 📏 فلترة الحجم
+    # ==========================================
+
+    if selected_size:
+
+        existing_query = (
+            existing_query.filter_by(
+                selected_size=selected_size
+            )
+        )
+
+    else:
+
+        existing_query = (
+            existing_query.filter(
+                Cart.selected_size.is_(None)
+            )
+        )
+
+    # ==========================================
+    # 🎨 فلترة التخصيص
+    #
+    # كل تخصيص مختلف يعتبر طلبًا مختلفًا
+    # ==========================================
+
+    if customization:
+
+        existing_query = (
+            existing_query.filter_by(
+                customization=customization
+            )
+        )
+
+    else:
+
+        existing_query = (
+            existing_query.filter(
+                Cart.customization.is_(None)
+            )
+        )
+
+    existing = existing_query.first()
 
     # ==========================================
     # ➖ إنقاص الكمية
@@ -3044,26 +3318,34 @@ def api_cart_add():
     if quantity < 0:
 
         # المنتج غير موجود في السلة
+
         if not existing:
 
             return jsonify({
+
                 "success": False,
-                "error": "Product is not in cart"
+
+                "error":
+                    "Product is not in cart"
+
             }), 404
 
-
+        # ==========================================
         # إنقاص الكمية
+        # ==========================================
+
         existing.quantity += quantity
 
-
         # ==========================================
-        # إذا وصلت الكمية إلى صفر أو أقل
-        # نحذف المنتج من السلة
+        # إذا وصلت الكمية إلى صفر
+        # نحذف المنتج
         # ==========================================
 
         if existing.quantity <= 0:
 
-            db.session.delete(existing)
+            db.session.delete(
+                existing
+            )
 
             db.session.commit()
 
@@ -3071,14 +3353,25 @@ def api_cart_add():
 
                 "success": True,
 
-                "message": "Product removed from cart",
+                "message":
+                    "Product removed from cart",
 
-                "product_id": product_id,
+                "product_id":
+                    product_id,
 
-                "quantity": 0
+                "selected_size":
+                    selected_size,
+
+                "selected_price":
+                    selected_price,
+
+                "customization":
+                    customization,
+
+                "quantity":
+                    0
 
             })
-
 
         # ==========================================
         # حفظ الكمية الجديدة
@@ -3086,19 +3379,29 @@ def api_cart_add():
 
         db.session.commit()
 
-
         return jsonify({
 
             "success": True,
 
-            "message": "Cart quantity decreased",
+            "message":
+                "Cart quantity decreased",
 
-            "product_id": product_id,
+            "product_id":
+                product_id,
 
-            "quantity": existing.quantity
+            "selected_size":
+                selected_size,
+
+            "selected_price":
+                selected_price,
+
+            "customization":
+                customization,
+
+            "quantity":
+                existing.quantity
 
         })
-
 
     # ==========================================
     # ➕ إضافة المنتج / زيادة الكمية
@@ -3106,44 +3409,110 @@ def api_cart_add():
 
     if existing:
 
-        # المنتج موجود بالفعل في السلة
+        # المنتج + الحجم + التخصيص
+        # موجودين بالفعل
+
         existing.quantity += quantity
+
+        # تأكيد السعر الحالي
+
+        existing.selected_price = (
+            selected_price
+        )
+
+        # تأكيد التخصيص
+
+        existing.customization = (
+            customization
+        )
 
     else:
 
-        # المنتج غير موجود في السلة
+        # ==========================================
+        # 🆕 إنشاء عنصر جديد في السلة
+        # ==========================================
+
         new_item = Cart(
 
             user_id=user_id,
 
             product_id=product_id,
 
-            quantity=quantity
+            quantity=quantity,
+
+            selected_size=selected_size,
+
+            selected_price=selected_price,
+
+            customization=customization
 
         )
 
-        db.session.add(new_item)
-
+        db.session.add(
+            new_item
+        )
 
     # ==========================================
-    # حفظ التغييرات
+    # 💾 حفظ التغييرات
     # ==========================================
 
     db.session.commit()
 
-
     # ==========================================
-    # الحصول على الكمية الحالية
+    # 🔍 الحصول على العنصر الحالي
     # ==========================================
 
-    current_item = Cart.query.filter_by(
+    current_query = Cart.query.filter_by(
 
         user_id=user_id,
 
         product_id=product_id
 
-    ).first()
+    )
 
+    # ==========================================
+    # 📏 فلترة الحجم
+    # ==========================================
+
+    if selected_size:
+
+        current_query = (
+            current_query.filter_by(
+                selected_size=selected_size
+            )
+        )
+
+    else:
+
+        current_query = (
+            current_query.filter(
+                Cart.selected_size.is_(None)
+            )
+        )
+
+    # ==========================================
+    # 🎨 فلترة التخصيص
+    # ==========================================
+
+    if customization:
+
+        current_query = (
+            current_query.filter_by(
+                customization=customization
+            )
+        )
+
+    else:
+
+        current_query = (
+            current_query.filter(
+                Cart.customization.is_(None)
+            )
+        )
+
+    current_item = (
+        current_query.first()
+    )
 
     current_quantity = (
 
@@ -3155,7 +3524,6 @@ def api_cart_add():
 
     )
 
-
     # ==========================================
     # النتيجة
     # ==========================================
@@ -3164,11 +3532,23 @@ def api_cart_add():
 
         "success": True,
 
-        "message": "Product added to cart",
+        "message":
+            "Product added to cart",
 
-        "product_id": product_id,
+        "product_id":
+            product_id,
 
-        "quantity": current_quantity
+        "selected_size":
+            selected_size,
+
+        "selected_price":
+            selected_price,
+
+        "customization":
+            customization,
+
+        "quantity":
+            current_quantity
 
     })
 # ==========================================
@@ -3230,7 +3610,6 @@ def api_cart_get():
     output = []
 
     products_total = 0
-
     total_items = 0
 
     for item in cart_items:
@@ -3242,11 +3621,39 @@ def api_cart_get():
 
         quantity = item.quantity
 
-        item_total = product.price * quantity
+        # ==========================================
+        # 💰 SELECTED PRICE
+        # ==========================================
+
+        # إذا كان للعنصر سعر مقاس محفوظ
+        # نستخدمه بدل السعر الأساسي
+
+        if item.selected_price is not None:
+
+            item_price = float(
+                item.selected_price
+            )
+
+        else:
+
+            item_price = float(
+                product.price
+            )
+
+        # ==========================================
+        # 🧮 ITEM TOTAL
+        # ==========================================
+
+        item_total = (
+            item_price * quantity
+        )
 
         products_total += item_total
-
         total_items += quantity
+
+        # ==========================================
+        # 📦 CART ITEM
+        # ==========================================
 
         output.append({
 
@@ -3254,22 +3661,44 @@ def api_cart_get():
 
             "name": product.name,
 
-            "price": product.price,
+            # السعر الفعلي للحجم المختار
+            "price": item_price,
 
+            # الحجم المختار
+            "selected_size": (
+                item.selected_size
+                if item.selected_size
+                else None
+            ),
+
+            # السعر المحفوظ للحجم
+            "selected_price": item_price,
+
+            # الكمية
             "quantity": quantity,
 
+            # بيانات التخصيص
+            "customization": item.customization,
+
+            # المخزون
             "stock": product.stock,
 
+            # الوصف
             "description": product.description,
 
+            # الصورة
             "image": url_for(
                 "static",
                 filename=f"images/{product.image}"
             ) if product.image else "",
 
+            # إجمالي العنصر
             "item_total": item_total
-
         })
+
+    # ==========================================
+    # 📤 RESPONSE
+    # ==========================================
 
     return jsonify({
 
@@ -3282,8 +3711,6 @@ def api_cart_get():
         "total_items": total_items
 
     })
-
-
 # ==========================================
 # ➕➖ Update Cart Quantity
 # ==========================================
@@ -3358,26 +3785,38 @@ def api_checkout():
     # ==========================================
 
     name = data.get("name", "").strip()
-    address = data.get("address", "").strip()
 
-    city = data.get("city", "").strip()
-    district = data.get("district", "").strip()
+    address = data.get(
+        "address",
+        ""
+    ).strip()
 
-    phone = data.get("phone", "").strip()
+    city = data.get(
+        "city",
+        ""
+    ).strip()
+
+    district = data.get(
+        "district",
+        ""
+    ).strip()
+
+    phone = data.get(
+        "phone",
+        ""
+    ).strip()
 
     # ==========================================
     # ❌ التحقق من البيانات
     # ==========================================
 
     if not name:
-
         return jsonify({
             "success": False,
             "error": "Please enter your name."
         }), 400
 
     if not address:
-
         return jsonify({
             "success": False,
             "error": "Please enter your delivery address."
@@ -3393,7 +3832,9 @@ def api_checkout():
     # 📧 البريد الإلكتروني
     # ==========================================
 
-    customer_email = current_user.email or ""
+    customer_email = (
+        current_user.email or ""
+    )
 
     # ==========================================
     # 🛒 تجهيز السلة
@@ -3406,33 +3847,112 @@ def api_checkout():
     products_total = 0
 
     # ==========================================
-    # 🛍️ قراءة المنتجات
+    # 🛍️ قراءة المنتجات من السلة
     # ==========================================
 
     for item in db_cart:
 
-        product = Product.query.get(item.product_id)
+        product = Product.query.get(
+            item.product_id
+        )
 
         if not product:
             continue
 
-        quantity = int(item.quantity)
+        # ==========================================
+        # 🔢 الكمية
+        # ==========================================
+
+        try:
+            quantity = int(
+                item.quantity
+            )
+        except (TypeError, ValueError):
+            quantity = 0
 
         if quantity <= 0:
             continue
 
+        # ==========================================
+        # 📏 الحجم المختار
+        # ==========================================
+
+        selected_size = (
+            item.selected_size
+            if item.selected_size
+            else None
+        )
+
+        # ==========================================
+        # 💰 السعر المختار
+        # ==========================================
+
+        if item.selected_price is not None:
+
+            try:
+                item_price = float(
+                    item.selected_price
+                )
+
+            except (TypeError, ValueError):
+
+                try:
+                    item_price = float(
+                        product.price
+                    )
+                except (TypeError, ValueError):
+                    item_price = 0
+
+        else:
+
+            try:
+                item_price = float(
+                    product.price
+                )
+
+            except (TypeError, ValueError):
+                item_price = 0
+
+        # ==========================================
+        # 🎨 التخصيص
+        # ==========================================
+
+        customization = None
+
+        if hasattr(
+            item,
+            "customization"
+        ):
+
+            customization = (
+                item.customization
+            )
+
+        # ==========================================
+        # 🧮 إجمالي المنتج
+        # ==========================================
+
         item_total = (
-            float(product.price) *
-            quantity
+            item_price * quantity
         )
 
         products_total += item_total
+
+        # ==========================================
+        # 📦 حفظ بيانات المنتج
+        # ==========================================
 
         cart_entries.append({
 
             "product": product,
 
             "quantity": quantity,
+
+            "item_price": item_price,
+
+            "selected_size": selected_size,
+
+            "customization": customization,
 
             "item_total": item_total
 
@@ -3445,20 +3965,26 @@ def api_checkout():
     if not cart_entries:
 
         return jsonify({
-
             "success": False,
-
             "error": "Cart is empty."
-
         }), 400
 
     # ==========================================
     # 🚚 الشحن
     # ==========================================
 
-    shipping_cost = float(
-        data.get("shipping_cost", 20) or 20
-    )
+    try:
+
+        shipping_cost = float(
+            data.get(
+                "shipping_cost",
+                20
+            ) or 20
+        )
+
+    except (TypeError, ValueError):
+
+        shipping_cost = 20
 
     shipping_method = (
         data.get(
@@ -3469,15 +3995,27 @@ def api_checkout():
     )
 
     # ==========================================
-    # 🎁 الكوبون
+    # 🎁 الكوبون والخصم
     # ==========================================
 
-    discount = float(
-        data.get("discount", 0) or 0
-    )
+    try:
+
+        discount = float(
+            data.get(
+                "discount",
+                0
+            ) or 0
+        )
+
+    except (TypeError, ValueError):
+
+        discount = 0
 
     coupon_code = (
-        data.get("coupon_code", "")
+        data.get(
+            "coupon_code",
+            ""
+        )
         .strip()
         .upper()
     )
@@ -3486,8 +4024,36 @@ def api_checkout():
     # ➕ الإضافات
     # ==========================================
 
-    extras_total = float(
-        data.get("extras_total", 0) or 0
+    try:
+
+        extras_total = float(
+            data.get(
+                "extras_total",
+                0
+            ) or 0
+        )
+
+    except (TypeError, ValueError):
+
+        extras_total = 0
+
+    # ==========================================
+    # 🛡️ منع القيم السالبة
+    # ==========================================
+
+    shipping_cost = max(
+        shipping_cost,
+        0
+    )
+
+    discount = max(
+        discount,
+        0
+    )
+
+    extras_total = max(
+        extras_total,
+        0
     )
 
     # ==========================================
@@ -3502,7 +4068,10 @@ def api_checkout():
     )
 
     # منع الإجمالي من أن يكون سالب
-    total = max(total, 0)
+    total = max(
+        total,
+        0
+    )
 
     # ==========================================
     # 📦 إنشاء الطلب
@@ -3534,7 +4103,10 @@ def api_checkout():
 
         discount=discount,
 
-        coupon_code=coupon_code or None,
+        coupon_code=(
+            coupon_code
+            or None
+        ),
 
         total=total,
 
@@ -3544,7 +4116,13 @@ def api_checkout():
 
     )
 
-    db.session.add(order)
+    db.session.add(
+        order
+    )
+
+    # ==========================================
+    # 🆔 الحصول على Order ID
+    # ==========================================
 
     db.session.flush()
 
@@ -3558,6 +4136,20 @@ def api_checkout():
 
         quantity = entry["quantity"]
 
+        item_price = entry["item_price"]
+
+        selected_size = (
+            entry["selected_size"]
+        )
+
+        customization = (
+            entry["customization"]
+        )
+
+        # ==========================================
+        # 📦 إنشاء Order Item
+        # ==========================================
+
         order_item = OrderItem(
 
             order_id=order.id,
@@ -3566,11 +4158,32 @@ def api_checkout():
 
             quantity=quantity,
 
-            price=product.price
+            price=item_price,
+
+            selected_size=selected_size
 
         )
 
-        db.session.add(order_item)
+        # ==========================================
+        # 🎨 حفظ بيانات التخصيص
+        # ==========================================
+
+        if hasattr(
+            order_item,
+            "customization"
+        ):
+
+            order_item.customization = (
+                customization
+            )
+
+        # ==========================================
+        # 💾 إضافة المنتج للطلب
+        # ==========================================
+
+        db.session.add(
+            order_item
+        )
 
     # ==========================================
     # 🗑️ تفريغ السلة
@@ -3588,18 +4201,41 @@ def api_checkout():
 
         message=(
             f"🛍️ طلب جديد رقم #{order.id} "
-            f"من العميل {order.customer_name}"
+            f"من العميل "
+            f"{order.customer_name}"
         )
 
     )
 
-    db.session.add(notification)
+    db.session.add(
+        notification
+    )
 
     # ==========================================
-    # 💾 حفظ الطلب
+    # 💾 حفظ كل التغييرات
     # ==========================================
 
-    db.session.commit()
+    try:
+
+        db.session.commit()
+
+    except Exception as e:
+
+        db.session.rollback()
+
+        print(
+            "❌ CHECKOUT ERROR:",
+            str(e)
+        )
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "Failed to create order."
+
+        }), 500
 
     # ==========================================
     # ✅ النتيجة

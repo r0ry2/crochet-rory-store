@@ -88,6 +88,7 @@
         color: #444;
         font-weight: 700;
         text-align: left;
+        word-break: break-word;
     }
 
     .status-badge {
@@ -117,9 +118,9 @@
 
     .item {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: 15px;
-        padding: 15px 0;
+        padding: 18px 0;
         border-bottom: 1px solid #f5e3e9;
     }
 
@@ -134,6 +135,7 @@
         object-fit: cover;
         border: 1px solid #f3c4d4;
         background: #fff6f9;
+        flex-shrink: 0;
     }
 
     .item-no-image {
@@ -145,26 +147,126 @@
         align-items: center;
         justify-content: center;
         font-size: 30px;
+        flex-shrink: 0;
     }
 
     .item-info {
         flex: 1;
+        min-width: 0;
     }
 
     .item-name {
         font-weight: 800;
         color: #444;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
+        font-size: 16px;
     }
 
     .item-meta {
         color: #888;
         font-size: 13px;
+        line-height: 1.8;
+    }
+
+    /* ==================================================
+       📏 SELECTED SIZE
+    ================================================== */
+
+    .selected-size {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin-top: 7px;
+        padding: 5px 10px;
+        border-radius: 8px;
+        background: #fff0f5;
+        border: 1px solid #f4bfd1;
+        color: #c84f82;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    /* ==================================================
+       🎨 CUSTOMIZATION
+    ================================================== */
+
+    .customization-box {
+        margin-top: 12px;
+        padding: 13px 15px;
+        background: #fff8fb;
+        border: 1px solid #f4cada;
+        border-radius: 12px;
+    }
+
+    .customization-title {
+        color: #d45f91;
+        font-size: 13px;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .customization-rendered {
+        color: #555;
+        font-size: 13px;
+        line-height: 1.8;
+    }
+
+    .custom-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 7px 0;
+        border-bottom: 1px solid #f5e3e9;
+    }
+
+    .custom-row:last-child {
+        border-bottom: none;
+    }
+
+    .custom-label {
+        color: #888;
+        flex-shrink: 0;
+    }
+
+    .custom-value {
+        color: #444;
+        font-weight: 700;
+        text-align: left;
+        word-break: break-word;
+    }
+
+    .custom-reference {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid #f5e3e9;
+    }
+
+    .custom-reference-title {
+        color: #d45f91;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .custom-reference img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 12px;
+        border: 1px solid #f4cada;
+        display: block;
+        cursor: pointer;
+    }
+
+    .custom-reference img:hover {
+        opacity: .9;
     }
 
     .item-total {
         color: #d45f91;
         font-weight: 800;
+        white-space: nowrap;
+        font-size: 15px;
     }
 
     .total-box {
@@ -277,6 +379,7 @@
     }
 
     @media (max-width: 768px) {
+
         .order-detail-page {
             padding: 10px 0 30px;
         }
@@ -323,250 +426,540 @@
     }
 </style>
 
-<div class="order-detail-page">
-
-```
-<!-- HEADER -->
-<div class="order-header">
-
-    <div>
-        <h1>
-            📦
-            {{ "تفاصيل الطلب" if current_lang == "ar" else "Order Details" }}
-        </h1>
-
-        <p>
-            {{ 
-                "معلومات وتفاصيل الطلب بالكامل."
-                if current_lang == "ar"
-                else
-                "Complete order information and details."
-            }}
-        </p>
-    </div>
-
-    <div class="order-id">
-        #{{ order.id }}
-    </div>
-
-</div>
 
 
-<!-- CUSTOMER + ORDER INFO -->
-<div class="order-grid">
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
-    <!-- CUSTOMER -->
-    <div class="order-card">
+    const isArabic = "{{ current_lang }}" === "ar";
 
-        <h2>
-            👤
-            {{ "بيانات العميل" if current_lang == "ar" else "Customer Information" }}
-        </h2>
+    const labels = {
+        skin_color: isArabic ? "لون البشرة" : "Skin Color",
+        hair_type: isArabic ? "نوع الشعر" : "Hair Type",
+        hair_color: isArabic ? "لون الشعر" : "Hair Color",
+        color: isArabic ? "اللون" : "Color",
+        size: isArabic ? "الحجم" : "Size",
+        yarn_type: isArabic ? "نوع الخيط" : "Yarn Type",
+        notes: isArabic ? "ملاحظات" : "Notes"
+    };
 
-        <div class="info-row">
-            <span class="info-label">
-                {{ "الاسم" if current_lang == "ar" else "Name" }}
-            </span>
+    document.querySelectorAll(".customization-box").forEach(function (box) {
 
-            <span class="info-value">
-                {{ order.customer_name or "-" }}
-            </span>
-        </div>
+        const source = box.querySelector(".customization-json");
+        const target = box.querySelector(".customization-rendered");
 
-        <div class="info-row">
-            <span class="info-label">
-                {{ "البريد الإلكتروني" if current_lang == "ar" else "Email" }}
-            </span>
+        if (!source || !target) return;
 
-            <span class="info-value">
-                {{ order.customer_email or "-" }}
-            </span>
-        </div>
+        let data;
 
-        <div class="info-row">
-            <span class="info-label">
-                {{ "رقم الجوال" if current_lang == "ar" else "Phone" }}
-            </span>
+        try {
+            data = JSON.parse(source.textContent.trim());
+        } catch (error) {
+            // إذا كانت البيانات نصًا عاديًا، نعرضها كما هي.
+            target.textContent = source.textContent.trim();
+            return;
+        }
 
-            <span class="info-value">
-                {{ order.customer_phone or "-" }}
-            </span>
-        </div>
+        if (!data || typeof data !== "object") {
+            target.textContent = String(data ?? "");
+            return;
+        }
 
-        <div class="info-row">
-            <span class="info-label">
-                {{ "العنوان" if current_lang == "ar" else "Address" }}
-            </span>
+        let html = "";
 
-            <span class="info-value">
-                {{ order.address or "-" }}
-            </span>
-        </div>
+        Object.keys(labels).forEach(function (key) {
+            const value = data[key];
 
-        <div class="info-row">
-            <span class="info-label">
-                {{ "المدينة" if current_lang == "ar" else "City" }}
-            </span>
+            if (
+                value !== undefined &&
+                value !== null &&
+                String(value).trim() !== ""
+            ) {
+                html += `
+                    <div class="custom-row">
+                        <span class="custom-label">
+                            ${escapeHtml(labels[key])}
+                        </span>
+                        <strong class="custom-value">
+                            ${escapeHtml(String(value))}
+                        </strong>
+                    </div>
+                `;
+            }
+        });
 
-            <span class="info-value">
-                {{ order.city or "-" }}
-            </span>
-        </div>
+        // بعض النسخ قد تحفظ الحقول بأسماء مختلفة.
+        if (!html) {
+            Object.keys(data).forEach(function (key) {
+                const value = data[key];
 
-        <div class="info-row">
-            <span class="info-label">
-                {{ "الحي" if current_lang == "ar" else "District" }}
-            </span>
+                if (
+                    key !== "enabled" &&
+                    key !== "reference_image" &&
+                    value !== null &&
+                    value !== undefined &&
+                    String(value).trim() !== ""
+                ) {
+                    html += `
+                        <div class="custom-row">
+                            <span class="custom-label">
+                                ${escapeHtml(key)}
+                            </span>
+                            <strong class="custom-value">
+                                ${escapeHtml(String(value))}
+                            </strong>
+                        </div>
+                    `;
+                }
+            });
+        }
 
-            <span class="info-value">
-                {{ order.district or "-" }}
-            </span>
-        </div>
+        const image = data.reference_image;
 
-    </div>
+        if (image && String(image).trim() !== "") {
+            const imageUrl = String(image);
 
-
-    <!-- ORDER INFO -->
-    <div class="order-card">
-
-        <h2>
-            🧾
-            {{ "معلومات الطلب" if current_lang == "ar" else "Order Information" }}
-        </h2>
-
-        <div class="info-row">
-            <span class="info-label">
-                {{ "رقم الطلب" if current_lang == "ar" else "Order Number" }}
-            </span>
-
-            <span class="info-value">
-                #{{ order.id }}
-            </span>
-        </div>
-
-        <div class="info-row">
-            <span class="info-label">
-                {{ "الحالة" if current_lang == "ar" else "Status" }}
-            </span>
-
-            <span class="info-value">
-                <span class="status-badge">
-                    {{ order.status or "-" }}
-                </span>
-            </span>
-        </div>
-
-        <div class="info-row">
-            <span class="info-label">
-                {{ "طريقة الدفع" if current_lang == "ar" else "Payment Method" }}
-            </span>
-
-            <span class="info-value">
-                {{ order.payment_method or "-" }}
-            </span>
-        </div>
-
-        <div class="info-row">
-            <span class="info-label">
-                {{ "طريقة الشحن" if current_lang == "ar" else "Shipping Method" }}
-            </span>
-
-            <span class="info-value">
-                {{ order.shipping_method or "-" }}
-            </span>
-        </div>
-
-        <div class="info-row">
-            <span class="info-label">
-                {{ "رقم التتبع" if current_lang == "ar" else "Tracking Number" }}
-            </span>
-
-            <span class="info-value">
-                {{ order.tracking_number or "-" }}
-            </span>
-        </div>
-
-        <div class="info-row">
-            <span class="info-label">
-                {{ "شركة الشحن" if current_lang == "ar" else "Shipping Company" }}
-            </span>
-
-            <span class="info-value">
-                {{ order.shipping_company or "-" }}
-            </span>
-        </div>
-
-        <div class="info-row">
-            <span class="info-label">
-                {{ "تاريخ الطلب" if current_lang == "ar" else "Order Date" }}
-            </span>
-
-            <span class="info-value">
-                {% if order.created_at %}
-                    {{ order.created_at.strftime("%Y-%m-%d %H:%M") }}
-                {% else %}
-                    -
-                {% endif %}
-            </span>
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ITEMS -->
-<div class="items-card">
-
-    <h2>
-        🛍️
-        {{ "المنتجات في الطلب" if current_lang == "ar" else "Order Items" }}
-    </h2>
-
-    {% if order.items %}
-
-        {% for item in order.items %}
-
-            <div class="item">
-
-                {% if item.product and item.product.image %}
-
-                    <img
-                        class="item-image"
-                        src="{{ url_for('static', filename='images/' ~ item.product.image) }}"
-                        alt="{{ item.product.name }}"
-                    >
-
-                {% else %}
-
-                    <div class="item-no-image">
-                        🧶
+            html += `
+                <div class="custom-reference">
+                    <div class="custom-reference-title">
+                        ${isArabic ? "الصورة المرجعية" : "Reference Image"}
                     </div>
 
-                {% endif %}
+                    <a
+                        href="${escapeAttribute(imageUrl)}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <img
+                            src="${escapeAttribute(imageUrl)}"
+                            alt="${isArabic ? "الصورة المرجعية" : "Reference Image"}"
+                            onerror="this.style.display='none'"
+                        >
+                    </a>
+                </div>
+            `;
+        }
+
+        target.innerHTML = html || escapeHtml(source.textContent.trim());
+    });
+
+    function escapeHtml(value) {
+        return value
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function escapeAttribute(value) {
+        return escapeHtml(value);
+    }
+
+});
+</script>
+
+<div class="order-detail-page">
+
+    <!-- ==================================================
+         HEADER
+    ================================================== -->
+
+    <div class="order-header">
+
+        <div>
+
+            <h1>
+                📦
+                {{ "تفاصيل الطلب" if current_lang == "ar" else "Order Details" }}
+            </h1>
+
+            <p>
+                {{
+                    "معلومات وتفاصيل الطلب بالكامل."
+                    if current_lang == "ar"
+                    else
+                    "Complete order information and details."
+                }}
+            </p>
+
+        </div>
+
+        <div class="order-id">
+            #{{ order.id }}
+        </div>
+
+    </div>
 
 
-                <div class="item-info">
+    <!-- ==================================================
+         CUSTOMER + ORDER INFO
+    ================================================== -->
 
-                    <div class="item-name">
+    <div class="order-grid">
 
-                        {% if item.product %}
-                            {{ item.product.name }}
-                        {% else %}
-                            {{ "منتج محذوف" if current_lang == "ar" else "Deleted Product" }}
+        <!-- CUSTOMER -->
+
+        <div class="order-card">
+
+            <h2>
+                👤
+                {{ "بيانات العميل" if current_lang == "ar" else "Customer Information" }}
+            </h2>
+
+            <div class="info-row">
+
+                <span class="info-label">
+                    {{ "الاسم" if current_lang == "ar" else "Name" }}
+                </span>
+
+                <span class="info-value">
+                    {{ order.customer_name or "-" }}
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="info-label">
+                    {{ "البريد الإلكتروني" if current_lang == "ar" else "Email" }}
+                </span>
+
+                <span class="info-value">
+                    {{ order.customer_email or "-" }}
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="info-label">
+                    {{ "رقم الجوال" if current_lang == "ar" else "Phone" }}
+                </span>
+
+                <span class="info-value">
+                    {{ order.customer_phone or "-" }}
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="info-label">
+                    {{ "العنوان" if current_lang == "ar" else "Address" }}
+                </span>
+
+                <span class="info-value">
+                    {{ order.address or "-" }}
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="info-label">
+                    {{ "المدينة" if current_lang == "ar" else "City" }}
+                </span>
+
+                <span class="info-value">
+                    {{ order.city or "-" }}
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="info-label">
+                    {{ "الحي" if current_lang == "ar" else "District" }}
+                </span>
+
+                <span class="info-value">
+                    {{ order.district or "-" }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- ORDER INFO -->
+
+        <div class="order-card">
+
+            <h2>
+                🧾
+                {{ "معلومات الطلب" if current_lang == "ar" else "Order Information" }}
+            </h2>
+
+
+            <div class="info-row">
+
+                <span class="info-label">
+                    {{ "رقم الطلب" if current_lang == "ar" else "Order Number" }}
+                </span>
+
+                <span class="info-value">
+                    #{{ order.id }}
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="info-label">
+                    {{ "الحالة" if current_lang == "ar" else "Status" }}
+                </span>
+
+                <span class="info-value">
+
+                    <span class="status-badge">
+                        {{ order.status or "-" }}
+                    </span>
+
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="info-label">
+                    {{ "طريقة الدفع" if current_lang == "ar" else "Payment Method" }}
+                </span>
+
+                <span class="info-value">
+                    {{ order.payment_method or "-" }}
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="info-label">
+                    {{ "طريقة الشحن" if current_lang == "ar" else "Shipping Method" }}
+                </span>
+
+                <span class="info-value">
+                    {{ order.shipping_method or "-" }}
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="info-label">
+                    {{ "رقم التتبع" if current_lang == "ar" else "Tracking Number" }}
+                </span>
+
+                <span class="info-value">
+                    {{ order.tracking_number or "-" }}
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="info-label">
+                    {{ "شركة الشحن" if current_lang == "ar" else "Shipping Company" }}
+                </span>
+
+                <span class="info-value">
+                    {{ order.shipping_company or "-" }}
+                </span>
+
+            </div>
+
+
+            <div class="info-row">
+
+                <span class="info-label">
+                    {{ "تاريخ الطلب" if current_lang == "ar" else "Order Date" }}
+                </span>
+
+                <span class="info-value">
+
+                    {% if order.created_at %}
+
+                        {{ order.created_at.strftime("%Y-%m-%d %H:%M") }}
+
+                    {% else %}
+
+                        -
+
+                    {% endif %}
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==================================================
+         ITEMS
+    ================================================== -->
+
+    <div class="items-card">
+
+        <h2>
+            🛍️
+            {{ "المنتجات في الطلب" if current_lang == "ar" else "Order Items" }}
+        </h2>
+
+
+        {% if order.items %}
+
+            {% for item in order.items %}
+
+                <div class="item">
+
+                    <!-- PRODUCT IMAGE -->
+
+                    {% if item.product and item.product.image %}
+
+                        <img
+                            class="item-image"
+                            src="{{ url_for('static', filename='images/' ~ item.product.image) }}"
+                            alt="{{ item.product.name }}"
+                        >
+
+                    {% else %}
+
+                        <div class="item-no-image">
+                            🧶
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- PRODUCT INFO -->
+
+                    <div class="item-info">
+
+                        <!-- PRODUCT NAME -->
+
+                        <div class="item-name">
+
+                            {% if item.product %}
+
+                                {{ item.product.name }}
+
+                            {% else %}
+
+                                {{
+                                    "منتج محذوف"
+                                    if current_lang == "ar"
+                                    else
+                                    "Deleted Product"
+                                }}
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- QUANTITY + PRICE -->
+
+                        <div class="item-meta">
+
+                            {{ "الكمية" if current_lang == "ar" else "Quantity" }}:
+                            {{ item.quantity }}
+
+                            &nbsp; | &nbsp;
+
+                            {{ "السعر" if current_lang == "ar" else "Price" }}:
+                            {{ "%.2f"|format(item.price or 0) }}
+
+                            {{ "ريال" if current_lang == "ar" else "SAR" }}
+
+                        </div>
+
+
+                        <!-- ==================================================
+                             SELECTED SIZE
+                        ================================================== -->
+
+                        {% if item.selected_size %}
+
+                            <div class="selected-size">
+
+                                📏
+
+                                {{ "الحجم" if current_lang == "ar" else "Size" }}:
+
+                                {{ item.selected_size }}
+
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- ==================================================
+                             CUSTOMIZATION
+                        ================================================== -->
+
+                        {% if item.customization %}
+
+
+                            <div class="customization-box">
+
+
+                                <div class="customization-title">
+
+                                    🎨
+
+                                    {{
+
+                                        "تفاصيل التخصيص"
+
+                                        if current_lang == "ar"
+
+                                        else
+
+                                        "Customization Details"
+
+                                    }}
+
+                                </div>
+
+
+                                <!-- نخزن JSON الحقيقي بدون تحويله إلى نص HTML -->
+
+                                <script type="application/json" class="customization-json">{{ item.customization|safe }}</script>
+
+
+                                <div class="customization-rendered"></div>
+
+
+                            </div>
+
+
                         {% endif %}
 
                     </div>
 
-                    <div class="item-meta">
 
-                        {{ "الكمية" if current_lang == "ar" else "Quantity" }}:
-                        {{ item.quantity }}
+                    <!-- ITEM TOTAL -->
 
-                        &nbsp; | &nbsp;
+                    <div class="item-total">
 
-                        {{ "السعر" if current_lang == "ar" else "Price" }}:
-                        {{ "%.2f"|format(item.price or 0) }}
+                        {{
+                            "%.2f"|format(
+                                (item.price or 0) *
+                                (item.quantity or 0)
+                            )
+                        }}
 
                         {{ "ريال" if current_lang == "ar" else "SAR" }}
 
@@ -574,183 +967,305 @@
 
                 </div>
 
+            {% endfor %}
 
-                <div class="item-total">
+        {% else %}
 
-                    {{
-                        "%.2f"|format(
-                            (item.price or 0) * (item.quantity or 0)
-                        )
-                    }}
+            <p style="color:#888;">
 
-                    {{ "ريال" if current_lang == "ar" else "SAR" }}
+                {{
+                    "لا توجد منتجات في هذا الطلب."
+                    if current_lang == "ar"
+                    else
+                    "No products found in this order."
+                }}
 
-                </div>
+            </p>
 
-            </div>
-
-        {% endfor %}
-
-    {% else %}
-
-        <p style="color:#888;">
-            {{
-                "لا توجد منتجات في هذا الطلب."
-                if current_lang == "ar"
-                else
-                "No products found in this order."
-            }}
-        </p>
-
-    {% endif %}
+        {% endif %}
 
 
-    <!-- TOTAL -->
-    <div class="total-box">
+        <!-- ==================================================
+             TOTAL
+        ================================================== -->
 
-        <span class="total-label">
-            {{ "الإجمالي" if current_lang == "ar" else "Total" }}
-        </span>
+        <div class="total-box">
 
-        <span class="total-value">
-            {{ "%.2f"|format(order.total or 0) }}
-            {{ "ريال" if current_lang == "ar" else "SAR" }}
-        </span>
+            <span class="total-label">
+
+                {{ "الإجمالي" if current_lang == "ar" else "Total" }}
+
+            </span>
+
+
+            <span class="total-value">
+
+                {{ "%.2f"|format(order.total or 0) }}
+
+                {{ "ريال" if current_lang == "ar" else "SAR" }}
+
+            </span>
+
+        </div>
 
     </div>
 
-</div>
+
+    <!-- ==================================================
+         UPDATE ORDER
+    ================================================== -->
+
+    <div class="update-card">
+
+        <h2>
+
+            ⚙️
+
+            {{ "تحديث الطلب" if current_lang == "ar" else "Update Order" }}
+
+        </h2>
 
 
-<!-- UPDATE ORDER -->
-<div class="update-card">
-
-    <h2>
-        ⚙️
-        {{ "تحديث الطلب" if current_lang == "ar" else "Update Order" }}
-    </h2>
-
-    <form
-        method="POST"
-        action="{{ url_for('update_order_detail', order_id=order.id) }}"
-    >
-
-        <div class="form-group">
-
-            <label>
-                {{ "حالة الطلب" if current_lang == "ar" else "Order Status" }}
-            </label>
-
-            <select
-                name="status"
-                class="form-control"
-                required
-            >
-
-                <option value="Pending Payment"
-                    {% if order.status == "Pending Payment" %}selected{% endif %}>
-                    {{ "بانتظار الدفع" if current_lang == "ar" else "Pending Payment" }}
-                </option>
-
-                <option value="Pending Review"
-                    {% if order.status == "Pending Review" %}selected{% endif %}>
-                    {{ "بانتظار المراجعة" if current_lang == "ar" else "Pending Review" }}
-                </option>
-
-                <option value="Processing"
-                    {% if order.status == "Processing" %}selected{% endif %}>
-                    {{ "قيد التجهيز" if current_lang == "ar" else "Processing" }}
-                </option>
-
-                <option value="Shipping"
-                    {% if order.status == "Shipping" %}selected{% endif %}>
-                    {{ "جاري الشحن" if current_lang == "ar" else "Shipping" }}
-                </option>
-
-                <option value="Delivered"
-                    {% if order.status == "Delivered" %}selected{% endif %}>
-                    {{ "تم التوصيل" if current_lang == "ar" else "Delivered" }}
-                </option>
-
-                <option value="Cancelled"
-                    {% if order.status == "Cancelled" %}selected{% endif %}>
-                    {{ "ملغي" if current_lang == "ar" else "Cancelled" }}
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                {{ "شركة الشحن" if current_lang == "ar" else "Shipping Company" }}
-            </label>
-
-            <input
-                type="text"
-                name="shipping_company"
-                class="form-control"
-                value="{{ order.shipping_company or '' }}"
-                placeholder="{{ 'مثال: DHL أو SMSA' if current_lang == 'ar' else 'Example: DHL or SMSA' }}"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>
-                {{ "رقم التتبع" if current_lang == "ar" else "Tracking Number" }}
-            </label>
-
-            <input
-                type="text"
-                name="tracking_number"
-                class="form-control"
-                value="{{ order.tracking_number or '' }}"
-                placeholder="{{ 'أدخل رقم التتبع' if current_lang == 'ar' else 'Enter tracking number' }}"
-            >
-
-        </div>
-
-
-        <button
-            type="submit"
-            class="update-btn"
+        <form
+            method="POST"
+            action="{{ url_for('update_order_detail', order_id=order.id) }}"
         >
-            💾
-            {{ "حفظ تحديثات الطلب" if current_lang == "ar" else "Save Order Updates" }}
-        </button>
 
-    </form>
+            <div class="form-group">
 
-</div>
+                <label>
 
+                    {{
+                        "حالة الطلب"
+                        if current_lang == "ar"
+                        else
+                        "Order Status"
+                    }}
 
-<!-- ACTIONS -->
-<div class="bottom-actions">
-
-    <a
-        href="{{ url_for('admin_orders') }}"
-        class="action-btn back-btn"
-    >
-        ←
-        {{ "العودة للطلبات" if current_lang == "ar" else "Back to Orders" }}
-    </a>
+                </label>
 
 
-    <a
-        href="{{ url_for('admin_invoice', order_id=order.id) }}"
-        class="action-btn invoice-btn"
-    >
-        🧾
-        {{ "طباعة الفاتورة" if current_lang == "ar" else "Print Invoice" }}
-    </a>
+                <select
+                    name="status"
+                    class="form-control"
+                    required
+                >
 
-</div>
-```
+                    <option
+                        value="Pending Payment"
+                        {% if order.status == "Pending Payment" %}selected{% endif %}
+                    >
+
+                        {{
+                            "بانتظار الدفع"
+                            if current_lang == "ar"
+                            else
+                            "Pending Payment"
+                        }}
+
+                    </option>
+
+
+                    <option
+                        value="Pending Review"
+                        {% if order.status == "Pending Review" %}selected{% endif %}
+                    >
+
+                        {{
+                            "بانتظار المراجعة"
+                            if current_lang == "ar"
+                            else
+                            "Pending Review"
+                        }}
+
+                    </option>
+
+
+                    <option
+                        value="Processing"
+                        {% if order.status == "Processing" %}selected{% endif %}
+                    >
+
+                        {{
+                            "قيد التجهيز"
+                            if current_lang == "ar"
+                            else
+                            "Processing"
+                        }}
+
+                    </option>
+
+
+                    <option
+                        value="Shipping"
+                        {% if order.status == "Shipping" %}selected{% endif %}
+                    >
+
+                        {{
+                            "جاري الشحن"
+                            if current_lang == "ar"
+                            else
+                            "Shipping"
+                        }}
+
+                    </option>
+
+
+                    <option
+                        value="Delivered"
+                        {% if order.status == "Delivered" %}selected{% endif %}
+                    >
+
+                        {{
+                            "تم التوصيل"
+                            if current_lang == "ar"
+                            else
+                            "Delivered"
+                        }}
+
+                    </option>
+
+
+                    <option
+                        value="Cancelled"
+                        {% if order.status == "Cancelled" %}selected{% endif %}
+                    >
+
+                        {{
+                            "ملغي"
+                            if current_lang == "ar"
+                            else
+                            "Cancelled"
+                        }}
+
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+
+                    {{
+                        "شركة الشحن"
+                        if current_lang == "ar"
+                        else
+                        "Shipping Company"
+                    }}
+
+                </label>
+
+
+                <input
+                    type="text"
+                    name="shipping_company"
+                    class="form-control"
+                    value="{{ order.shipping_company or '' }}"
+                    placeholder="{{
+                        'مثال: DHL أو SMSA'
+                        if current_lang == 'ar'
+                        else
+                        'Example: DHL or SMSA'
+                    }}"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+
+                    {{
+                        "رقم التتبع"
+                        if current_lang == "ar"
+                        else
+                        "Tracking Number"
+                    }}
+
+                </label>
+
+
+                <input
+                    type="text"
+                    name="tracking_number"
+                    class="form-control"
+                    value="{{ order.tracking_number or '' }}"
+                    placeholder="{{
+                        'أدخل رقم التتبع'
+                        if current_lang == 'ar'
+                        else
+                        'Enter tracking number'
+                    }}"
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="update-btn"
+            >
+
+                💾
+
+                {{
+                    "حفظ تحديثات الطلب"
+                    if current_lang == "ar"
+                    else
+                    "Save Order Updates"
+                }}
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- ==================================================
+         ACTIONS
+    ================================================== -->
+
+    <div class="bottom-actions">
+
+        <a
+            href="{{ url_for('admin_orders') }}"
+            class="action-btn back-btn"
+        >
+
+            ←
+
+            {{
+                "العودة للطلبات"
+                if current_lang == "ar"
+                else
+                "Back to Orders"
+            }}
+
+        </a>
+
+
+        <a
+            href="{{ url_for('admin_invoice', order_id=order.id) }}"
+            class="action-btn invoice-btn"
+        >
+
+            🧾
+
+            {{
+                "طباعة الفاتورة"
+                if current_lang == "ar"
+                else
+                "Print Invoice"
+            }}
+
+        </a>
+
+    </div>
 
 </div>
 
