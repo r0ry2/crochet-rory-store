@@ -1,59 +1,1208 @@
 {% extends "admin/admin_base.html" %}
+
 {% block title %}Messages | Admin{% endblock %}
+
 {% block content %}
 
-<!-- 🔙 زر الرجوع -->
-<a href="{{ url_for('admin_home') }}" 
-   style="
-     position: fixed;
-     top: 20px;
-     left: 20px;
-     background-color: #ff8fab;
-     color: white;
-     padding: 10px 18px;
-     border-radius: 25px;
-     font-weight: bold;
-     text-decoration: none;
-     box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-     transition: 0.3s;
-     z-index: 1000;
-   "
-   onmouseover="this.style.transform='scale(1.1)'"
-   onmouseout="this.style.transform='scale(1)'">
-   ⬅️ Back
+<style>
+
+/* =====================================================
+   PAGE
+===================================================== */
+
+.messages-page {
+    max-width: 1100px;
+    margin: 50px auto;
+    padding: 25px;
+    box-sizing: border-box;
+}
+
+.messages-title {
+    text-align: center;
+    color: #e26fa7;
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+}
+
+
+/* =====================================================
+   BACK BUTTON
+===================================================== */
+
+.back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+
+    background: #ff8fab;
+    color: white;
+
+    padding: 10px 18px;
+    border-radius: 25px;
+
+    font-weight: bold;
+    text-decoration: none;
+
+    box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+
+    transition: 0.3s;
+
+    z-index: 1000;
+}
+
+.back-button:hover {
+    transform: scale(1.05);
+    background: #e26fa7;
+}
+
+
+/* =====================================================
+   MAIN CONTAINER
+===================================================== */
+
+.messages-container {
+    display: flex;
+
+    height: 650px;
+
+    background: white;
+
+    border-radius: 22px;
+
+    overflow: hidden;
+
+    box-shadow: 0 5px 20px rgba(0,0,0,0.10);
+
+    border: 1px solid #f1d8e1;
+}
+
+
+/* =====================================================
+   CUSTOMERS LIST
+===================================================== */
+
+.customers-list {
+    width: 330px;
+
+    background: #fff7fa;
+
+    border-right: 1px solid #f1d8e1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    overflow-y: auto;
+}
+
+.customers-header {
+    padding: 20px;
+
+    background: #fff0f6;
+
+    border-bottom: 1px solid #f1d8e1;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 2;
+}
+
+.customers-header h3 {
+    margin: 0;
+
+    color: #e26fa7;
+
+    font-size: 1.1rem;
+}
+
+
+/* =====================================================
+   CUSTOMER ITEM
+===================================================== */
+
+.customer-item {
+    padding: 15px 12px 15px 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    border-bottom: 1px solid #f8e5eb;
+
+    transition: 0.2s;
+
+    position: relative;
+}
+
+.customer-item:hover {
+    background: #ffeaf2;
+}
+
+.customer-item.active {
+    background: #ffdce9;
+}
+
+
+/* =====================================================
+   CUSTOMER CLICK AREA
+===================================================== */
+
+.customer-chat-button {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    flex: 1;
+
+    min-width: 0;
+
+    cursor: pointer;
+}
+
+
+/* =====================================================
+   AVATAR
+===================================================== */
+
+.customer-avatar {
+    width: 48px;
+    height: 48px;
+
+    min-width: 48px;
+
+    border-radius: 50%;
+
+    background: #ffe0eb;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 22px;
+}
+
+
+/* =====================================================
+   CUSTOMER DETAILS
+===================================================== */
+
+.customer-details {
+    min-width: 0;
+
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.customer-name {
+    font-weight: bold;
+
+    color: #555;
+
+    font-size: 0.95rem;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+.customer-email {
+    color: #999;
+
+    font-size: 0.78rem;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =====================================================
+   UNREAD
+===================================================== */
+
+.unread-dot {
+    width: 9px;
+    height: 9px;
+
+    border-radius: 50%;
+
+    background: #e26fa7;
+
+    flex-shrink: 0;
+}
+
+
+/* =====================================================
+   DELETE CUSTOMER BUTTON
+===================================================== */
+
+.delete-customer-form {
+    flex-shrink: 0;
+}
+
+.delete-customer-button {
+    width: 34px;
+    height: 34px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #f7d3e2;
+
+    color: #c84c88;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition: 0.2s;
+
+    opacity: 0.75;
+}
+
+.customer-item:hover .delete-customer-button {
+    opacity: 1;
+}
+
+.delete-customer-button:hover {
+    background: #e26fa7;
+
+    color: white;
+
+    transform: scale(1.08);
+}
+
+
+/* =====================================================
+   CHAT AREA
+===================================================== */
+
+.chat-area {
+    flex: 1;
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-width: 0;
+
+    background: #efe7df;
+}
+
+
+/* =====================================================
+   CHAT WINDOW
+===================================================== */
+
+.chat-window {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-height: 0;
+}
+
+
+/* =====================================================
+   CHAT HEADER
+===================================================== */
+
+.chat-header {
+    background: #fff;
+
+    min-height: 75px;
+
+    padding: 12px 20px;
+
+    box-sizing: border-box;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    border-bottom: 1px solid #ead9df;
+
+    flex-shrink: 0;
+}
+
+.chat-header-avatar {
+    width: 45px;
+    height: 45px;
+
+    min-width: 45px;
+
+    border-radius: 50%;
+
+    background: #ffe0eb;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 20px;
+}
+
+.chat-header-info {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+    min-width: 0;
+}
+
+.chat-header-name {
+    font-weight: bold;
+
+    color: #555;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+.chat-header-email {
+    color: #999;
+
+    font-size: 0.75rem;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =====================================================
+   CHAT MESSAGES
+===================================================== */
+
+.chat-messages {
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 25px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+    min-height: 0;
+}
+
+
+/* =====================================================
+   MESSAGE ROW
+===================================================== */
+
+.message-row {
+    display: flex;
+
+    width: 100%;
+}
+
+.message-row.customer {
+    justify-content: flex-start;
+}
+
+.message-row.admin {
+    justify-content: flex-end;
+}
+
+
+/* =====================================================
+   MESSAGE WRAPPER
+===================================================== */
+
+.message-wrapper {
+    max-width: 72%;
+
+    position: relative;
+}
+
+
+/* =====================================================
+   MESSAGE BUBBLE
+===================================================== */
+
+.message-bubble {
+    padding: 10px 14px 7px;
+
+    border-radius: 16px;
+
+    font-size: 0.9rem;
+
+    line-height: 1.6;
+
+    word-break: break-word;
+
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+
+    position: relative;
+}
+
+
+/* =====================================================
+   CUSTOMER MESSAGE
+===================================================== */
+
+.message-row.customer .message-bubble {
+    background: white;
+
+    color: #555;
+
+    border-radius: 16px 16px 16px 5px;
+}
+
+
+/* =====================================================
+   ADMIN MESSAGE
+===================================================== */
+
+.message-row.admin .message-bubble {
+    background: #f8c6dc;
+
+    color: #555;
+
+    border-radius: 16px 16px 5px 16px;
+}
+
+
+/* =====================================================
+   MESSAGE TEXT
+===================================================== */
+
+.message-text {
+    white-space: pre-wrap;
+}
+
+
+/* =====================================================
+   MESSAGE TIME
+===================================================== */
+
+.message-time {
+    display: block;
+
+    text-align: right;
+
+    font-size: 0.65rem;
+
+    color: #999;
+
+    margin-top: 4px;
+}
+
+
+/* =====================================================
+   REPLY AREA
+===================================================== */
+
+.reply-area {
+    background: #fff;
+
+    padding: 12px;
+
+    border-top: 1px solid #ead9df;
+
+    flex-shrink: 0;
+}
+
+.reply-form {
+    display: flex;
+
+    align-items: flex-end;
+
+    gap: 9px;
+}
+
+.reply-textarea {
+    flex: 1;
+
+    min-height: 45px;
+
+    max-height: 120px;
+
+    padding: 11px 15px;
+
+    border: 1px solid #ead9df;
+
+    border-radius: 23px;
+
+    background: #fafafa;
+
+    outline: none;
+
+    resize: none;
+
+    font-family: inherit;
+
+    font-size: 0.9rem;
+
+    box-sizing: border-box;
+}
+
+.reply-textarea:focus {
+    border-color: #e26fa7;
+
+    background: white;
+
+    box-shadow: 0 0 0 2px rgba(226,111,167,0.08);
+}
+
+
+/* =====================================================
+   SEND BUTTON
+===================================================== */
+
+.reply-button {
+    width: 45px;
+    height: 45px;
+
+    flex-shrink: 0;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #e26fa7;
+
+    color: white;
+
+    font-size: 1.1rem;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition: 0.25s;
+}
+
+.reply-button:hover {
+    background: #ff8fab;
+
+    transform: scale(1.05);
+}
+
+
+/* =====================================================
+   EMPTY CHAT
+===================================================== */
+
+.chat-empty {
+    flex: 1;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    color: #999;
+
+    padding: 30px;
+}
+
+.chat-empty-content {
+    background: rgba(255,255,255,0.75);
+
+    padding: 25px 35px;
+
+    border-radius: 18px;
+}
+
+.chat-empty-icon {
+    font-size: 45px;
+
+    margin-bottom: 10px;
+}
+
+
+/* =====================================================
+   NO CUSTOMERS
+===================================================== */
+
+.no-customers {
+    padding: 30px 20px;
+
+    text-align: center;
+
+    color: #999;
+
+    font-size: 0.9rem;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:750px) {
+
+    .messages-page {
+        width: 96%;
+
+        margin: 65px auto 25px;
+
+        padding: 10px;
+    }
+
+    .messages-container {
+        height: 650px;
+    }
+
+    .customers-list {
+        width: 85px;
+    }
+
+    .customers-header {
+        text-align: center;
+
+        padding: 15px 5px;
+    }
+
+    .customers-header h3 {
+        font-size: 0.75rem;
+    }
+
+    .customer-item {
+        padding: 12px 5px;
+
+        justify-content: center;
+    }
+
+    .customer-chat-button {
+        justify-content: center;
+    }
+
+    .customer-details {
+        display: none;
+    }
+
+    .customer-avatar {
+        width: 42px;
+        height: 42px;
+
+        min-width: 42px;
+    }
+
+    .delete-customer-form {
+        position: absolute;
+
+        top: 4px;
+        right: 4px;
+    }
+
+    .delete-customer-button {
+        width: 22px;
+        height: 22px;
+
+        font-size: 10px;
+    }
+
+    .unread-dot {
+        position: absolute;
+
+        top: 8px;
+        right: 7px;
+
+        width: 7px;
+        height: 7px;
+    }
+
+    .chat-header {
+        padding: 10px;
+    }
+
+    .chat-header-avatar {
+        width: 40px;
+        height: 40px;
+
+        min-width: 40px;
+    }
+
+    .chat-header-name {
+        font-size: 0.9rem;
+    }
+
+    .chat-header-email {
+        font-size: 0.68rem;
+    }
+
+    .chat-messages {
+        padding: 15px 10px;
+    }
+
+    .message-wrapper {
+        max-width: 84%;
+    }
+
+    .message-bubble {
+        font-size: 0.85rem;
+    }
+
+    .back-button {
+        top: 12px;
+        left: 12px;
+
+        padding: 8px 13px;
+
+        font-size: 0.82rem;
+    }
+}
+
+</style>
+
+
+<!-- =====================================================
+     BACK
+===================================================== -->
+
+<a
+    href="{{ url_for('admin_home') }}"
+    class="back-button"
+>
+    ⬅️ Back
 </a>
 
-<div style="max-width:900px; margin:80px auto; background:#fff0f6; padding:30px; border-radius:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
 
-  <h2 style="text-align:center; color:#e26fa7; margin-bottom:30px;">💌 Customer Messages</h2>
+<!-- =====================================================
+     MAIN
+===================================================== -->
 
-  {% if messages %}
-    <table style="width:100%; border-collapse:collapse; background:white; border-radius:10px; overflow:hidden;">
-      <thead style="background:#ffe3ec; color:#e26fa7;">
-        <tr>
-          <th style="padding:12px;">#</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Message</th>
-          <th>Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for msg in messages %}
-        <tr style="text-align:center; border-bottom:1px solid #f3cbd6;">
-          <td style="padding:10px;">{{ msg.id }}</td>
-          <td>{{ msg.name }}</td>
-          <td>{{ msg.email }}</td>
-          <td style="max-width:300px;">{{ msg.message }}</td>
-          <td>{{ msg.date_sent.strftime('%Y-%m-%d %H:%M') if msg.date_sent else '—' }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p style="text-align:center; color:#777;">No messages yet 💭</p>
-  {% endif %}
+<div class="messages-page">
+
+    <h2 class="messages-title">
+        💌 Customer Messages
+    </h2>
+
+
+    <div class="messages-container">
+
+
+        <!-- =================================================
+             CUSTOMERS LIST
+        ================================================== -->
+
+        <div class="customers-list">
+
+            <div class="customers-header">
+
+                <h3>
+                    👥 Customers
+                </h3>
+
+            </div>
+
+
+            {% if conversations %}
+
+                {% for conversation in conversations %}
+
+                    <div
+                        class="customer-item {% if loop.first %}active{% endif %}"
+                        id="customer-{{ conversation.user_id }}"
+                    >
+
+
+                        <!-- =================================
+                             CUSTOMER CHAT BUTTON
+                        ================================== -->
+
+                        <div
+                            class="customer-chat-button"
+                            onclick="openChat('{{ conversation.user_id }}')"
+                        >
+
+                            <div class="customer-avatar">
+                                👤
+                            </div>
+
+
+                            <div class="customer-details">
+
+                                <div class="customer-name">
+                                    {{ conversation.name }}
+                                </div>
+
+                                <div class="customer-email">
+                                    {{ conversation.email }}
+                                </div>
+
+                            </div>
+
+
+                            {% if conversation.unread %}
+
+                                <div class="unread-dot"></div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =================================
+                             DELETE WHOLE CONVERSATION
+                        ================================== -->
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('admin_delete_customer_messages', user_id=conversation.user_id) }}"
+                            class="delete-customer-form"
+                            onsubmit="return confirm('هل أنتِ متأكدة من حذف المحادثة كاملة؟ سيتم حذف جميع رسائل هذا العميل من لوحة الرسائل.');"
+                        >
+
+                            <button
+                                type="submit"
+                                class="delete-customer-button"
+                                title="Delete conversation"
+                            >
+                                🗑️
+                            </button>
+
+                        </form>
+
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="no-customers">
+                    💭 No messages yet.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- =================================================
+             CHAT AREA
+        ================================================== -->
+
+        <div class="chat-area">
+
+            {% if conversations %}
+
+                {% for conversation in conversations %}
+
+                    <div
+                        class="chat-window"
+                        id="chat-{{ conversation.user_id }}"
+                        {% if not loop.first %}
+                            style="display:none;"
+                        {% endif %}
+                    >
+
+
+                        <!-- =================================
+                             CHAT HEADER
+                        ================================== -->
+
+                        <div class="chat-header">
+
+                            <div class="chat-header-avatar">
+                                👤
+                            </div>
+
+
+                            <div class="chat-header-info">
+
+                                <div class="chat-header-name">
+                                    {{ conversation.name }}
+                                </div>
+
+                                <div class="chat-header-email">
+                                    {{ conversation.email }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- =================================
+                             MESSAGES
+                        ================================== -->
+
+                        <div class="chat-messages">
+
+                            {% if conversation.messages %}
+
+                                {% for msg in conversation.messages %}
+
+                                    <div
+                                        class="message-row
+                                        {% if msg.sender == 'admin' %}
+                                            admin
+                                        {% else %}
+                                            customer
+                                        {% endif %}"
+                                    >
+
+                                        <div class="message-wrapper">
+
+                                            <div class="message-bubble">
+
+                                                <div class="message-text">
+                                                    {{ msg.message }}
+                                                </div>
+
+
+                                                <span class="message-time">
+
+                                                    {% if msg.created_at %}
+
+                                                        {{ msg.created_at.strftime("%Y-%m-%d %H:%M") }}
+
+                                                    {% endif %}
+
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            {% else %}
+
+                                <div class="chat-empty">
+
+                                    <div class="chat-empty-content">
+
+                                        <div class="chat-empty-icon">
+                                            💭
+                                        </div>
+
+                                        <div>
+                                            No messages in this conversation.
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- =================================
+                             REPLY
+                        ================================== -->
+
+                        <div class="reply-area">
+
+                            <form
+                                action="{{ url_for('admin_reply_message', user_id=conversation.user_id) }}"
+                                method="POST"
+                                class="reply-form"
+                            >
+
+                                <textarea
+                                    name="message"
+                                    class="reply-textarea"
+                                    placeholder="Write a reply..."
+                                    rows="1"
+                                    required
+                                ></textarea>
+
+
+                                <button
+                                    type="submit"
+                                    class="reply-button"
+                                    title="Send Reply"
+                                >
+                                    ➤
+                                </button>
+
+                            </form>
+
+                        </div>
+
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="chat-empty">
+
+                    <div class="chat-empty-content">
+
+                        <div class="chat-empty-icon">
+                            💌
+                        </div>
+
+                        <div>
+                            Select a customer to view the conversation.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
 
 </div>
+
+
+<script>
+
+/* =====================================================
+   OPEN CHAT
+===================================================== */
+
+function openChat(userId) {
+
+    /* Hide all chats */
+
+    document.querySelectorAll(".chat-window").forEach(function(chat) {
+
+        chat.style.display = "none";
+
+    });
+
+
+    /* Show selected chat */
+
+    const selectedChat =
+        document.getElementById("chat-" + userId);
+
+    if (selectedChat) {
+
+        selectedChat.style.display = "flex";
+
+        selectedChat.style.flexDirection = "column";
+
+        selectedChat.style.height = "100%";
+
+    }
+
+
+    /* Remove active */
+
+    document.querySelectorAll(".customer-item").forEach(function(item) {
+
+        item.classList.remove("active");
+
+    });
+
+
+    /* Add active */
+
+    const selectedCustomer =
+        document.getElementById("customer-" + userId);
+
+    if (selectedCustomer) {
+
+        selectedCustomer.classList.add("active");
+
+    }
+
+
+    /* Scroll to bottom */
+
+    if (selectedChat) {
+
+        const messages =
+            selectedChat.querySelector(".chat-messages");
+
+        if (messages) {
+
+            setTimeout(function() {
+
+                messages.scrollTop =
+                    messages.scrollHeight;
+
+            }, 50);
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   AUTO SCROLL FIRST CHAT
+===================================================== */
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    const firstChat =
+        document.querySelector(".chat-window");
+
+    if (firstChat) {
+
+        const messages =
+            firstChat.querySelector(".chat-messages");
+
+        if (messages) {
+
+            messages.scrollTop =
+                messages.scrollHeight;
+
+        }
+
+    }
+
+});
+
+</script>
 
 {% endblock %}

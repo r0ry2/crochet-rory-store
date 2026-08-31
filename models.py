@@ -971,27 +971,60 @@ class Message(db.Model):
         primary_key=True
     )
 
+    # 👤 العميل صاحب المحادثة
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("user.id"),
+        nullable=True
+    )
+
+    # 👤 اسم العميل
     name = db.Column(
         db.String(100),
         nullable=False
     )
 
+    # 📧 بريد العميل
     email = db.Column(
         db.String(100),
         nullable=False
     )
 
+    # 💬 نص الرسالة
     message = db.Column(
         db.Text,
         nullable=False
     )
 
+    # 👤 من أرسل الرسالة؟
+    # customer = العميل
+    # admin = الأدمن
+    sender = db.Column(
+        db.String(20),
+        nullable=False,
+        default="customer"
+    )
+
+    # 👁️ هل قرأ الأدمن الرسالة؟
     is_read = db.Column(
         db.Boolean,
         default=False
     )
 
+    # 🕐 وقت إرسال الرسالة
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )
 
+    # 🔗 ربط الرسالة بحساب العميل
+    user = db.relationship(
+        "User",
+        backref=db.backref(
+            "contact_messages",
+            lazy=True
+        )
+    )
 # ==================================================
 # ⭐ REVIEWS
 # ==================================================

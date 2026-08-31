@@ -1,302 +1,658 @@
 {% extends "base_logged.html" %}
 
 {% block title %}
-تفاصيل الطلب
+    {{ "تفاصيل الطلب" if current_lang=="ar" else "Order Details" }}
 {% endblock %}
 
 
 {% block content %}
 
-
 <style>
 
 .order-box{
-
     width:90%;
     max-width:1000px;
     margin:50px auto;
-
     background:white;
-
     padding:30px;
-
     border-radius:25px;
-
     box-shadow:0 10px 30px rgba(0,0,0,.08);
-
 }
-
 
 .title{
-
     color:#d88ea4;
-
     margin-bottom:25px;
-
 }
-
 
 .info{
-
     display:grid;
-
     grid-template-columns:repeat(2,1fr);
-
     gap:15px;
-
 }
-
 
 .info div{
-
     background:#fdecef;
-
     padding:15px;
-
     border-radius:15px;
-
 }
-
 
 table{
-
     width:100%;
-
     margin-top:25px;
-
     border-collapse:collapse;
-
 }
-
 
 th{
-
     background:#fff1f6;
-
     padding:15px;
-
 }
-
 
 td{
-
     padding:15px;
-
     text-align:center;
-
     border-bottom:1px solid #eee;
-
+    vertical-align:top;
 }
 
-
-img{
-
+.product-image{
     width:60px;
-
     height:60px;
-
     border-radius:10px;
-
     object-fit:cover;
-
 }
 
+
+/* ==========================================
+   CUSTOMIZATION
+========================================== */
+
+.customization-box{
+    margin-top:15px;
+    padding:18px;
+    background:#fff8fa;
+    border:1px solid #f2bfd0;
+    border-radius:18px;
+    text-align:right;
+}
+
+.customization-title{
+    color:#b15f77;
+    font-size:17px;
+    font-weight:700;
+    margin-bottom:14px;
+}
+
+.custom-details{
+    display:grid;
+    gap:9px;
+}
+
+.custom-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:15px;
+    background:white;
+    padding:10px 13px;
+    border-radius:12px;
+}
+
+.custom-label{
+    color:#9a6b79;
+    font-weight:600;
+}
+
+.custom-value{
+    color:#555;
+    font-weight:500;
+    text-align:left;
+    word-break:break-word;
+}
+
+
+/* ==========================================
+   REFERENCE IMAGE
+========================================== */
+
+.custom-reference{
+    margin-top:18px;
+    text-align:center;
+}
+
+.custom-reference-title{
+    color:#9a6b79;
+    font-weight:600;
+    margin-bottom:10px;
+}
+
+.custom-reference img{
+    width:180px;
+    height:180px;
+    object-fit:cover;
+    border-radius:18px;
+    border:3px solid #f2bfd0;
+    box-shadow:0 6px 20px rgba(0,0,0,.08);
+}
+
+
+/* ==========================================
+   BACK BUTTON
+========================================== */
 
 .back{
-
     display:inline-block;
-
     margin-top:25px;
-
     background:#d88ea4;
-
     color:white;
-
     padding:12px 25px;
-
     border-radius:30px;
-
     text-decoration:none;
+    transition:.3s;
+}
 
+.back:hover{
+    background:#c76f89;
 }
 
 
-</style>
+/* ==========================================
+   MOBILE
+========================================== */
 
+@media(max-width:768px){
+
+    .order-box{
+        width:94%;
+        padding:20px 14px;
+        margin:30px auto;
+        border-radius:20px;
+    }
+
+    .title{
+        font-size:22px;
+    }
+
+    .info{
+        grid-template-columns:1fr;
+        gap:10px;
+    }
+
+    .info div{
+        padding:12px;
+        font-size:13px;
+    }
+
+    table{
+        display:block;
+        overflow-x:auto;
+        white-space:nowrap;
+    }
+
+    th,
+    td{
+        padding:10px;
+        font-size:13px;
+    }
+
+    .customization-box{
+        white-space:normal;
+        min-width:260px;
+    }
+
+    .custom-row{
+        flex-direction:column;
+        gap:4px;
+    }
+
+    .custom-value{
+        text-align:right;
+    }
+
+    .custom-reference img{
+        width:150px;
+        height:150px;
+    }
+
+    .back{
+        width:100%;
+        text-align:center;
+    }
+
+}
+
+</style>
 
 
 <div class="order-box">
 
 
-<h2 class="title">
+    <!-- ==========================================
+         TITLE
+    ========================================== -->
 
-🧾 طلب رقم #{{ order.id }}
+    <h2 class="title">
 
-</h2>
+        🧾
 
+        {{ "طلب رقم" if current_lang=="ar" else "Order" }}
 
+        #{{ order.id }}
 
-<div class="info">
+    </h2>
 
 
-<div>
+    <!-- ==========================================
+         ORDER INFORMATION
+    ========================================== -->
 
-<b>الحالة:</b>
+    <div class="info">
 
-{{ order.status }}
 
-</div>
+        <div>
 
+            <b>
+                {{ "الحالة:" if current_lang=="ar" else "Status:" }}
+            </b>
 
-<div>
+            {{ order.status }}
 
-<b>التاريخ:</b>
+        </div>
 
-{{ order.created_at.strftime("%Y-%m-%d") }}
 
-</div>
+        <div>
 
+            <b>
+                {{ "التاريخ:" if current_lang=="ar" else "Date:" }}
+            </b>
 
-<div>
+            {{ order.created_at.strftime("%Y-%m-%d") }}
 
-<b>طريقة الدفع:</b>
+        </div>
 
-{{ order.payment_method }}
 
-</div>
+        <div>
 
+            <b>
+                {{ "طريقة الدفع:" if current_lang=="ar" else "Payment Method:" }}
+            </b>
 
-<div>
+            {{ order.payment_method or
+               ("غير محددة" if current_lang=="ar" else "Not specified") }}
 
-<b>الإجمالي:</b>
+        </div>
 
-{{ order.total }} ريال
 
-</div>
+        <div>
 
+            <b>
+                {{ "الإجمالي:" if current_lang=="ar" else "Total:" }}
+            </b>
 
+            {{ order.total }} ريال
 
-{% if order.shipping_company %}
+        </div>
 
-<div>
 
-<b>🚚 شركة الشحن:</b>
+        {% if order.shipping_company %}
 
-{{ order.shipping_company }}
+        <div>
 
-</div>
+            <b>
+                🚚
+                {{ "شركة الشحن:" if current_lang=="ar" else "Shipping Company:" }}
+            </b>
 
+            {{ order.shipping_company }}
 
-{% endif %}
+        </div>
 
+        {% endif %}
 
 
-{% if order.tracking_number %}
+        {% if order.tracking_number %}
 
-<div>
+        <div>
 
-<b>🔎 رقم التتبع:</b>
+            <b>
+                🔎
+                {{ "رقم التتبع:" if current_lang=="ar" else "Tracking Number:" }}
+            </b>
 
-{{ order.tracking_number }}
+            {{ order.tracking_number }}
 
-</div>
+        </div>
 
+        {% endif %}
 
-{% endif %}
 
+    </div>
 
 
-</div>
+    <!-- ==========================================
+         PRODUCTS
+    ========================================== -->
 
+    <h3 style="margin-top:30px">
 
+        🛒
 
+        {{ "المنتجات" if current_lang=="ar" else "Products" }}
 
-<h3 style="margin-top:30px">
+    </h3>
 
-🛒 المنتجات
 
-</h3>
+    <table>
 
+        <tr>
 
+            <th>
+                {{ "الصورة" if current_lang=="ar" else "Image" }}
+            </th>
 
-<table>
+            <th>
+                {{ "المنتج" if current_lang=="ar" else "Product" }}
+            </th>
 
+            <th>
+                {{ "الكمية" if current_lang=="ar" else "Quantity" }}
+            </th>
 
-<tr>
+            <th>
+                {{ "السعر" if current_lang=="ar" else "Price" }}
+            </th>
 
-<th>الصورة</th>
+        </tr>
 
-<th>المنتج</th>
 
-<th>الكمية</th>
+        {% for item in order.items %}
 
-<th>السعر</th>
+        <tr>
 
-</tr>
 
+            <!-- PRODUCT IMAGE -->
 
+            <td>
 
-{% for item in order.items %}
+                {% if item.product and item.product.image %}
 
+                    <img
+                        class="product-image"
+                        src="{{ url_for('static', filename='uploads/' ~ item.product.image) }}"
+                        alt="{{ item.product.name }}"
+                        onerror="this.style.display='none';">
 
-<tr>
+                {% else %}
 
+                    -
 
-<td>
+                {% endif %}
 
-{% if item.product.image %}
+            </td>
 
-<img src="{{ url_for('static',
-filename='uploads/' + item.product.image) }}">
 
-{% else %}
+            <!-- PRODUCT NAME + CUSTOMIZATION -->
 
--
+            <td>
 
-{% endif %}
+                <strong>
+                    {{ item.product.name if item.product else "-" }}
+                </strong>
 
 
-</td>
+                <!-- SELECTED SIZE -->
 
+                {% if item.selected_size %}
 
-<td>
+                <div style="
+                    margin-top:8px;
+                    color:#9a6b79;
+                    font-size:13px;
+                ">
 
-{{ item.product.name }}
+                    📏
 
-</td>
+                    {{ "الحجم:" if current_lang=="ar" else "Size:" }}
 
+                    {{ item.selected_size }}
 
-<td>
+                </div>
 
-{{ item.quantity }}
+                {% endif %}
 
-</td>
 
+                <!-- ==================================
+                     CUSTOMIZATION DETAILS
+                ================================== -->
 
-<td>
+                {% if item.customization_data %}
 
-{{ item.price }} ريال
+                <div class="customization-box">
 
-</td>
 
+                    <div class="customization-title">
 
-</tr>
+                        ✨
 
+                        {{
+                            "تفاصيل التخصيص"
+                            if current_lang=="ar"
+                            else
+                            "Customization Details"
+                        }}
 
-{% endfor %}
+                    </div>
 
 
+                    <div class="custom-details">
 
-</table>
 
+                        {% if item.customization_data.get("skin_color") %}
 
+                        <div class="custom-row">
 
-<a href="{{ url_for('profile') }}" class="back">
+                            <span class="custom-label">
+                                {{ "لون البشرة" if current_lang=="ar" else "Skin Color" }}
+                            </span>
 
-⬅ العودة
+                            <span class="custom-value">
+                                {{ item.customization_data.get("skin_color") }}
+                            </span>
 
-</a>
+                        </div>
 
+                        {% endif %}
+
+
+                        {% if item.customization_data.get("hair_type") %}
+
+                        <div class="custom-row">
+
+                            <span class="custom-label">
+                                {{ "نوع الشعر" if current_lang=="ar" else "Hair Type" }}
+                            </span>
+
+                            <span class="custom-value">
+                                {{ item.customization_data.get("hair_type") }}
+                            </span>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if item.customization_data.get("hair_color") %}
+
+                        <div class="custom-row">
+
+                            <span class="custom-label">
+                                {{ "لون الشعر" if current_lang=="ar" else "Hair Color" }}
+                            </span>
+
+                            <span class="custom-value">
+                                {{ item.customization_data.get("hair_color") }}
+                            </span>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if item.customization_data.get("color") %}
+
+                        <div class="custom-row">
+
+                            <span class="custom-label">
+                                {{ "اللون" if current_lang=="ar" else "Color" }}
+                            </span>
+
+                            <span class="custom-value">
+                                {{ item.customization_data.get("color") }}
+                            </span>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if item.customization_data.get("size") %}
+
+                        <div class="custom-row">
+
+                            <span class="custom-label">
+                                {{ "الحجم" if current_lang=="ar" else "Size" }}
+                            </span>
+
+                            <span class="custom-value">
+                                {{ item.customization_data.get("size") }}
+                            </span>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if item.customization_data.get("yarn_type") %}
+
+                        <div class="custom-row">
+
+                            <span class="custom-label">
+                                {{ "نوع الخيط" if current_lang=="ar" else "Yarn Type" }}
+                            </span>
+
+                            <span class="custom-value">
+                                {{ item.customization_data.get("yarn_type") }}
+                            </span>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if item.customization_data.get("notes") %}
+
+                        <div class="custom-row">
+
+                            <span class="custom-label">
+                                {{ "ملاحظات" if current_lang=="ar" else "Notes" }}
+                            </span>
+
+                            <span class="custom-value">
+                                {{ item.customization_data.get("notes") }}
+                            </span>
+
+                        </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                    <!-- ==================================
+                         REFERENCE IMAGE
+                    ================================== -->
+
+                    {% if item.customization_data.get("reference_image") %}
+
+                    <div class="custom-reference">
+
+
+                        <div class="custom-reference-title">
+
+                            📷
+
+                            {{
+                                "الصورة المرجعية"
+                                if current_lang=="ar"
+                                else
+                                "Reference Image"
+                            }}
+
+                        </div>
+
+
+                        <img
+                            src="{{ item.customization_data.get('reference_image') }}"
+                            alt="{{
+                                'الصورة المرجعية'
+                                if current_lang=='ar'
+                                else
+                                'Reference Image'
+                            }}"
+                            onerror="this.style.display='none';">
+
+
+                    </div>
+
+                    {% endif %}
+
+
+                </div>
+
+                {% endif %}
+
+
+            </td>
+
+
+            <!-- QUANTITY -->
+
+            <td>
+
+                {{ item.quantity }}
+
+            </td>
+
+
+            <!-- PRICE -->
+
+            <td>
+
+                {{ item.price }} ريال
+
+            </td>
+
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+
+    <!-- ==========================================
+         BACK
+    ========================================== -->
+
+    <a
+        href="{{ url_for('profile') }}"
+        class="back">
+
+        ⬅
+
+        {{ "العودة إلى الملف الشخصي" if current_lang=="ar" else "Back to Profile" }}
+
+    </a>
 
 
 </div>

@@ -67,8 +67,7 @@ from datetime import datetime
 from flask import jsonify
 from sqlalchemy import func
 from flask_login import login_user, logout_user, login_required, current_user
-from flask_mail import Message
-
+from flask_mail import Message as MailMessage
 # ==================================================
 # 📧 TEST RESEND EMAIL
 # ==================================================
@@ -111,40 +110,6 @@ def test_resend():
         print("❌ RESEND ERROR:", e)
 
         return f"RESEND ERROR: {e}", 500
-# ==================================================
-# 📧 TEST EMAIL
-# ==================================================
-
-@app.route("/test-email")
-def test_email():
-
-    try:
-
-        msg = Message(
-            subject="Crochet Rory Store - Test Email",
-            sender=app.config["MAIL_DEFAULT_SENDER"],
-            recipients=["noni200217noni@gmail.com"]
-        )
-
-        msg.body = """
-Hello!
-
-This is a test email from Crochet Rory Store.
-
-If you received this email, Gmail SMTP is working correctly.
-
-Crochet Rory Store 💕
-"""
-
-        mail.send(msg)
-
-        return "EMAIL SENT SUCCESSFULLY ✅"
-
-    except Exception as e:
-
-        print("❌ EMAIL ERROR:", e)
-
-        return f"EMAIL ERROR: {e}", 500
 
 @app.route("/language/<lang>")
 def change_language(lang):
@@ -1374,15 +1339,58 @@ def get_order_details(order_id):
 
 
 
+# ==========================================
+# 📦 CUSTOMER ORDER DETAILS
+# ==========================================
+
 @app.route("/my-order/<int:order_id>")
 @login_required
 def customer_order_detail(order_id):
+
+    # ==========================================
+    # 🔐 GET ONLY THE CURRENT USER'S ORDER
+    # ==========================================
 
     order = Order.query.filter_by(
         id=order_id,
         user_id=current_user.id
     ).first_or_404()
 
+
+    # ==========================================
+    # 🎨 PREPARE CUSTOMIZATION DATA
+    # ==========================================
+
+    import json
+
+    for item in order.items:
+
+        item.customization_data = {}
+
+        if item.customization:
+
+            try:
+
+                if isinstance(item.customization, str):
+
+                    item.customization_data = json.loads(
+                        item.customization
+                    )
+
+                elif isinstance(item.customization, dict):
+
+                    item.customization_data = (
+                        item.customization
+                    )
+
+            except (json.JSONDecodeError, TypeError, ValueError):
+
+                item.customization_data = {}
+
+
+    # ==========================================
+    # 🧾 ORDER DETAILS PAGE
+    # ==========================================
 
     return render_template(
         "customer_order_detail.html",
@@ -5880,51 +5888,354 @@ def change_user_password(id):
 # 📩 CONTACT
 # ==========================================
 
+# ==================================================
+# 💌 CONTACT PAGE
+# ==================================================
+
 @app.route('/contact', methods=['GET', 'POST'])
+@login_required
 def contact_page():
 
+    # ==================================================
+    # 🌐 LANGUAGE
+    # ==================================================
+    current_lang = session.get("language", "ar")
+
+    # ==================================================
+    # 📩 SEND MESSAGE
+    # ==================================================
     if request.method == "POST":
 
-        name = request.form.get("name")
-        email = request.form.get("email")
         message_text = request.form.get("message")
 
+        # التأكد أن الرسالة ليست فارغة
+        if not message_text or not message_text.strip():
+            flash(
+                "الرجاء كتابة رسالة."
+                if current_lang == "ar"
+                else "Please write a message."
+            )
+            return redirect(url_for("contact_page"))
+
+        # إنشاء الرسالة
         new_message = Message(
-            name=name,
-            email=email,
-            message=message_text
+            user_id=current_user.id,
+            name=current_user.username,
+            email=current_user.email,
+            message=message_text.strip(),
+            sender="customer",
+            is_read=False
         )
 
         db.session.add(new_message)
         db.session.commit()
 
-        flash("💖 Your message has been sent successfully!")
+        flash(
+            "💖 تم إرسال رسالتك بنجاح!"
+            if current_lang == "ar"
+            else "💖 Your message has been sent successfully!"
+        )
 
         return redirect(url_for("contact_page"))
 
-    return render_template("contact.html")
+    # ==================================================
+    # 💬 GET CUSTOMER CONVERSATION
+    # ==================================================
+    messages = (
+        Message.query
+        .filter_by(user_id=current_user.id)
+        .order_by(Message.created_at.asc())
+        .all()
+    )
 
-
+    # ==================================================
+    # 📄 RENDER CONTACT PAGE
+    # ==================================================
+    return render_template(
+        "contact.html",
+        messages=messages
+    )
 # ==========================================
 # 📨 ADMIN MESSAGES
 # ==========================================
+
+# ==================================================
+# 💌 ADMIN MESSAGES
+# ==================================================
 
 @app.route('/admin/messages')
 @login_required
 def admin_messages():
 
+    # =====================================================
+    # 🔐 ADMIN CHECK
+    # =====================================================
+
     if current_user.role != "admin":
         flash("⚠️ Access denied! Admins only.", "danger")
         return redirect(url_for("home_logged"))
 
-    messages = Message.query.order_by(Message.id.desc()).all()
+    # =====================================================
+    # 💬 جلب جميع الرسائل
+    # =====================================================
+
+    all_messages = (
+        Message.query
+        .order_by(Message.created_at.asc())
+        .all()
+    )
+
+    # =====================================================
+    # 👥 تجميع الرسائل حسب العميل
+    # =====================================================
+
+    conversations_dict = {}
+
+    for msg in all_messages:
+
+        # نتجاهل أي رسالة بدون user_id
+        if not msg.user_id:
+            continue
+
+        user_id = msg.user_id
+
+        # إنشاء محادثة جديدة للعميل
+        if user_id not in conversations_dict:
+
+            conversations_dict[user_id] = {
+                "user_id": user_id,
+                "name": msg.name or "Customer",
+                "email": msg.email or "",
+                "messages": [],
+                "unread": False
+            }
+
+        # إضافة الرسالة للمحادثة
+        conversations_dict[user_id]["messages"].append(msg)
+
+        # =================================================
+        # 🔴 تحديد وجود رسائل غير مقروءة
+        # =================================================
+
+        if msg.sender != "admin" and not msg.is_read:
+            conversations_dict[user_id]["unread"] = True
+
+    # =====================================================
+    # 📋 تحويل Dictionary إلى List
+    # =====================================================
+
+    conversations = list(conversations_dict.values())
+
+    # =====================================================
+    # 🕐 ترتيب المحادثات حسب آخر رسالة
+    # =====================================================
+
+    conversations.sort(
+        key=lambda conversation: (
+            conversation["messages"][-1].created_at
+            if conversation["messages"]
+            and conversation["messages"][-1].created_at
+            else datetime.min
+        ),
+        reverse=True
+    )
+
+    # =====================================================
+    # 📄 عرض صفحة الأدمن
+    # =====================================================
 
     return render_template(
         "admin/admin_messages.html",
-        messages=messages
+        conversations=conversations
     )
 
+# ==================================================
+# 💬 ADMIN REPLY TO CUSTOMER
+# ==================================================
 
+@app.route('/admin/messages/reply/<int:user_id>', methods=['POST'])
+@login_required
+def admin_reply_message(user_id):
+
+    # 🔐 ADMIN CHECK
+    if current_user.role != "admin":
+        flash("⚠️ Access denied! Admins only.", "danger")
+        return redirect(url_for("home_logged"))
+
+    # =====================================================
+    # 📝 الحصول على الرسالة
+    # =====================================================
+
+    message_text = request.form.get("message", "").strip()
+
+    # =====================================================
+    # ❌ التأكد أن الرسالة ليست فارغة
+    # =====================================================
+
+    if not message_text:
+        flash("⚠️ Please write a reply.", "danger")
+        return redirect(url_for("admin_messages"))
+
+    # =====================================================
+    # 👤 البحث عن العميل
+    # =====================================================
+
+    customer = User.query.get(user_id)
+
+    if not customer:
+        flash("⚠️ Customer not found.", "danger")
+        return redirect(url_for("admin_messages"))
+
+    # =====================================================
+    # 💬 إنشاء رسالة الأدمن
+    # =====================================================
+
+    new_message = Message(
+        user_id=customer.id,
+        name=customer.username,
+        email=customer.email,
+        message=message_text,
+        sender="admin",
+        is_read=True
+    )
+
+    db.session.add(new_message)
+    db.session.commit()
+
+    flash("💗 Reply sent successfully!", "success")
+
+    return redirect(url_for("admin_messages"))
+# ==================================================
+# 🗑️ DELETE CUSTOMER CONVERSATION
+# ==================================================
+
+@app.route(
+    "/admin/messages/delete_customer/<int:user_id>",
+    methods=["POST"]
+)
+@login_required
+def admin_delete_customer_messages(user_id):
+
+    # 🔐 ADMIN CHECK
+    if current_user.role != "admin":
+        flash("⚠️ Access denied! Admins only.", "danger")
+        return redirect(url_for("home_logged"))
+
+    try:
+
+        # 🗑️ Delete ALL messages belonging to this customer
+        Message.query.filter_by(
+            user_id=user_id
+        ).delete(
+            synchronize_session=False
+        )
+
+        db.session.commit()
+
+        flash(
+            "🗑️ تم حذف المحادثة كاملة بنجاح.",
+            "success"
+        )
+
+    except Exception as e:
+
+        db.session.rollback()
+
+        print(
+            "❌ DELETE CUSTOMER CONVERSATION ERROR:",
+            str(e)
+        )
+
+        flash(
+            "❌ حدث خطأ أثناء حذف المحادثة.",
+            "danger"
+        )
+
+    return redirect(
+        url_for("admin_messages")
+    )
+@app.route('/admin/messages/delete/<int:message_id>', methods=['POST'])
+@login_required
+def admin_delete_message(message_id):
+
+    # 🔐 ADMIN CHECK
+    if current_user.role != "admin":
+        flash("⚠️ Access denied! Admins only.", "danger")
+        return redirect(url_for("home_logged"))
+
+    # =====================================================
+    # 🔎 البحث عن الرسالة
+    # =====================================================
+
+    message = Message.query.get(message_id)
+
+    if not message:
+        flash("⚠️ Message not found.", "danger")
+        return redirect(url_for("admin_messages"))
+
+    # =====================================================
+    # 🚫 منع الأدمن من حذف رسالة أدمن من هذا المسار
+    # =====================================================
+
+    if message.sender == "admin":
+        flash("⚠️ Admin messages cannot be deleted here.", "danger")
+        return redirect(url_for("admin_messages"))
+
+    # =====================================================
+    # 🗑 حذف رسالة العميل
+    # =====================================================
+
+    db.session.delete(message)
+    db.session.commit()
+
+    flash("🗑️ Message deleted successfully.", "success")
+
+    return redirect(url_for("admin_messages"))
+
+@app.route('/admin/messages/delete-conversation/<int:user_id>', methods=['POST'])
+@login_required
+def admin_delete_conversation(user_id):
+
+    # =====================================================
+    # 🔐 ADMIN CHECK
+    # =====================================================
+
+    if current_user.role != "admin":
+        flash("⚠️ Access denied! Admins only.", "danger")
+        return redirect(url_for("home_logged"))
+
+    # =====================================================
+    # 👤 التأكد أن العميل موجود
+    # =====================================================
+
+    customer = User.query.get(user_id)
+
+    if not customer:
+        flash("⚠️ Customer not found.", "danger")
+        return redirect(url_for("admin_messages"))
+
+    # =====================================================
+    # 💬 حذف جميع رسائل هذا العميل
+    # =====================================================
+
+    Message.query.filter_by(
+        user_id=user_id
+    ).delete(
+        synchronize_session=False
+    )
+
+    db.session.commit()
+
+    # =====================================================
+    # ✅ SUCCESS
+    # =====================================================
+
+    flash(
+        f"🗑️ Conversation with {customer.username} deleted successfully.",
+        "success"
+    )
+
+    return redirect(url_for("admin_messages"))
 # ==========================================
 # 🏠 USER HOME
 # ==========================================
