@@ -173,7 +173,7 @@ def cart_items_to_json(cart_items):
             "quantity": item.quantity,
             "image": url_for(
                 "static",
-                filename=f"images/{product.image}"
+                filename=f"uploads/{product.image}"
             ) if product.image else ""
         })
 
@@ -303,10 +303,19 @@ def edit_product(id):
                 image_file.filename
             )
 
-            image_path = os.path.join(
+            upload_folder = os.path.join(
                 app.root_path,
                 "static",
-                "images",
+                "uploads"
+            )
+
+            os.makedirs(
+                upload_folder,
+                exist_ok=True
+            )
+
+            image_path = os.path.join(
+                upload_folder,
                 filename
             )
 
@@ -625,6 +634,10 @@ def delete_product(id):
 # ➕ ADD PRODUCT
 # ==================================================
 
+# ==================================================
+# ➕ ADD PRODUCT
+# ==================================================
+
 @app.route("/admin/add_product", methods=["GET", "POST"])
 @login_required
 def add_product():
@@ -687,12 +700,33 @@ def add_product():
                     image_file.filename
                 )
 
-                image_path = os.path.join(
+                # ==================================================
+                # 📁 CREATE UPLOADS FOLDER
+                # ==================================================
+
+                upload_folder = os.path.join(
                     app.root_path,
                     "static",
-                    "images",
+                    "uploads"
+                )
+
+                os.makedirs(
+                    upload_folder,
+                    exist_ok=True
+                )
+
+                # ==================================================
+                # 📍 IMAGE PATH
+                # ==================================================
+
+                image_path = os.path.join(
+                    upload_folder,
                     filename
                 )
+
+                # ==================================================
+                # 💾 SAVE IMAGE TO VOLUME
+                # ==================================================
 
                 image_file.save(
                     image_path
@@ -760,23 +794,16 @@ def add_product():
 
             # منع السعر المخفض من أن يكون سالبًا
             if sale_price < 0:
+
                 sale_price = None
 
             # إذا كان السعر المخفض أكبر أو يساوي السعر الأصلي
             elif sale_price >= form.price.data:
+
                 sale_price = None
 
         # ==================================================
         # 📏 SIZE PRICES
-        # ==================================================
-        # يتم استقبال أسعار الأحجام من صفحة الأدمن
-        #
-        # مثال:
-        # {
-        #     "small": 50,
-        #     "medium": 70,
-        #     "large": 90
-        # }
         # ==================================================
 
         size_prices = {}
@@ -789,7 +816,9 @@ def add_product():
             "size_price[]"
         )
 
-        for index, size_name in enumerate(size_names):
+        for index, size_name in enumerate(
+            size_names
+        ):
 
             size_name = size_name.strip()
 
@@ -802,7 +831,9 @@ def add_product():
                 price_value = size_values[index]
 
             try:
-                price_value = float(price_value)
+                price_value = float(
+                    price_value
+                )
             except (TypeError, ValueError):
                 continue
 
@@ -1023,8 +1054,19 @@ def add_or_edit_product(product_id=None):
                 image_file.filename
             )
 
+            upload_folder = os.path.join(
+                app.root_path,
+                "static",
+                "uploads"
+            )
+
+            os.makedirs(
+                upload_folder,
+                exist_ok=True
+            )
+
             image_path = os.path.join(
-                app.config["UPLOAD_FOLDER"],
+                upload_folder,
                 filename
             )
 
@@ -3726,7 +3768,7 @@ def api_cart_get():
             # الصورة
             "image": url_for(
                 "static",
-                filename=f"images/{product.image}"
+                filename=f"uploads/{product.image}"
             ) if product.image else "",
 
             # إجمالي العنصر
