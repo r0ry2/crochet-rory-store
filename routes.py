@@ -173,7 +173,7 @@ def cart_items_to_json(cart_items):
             "quantity": item.quantity,
             "image": url_for(
                 "static",
-                filename=f"uploads/{product.image}"
+                filename=f"uploads/products/{product.image}"
             ) if product.image else ""
         })
 
@@ -303,19 +303,10 @@ def edit_product(id):
                 image_file.filename
             )
 
-            upload_folder = os.path.join(
+            image_path = os.path.join(
                 app.root_path,
                 "static",
-                "uploads"
-            )
-
-            os.makedirs(
-                upload_folder,
-                exist_ok=True
-            )
-
-            image_path = os.path.join(
-                upload_folder,
+                "images",
                 filename
             )
 
@@ -707,7 +698,8 @@ def add_product():
                 upload_folder = os.path.join(
                     app.root_path,
                     "static",
-                    "uploads"
+                    "uploads",
+                    "products"
                 )
 
                 os.makedirs(
@@ -1057,7 +1049,8 @@ def add_or_edit_product(product_id=None):
             upload_folder = os.path.join(
                 app.root_path,
                 "static",
-                "uploads"
+                "uploads",
+                "products"
             )
 
             os.makedirs(
@@ -3768,7 +3761,7 @@ def api_cart_get():
             # الصورة
             "image": url_for(
                 "static",
-                filename=f"uploads/{product.image}"
+                filename=f"uploads/products/{product.image}"
             ) if product.image else "",
 
             # إجمالي العنصر

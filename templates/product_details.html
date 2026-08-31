@@ -1002,7 +1002,7 @@ body{
         {% if product.image %}
 
             <img
-                src="{{ url_for('static', filename='images/' ~ product.image) }}"
+                src="{{ url_for('static', filename='uploads/products/' ~ product.image) }}"
                 alt="{{ product.name }}"
             >
 
@@ -1657,7 +1657,7 @@ body{
             {% if item.image %}
 
                 <img
-                    src="{{ url_for('static', filename='images/' ~ item.image) }}"
+                    src="{{ url_for('static', filename='uploads/products/' ~ item.image) }}"
                     alt="{{ item.name }}"
                 >
 
