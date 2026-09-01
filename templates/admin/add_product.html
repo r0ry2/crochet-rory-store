@@ -1263,6 +1263,37 @@ textarea.form-control {
         </div>
 
 
+        <!-- CATEGORY -->
+
+        <div class="form-group">
+
+            <label class="form-label">
+                🏷️
+                {{
+                    "تصنيف المنتج"
+                    if current_lang == "ar"
+                    else
+                    "Product Category"
+                }}
+            </label>
+
+            <select name="category" class="form-control" required>
+                <option value="dolls">{{ "الدمى" if current_lang == "ar" else "Dolls" }}</option>
+                <option value="keychains">{{ "الميداليات" if current_lang == "ar" else "Keychains" }}</option>
+                <option value="pattern">{{ "الباترون" if current_lang == "ar" else "Pattern" }}</option>
+                <option value="coaster">{{ "حاملات الأكواب" if current_lang == "ar" else "Coaster" }}</option>
+                <option value="ready_stock">{{ "تسليم فوري" if current_lang == "ar" else "Ready Stock" }}</option>
+            </select>
+
+            {% for error in form.category.errors %}
+                <p class="form-error">
+                    ⚠️ {{ error }}
+                </p>
+            {% endfor %}
+
+        </div>
+
+
         <!-- PRICE + QUANTITY -->
 
         <div class="form-row">
@@ -1780,7 +1811,49 @@ textarea.form-control {
             </div>
 
 
-            <!-- =========================
+                        <!-- =========================
+                 CATEGORY
+            ========================== -->
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    🏷️
+                    {{
+                        "تصنيف المنتج"
+                        if current_lang == "ar"
+                        else
+                        "Product Category"
+                    }}
+                </label>
+
+                <select
+                    name="category"
+                    class="form-control"
+                    required>
+
+                    <option value="dolls" {% if product.category == "dolls" %}selected{% endif %}>
+                        {{ "الدمى" if current_lang == "ar" else "Dolls" }}
+                    </option>
+
+                    <option value="keychains" {% if product.category == "keychains" %}selected{% endif %}>
+                        {{ "الميداليات" if current_lang == "ar" else "Keychains" }}
+                    </option>
+
+                    <option value="pattern" {% if product.category == "pattern" %}selected{% endif %}>
+                        {{ "الباترون" if current_lang == "ar" else "Pattern" }}
+                    </option>
+
+                    <option value="coaster" {% if product.category == "coaster" %}selected{% endif %}>
+                        {{ "حاملات الأكواب" if current_lang == "ar" else "Coaster" }}
+                    </option>
+
+                </select>
+
+            </div>
+
+
+<!-- =========================
                  PRICE + QUANTITY
             ========================== -->
 

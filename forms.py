@@ -37,6 +37,24 @@ class ProductForm(FlaskForm):
     )
 
     # ==========================
+    # 🏷️ Product Category
+    # ==========================
+
+    category = SelectField(
+        "Category",
+        choices=[
+            ("dolls", "Dolls"),
+            ("keychains", "Keychains"),
+            ("pattern", "Pattern"),
+            ("coaster", "Coaster"),
+            ("ready_stock", "Ready Stock")
+        ],
+        validators=[
+            DataRequired()
+        ]
+    )
+
+    # ==========================
     # 💰 Product Price
     # ==========================
 

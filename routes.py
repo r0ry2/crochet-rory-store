@@ -847,6 +847,8 @@ def add_product():
 
             name=form.name.data,
 
+            category=form.category.data,
+
             price=form.price.data,
 
             description=form.description.data,
@@ -1075,6 +1077,8 @@ def add_or_edit_product(product_id=None):
 
             product.name = name
 
+            product.category = form.category.data
+
             product.price = price
 
             product.description = description
@@ -1103,6 +1107,8 @@ def add_or_edit_product(product_id=None):
             new_product = Product(
 
                 name=name,
+
+                category=form.category.data,
 
                 price=price,
 

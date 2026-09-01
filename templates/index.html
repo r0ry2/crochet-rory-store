@@ -137,6 +137,11 @@
                  alt="Coaster">
             <span>{{ "كوسترات" if current_lang == "ar" else "Coaster" }}</span>
         </a>
+        <a href="{{ url_for('login') }}" class="category-card">
+            <img src="{{ url_for('static', filename='images/ready_stock.jpg') }}"
+                 alt="Ready Stock">
+            <span>{{ "تسليم فوري" if current_lang == "ar" else "Ready Stock" }}</span>
+        </a>
 
     </div>
 

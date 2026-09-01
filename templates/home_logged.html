@@ -1147,6 +1147,28 @@ if(advertisementSlides.length > 1){
 
         </button>
 
+        <!-- READY STOCK -->
+        <button type="button"
+                class="category-card category-filter"
+                data-category="ready_stock"
+                onclick="filterProducts('ready_stock', this)">
+
+            <img src="{{ url_for(
+                'static',
+                filename='images/ready_stock.jpg'
+            ) }}"
+                 alt="Ready Stock">
+
+            <span>
+                {{
+                    "تسليم فوري"
+                    if current_lang == "ar"
+                    else "Ready Stock"
+                }}
+            </span>
+
+        </button>
+
     </div>
 
 </section>
@@ -1186,7 +1208,7 @@ if(advertisementSlides.length > 1){
     display:grid;
 
     grid-template-columns:
-        repeat(5, minmax(0, 1fr));
+        repeat(6, minmax(0, 1fr));
 
     gap:20px;
 
@@ -3158,6 +3180,19 @@ function normalizeCategory(category){
     ){
 
         return "coaster";
+
+    }
+
+
+    if(
+        category.includes("تسليم فوري") ||
+        category.includes("جاهز") ||
+        category.includes("ready stock") ||
+        category.includes("ready_stock") ||
+        category.includes("readystock")
+    ){
+
+        return "ready_stock";
 
     }
 

@@ -1155,17 +1155,16 @@ body{
         </button>
 
 
-<button
-    type="button"
-    class="category-btn"
-    data-category="Custom"
->
 
-    {{ "طلب فوري"
-       if current_lang == "ar"
-       else "Instant Order" }}
-
-</button>
+        <button
+            type="button"
+            class="category-btn"
+            data-category="ready_stock"
+        >
+            {{ "تسليم فوري"
+               if current_lang == "ar"
+               else "Ready Stock" }}
+        </button>
 
     </div>
 
@@ -1595,7 +1594,28 @@ buttons.forEach(btn => {
             cards.forEach(card => {
 
                 const cardCategory =
-                    card.dataset.category;
+                    (card.dataset.category || "").trim().toLowerCase();
+
+                const selectedCategory =
+                    (category || "").trim().toLowerCase();
+
+                const categoryAliases = {
+                    "dolls": ["dolls", "doll"],
+                    "flowers": ["flowers", "flower"],
+                    "keychains": ["keychains", "keychain"],
+                    "custom": ["custom"],
+                    "pattern": ["pattern", "patterns"],
+                    "coaster": ["coaster", "coasters"],
+                    "ready_stock": [
+                        "ready_stock",
+                        "ready stock",
+                        "ready-stock",
+                        "readystock"
+                    ]
+                };
+
+                const allowedCategories =
+                    categoryAliases[selectedCategory] || [selectedCategory];
 
 
                 const cardName =
@@ -1620,8 +1640,8 @@ buttons.forEach(btn => {
 
 
                 const matchesCategory =
-                    category === "all" ||
-                    cardCategory === category;
+                    selectedCategory === "all" ||
+                    allowedCategories.includes(cardCategory);
 
 
                 if(
